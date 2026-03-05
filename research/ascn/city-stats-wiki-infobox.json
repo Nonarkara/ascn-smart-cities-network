@@ -1,0 +1,230 @@
+[
+  {
+    "city": "Bandar Seri Begawan",
+    "wiki_title": "Bandar Seri Begawan",
+    "area_km2_wiki": 100.36,
+    "population_wiki": null
+  },
+  {
+    "city": "Battambang",
+    "wiki_title": "Battambang",
+    "area_km2_wiki": 293.0,
+    "population_wiki": 119251
+  },
+  {
+    "city": "Phnom Penh",
+    "wiki_title": "Phnom Penh",
+    "area_km2_wiki": 679.0,
+    "population_wiki": 2352851
+  },
+  {
+    "city": "Siem Reap",
+    "wiki_title": "Siem Reap",
+    "area_km2_wiki": null,
+    "population_wiki": 245494
+  },
+  {
+    "city": "Sihanoukville City",
+    "wiki_title": "Sihanoukville",
+    "area_km2_wiki": 195.9,
+    "population_wiki": 73036
+  },
+  {
+    "city": "Banyuwangi",
+    "wiki_title": "Banyuwangi",
+    "area_km2_wiki": null,
+    "population_wiki": null
+  },
+  {
+    "city": "Jakarta",
+    "wiki_title": "Jakarta",
+    "area_km2_wiki": 660.982,
+    "population_wiki": 10684946
+  },
+  {
+    "city": "Makassar",
+    "wiki_title": "Makassar",
+    "area_km2_wiki": 175.77,
+    "population_wiki": 1474393
+  },
+  {
+    "city": "Sumedang",
+    "wiki_title": "Sumedang",
+    "area_km2_wiki": 125.32,
+    "population_wiki": 187795
+  },
+  {
+    "city": "Denpasar",
+    "wiki_title": "Denpasar",
+    "area_km2_wiki": 125.98,
+    "population_wiki": 670210
+  },
+  {
+    "city": "Semarang",
+    "wiki_title": "Semarang",
+    "area_km2_wiki": 373.78,
+    "population_wiki": 1694740
+  },
+  {
+    "city": "Luang Prabang",
+    "wiki_title": "Luang Prabang",
+    "area_km2_wiki": null,
+    "population_wiki": 55027
+  },
+  {
+    "city": "Vientiane",
+    "wiki_title": "Vientiane",
+    "area_km2_wiki": 3920.0,
+    "population_wiki": 840940
+  },
+  {
+    "city": "Johor Bahru",
+    "wiki_title": "Johor Bahru",
+    "area_km2_wiki": 373.18,
+    "population_wiki": 858118
+  },
+  {
+    "city": "Kuala Lumpur",
+    "wiki_title": "Kuala Lumpur",
+    "area_km2_wiki": 243.0,
+    "population_wiki": 2075600
+  },
+  {
+    "city": "Kota Kinabalu",
+    "wiki_title": "Kota Kinabalu",
+    "area_km2_wiki": 351.0,
+    "population_wiki": 601000
+  },
+  {
+    "city": "Kuching",
+    "wiki_title": "Kuching",
+    "area_km2_wiki": 450.02,
+    "population_wiki": 514658
+  },
+  {
+    "city": "Ipoh",
+    "wiki_title": "Ipoh",
+    "area_km2_wiki": 643.0,
+    "population_wiki": 759952
+  },
+  {
+    "city": "Putrajaya",
+    "wiki_title": "Putrajaya",
+    "area_km2_wiki": 49.0,
+    "population_wiki": 119700
+  },
+  {
+    "city": "Seberang Perai",
+    "wiki_title": "Seberang Perai",
+    "area_km2_wiki": 748.0,
+    "population_wiki": 946092
+  },
+  {
+    "city": "Nay Pyi Taw",
+    "wiki_title": "Naypyidaw",
+    "area_km2_wiki": 7054.37,
+    "population_wiki": 924608
+  },
+  {
+    "city": "Mandalay",
+    "wiki_title": "Mandalay",
+    "area_km2_wiki": 163.84,
+    "population_wiki": 1726889
+  },
+  {
+    "city": "Yangon",
+    "wiki_title": "Yangon",
+    "area_km2_wiki": 598.75,
+    "population_wiki": 5160512
+  },
+  {
+    "city": "Cebu City",
+    "wiki_title": "Cebu City",
+    "area_km2_wiki": 315.0,
+    "population_wiki": 2454000
+  },
+  {
+    "city": "Davao City",
+    "wiki_title": "Davao City",
+    "area_km2_wiki": 293.78,
+    "population_wiki": 1232958
+  },
+  {
+    "city": "Manila",
+    "wiki_title": "Manila",
+    "area_km2_wiki": 42.34,
+    "population_wiki": 13484482
+  },
+  {
+    "city": "Cauayan City",
+    "wiki_title": "Cauayan, Isabela",
+    "area_km2_wiki": null,
+    "population_wiki": null
+  },
+  {
+    "city": "Singapore",
+    "wiki_title": "Singapore",
+    "area_km2_wiki": 744.3,
+    "population_wiki": null
+  },
+  {
+    "city": "Bangkok",
+    "wiki_title": "Bangkok",
+    "area_km2_wiki": 1568.737,
+    "population_wiki": 8305218
+  },
+  {
+    "city": "Chonburi",
+    "wiki_title": "Chonburi",
+    "area_km2_wiki": 3.5,
+    "population_wiki": 27815
+  },
+  {
+    "city": "Phuket",
+    "wiki_title": "Phuket",
+    "area_km2_wiki": null,
+    "population_wiki": null
+  },
+  {
+    "city": "Chiang Mai",
+    "wiki_title": "Chiang Mai",
+    "area_km2_wiki": 40.216,
+    "population_wiki": 127240
+  },
+  {
+    "city": "Khon Kaen",
+    "wiki_title": "Khon Kaen",
+    "area_km2_wiki": 46.0,
+    "population_wiki": 114459
+  },
+  {
+    "city": "Rayong",
+    "wiki_title": "Rayong",
+    "area_km2_wiki": 16.95,
+    "population_wiki": 64256
+  },
+  {
+    "city": "Da Nang",
+    "wiki_title": "Da Nang",
+    "area_km2_wiki": 11859.59,
+    "population_wiki": 3065628
+  },
+  {
+    "city": "Ha Noi",
+    "wiki_title": "Hanoi",
+    "area_km2_wiki": 3359.84,
+    "population_wiki": 8807523
+  },
+  {
+    "city": "Ho Chi Minh City",
+    "wiki_title": "Ho Chi Minh City",
+    "area_km2_wiki": 6781.0,
+    "population_wiki": 14002598
+  },
+  {
+    "city": "Dili",
+    "wiki_title": "Dili",
+    "area_km2_wiki": 178.62,
+    "population_wiki": 277488
+  }
+]

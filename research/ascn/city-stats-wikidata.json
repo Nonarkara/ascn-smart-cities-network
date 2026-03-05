@@ -1,0 +1,268 @@
+[
+  {
+    "city": "Bandar Seri Begawan",
+    "country": "Brunei Darussalam",
+    "population": 50000,
+    "area_km2": 100.36,
+    "query_name": "Bandar Seri Begawan"
+  },
+  {
+    "city": "Battambang",
+    "country": "Cambodia",
+    "population": 130000,
+    "area_km2": 0.0,
+    "query_name": "Battambang"
+  },
+  {
+    "city": "Phnom Penh",
+    "country": "Cambodia",
+    "population": 2129371,
+    "area_km2": 0.0,
+    "query_name": "Phnom Penh"
+  },
+  {
+    "city": "Siem Reap",
+    "country": "Cambodia",
+    "population": 147866,
+    "area_km2": null,
+    "query_name": "Siem Reap"
+  },
+  {
+    "city": "Sihanoukville City",
+    "country": "Cambodia",
+    "population": 71082,
+    "area_km2": 0.0,
+    "query_name": "Sihanoukville"
+  },
+  {
+    "city": "Banyuwangi",
+    "country": "Indonesia",
+    "population": 108617,
+    "area_km2": 0.0,
+    "query_name": "Banyuwangi"
+  },
+  {
+    "city": "Jakarta",
+    "country": "Indonesia",
+    "population": 11135191,
+    "area_km2": 0.0,
+    "query_name": "Jakarta"
+  },
+  {
+    "city": "Makassar",
+    "country": "Indonesia",
+    "population": 1338663,
+    "area_km2": 0.0,
+    "query_name": "Makassar"
+  },
+  {
+    "city": "Sumedang",
+    "country": "Indonesia",
+    "population": null,
+    "area_km2": null,
+    "query_name": "Sumedang"
+  },
+  {
+    "city": "Denpasar",
+    "country": "Indonesia",
+    "population": 670210,
+    "area_km2": 0.0,
+    "query_name": "Denpasar"
+  },
+  {
+    "city": "Semarang",
+    "country": "Indonesia",
+    "population": null,
+    "area_km2": null,
+    "query_name": "Semarang City"
+  },
+  {
+    "city": "Luang Prabang",
+    "country": "Lao PDR",
+    "population": 53792,
+    "area_km2": 0.0,
+    "query_name": "Luang Prabang"
+  },
+  {
+    "city": "Vientiane",
+    "country": "Lao PDR",
+    "population": null,
+    "area_km2": null,
+    "query_name": "Vientiane Prefecture"
+  },
+  {
+    "city": "Johor Bahru",
+    "country": "Malaysia",
+    "population": 797882,
+    "area_km2": 0.0,
+    "query_name": "Johor Bahru"
+  },
+  {
+    "city": "Kuala Lumpur",
+    "country": "Malaysia",
+    "population": 9000280,
+    "area_km2": 0.0,
+    "query_name": "Kuala Lumpur"
+  },
+  {
+    "city": "Kota Kinabalu",
+    "country": "Malaysia",
+    "population": 452058,
+    "area_km2": 352.24,
+    "query_name": "Kota Kinabalu"
+  },
+  {
+    "city": "Kuching",
+    "country": "Malaysia",
+    "population": 325132,
+    "area_km2": 431.02,
+    "query_name": "Kuching"
+  },
+  {
+    "city": "Ipoh",
+    "country": "Malaysia",
+    "population": 866772,
+    "area_km2": 0.0,
+    "query_name": "Ipoh"
+  },
+  {
+    "city": "Putrajaya",
+    "country": "Malaysia",
+    "population": 109202,
+    "area_km2": 0.0,
+    "query_name": "Putrajaya"
+  },
+  {
+    "city": "Seberang Perai",
+    "country": "Malaysia",
+    "population": null,
+    "area_km2": null,
+    "query_name": "Seberang Perai City"
+  },
+  {
+    "city": "Nay Pyi Taw",
+    "country": "Myanmar",
+    "population": 1160242,
+    "area_km2": 0.01,
+    "query_name": "Naypyidaw"
+  },
+  {
+    "city": "Mandalay",
+    "country": "Myanmar",
+    "population": 1225546,
+    "area_km2": 0.0,
+    "query_name": "Mandalay"
+  },
+  {
+    "city": "Yangon",
+    "country": "Myanmar",
+    "population": 6874000,
+    "area_km2": 0.0,
+    "query_name": "Yangon"
+  },
+  {
+    "city": "Cebu City",
+    "country": "Philippines",
+    "population": 965332,
+    "area_km2": 0.0,
+    "query_name": "Cebu City"
+  },
+  {
+    "city": "Davao City",
+    "country": "Philippines",
+    "population": 1848947,
+    "area_km2": 0.0,
+    "query_name": "Davao City"
+  },
+  {
+    "city": "Manila",
+    "country": "Philippines",
+    "population": 1902590,
+    "area_km2": 0.0,
+    "query_name": "Manila"
+  },
+  {
+    "city": "Cauayan City",
+    "country": "Philippines",
+    "population": 143539,
+    "area_km2": 0.0,
+    "query_name": "Cauayan"
+  },
+  {
+    "city": "Singapore",
+    "country": "Singapore",
+    "population": 5866139,
+    "area_km2": 0.0,
+    "query_name": "Singapore"
+  },
+  {
+    "city": "Bangkok",
+    "country": "Thailand",
+    "population": 5676648,
+    "area_km2": 0.0,
+    "query_name": "Bangkok"
+  },
+  {
+    "city": "Chonburi",
+    "country": "Thailand",
+    "population": null,
+    "area_km2": null,
+    "query_name": "Chonburi Province"
+  },
+  {
+    "city": "Phuket",
+    "country": "Thailand",
+    "population": 77610,
+    "area_km2": 0.0,
+    "query_name": "Phuket"
+  },
+  {
+    "city": "Chiang Mai",
+    "country": "Thailand",
+    "population": 1198000,
+    "area_km2": 0.0,
+    "query_name": "Chiang Mai"
+  },
+  {
+    "city": "Khon Kaen",
+    "country": "Thailand",
+    "population": 115928,
+    "area_km2": 0.0,
+    "query_name": "Khon Kaen"
+  },
+  {
+    "city": "Rayong",
+    "country": "Thailand",
+    "population": 61902,
+    "area_km2": 0.0,
+    "query_name": "Rayong"
+  },
+  {
+    "city": "Da Nang",
+    "country": "Viet Nam",
+    "population": 2819900,
+    "area_km2": 0.01,
+    "query_name": "Da Nang"
+  },
+  {
+    "city": "Ha Noi",
+    "country": "Viet Nam",
+    "population": 8717600,
+    "area_km2": 0.0,
+    "query_name": "Hanoi"
+  },
+  {
+    "city": "Ho Chi Minh City",
+    "country": "Viet Nam",
+    "population": 14002598,
+    "area_km2": 0.01,
+    "query_name": "Ho Chi Minh City"
+  },
+  {
+    "city": "Dili",
+    "country": "Timor-Leste",
+    "population": 222323,
+    "area_km2": 0.0,
+    "query_name": "Dili"
+  }
+]

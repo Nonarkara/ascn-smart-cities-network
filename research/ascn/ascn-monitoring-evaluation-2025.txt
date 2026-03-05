@@ -1,0 +1,1346 @@
+ASEAN Smart Cities Network
+Monitoring & Evaluation
+Report 2025
+ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+
+
+                                          1
+ ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+
+Contents
+Contents ................................................................................................................................................. 2
+List of Acronyms ................................................................................................................................... 3
+1| Introduction ....................................................................................................................................... 4
+2| Status of ASCN Smart City Projects ............................................................................................... 8
+            Civic & Social ............................................................................................................................. 8
+            Health & Well-Being ................................................................................................................. 11
+            Safety & Security ...................................................................................................................... 13
+            Quality Environment ................................................................................................................. 16
+            Built Infrastructure .................................................................................................................... 19
+            Industry & Innovation ............................................................................................................... 22
+3| Observations and Recommendations .......................................................................................... 25
+Appendix .............................................................................................................................................. 27
+A.          List of ASCN Smart City Projects that are Ongoing and under Planning across the Six
+            Focus Areas ............................................................................................................................ 27
+B.          List of Completed ASCN Smart City Projects across the Six Focus Areas ..................... 32
+
+
+
+
+                                                                             2
+ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+
+
+List of Acronyms
+ACTS               Automated Citywide Traffic Control System
+ADB                Asian Development Bank
+AI                 Artificial Intelligence
+Aus4ASEAN          Australia for ASEAN Futures Initiative
+ASCAP              ASEAN Smart City Action Plan
+ASPP               ASEAN Smart City Professional Program
+ASUF               ASEAN Sustainable Urbanisation Forum
+CCTV               Closed-Circuit Television
+CHASE              Clean, Healthy, Advance, Safe, and Eco-friendly
+DEPA               Digital Economy Promotion Agency of Thailand
+GIS                Geographic Information System
+IMAC               Iskandar Malaysia Analytics Centre
+INFLOS             Integrated Flood and Monitoring Pump House System
+IRDA               Iskandar Regional Development Authority
+JICA               Japan International Cooperation Agency
+KLUO               Kuala Lumpur Urban Observatory
+LGU                Local Government Unit
+MCDC               Mandalay City Development Committee
+MRID               Manila Residents Identification
+NPTDC              Nay Pyi Taw Development Committee
+PDD                Punggol Digital District
+PPCH               Phnom Penh Capital Hall
+SCADA              Supervisory Control and Data Acquisition
+SDP                Social Development Program
+SME                Small and Medium-sized Enterprises
+SNU                Seoul National University
+SPLiT              Sistem Pengurusan Lalulintas Pintar
+SRPA               Siem Reap Provincial Administration
+SSDaP              Siem Reap Smart City Data Platform
+UN-Habitat         United Nations Human Settlements Programme
+USTDA              United States Trade and Development Agency
+YCDC               Yangon City Development Committee
+
+
+
+
+                                               3
+              ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+
+             1| Introduction
+             Over the past year (October 2024 – September           An overview of distribution of these projects
+             2025), the ASEAN Smart Cities Network                  across the ASCN’s key focus areas is shown in
+             (ASCN) has continued to make significant               Exhibit 1.
+             progress in advancing the ASCN Smart City
+             Action Plans, promoting the sharing of best            Exhibit 2 provides a snapshot of smart city
+             practices, enhancing the capacity of national          implementation progress, as follows:
+             and local governments, developing knowledge                • On-going: 108 projects (81%) are
+             products, and strengthening partnerships.                      currently in implementation. These are
+                                                                            typically projects beyond the feasibility
+             This report summarises the progress and key                    stage and include efforts to scale up or
+             outcomes of the ASCN's work during the                         enhance existing initiatives.
+             period, providing an overview of project                   • Completed: 18 projects (13%) have
+             implementation, regional activities, and                       been successfully concluded.
+             strategic developments.                                    • Planning: 8 projects (6%) are in the
+                                                                            proposal development, pre-feasibility
+             The number of ASCN smart city projects                         and feasibility stage.
+             continues to expand, driven by both existing
+             and new member cities. As of September 2025,
+             the ASCN has a total of 134 smart city projects.
+
+
+
+25%
+CIVIC & SOCIAL
+                                    6%
+                                    HEALTH & WELL-BEING
+                                                                      14%
+                                                                      SAFETY & SECURITY
+
+
+
+
+Projects related to:                Projects related to:              Projects related to:
+Public & Municipal Services         Healthcare                        Resource Security
+
+
+
+
+                                                                                                           134
+Governance                          Housing & Home                    Public Safety, City Surveillance,
+Tourism                             Education                         & Crime Prevention
+Culture & Heritage
+
+
+
+18%                                 25%                               12%
+                                                                      INDUSTRY & INNOVATION                    Smart City
+QUALITY ENVIRONMENT                 BUILT INFRASTRUCTURE
+                                                                                                                Projects
+
+
+
+
+Projects related to:                                                  Projects related to:                Exhibit 1:
+Clean Environment                                                     Business & Entrepreneurship         ASCN Smart City Projects
+Resources Access & Management       Projects related to:              Trade & Commerce
+                                                                      Research                            across the Six Focus Areas
+Urban Resilience                    Mobility & Transportation   4
+                                    Utilities                         Technology Incubation               as of September 2025
+ ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+Exhibit 2: Overall Implementation Progress of ASCN Smart City Projects as of September 2025
+
+
+
+
+                                                  5
+ ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+Exhibit 3: Country Chart as of September 2025
+
+
+
+
+                                                6
+ ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+A detailed breakdown of smart city projects by         ASEAN Smart City Professional Program
+ASEAN Member States, including the                     (ASPP); expanded membership from 26 pilot
+distribution by focus areas and specific project       cities upon establishment to 35 cities as of
+types, is provided in the Country Chart                September 2025; as well as actively
+(Exhibit 3).                                           participated in workshops/events that convened
+                                                       by/in collaboration with ASEAN’s external
+At the regional level, the ASCN has launched           partners.
+the ASEAN Smart City Financing Toolkit;
+spearheaded the convening of the ASEAN                 The ASCN M&E Report 2025 comprises three
+Sustainable Urbanisation Forum (ASUF) 2025,            main sections. Following the Introduction
+as well as a series of the Urban Planning for          section, this Report presents the status of
+City Leaders Training Programme and Multi-             ASCN smart city projects by focus area with
+Stakeholder Capacity Building Programme;               each ASCN city having one of their smart city
+convened a Smart City Expert Talk and Smart            projects highlighted. The full list of ASCN smart
+City Connect Exhibition back-to-back with the          city projects can be seen in the Appendix. The
+8th ASCN Annual Meeting; driven the                    last section is a summary of observations and
+implementation of the short-term training and          recommendations.
+Master’s Degree scholarships under the
+
+
+
+
+                                                   7
+  ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+
+2| Status of ASCN Smart City Projects
+
+Civic & Social
+Social
+The focus area of Civic and Social aims to                  SSDaP seeks to collect data across sectors
+achieve social cohesion, promote social equity,             and share with        government officials,
+preserve and deepen appreciation for cities’                businesses, and researchers to conduct policy
+cultural authenticity and heritage, promote the             planning, as well as improving and creating
+tourism sector, and improve the citizen                     urban services.
+experience. These involve enhancing good
+governance in the delivery of public and                    The Japan International Cooperation Agency
+municipal      services,    decision     making,            (JICA) has supported the development of
+transparency, accountability, and information               SSDaP as well as provided capacity building for
+accessibility. Civic and Social accounts for 25%            the officers of Siem Reap’s Department of
+of the overall ASCN projects. Siem Reap, Johor              Tourism to collect and manage data digitally.
+Bahru, Kuala Lumpur, Yangon, and Manila City
+are examples of ASCN Cities that have projects              One of the data types provided by SSDaP is on
+in this focus area.                                         tourism. It provides statistics on number of
+                                                            tourists by region, by country, and by month, as
+Siem Reap, Cambodia                                         well as tourists arriving at the Siem Reap
+With the aim to optimise urban services in a                International Airport. SRPA continues to work
+unified operation system and encourage free                 on expanding SSDaP and promote its usage to
+data utilisation, the Siem Reap Provincial                  the public.
+Administration (SRPA) launched the Siem
+Reap Smart City Data Platform (SSDaP) in                    Johor Bahru, Malaysia
+September 2024.                                             The work to develop the system for Iskandar
+Smart Tourism                                               Malaysia Analytics Centre (IMAC) has
+Objective: To deliver a more convenient and on-demand       commenced in December 2024. Driven by the
+tourism service, as well as develop diverse tourism         Iskandar Regional Development Authority
+resources towards more convenient and satisfactory
+tourism.                                                    (IRDA) the project aims to establish a data
+                                                            centre to collate, update, analyse, manage and
+                                                            disseminate data and analysis to stakeholders
+                                                            – government and private alike – for making
+                                                            more informed and timely decisions.
+
+
+
+
+                                                             Exhibit 5: IMAC
+                                                             Objective: To ease decision-making in planning approval
+Exhibit 4: Tourism dashboard from SSDaP. © SRPA              process and to improve government transparencies in
+                                                             tracking development, policies and targets.
+
+
+
+
+                                                        8
+  ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+ Prior to the system development, IRDA                         Now the Urban Planning Department of YCDC
+ completed the framework documents for IMAC                    is analysing the urban blue and green areas in
+ which consists of business plan, data                         GIS by using One Map Yangon data. The urban
+ landscape review, as well as data management                  green analysis will be utilised for evacuation
+ and policy with funding from the United Nations               shelter, and the urban blue area analysis will be
+ Development Programme. The development of                     utilised for supply of water to community in case
+ system architecture framework and platform                    of natural disasters. This research and analysis
+ requirements for the IMAC core system was                     can support the government efforts in disaster
+ completed with funding from the United States                 management for preparedness and awareness.
+ Trade and Development Agency (USTDA). The
+ project to develop IMAC system is expected to                 Currently, One Map Myanmar and One Map
+ be completed in 2026.                                         Yangon are collaborating towards a national-
+                                                               level    integration of    geospatial  data
+ Kuala Lumpur, Malaysia                                        infrastructure.
+ The Kuala Lumpur Urban Observatory (KLUO)
+ is envisaged to be a centralised database                     Manila City, the Philippines
+ platform and city-level information sharing
+ network, providing access to the citizens and
+ exchange of data across ministries and
+ agencies.
+
+ KLUO seeks to establish data analytics
+ platform where it can integrate and
+ comprehend multiple big data platforms to
+ perform data analytics functions. Tender
+ documentation is currently being prepared and
+ is anticipated to be published in Q4 2025.
+
+ Yangon, Myanmar
+ Through the One Map Yangon initiative,
+ Yangon City Development Committee (YCDC)                       Exhibit 7: Official web and mobile
+ has continued to integrate spatial and non-                    application of GO! Manila made available.
+                                                                © City of Manila
+ spatial data from all YCDC Departments
+ towards improved transparency, coordination,                   E-Government Services
+ data management and maintenance, and better                    Objective: To provide fast, secure, effective
+                                                                and convenient manner of various services to
+ services to the public. This has been done                     the public to access a full range of payments
+ through establishing and maintaining the E-                    and financial services that will reach not only
+ government platform, i.e. maps.ycdc.gov.mm .                   the constituents of the city but globally.
+
+
+                                                               As part of its initiative to provide e-Government
+Exhibit 6: One Map Yangon
+Objective: To develop an integrated geospatial database        services, Manila City launched the Go! Manila
+platform with spatial and non-spatial data from all YCDC       as the official web and mobile application of the
+departments.
+                                                               City Government of Manila that aims to provide
+                                                               fast, effective, and convenient services to the
+                                                               public. It serves as a platform for a more secure
+                                                               and cost-effective means to access a full range
+                                                               of payments and financial services of the City
+                                                               Government.
+
+                                                               The mobile application has several features
+                                                               such as the City of Manila’s Real Property and
+                                                               Business Tax Payments; wide range of facilities
+                                                               for payment of bills for government and private
+
+
+
+                                                           9
+ ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+entities; jobs portal; electronic social                   transactions in all offices in the City using digital
+amelioration system; and e-wallet for loading,             platforms and digital documents for internal
+payment, sending, and receiving of funds.                  transactions     (payroll       system,     budget,
+                                                           procurement, accounting, digital signature).
+Additional features of the application are                 The City Government also aims to establish a
+currently being integrated in the system to                Manila intranet to ensure interconnectivity of
+include the Manila Residents Identification                department/offices of the City of Manila using
+(MRID) in which data capturing of residents and            fibre optics and wireless connection. This
+issuance of physical MRID Card are ongoing.                initiative aims for efficient, faster, and more
+                                                           convenient public service delivery.
+The City Government is also implementing the
+Manila Inclusive Digital Transformation Project
+for an inclusive digitalisation and digitisation of
+
+
+
+
+                                                      10
+ ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+
+Health & Well-Being
+Well-Being
+Improving the quality and access to healthcare,              homecare electric ambulances that are
+housing, and education in a way that is                      equipped with tele-ultrasonography, tele-
+innovative and resource-efficient are the core of            electrocardiography, and tele-spirometry. The
+Health and Well-Being focus area. Health and                 mobile-app version of Dottoro’ta has been
+Well-Being accounts for 6% of the overall                    developed.
+ASCN projects. Examples of ASCN projects fall
+under this focus area can be found in Makassar,              To advance and sustain Dottoro’ta, it would be
+Sumedang, Nay Pyi Taw, and Rayong.                           necessary to have more specialists providing
+                                                             consultation for certain/specific diseases,
+Makassar, Indonesia                                          increase technical knowledge and welfare of
+Makassar’s homecare programme called                         homecare workers, increase the use of
+Dottoro’ta or “our doctor” in Makassar                       information and communication technology in
+language, had attended 6,973 patients in 2024                Dottoro’ta, as well as continue to disseminate
+and has attended more than 2,800 patients this               the information on Dottoro’ta programme
+year as of July 2025. Dottoro’ta aims to improve             especially to the remote areas of Makassar,
+the level of health independence of citizens and             including the islands.
+reduce impacts of diseases, reduce the number
+of patient referrals because patients are directly           Sumedang, Indonesia
+served at their homes, and increase                          There are four elements to the project on
+awareness/knowledge of residents on healthy                  “Jatinangor City of Knowledge”, that are
+living behaviours.                                           ongoing, namely: (1) Integrated Campus
+                                                             District; (2) Smart Infrastructure Development;
+                                                             (3) Multifunctional Plazas and Open Spaces;
+                                                             and (4) Digital Public Services.
+                                                              Jatinangor City of Knowledge
+                                                              Objective: To develop a vibrant, inclusive, and
+                                                              sustainable campus district that seamlessly integrates
+                                                              public spaces, promotes open access, and fosters
+                                                              community engagement.
+
+
+
+
+Exhibit 8: Health services are provided to
+individuals/families at their homes to improve health
+of people independence and to reduce impacts of
+diseases. © City of Makassar
+
+
+
+
+Dottoro’ta is operating 24 hours in collaboration
+with    the     community     health      centres             Exhibit 9: Jatinangor is known for hosting several
+(Puskesmas)       and    Makassar      University             major universities. The area accommodates around
+                                                              60,000 students from these institutions, with an
+Hospital. The programme is supported with 48                  annual increase of approximately 12,000 new
+                                                              students. © Sumedang Regency.
+
+
+
+                                                        11
+                ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+               Facilitated by the local authorities, deliberation        Rayong, Thailand
+               is ongoing among the education institutions               Rayong has been developing a Public Health
+               within Jatinangor towards realising an                    Monitoring and Care System that provides
+               integrated campus district. To support public             screening, monitoring, and control of individuals
+               safety and accessibility efforts, CCTV cameras            at risk for hypertension and diabetes. The
+               and free WiFi connection have been installed in           system includes health data collection via a
+               the village offices and strategic locations               mobile application, targeting no fewer than
+               surrounding the residential areas within                  5,000 residents in the designated area over an
+               Jatinangor. Furthermore, both improvement in              extended period. Training programme has also
+               the physical and digital public services has              been conducted for the village health
+               been ongoing through the establishment of a               volunteers in Rayong Province to train them on
+               public service mall as well as the digital tools,         how to use digital health screening tools for
+               i.e. E-Office Desa, Tahu Sumedang, and                    real-time data collection, eliminating the need
+               WhatsApp Bot.                                             for manual data entry by the volunteers. The
+                                                                         system is joint effort involving a wide range of
+               Nay Pyi Taw, Myanmar                                      stakeholders, including a Thai’s start-up, the
+               Nay Pyi Taw Development Committee                         Digital Economy Promotion Agency (depa), and
+               (NPTDC), Nay Pyi Taw Council, and the                     National Health Security Office. Collaboration
+               Ministry of Construction have jointly completed           with more public and private sector entities
+               the construction of 3,000 units of low-cost               would be key to ensure sustainability of the
+               housing (Phase I), named as Thu Kha Taw Win               initiative.
+               Housing, including basic infrastructures. All the
+               units have been allocated to public and
+               government employees, including the retired
+               government employees.
+
+               Building on the success of Phase I, Phase II
+               was launched in 2024, aiming to construct
+               1,060 additional low-cost housing units. The
+               Phase II construction has commenced in early
+               2025 with the initiation of foundation work.
+               However, the major earthquake that struck
+               Mandalay in March 2025 has caused significant              Exhibit 11: Public Health Monitoring and Care System
+               disruption to the construction activities. The             with a Health Database
+                                                                          Objective: To provide screening, monitoring, and control of
+               earthquake led to safety concerns regarding the            individuals at risk for hypertension and diabetes, alongside
+               structural integrity of the ongoing work,                  health data collection via a mobile application.
+               prompting a halt in construction activities.               Photo © depa
+
+
+
+3000 units
+completed and occupied
+1060 units planned
+for Phase 2
+
+
+
+
+ Exhibit 10: Affordable and Low-Cost Housing
+ Objective: To construct affordable and low-cost
+ housing for the public and government employees,    © NPTDC
+ including the retired government employees.
+
+                                                                    12
+       ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+
+     Safety & Security
+     Security
+     The focus area of Safety and Security refers to                    The Ministry of Post and Telecommunication of
+     the adoption of effective technologies to                          Cambodia is supporting the procurement of 100
+     address urban security problems, such as,                          Artificial Intelligence (AI)-powered street
+     strengthening public safety, city surveillance                     cameras. These advanced cameras will be
+     and crime prevention, among others.                                installed throughout the city to strengthen
+                                                                        monitoring capabilities, improve public safety,
+     Safety and Security accounts for 14% of the                        and help prevent incidents of violence.
+     overall ASCN projects. Sihanoukville City, Ipoh,
+     Putrajaya, Cebu City, Chiang Mai, Da Nang, Ha                      Looking ahead, investment in human resources
+     Noi, and Ho Chi Minh City are examples of                          and capacity building is urgently needed to
+     ASCN Cities that have projects in this focus                       strengthen the skills and capabilities of
+     area.                                                              operational staff, ensuring sustainable and
+                                                                        effective CCTV management in the long run.
+     Sihanoukville City, Cambodia
+     As part of Preah Sihanouk Province’s ongoing                       Ipoh, Malaysia
+     efforts to leverage modern technology towards                      Improving the mobility of residents Ipoh has
+     create a safer, more secure urban environment                      been the priority of Ipoh City Council towards
+     for all residents and visitors, the government                     realising the vision of a smart liveable, resilient,
+     has installed 433 GPS cameras on upgrading                         and sustainable city by 2030. Ipoh City Council
+     34 arterial and other critical roads in and around                 has installed of AI-powered cameras and IOT
+     the city. All installed CCTV cameras are                           sensors connected to the controller allows real-
+     connected to the internet, enabling real-time                      time analysis of all traffic data and optimal
+     data transmission to the central CCTV                              green time setting to be generated
+     monitoring centre. The CCTV control room is                        automatically.
+     equipped with 18 LED screen displays to
+     receive and monitor live feeds from the                            Adaptive traffic flow systems have been used to
+     cameras.                                                           make traffic planning more dynamic and
+                                                                        responsive to real-time conditions, leading to
+     However, as the implementation progresses,                         smoother traffic movement and reduced travel
+     several cameras have been reported as                              time, as well as help lower carbon emissions.
+     damaged or stolen and require repair or                            Ipoh City Council has also been gathering traffic
+     replacement to maintain a comprehensive                            data and analysing patterns to support better
+     surveillance coverage. At present, the                             decision-making for both road management
+     contracted service provider continues to assist                    and town planning, ensuring that infrastructure
+     the police officers with the daily operation of the                meets the growing demands of the community.
+     CCTV system.
+
+
+
+
+Exhibit 12: GPS cameras linked to a control centre monitor              Exhibit 13: SPLiT at Jalan Sultan Idris Shah. © Ipoh City
+the public safety and security. © Sihanoukville City                    Council
+
+Smart Security                                                          SPLiT
+Objective: To enhance the effectiveness and timeliness of          13   Objective: To improve traffic management to address
+policing including crime prevention, investigations and evidence        congestion, reduce carbon emissions, and enhance operational
+gathering.                                                              efficiency.
+ ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+Putrajaya, Malaysia                                          conditions to optimise the flow of traffic. The
+Putrajaya Smart City Blueprint has been                      construction of a Command Centre for the
+guiding the city in formulating policies,                    ACTS has also been completed.
+strategies, and initiatives towards the
+implementation of Putrajaya Smart City. One of               Cebu City Government is reviewing the
+the key initiatives that the city has been                   installed Phase 1 ACTS and the constructed
+advancing is public safety enhancement                       command centre to ensure optimum operation
+through providing assistance to complainants                 by the Traffic Management Coordination
+according to their needs and send an                         Committee and Cebu City Traffic Office.
+enforcement team to assist them. Under the                   Meanwhile, permit requirements are being
+CHASE (Clean, Healthy, Advance, Safe, and                    fulfilled to complete the Phase 2 installation.
+Eco-friendly)      Programme,         Putrajaya
+Corporation has set a target to install 1,000                Chiang Mai, Thailand
+units of CCTV and 120 units of panic buttons by              The Wildfire Prevention & Solution Command
+the year 2030. So far, 545 units of CCTV and                 Centre (PM2.5 DSS & FireD), developed by
+96 units of Panic Button have been installed.                Chiang     Mai    Provincial   Administrative
+                                                             Organisation, seeks to serve as a command
+        Exhibit 14: CCTV and Panic Button                    hub, a database system, and a public gateway
+        Objective: To enhance public safety through
+        helping complainants according to their needs
+                                                             for information on the PM2.5 situation to
+        and send an enforcement team to assist them.         support decision-making in biomass fuel
+        Photo ©Putrajaya Corporation                         management and reduce risks and impacts for
+                                                             the people of Chiang Mai.
+
+
+
+
+                                                              Exhibit 15: Wildfire Prevention & Solution Command
+                                                              Centre
+                                                              Objective: To establish a command and control for
+                                                              situational response, data-driven planning through
+                                                              forecasting and analysis, and public communication and
+                                                              empowerment through data accessibility.
+                                                              Photo © Chiang Mai Provincial Administrative
+                                                              Organisation
+
+
+                                                             The work of the command centre involves
+                                                             addressing complex data integration that
+                                                             requires aggregating real-time data from
+                                                             diverse sources (ground sensors, satellite
+                                                             imagery, weather models, management data
+Cebu City, the Philippines                                   from the FireD app) into a single, reliable
+Phase 1 of the Automated Citywide Traffic                    decision support system.
+Control System (ACTS) has been completed
+and operational. This includes the completion of             The next phase of the project requires
+installation cameras for the 18 intersections in             technology and infrastructure to install and
+the uptown and midtown areas in Cebu City.                   integrate the dust sensor network across all 25
+The fully installed Phase 1 of ACTS adapts the               districts to enable complete real-time, localised
+timings of traffic lights based on real-time traffic         data linkage. This will be implemented in
+
+
+
+                                                        14
+ ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+collaboration with Chiang Mai University as the         Ha Noi, Viet Nam
+provider of Dust Boy sensors and technical              Forming an intelligent operation centre in Ha
+expertise. Equally important, training for local        Noi is expected to contribute the goal of
+administrative organisation officials is needed         becoming an interactive, transparent, efficient
+to effectively utilise the FireD and CMDSS              administration, providing services based on the
+PM2.5 platforms for autonomous fuel                     needs of people and businesses. In this regard,
+management and public communication,                    an intelligent operation centre is sought to
+ensuring the success of decentralisation.               provide services for and contribute to, among
+                                                        others, monitoring security and safety, press
+Da Nang, Viet Nam                                       and media, traffic management and crime
+Da Nang has been advancing its intelligent              prevention in public areas, data analytics, as
+operation centre to integrate different services        well as, receiving and processing information
+and cater to various needs, as well as support          on emergency, fire prevention, search and
+analysis and decision-making. The intelligent           rescue, medical rescue.
+operation centre has been providing complaint
+service, traffic monitoring service, order              Ho Chi Minh City, Viet Nam
+security monitoring service, social network             Ho Chi Minh City has been investing in the
+monitoring service, information security                development of an emergency response centre
+monitoring service, and public service                  and enhancement of the efficiency of
+monitoring. Work continues to capture a wider           emergency call service which includes
+range of services which include environmental           facilitating emergency cases reported through
+warning monitoring, open data services,                 methods other than voice call, i.e. mobile app,
+monitoring socio-economic indicators, natural           Coordination with central-level ministries and
+disaster prevention, and monitoring garbage             agencies has been taking place to ensure
+truck journeys.                                         compatibility and compliance with, among
+                                                        others,        legal     regulations        and
+                                                        telecommunications policies.
+
+
+
+
+                                                   15
+ ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+
+Quality Environment
+Environment
+The focus area of Quality Environment aims to              Luang Prabang, Lao PDR
+leverage technologies to, for example, maintain            As part of its clean and safe environment effort,
+a clean and pleasant environment; promote the              Luang Prabang is implementing the Urban
+sustainable use of ecosystems, natural                     Environment Improvement Investment Project
+resources and biodiversity; and strengthen                 that seeks to: (i) improve the quality and
+resilience against disaster risks and potential            coverage of urban infrastructure and services;
+climate change impact. Quality Environment                 (ii) strengthen institutions and capacity to foster
+accounts for 18% of the overall ASCN projects.             climate and disaster resilient development
+Battambang, Luang Prabang, Vientiane,                      pathways; (iii) promote inclusive and gender-
+Kuching, Seberang Perai, Mandalay, and                     responsive urban planning; and (iv) enhance
+Cauayan City are examples of ASCN Cities that              women's         leadership      and     economic
+have projects in this focus area.                          empowerment.
+
+Battambang, Cambodia                                       A Project Coordination Unit and Project
+The work continues in upgrading the drainage               Implementation Units have been established.
+and sewage system as a key aspect of                       Procurement of vehicles and essential tools to
+Battambang’s priority in mitigating flood. The             launch the first phase has been completed.
+main canal in the city is being rehabilitated to           Work plan for the first phase, as well as project
+help store excess rainwater during the rainy               boundaries have been defined for the
+season. Construction has been progressing for              implementation areas.
+the wastewater treatment plant in both east and
+west sides of the Sanger River. Efforts are also            Clean and Safe Environment
+                                                            Objective: To improve solid waste and wastewater
+underway to connect the drainage and sewage                 management and promote smart climate and disaster risk
+system to household in the city centre. The solid           solutions appropriate for the local context.
+and liquid waste management projects in
+Battambang are implemented by the Ministry of
+Public Works and Transport of Cambodia and
+supported by the Asian Development Bank
+(ADB).
+
+
+
+
+                                                            Exhibit 17: The project seeks to contribute to the
+                                                            City’s goal to enhance well-being for around 104,500
+                                                            residents and 1.3 million annual visitors by 2031.
+                                                            © Luang Prabang City Administrative Office
+
+
+
+
+Exhibit 16: Main canal rehabilitation; drainage and
+sewage system construction; wastewater treatment
+plant construction; connecting sewage system to
+household. (Clockwise from top-left) © Battambang
+Provincial Hall
+
+Solid and Liquid Waste Management
+Objective: To establish sewage and wastewater
+management systems, including developing additional
+drain and sewage infrastructure.
+
+
+                                                      16
+        ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+      Vientiane, Lao PDR                                      Data and alerts are provided to the citizens via
+      Vientiane’s urban expansion poses challenges,           IHYDRO, an online Hydrological Telemetry
+      such as increased traffic congestion,                   System. With IHYDRO, users can be kept
+      environmental degradation through increased             informed on the rainfall condition and river
+      pollution, and administrative complexity. With          condition in their areas.
+      regards to the environmental protection,
+      Vientiane Capital has been putting efforts to            Integrated Flood Management and Response System
+                                                               Objective: To create a comprehensive and real-time
+      leverage technology to centralise and                    flood-related database through the upgrading critical
+      modernise its wastewater treatment.                      rainfall/ water level telemetry-enabled stations for more
+                                                               accurate flood modelling and prediction to prevent and
+                                                               mitigate floods.
+      The construction of wastewater treatment plant
+      with an expected capacity of 52,000 m3/day has
+      been ongoing. The plant utilises biological
+      purification technology, as well as sensors to
+      form real-time community-level monitoring
+      dashboards. So far, the project has restored
+      15% of domestic wastewater in the urban area,
+      benefitting over 8,000 households.
+
+Exhibit 18: The wastewater treatment plant is
+expected to cover improve the local water quality
+indexes. © Department of Public Works and
+Transport of Vientiane Capital
+
+
+
+
+      Kuching, Malaysia                                        Exhibit 19: IHYDRO is an online platform for real-
+      Kuching has upgraded and been operating 78               time flood and drought monitoring. © DID Sarawak
+      telemetry stations to obtain real-time
+      data/information through various means of
+      communication. The ability to provide real time         Seberang Perai, Malaysia
+      rainfall and water level on-line enable close           Seberang Perai has put in place measures to
+      monitoring of the development of floods at              ensure continuous readiness for managing
+      critical flood prone areas and drought situation        flood risks through the Integrated Flood and
+      in the river basin. This will then allow for the        Monitoring Pump House System (INFLOS).
+      proper, timely and smooth co-ordination of              The system involves monitoring 12 key flood
+      essential disaster relief operations and                hotspots and controlling 20 pump houses via
+      management to the affected areas.                       the Supervisory Control and Data Acquisition
+                                                              (SCADA) system. The SCADA system features
+                                                              real-time monitoring and remote automatic
+
+
+
+                                                         17
+             ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+            control of pump house operations, along with              Within the city area, all new construction and
+            residential sensor monitoring for efficient and           repairs of drainage systems, bridges, and box
+            rapid flood management. Further investment in             culverts have been done using precast
+            infrastructure is necessary to enhance the                concrete. Presence of underground cables and
+            performance of INFLOS.                                    water supply pipelines has posed some
+                                                                      challenges to the drainage improvement effort.
+            Mandalay, Myanmar                                         Nevertheless, MCDC has been committed to
+            Since 2018, the Mandalay City Development                 continuously improving the drainage system.
+            Committee (MCDC) has been expanding and                   Approximately 104 km of drain length have
+            upgrading the drainage system with precast                been constructed using precast concrete
+            concrete to mitigate flash floods, to have an             between 2021 - 2025.
+            effective flood management system and to
+            beautify the neighbouring environment with the            Cauayan City, the Philippines
+            provision of better drainage within the city area.        As part of the effort in building a green and
+                                                                      resilient city through resource-efficient and
+            The main irrigation canal, Yay Ni Canal (4km in           promote circular economy, the Local
+            length) has been upgraded with precast                    Government Unit (LGU) of Cauayan City has
+            concrete in 2019 and 2022. Since 2019, the old            been focusing on developing Material Recovery
+            drains along the driveway within the city area            Facility and introducing a smart waste collection
+            have also been upgraded to improve the water              system with route optimisation and sensor-
+            quality and to have healthy environment by                enabled bins. This initiative seeks to synergise
+            creating smooth water flow.                               with the implementing a city-wide composting,
+                                                                      recycling, and waste segregation initiatives, as
+                                                                      well as, promoting education campaigns and
+                                                                      incentive systems for sustainable practices.
+
+
+
+
+Exhibit 20: Drainage System Improvement in Mandalay
+© MCDC
+
+Solid Waste and Wastewater Treatment
+Objective: To ensure quality water supply through good
+solid waste and wastewater management.
+
+
+
+
+                                                                 18
+ ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+
+Built Infrastructure
+Infrastructure
+The focus area of Built Infrastructure advocates
+investment in infrastructure to deliver multiple
+benefits across various stakeholders, whether
+private or public. These can include investing in
+utilities such as energy, mobility and
+transportation, as well as buildings and
+construction.
+
+Built Infrastructure accounts for 25% of the
+overall ASCN projects. Kota Kinabalu, Davao
+City, Bangkok, Chonburi, Khon Kaen, and
+Phuket are examples of ASCN Cities that have
+projects in this focus area.                              Exhibit 21: Intelligent Transport System, Garage and
+                                                          Operations Command Center, Bus Fleet Management
+                                                          System (Clockwise from left). © Davao City
+Kota Kinabalu, Malaysia
+                                                          Intelligent Transportation and Traffic Systems
+To improve public transport accessibility,                with Security
+punctuality, and coverage, Kota Kinabalu has              Objective: To enhance transportation and traffic
+                                                          management capabilities by leveraging on the latest
+been developing the Stage Bus Transformation              technological innovations available and ensuring
+System which adopts a more efficient 'hub and             inclusivity and security.
+spoke' network concept for people to arrive at
+their destinations and its operations are                The initiative to modernise Davao City’s public
+monitored through electronic and modern                  transport systems has been planned and
+systems. Operator has been appointed and in              implemented in a manner that takes into
+the contract preparation stage. Bus service was          account the socio-economic impacts and risks
+scheduled to launch in September 2025.                   of implementing the project. The Davao Bus
+                                                         Information System has been also developed to
+Davao City, the Philippines                              serve as a web-based application for the Social
+Efforts continue to modernise Davao City’s               Development Program (Davao Bus-SDP)
+public transport services under the Davao                provided to the affected operators, drivers, and
+Public Transport Modernisation Project. This             their beneficiaries, Davao Bus-Grievance
+entails transforming the existing jeepney-driven         System for concerns, complaints, incidents,
+public transportation system into a higher               damages or conflicts resulting from the Davao
+capacity bus system, consisting of a core bus            Bus project, as well as Davao Bus-SMS for
+network of over 100km and a feeder network of            administrator's information dissemination tool.
+over 500km. The project has been supported by            Furthermore, training has been ongoing for
+the ADB, Government of the Philippines, LGU              affected beneficiaries of SDP.                          © MOT
+of Davao.
+                                                         Bangkok, Thailand
+To promote a sustainable and commuter-                   Krung Thep Aphiwat Central Terminal Station
+friendly transport system, Davao City is                 or Bang Sue Grand Station has been
+developing an intelligent transport system,              expanding its service by surrounding area as
+garage and Operations Command Centre, as                 part of the efforts towards achieving the vision
+well as bus fleet management system.                     of Liveable Innovation City, connecting
+                                                         Thailand and the world. These efforts are in line
+                                                         with Bang Sue Smart City Action Plan that will
+                                                         guide the implementation of integrated
+                                                         development in Bang Sue Area. Bang Sue
+
+
+
+
+                                                    19
+                  ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+                 Smart City Action Plan is currently being               The business model and implementation plan
+                 developed with expected completion in 2025.             for the hydrogen energy project are under
+                                                                         development.      The      “research    before
+                 Bang Sue Grand Station is a central station             demonstration” has been ongoing since 2024 to
+                 connecting various rail transport systems,              identify the ideal method to supply and
+                 including commuter trains, long-distance trains,        distribute hydrogen to customer. The feasibility
+                 and future high-speed trains. The construction          assessment is expected to complete this year
+                 of the high-speed railway to the northeastern           and to be followed by agreement signing. The
+                 part of Thailand (first section) has been               demonstration period would then commence
+                 progressing and is expected to be completed in          and is expected to last until 2028. Once
+                 2027. This high-speed railway will link with            hydrogen fuel gains wider adoption among
+                 high-speed train from the southern of China to          users, the consortium will continue exploring
+                 Lao PDR and to Thailand. Meanwhile, the                 business opportunities to commercialise the
+                 contract on the high-speed railway linking Don          product based on customer demand.
+                 Mueang- Suvarnabhumi - U-Tapao airports is
+                 being reviewed for approval. The construction           Challenges to the implementation relate to the
+                 process would begin immediately after the               high price of hydrogen fuel, high price of vehicle
+                 contract signing, with the goal of opening for          using hydrogen fuel, sensitive nature of the
+                 service in 2030-2031.                                   hydrogen for transportation, and achieving
+                                                                         economy of scale for the project.
+
+                                                                         Khon Kaen, Thailand
+                                                                         Khon Kaen Municipality has been working to
+                                                                         develop a tram system in the city towards
+                                                                         reducing social inequality and improving the
+                                                                         quality of life.
+
+                                                                         The detailed design of Khon Kaen Tram has
+                                                                         been completed. The project will be managed
+                                                                         by local administrative organisations and is
+                                                                         seeking private investment. Discussions are
+                                                                         ongoing regarding the use of land, and an
+                                                                         Environmental Impact Assessment report is
+                                                                         being prepared.
+
+                                                                          Khon Kaen Tram
+                                                                          Objective: To improve efficiency, reduce unnecessary
+                                                                          costs, and enhance service quality, thereby supporting
+                                                                          the long-term viability of operators and providing reliable
+                                                                          transportation options for the public.
+Exhibit 22: Bang Sue Grand Station.
+© Office of Transport and Traffic Policy and Planning
+
+
+                 Chonburi, Thailand
+                 Government of Thailand has partnered with
+                 AMATA Corporation PCL, the industrial city
+                 developer for Chonburi AMATA Smart City, in
+                 promoting renewable energy, as well as,
+                 developing smart energy infrastructure and
+                 systems. An initiative that has been under
+                 planning and feasibility assessment is on the
+                 development of hydrogen energy as fuel for
+                                                                          Exhibit 23: Khon Kaen Tram network is planned to
+                 forklifts in the factories in Chonburi AMATA
+                                                                          have 26 kilometres of track. © Khon Kaen
+                 Smart City area.                                         Municipality
+
+
+
+
+                                                                    20
+ ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+
+The experience managing Khon Kaen City Bus               Phuket Smart Mobility
+highlighted the potential of technology to               Objective: To enhance public transportation network and
+                                                         achieve seamless mobility.
+address the challenges faced by the public
+transportation operators. In this regard, Khon
+Kaen Tram seeks to leverage GPS and fare
+collection data to analyse passenger behaviour,
+enabling route adjustments that match demand
+and reduce idle runs. Khon Kaen Tram also
+aims to integrate an AI-powered announcement
+system provides stop information in both
+English and the local language, benefiting
+visually impaired passengers. Additionally, a
+live map and timetable will be made available to
+enhance travel planning.
+
+Phuket, Thailand
+To facilitate comfortable and convenient
+movement for tourists and residents alike,               Exhibit 24: Phuket One Map integrates all public
+Phuket has continuously developed its                    transport routes covering both air-conditioned and
+                                                         non-air-conditioned bus. © depa
+transport sector.
+                                                        The EV Bus system, by the Phuket City
+                                                        Development       Company       and      Phuket
+                                                        Administrative Office, provides smart bus
+                                                        services. The Phuket One Map integrates all
+                                                        public transport routes for Phuket local people
+                                                        and tourists. Meanwhile, a cashless fare
+                                                        payment system and joint tickets have been
+                                                        developed to increase convenient ride for
+                                                        Phuket smart bus system and seamless ride.
+                                                        .
+
+
+
+
+                                                   21
+ ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+
+Industry & Innovation
+Innovation
+The focus area of Industry and Innovation                        National QR standard (tarusQR) has been
+pertains to encouraging industries and                           approved and issued by the Brunei Darussalam
+businesses to capitalise on new technologies,                    Central Bank to support QR payment
+using innovation as a catalyst to build                          interoperability between participating banks
+competitive     advantages       and    transform                and e-wallet providers.
+processes. Industry and Innovation accounts
+for 12% of the overall ASCN projects. Bandar                     Phnom Penh, Cambodia
+Seri Begawan, Phnom Penh, Banyuwangi,                            Further to the series of Ecocity Transition Labs
+Jakarta, and Singapore are examples of ASCN                      conducted by Phnom Penh Capital Hall (PPCH)
+Cities that have projects in this focus area.                    during the period of 2020-2024, the
+                                                                 Build4People (B4P) project has produced a
+Bandar Seri Begawan, Brunei Darussalam                           PPCH-B4P Transformation Toolbox prototype.
+The Digital Payment Hub (DPH), now                               The Ecocity Transition Labs, which were held
+rebranded as tarus, was initiated in 2021 and                    with the support from the German Federal
+officially launched Phase 1 on 12 March 2025.                    Ministry of Education and Research, sought to
+tarus is an instant fund transfer service which                  provide a multi-stakeholder dialogue platform to
+enables secure, instant, and cost-effective                      deliberate on current urban development issues
+account-to-account      fund     transfers  and                  in Phnom Penh. Meanwhile, the PPCH-B4P
+payments available around the clock across                       Transformation Toolbox seeks to serve as a
+local participating banks and e-wallets,                         comprehensive digital planning instrument and
+alongside the roll-out of a national QR code for                 eventually as an online interactive and
+payments.                                                        participatory learning platform that enables
+                                                                 evidence-based data-driven decisions. The
+                                                                 B4P project has entered an implementation
+                                                                 phase where the Phnom Penh Capital
+                                                                 Administration will utilise the Transformation
+                                                                 Toolbox to help advance its sustainable goals
+                                                                 through connecting its green and smart city
+                                                                 strategies.
+
+
+
+
+Exhibit 25: Digital Payment Hub
+Objective: To implement a Fast Payment System (Instant
+Payment System) to enable secure, instant, and cost-
+effective account-to-account fund transfers and payments
+available around the clock across local participating
+banks and e-wallets, alongside the roll-out of a national
+QR code for payments. © tarus
+
+
+Currently, the participants providing end-user
+solutions for tarus (i.e. transfers via Alias
+lookup) include Beep Digital Solutions, Bank
+Islam Brunei Darussalam (BIBD) At-Tamwil,
+Datastream Digital, Perbadanan Tabung
+Amanah Islam Brunei (TAIB), and Progresif.
+With incoming participants including Baiduri
+                                                                  Build4People
+Bank, BIBD, and Pocket (ThreeG Media). The                        Objective: To achieve a transformative shift in the current
+                                                                  development path of Phnom Penh and improve the urban
+                                                                  quality of life of Phnom Penh citizens through research.
+
+                                                                  Exhibit 26: Transformation Toolbox is an output of
+                                                            22    the Ecocity Transition Labs. © Build4People
+ ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+Banyuwangi, Indonesia                                             from Badan Siber dan Sandi Negara / the
+Banyuwangi Regency Government with its                            National Cyber and Crypto Agency.
+flagship      programme      called       Jagoan
+Banyuwangi, or Banyuwangi Champs, has                             Jakarta, Indonesia
+been consistent in providing a holistic approach                  Since the launch of JakPreneur in February
+to support small and medium-sized enterprises                     2020 until June 2025, 405,052 MSMEs from
+(SMEs) in the areas of entrepreneurship                           various business sectors have registered with
+(Jagoan Bisnis), digital (Jagoan Digital), and                    JakPreneur, allowing them to tap on a wide
+agriculture (Jagoan Tani).                                        range of support and facilitation. Aiming to
+                                                                  empower the MSMEs in Jakarta, Jakarta
+Spearing Industrial Growth through Education                      Provincial Government has established
+Objective: To collaborate with private entities to provide        JakPreneur as a platform for innovation,
+the youth with knowledge in e-commerce and online                 facilitation, and collaboration for MSME
+trading through the inclusion of customised IT modules in
+the skills curriculum.                                            development through creating entrepreneurial
+                                                                  ecosystem, involving start-ups, educational
+                                                                  institutions, and financing institutions.
+
+                                                                  JakPreneur offers various support to MSMEs
+                                                                  covering trainings, licensing, marketing,
+                                                                  financial reporting, as well as capital facilities.
+                                                                  Comprehensive assistance has been given to
+                                                                  MSMEs to navigate the licensing and permitting
+                                                                  process. This includes the curated information
+                                                                  available on JakPreneur website and facilitation
+                                                                  in obtaining the MSME permit or Business
+                                                                  Identification Number, Home Industry Food
+                                                                  Production certificate, Halal certificate, and
+                                                                  Intellectual Property Rights certificate.
+
+Exhibit 27: Since 2021, around 75 young talents                    JakPreneur
+participated in Jagoan Digital every year.                         Objective: To encourage economic growth through
+© Banyuwangi                                                       supporting the MSMEs in Jakarta for long-term
+                                                                   cooperation by providing training and mentoring to gain
+                                                                   capital which could be accessed through digital platforms.
+Through Jagoan Digital, young entrepreneurs
+receive    trainings    on,    among      others,
+foundational programming, algorithms, UI/UX
+development, HTML & CSS, and no-code
+development for those without advanced
+coding expertise. The programme also includes
+a hackathon that allows participants to compete
+in developing technology solutions within a
+short timeframe. As part of the programme, a                             Training                 Assistance            Licenses & Permits
+mentorship is provided for participants to
+receive guidance directly from technology
+professionals to further hone their technical
+skills and strengthen their digital business
+strategies. Participants are further selected to
+be given access to seed funding, internship
+programme, an investor network to develop
+technology start-up ideas into sustainable
+                                                                        Marketing             Financial Reporting               Capital
+businesses, as well as an official certificate
+                                                                   Exhibit 28: A wide range of support offered by
+                                                                   JakPreneur to the MSMEs. © JakPreneur
+
+
+
+                                                             23
+ ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+More than 200 JakPreneur Bazaars promoting              PDD has begun opening progressively from Q3
+MSMEs from various industries have already              2024. The Open Digital Platform has been
+been held from the beginning of 2024 to June            developed to serve as the district's digital
+2025.                                                   backbone, bringing together various systems to
+                                                        optimise building management and resource
+Through JakPreneur, Jakarta Provincial                  utilisation. Co-developed by GovTech and
+Government continues to explore partnership             Jurong Town Corporation (JTC), this platform
+and collaboration to enable credit programmes           not only streamlines operations but also
+without collateral, incentivise the financial           transforms PDD into a living laboratory for
+services sector to offer funding for the MSMEs,         experimentation and innovation. With this
+as well as to bring in experts and mentors to           rollout, data collection will commence to
+sustain the training programmes.                        demonstrate the value of system integration,
+                                                        operational optimisation, and innovation
+Singapore                                               enablement.
+Singapore’s Smart Nation 2.0 aims to use
+                                                         Punggol Digital District
+technology more effectively to improve citizens’
+                                                         Objective: To build a smart and sustainable business
+lives and is guided by three key goals, namely           district that offers new operating and service delivery
+Trust, Growth, Community.                                concepts.
+
+
+Through developing the Punggol Digital District
+(PDD), Singapore aims to build a smart and
+sustainable business district that offers new
+operating and service delivery concepts. A
+Smart City Operating System is being
+developed to enable district level facility
+management to achieve maintenance and
+manpower cost savings, as well as achieve
+resource optimisation.
+
+
+
+
+                                                         Exhibit 29: PDD comprises JTC Business Park and
+                                                         SIT Campus. © MDDI Singapore
+
+
+
+
+                                                   24
+ ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+
+3| Observations and Recommendations
+Besides advancing the implementation of smart            Development of Capacity and Knowledge
+city projects of the respective ASCN Cities, the         Through targeted training programmes and the
+ASCN has established itself as a platform for            development of practical toolkits, the ASCN is
+exchange, strengthened knowledge exchange,               building a sustainable suite of initiatives to
+and deepened cooperation with ASEAN                      enhance        knowledge     and      capacity   in
+Dialogue Partners and other external partners.           implementing smart and sustainable urban
+                                                         projects. The ASCN launched the ASEAN
+Successful Platform for Exchange                         Smart City Financing Toolkit in November
+The ASCN continues to serve as a vital platform          2024. Supported by the Australia for ASEAN
+for peer-to-peer learning, public-private                (Aus4ASEAN) Futures Initiative with the
+dialogue, and the sharing of best practices,             technical assistance from Access Partnership,
+fostering a collaborative ecosystem for smart            The Toolkit has now been made available for
+and sustainable urban development in ASEAN.              policymakers and key stakeholders in ASEAN
+Under the Chairmanship of Malaysia, the ASCN             to      access     knowledge        and    deepen
+held the 8th ASCN Annual Meeting on 9                    understanding of the financing options
+September 2025 back-to-back with the Smart               available for various types of smart city
+City Expert Talk held on 10 September 2025.              initiatives in ASEAN Member States as well as
+The Smart City Expert Talk discussed ways to             to identify strategies that suit the needs of smart
+strengthen collaboration between the ASEAN               city projects, through the sharing of global best
+and private sectors, the development of                  practices via case studies.
+strategies for effective governance and
+investment, and actionable recommendations               Under the ASUS Project-Phase II, the
+aimed at scaling smart city projects. The ASCN           organisation and conduct of the series of Urban
+has also supported the convening of the ASUF             Planning for City Leaders Training Programme
+2025 through the concept development,                    and Multi-Stakeholder Capacity Building
+resource mobilisation (as part of the project on         Programme for the participating countries have
+Accelerating the Implementation of the ASEAN             benefited from the strong leadership of the
+Sustainable Urbanisation Strategy - Phase II             National Representatives and collaboration
+(“ASUS Project-Phase II”)), as well as                   with the Chief Smart City Officers of ASCN. The
+participation and speaking roles.                        ASUS Project – Phase II is supported through
+                                                         the Aus4ASEAN Futures Initiative, with the
+Expansion of Partnerships                                technical assistance from the United Nations
+The ASCN has successfully strengthened its               Human Settlements Programme (UN-Habitat).
+engagement with ASEAN Dialogue Partners
+and external stakeholders, which has                     In its third-year implementation, the ASPP has
+translated into concrete support and knowledge           conducted the 3rd batch of ASPP short-term
+sharing, enhancing the network's overall                 training, as well as commenced the ASPP
+capacity and reach. For example, at the                  Master’s Degree Course Spring Fall 2025 on
+invitation of the New Zealand Ministry of                topics related to data-driven smart city planning
+Foreign Affairs and Trade, representatives of            at Seoul National University (SNU) supported
+the ASCN participated in the event on ASEAN              through the ASEAN-Korea Cooperation Fund.
+Smart Cities Network Showcase of New                     As of 2025, a total of 144 local government
+Zealand Initiatives in November 2024. The                representatives and urban practitioners have
+Showcase provided the opportunity for the                benefitted from the ASPP short-term training.
+delegates to share on their experience in                Meanwhile, a total of 40 local government
+advancing their respective smart city initiatives        representatives and urban practitioners have
+as well as learn from and engage with                    been undergoing a Master’s Degree Course at
+representatives from New Zealand Councils,               SNU with some of them already graduating
+international speakers, and other participants           early next year.
+with relevant expertise.
+
+
+                                                    25
+ ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+With the above efforts, it is important to            There may be merits to systematically
+enhance       partnership    momentum      by         document, share, and scale the successful
+continuously and proactively engage with              stories and lessons learnt from the smart city
+existing and new partners to secure sustained         projects across all ASCN members.
+technical and financial support for capacity
+building and project implementation. Moreover,        Led by Malaysia as the Chair of ASCN this
+continued coordination will be essential to           year, ASCN has developed and adopted an
+ensure the timely and successful completion of        ASEAN Smart City Action Plan (ASCAP) for
+all deliverables under various ASCN projects          2026-2035. The implementation of the ASCAP
+towards developing new phases of these                2026-2035 shall leverage on the efforts and
+projects.                                             partnerships made thus far, towards supporting
+                                                      the realisation of the ASEAN Community Vision
+                                                      2045.
+
+
+
+
+                                                 26
+ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+
+Appendix
+A.    List of ASCN Smart City Projects that are Ongoing and under Planning across the Six Focus Areas
+No.        Country                City                                           Project                 Focus Area
+1.    Brunei Darussalam   Bandar Seri Begawan   Revitalisation of Kampong Ayer (Water Village)      Civic & Social
+2.                        Bandar Seri Begawan   Digital Identity                                    Civic & Social
+3.                        Bandar Seri Begawan   Gov.bn                                              Civic & Social
+4.                        Bandar Seri Begawan   Bus Passenger Information System                    Built Infrastructure
+5.    Cambodia            Battambang            Urban Street and Public Space Management            Built Infrastructure
+6.                        Battambang            Solid and Liquid Waste Management                   Quality Environment
+7.                        Phnom Penh            Phnom Penh Walk Way                                 Built Infrastructure
+8.                        Phnom Penh            Phnom Penh Public Bus Service                       Built Infrastructure
+9.                        Phnom Penh            Phnom Penh Smart City Hub                           Industry & Innovation
+10.                       Phnom Penh            Build4People                                        Industry & Innovation
+11.                       Siem Reap             Smart Tourism                                       Civic & Social
+12.                       Siem Reap             Smart Security                                      Safety & Security
+13.                       Siem Reap             Data Platform                                       Civic & Social
+14.                       Siem Reap             Government Internal Document Tracking               Civic & Social
+15.                       Siem Reap             Air Quality Sensors Installation                    Quality Environment
+16.                       Sihanoukville City    Smart Security                                      Safety & Security
+17.                       Sihanoukville City    Smart Parking                                       Built Infrastructure
+18.   Indonesia           Banyuwangi            Spearing Industrial Growth through Education        Industry & Innovation
+19.                       Banyuwangi            Digital Public Service Mall                         Civic & Social
+20.                       Banyuwangi            Caring for Stunting                                 Health & Well-Being
+21.                       Banyuwangi            Sustainable Waste Management                        Quality Environment
+22.                       Jakarta               JakPreneur                                          Industry & Innovation
+23.                       Jakarta               JakLingko                                           Built Infrastructure
+24.                       Jakarta               JAKI                                                Civic & Social
+25.                       Jakarta               Jakarta Smart City Goes to School                   Civic & Social
+
+
+
+                                                                      27
+ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+No.        Country                   City                                         Project                               Focus Area
+26.                      Jakarta               Living Lab                                                          Industry & Innovation
+27.                      Makassar              Smart Health Care                                                   Health & Well-Being
+28.                      Makassar              Smart E-Tax                                                         Civic & Social
+29.                      Makassar              Tourism Alleys                                                      Civic & Social
+30.                      Makassar              Makassar Virtual Economic Centre                                    Industry & Innovation
+31.                      Makassar              Makassar Incubator Centre                                           Industry & Innovation
+32.                      Sumedang              Jatinangor City of Knowledge                                        Health & Well-Being
+33.                      Sumedang              E-Office Desa                                                       Civic & Social
+34.                      Sumedang              Integrated Stunting Intervention                                    Health & Well-Being
+35.   Lao PDR            Luang Prabang         Restoration of Wetlands for Green Spaces                            Quality Environment
+36.                      Luang Prabang         Construction of Concrete Roads for Communities                      Built Infrastructure
+37.                      Luang Prabang         Clean and Safe Environment                                          Quality Environment
+38.                      Vientiane             Integrated Vehicle Management and Transportation                    Quality Environment
+39.                      Vientiane             Vientiane Sustainable Urban Transport Project (VSUTP)               Built Infrastructure
+40.                      Vientiane             Wastewater Treatment System                                         Quality Environment
+                         Vientiane             Vientiane Integrated Urban Information GIS-based Opendata (VirGo)   Civic & Social
+41.
+                                               Platform
+42.   Malaysia           Ipoh                  Sistem Pengurusan Lalulintas Pintar (SPLiT)                         Built Infrastructure
+43.                      Ipoh                  Smart Surveillance System-Smart CCTV                                Safety & Security
+44.                      Ipoh                  Air Quality Monitoring System                                       Quality Environment
+45.                      Ipoh                  Ipoh Integrated Operation Center                                    Safety & Security
+46.                      Johor Bahru           Iskandar Malaysia Analytics Centre                                  Civic & Social
+47.                      Johor Bahru           Integrated Smart Mobility Programs                                  Built Infrastructure
+48.                      Kota Kinabalu         Integrated Public Transport System                                  Built Infrastructure
+49.                      Kota Kinabalu         Integrated Solid Waste Management                                   Quality Environment
+50.                      Kota Kinabalu         Smart New Township and Smart Water Management                       Quality Environment
+51.                      Kota Kinabalu         Kota Kinabalu Command Centre                                        Safety & Security
+52.                      Kuala Lumpur          Kuala Lumpur Urban Observatory                                      Civic & Social
+53.                      Kuala Lumpur          GoKL Journey Planner                                                Built Infrastructure
+
+
+
+                                                                    28
+ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+No.        Country               City                                            Project                       Focus Area
+54.                      Kuala Lumpur          Smart Bin                                                  Quality Environment
+55.                      Kuala Lumpur          Bicycle Friendly City                                      Quality Environment
+56.                      Kuching               Integrated Smart Traffic Light System                      Built Infrastructure
+57.                      Kuching               Integrated Flood Management and Response System            Quality Environment
+58.                      Kuching               Sarawak Integrated Operation Centre                        Built Infrastructure
+59.                      Kuching               Smart Parking                                              Built Infrastructure
+60.                      Putrajaya             Smart Traffic Light                                        Built Infrastructure
+61.                      Putrajaya             Putrajaya Urban Observatory                                Civic & Social
+62.                      Putrajaya             Solar System                                               Built Infrastructure
+63.                      Putrajaya             Electric Vehicle Charging Stations                         Built Infrastructure
+64.                      Putrajaya             CCTV and Panic Button                                      Safety & Security
+65.                      Seberang Perai        Integrated Flood and Monitoring Pump House System          Quality Environment
+66.                      Seberang Perai        Seberang Perai Command Centre                              Safety & Security
+67.   Myanmar            Mandalay              Traffic Congestion Management                              Built Infrastructure
+68.                      Mandalay              Solid Waste and Wastewater Treatment                       Quality Environment
+69.                      Mandalay              On-Grid Solar System at the Water Pumping Stations         Quality Environment
+70.                      Mandalay              Public Parks                                               Quality Environment
+71.                      Nay Pyi Taw           Affordable and Low-Cost Housing                            Health & Well-Being
+72.                      Nay Pyi Taw           Knowledge Hub                                              Health & Well-Being
+73.                      Nay Pyi Taw           Smart Street Lighting                                      Safety & Security
+74.                      Nay Pyi Taw           Safe City                                                  Safety & Security
+75.                      Nay Pyi Taw           Electric Vehicle System Development                        Built Infrastructure
+76.                      Nay Pyi Taw           One Map Myanmar                                            Civic & Social
+77.                      Yangon                Conservation of Downtown Yangon                            Civic & Social
+78.                      Yangon                Transit Oriented Development in Hlaing Thar Yar Township   Built Infrastructure
+79.                      Yangon                One Map Yangon                                             Civic & Social
+80.   Philippines        Cauayan City          Waste-Wise Cities for Sustainability                       Quality Environment
+81.                      Cebu City             Cebu City Bus Rapid Transit                                Built Infrastructure
+82.                      Cebu City             Automated Citywide Traffic Control System                  Safety & Security
+
+
+
+                                                                       29
+ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+No.         Country              City                                      Project                                         Focus Area
+83.                      Davao City            Converged Command and Control Center                                   Safety & Security
+84.                      Davao City            Intelligent Transportation and Traffic Systems with Security           Built Infrastructure
+85.                      Davao City            Stormwater Management System                                           Quality Environment
+86.                      Manila City           Command Center Upgrade                                                 Safety & Security
+87.                      Manila City           E-Government Services                                                  Civic & Social
+88.    Singapore         Singapore             Punggol Digital District - Smart Facility Management                   Industry & Innovation
+89.                      Singapore             Woodlands North Coast - Autonomous Delivery Robot                      Industry & Innovation
+90.                      Singapore             Marine Digital Twin                                                    Industry & Innovation
+91.    Thailand          Bangkok               Bang Sue Smart City                                                    Quality Environment
+92.                      Bangkok               Bang Sue Grand Station                                                 Built Infrastructure
+93.                      Chiang Mai            Wildfire Prevention and Solution Command Centre                        Safety & Security
+94.                      Chiang Mai            Mae Kha Canal Development                                              Quality Environment
+95.                      Chiang Mai            Smart Tourism and Living: Nimman Road & Chiang Mai University Campus   Industry & Innovation
+96.                      Chiang Mai            Mea-Hia Smart City                                                     Civic & Social
+97.                      Chonburi              Smart Data Utilisation for Smart Microgrid Development                 Built Infrastructure
+98.                      Chonburi              Solar Energy (Solar Rooftop and Floating Solar)                        Built Infrastructure
+99.                      Chonburi              Hydrogen Energy (Hydrogen Forklift)                                    Built Infrastructure
+100.                     Khon Kaen             Kaen Nakhon Tram                                                       Built Infrastructure
+101.                     Khon Kaen             Khon Kaen Smart Bus                                                    Built Infrastructure
+102.                     Khon Kaen             Knowledge Governance Token                                             Industry & Innovation
+103.                     Phuket                Smart Mobility                                                         Built Infrastructure
+104.                     Phuket                Smart Pier                                                             Safety & Security
+105.                     Phuket                City Data Platform                                                     Civic & Social
+106.                     Phuket                Healthcare Platform                                                    Health & Well-Being
+107.                     Rayong                Wangchan Valley Smart City                                             Industry & Innovation
+108.                     Rayong                Emergency Incident Command Centre                                      Safety & Security
+109.                     Rayong                Public Health Monitoring and Care System with a Health Database        Health & Well-Being
+110.                     Rayong                Smart Government Service                                               Civic & Social
+111. Viet Nam            Da Nang               Intelligent Operation Centre                                           Safety & Security
+
+
+
+                                                                     30
+ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+No.       Country                  City                                     Project                    Focus Area
+112.                     Da Nang               Smart Water Management System                      Quality Environment
+113.                     Ha Noi                Intelligent Operation Centre                       Safety & Security
+114.                     Ha Noi                Transport Operation and Surveillance Centre        Built Infrastructure
+115.                     Ho Chi Minh City      Integrated Operation Centre                        Civic & Social
+116.                     Ho Chi Minh City      Integrated and Unified Emergency Response Centre   Safety & Security
+
+
+
+
+                                                                    31
+ASCN Monitoring and Evaluation Report 2025 (As of 30 September 2025)
+
+
+B.    List of Completed ASCN Smart City Projects across the Six Focus Areas
+
+No.        Country                City                                           Project                                    Focus Area
+1.    Brunei Darussalam   Bandar Seri Begawan   National Information Hub                                               Civic & Social
+2.                        Bandar Seri Begawan   Clean River Management                                                 Quality Environment
+3.                        Bandar Seri Begawan   Digital Payment Hub                                                    Industry & Innovation
+4.    Cambodia            Phnom Penh            Smart City Strategic Planning                                          Civic & Social
+5.                        Siem Reap             Formulation of Smart City Roadmap                                      Civic & Social
+6.                        Siem Reap             38-Road Construction                                                   Built Infrastructure
+7.                        Siem Reap             Smart Waste Management                                                 Quality Environment
+8.    Indonesia           Banyuwangi            Creating Inclusive Economic Growth through Tourism-Based Development   Civic & Social
+9.    Lao PDR             Luang Prabang         Smart City Planning and Development                                    Civic & Social
+10.                       Luang Prabang         Smart and Integrated Urban Strategy                                    Civic & Social
+11.   Malaysia            Johor Bahru           Iskandar Malaysia Integrated Urban Services Program                    Safety & Security
+12.                       Johor Bahru           Management of Water Resources and Distribution                         Quality Environment
+13.                       Kuala Lumpur          OSC 3.0 Plus Online                                                    Civic & Social
+14.                       Kuching               Introduction of Blockchain Technology                                  Civic & Social
+15.   Myanmar             Mandalay              Cadastral Map and GIS Database                                         Civic & Social
+16.   Singapore           Singapore             E-Payments                                                             Industry & Innovation
+17.                       Singapore             National Digital Identity                                              Civic & Social
+18.                       Singapore             Smart Nation 1.0 Initiatives                                           Industry & Innovation
+
+
+
+
+                                                                       32
+
