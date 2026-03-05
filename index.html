@@ -18,7 +18,7 @@
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
       crossorigin=""
     />
-    <link rel="stylesheet" href="styles.css?v=5" />
+    <link rel="stylesheet" href="styles.css?v=6" />
   </head>
   <body>
     <header class="site-nav">
@@ -44,6 +44,14 @@
 
     <main>
       <section class="hero panel" id="top">
+        <div class="live-ribbon reveal" aria-live="polite">
+          <p class="eyebrow">Live Monitor</p>
+          <div id="hero-live-ticker" class="hero-live-ticker">
+            <span>Loading trusted-source ASCN signals...</span>
+          </div>
+          <button id="refresh-live" type="button" class="refresh-live">Refresh now</button>
+        </div>
+
         <div class="hero-copy reveal">
           <p class="eyebrow">ASEAN Public Platform</p>
           <h1>A living network of 38 cities learning from each other in public.</h1>
@@ -234,6 +242,39 @@
           </p>
           <div id="cohort-motion" class="motion-chart" aria-live="polite"></div>
         </article>
+
+        <article class="glass compare-panel reveal">
+          <div class="module-head">
+            <p class="eyebrow">City Compare Lab</p>
+            <h3>Choose up to three cities and compare movement over time.</h3>
+          </div>
+          <div class="compare-controls">
+            <label>
+              City A
+              <select id="compare-a"></select>
+            </label>
+            <label>
+              City B
+              <select id="compare-b"></select>
+            </label>
+            <label>
+              City C
+              <select id="compare-c"></select>
+            </label>
+            <label>
+              Time range
+              <select id="compare-range">
+                <option value="7d">7 days</option>
+                <option value="30d">30 days</option>
+                <option value="12m" selected>12 months</option>
+              </select>
+            </label>
+          </div>
+          <div class="compare-stage">
+            <svg id="compare-chart" viewBox="0 0 980 320" aria-label="City trend comparison chart"></svg>
+            <div id="compare-legend" class="compare-legend"></div>
+          </div>
+        </article>
       </section>
 
       <section class="cities panel" id="cities">
@@ -281,6 +322,24 @@
         <div class="section-head reveal">
           <p class="eyebrow">Mentions &amp; Trends</p>
           <h2>Trusted-source coverage and why ASCN gets cited.</h2>
+        </div>
+
+        <div class="live-status-grid reveal">
+          <article class="glass live-summary">
+            <p class="eyebrow">Real-time ASCN feed health</p>
+            <h3 id="live-last-updated">Waiting for first sync...</h3>
+            <p id="live-summary-note">
+              Pulling ASEAN and trusted media streams. If a source fails, fallback data remains visible.
+            </p>
+          </article>
+          <article class="glass live-source-board">
+            <p class="eyebrow">Source status</p>
+            <div id="source-health" class="source-health"></div>
+          </article>
+          <article class="glass live-alert-board">
+            <p class="eyebrow">Latest alerts</p>
+            <div id="live-alerts" class="live-alerts"></div>
+          </article>
         </div>
 
         <div class="signal-tab-rail reveal" role="tablist" aria-label="Mentions views">
@@ -386,6 +445,22 @@
         <div class="tab-shell">
           <section class="tab-panel is-active" id="chair" role="tabpanel">
             <div class="panel-grid">
+              <article class="glass chair-tracker">
+                <p class="eyebrow">Chairship Tracker</p>
+                <h3>Malaysia 2025 → Philippines 2026</h3>
+                <div class="chair-progress-track">
+                  <i id="chair-progress-fill"></i>
+                </div>
+                <p id="chair-progress-note" class="chair-progress-note"></p>
+                <ul id="chair-milestones" class="chair-milestones">
+                  <li data-date="2025-09-09">ASCN 8 Annual Meeting (Malaysia)</li>
+                  <li data-date="2025-09-10">Smart City Expert Talk (Malaysia)</li>
+                  <li data-date="2025-10-27">Philippines announced as 2026 chairship</li>
+                  <li data-date="2026-01-31">Roster reaches 38 cities (with Dili)</li>
+                  <li data-date="2026-09-01">2026 chairship cycle review milestone</li>
+                </ul>
+              </article>
+
               <article class="glass">
                 <p class="eyebrow">Malaysia 2025</p>
                 <h3>ASCN 8 and policy acceleration</h3>
@@ -545,6 +620,6 @@
       integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
       crossorigin=""
     ></script>
-    <script src="app.js?v=3"></script>
+    <script src="app.js?v=4"></script>
   </body>
 </html>
