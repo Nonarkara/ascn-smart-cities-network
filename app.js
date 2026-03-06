@@ -640,7 +640,7 @@ const waveLabel = {
   2026: "2026 frontier",
 };
 
-const compareColors = ["#1d4aa8", "#cf2738", "#f0b41b"];
+const compareColors = ["#2b5fbe", "#ff5d71", "#f5be34"];
 
 const liveFeedSources = [
   {
