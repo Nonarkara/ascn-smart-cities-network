@@ -1435,7 +1435,7 @@ function renderCompareChart() {
     .join("");
 
   compareChart.innerHTML = `
-    <rect x="0" y="0" width="${width}" height="${height}" fill="#ffffff"></rect>
+    <rect x="0" y="0" width="${width}" height="${height}" fill="none"></rect>
     ${gridLines}
     ${paths}
     ${xLabels}
