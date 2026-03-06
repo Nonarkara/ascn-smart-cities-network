@@ -1348,7 +1348,20 @@ main {
   .site-nav nav {
     width: 100%;
     justify-content: flex-start;
-    gap: 0.6rem 0.72rem;
+    flex-wrap: nowrap;
+    gap: 0.86rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .site-nav nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .site-nav nav a {
+    white-space: nowrap;
+    flex: 0 0 auto;
   }
 
   .panel {
@@ -1364,6 +1377,30 @@ main {
   .panel {
     padding: 2.4rem 0;
     scroll-margin-top: 9rem;
+  }
+
+  .brand-text small {
+    display: none;
+  }
+
+  .site-nav nav a {
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+  }
+
+  .section-head h2 {
+    font-size: clamp(1.58rem, 7.2vw, 2.1rem);
+    line-height: 1.08;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(1.9rem, 9vw, 2.9rem);
+    line-height: 1;
+    max-width: 12ch;
+  }
+
+  .hero-live-ticker {
+    font-size: 0.78rem;
   }
 
   .hero-visual {
