@@ -528,11 +528,226 @@ function wireSorting() {
   if (cf) cf.addEventListener("change", (e) => { state.filter = e.target.value; renderCities(); });
 }
 
+// ── SLIC Index Lite (ASCN Version) ─────────────────────
+
+const pillarNames = { momentum: "Momentum", productivity: "Productivity", livability: "Livability", digital: "Digital", safety: "Safety", social: "Social" };
+const pillarKeys = Object.keys(pillarNames);
+let slicLiteData = [];
+let slicLitePillar = "momentum";
+
+function norm(val, min, max) {
+  if (val == null || max === min) return null;
+  return Math.max(0, Math.min(100, ((val - min) / (max - min)) * 100));
+}
+
+function invertNorm(val, min, max) {
+  const n = norm(val, min, max);
+  return n != null ? 100 - n : null;
+}
+
+function avgValid(...vals) {
+  const v = vals.filter((x) => x != null);
+  return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
+}
+
+function computeSlicLite() {
+  // Collect raw values for normalization ranges
+  const raw = cities.map((c) => {
+    const s = slicData[c.city] || {};
+    const ind = s.indicators || {};
+    const ec = s.economy || {};
+    return {
+      city: c,
+      gdp_ppp: ec.gdp_ppp ?? null,
+      gdp_growth: ec.gdp_growth ?? null,
+      water: ind.water_sanitation ?? null,
+      healthcare: ind.healthcare ?? null,
+      pm25: ind.air_quality_pm25 ?? null,
+      digital: ind.digital_infra ?? null,
+      homicide: ind.homicide_rate ?? null,
+      mental: ind.mental_strain ?? null,
+      belonging: ind.belonging ?? null,
+      tolerance: ind.tolerance ?? null,
+      cultural: ind.cultural_life ?? null,
+      projects: c.projects,
+      live: c.live,
+      completed: c.completed,
+      year: c.year,
+    };
+  });
+
+  // Compute min/max for normalization
+  const vals = (key) => raw.map((r) => r[key]).filter((v) => v != null);
+  const range = (key) => { const v = vals(key); return [Math.min(...v), Math.max(...v)]; };
+
+  const [gdpMin, gdpMax] = vals("gdp_ppp").length ? [Math.log(Math.max(1, Math.min(...vals("gdp_ppp")))), Math.log(Math.max(...vals("gdp_ppp")))] : [0, 1];
+  const [growMin, growMax] = vals("gdp_growth").length ? range("gdp_growth") : [0, 1];
+  const [waterMin, waterMax] = vals("water").length ? range("water") : [0, 100];
+  const [hcMin, hcMax] = vals("healthcare").length ? range("healthcare") : [0, 100];
+  const [pm25Min, pm25Max] = vals("pm25").length ? range("pm25") : [0, 50];
+  const [digMin, digMax] = vals("digital").length ? range("digital") : [0, 30];
+  const [homMin, homMax] = vals("homicide").length ? range("homicide") : [0, 10];
+  const [mentMin, mentMax] = vals("mental").length ? range("mental") : [0, 20];
+  const [belMin, belMax] = vals("belonging").length ? range("belonging") : [0, 100];
+  const [tolMin, tolMax] = vals("tolerance").length ? range("tolerance") : [0, 100];
+  const [culMin, culMax] = vals("cultural").length ? range("cultural") : [0, 100];
+
+  // Max project score for momentum
+  const maxProjScore = Math.max(...raw.map((r) => r.live * 3 + r.completed * 5), 1);
+  const years = raw.map((r) => r.year);
+  const minYear = Math.min(...years);
+  const maxYear = Math.max(...years);
+
+  slicLiteData = raw.map((r) => {
+    const c = r.city;
+
+    // Productivity: log GDP PPP + growth + project tiebreaker
+    let productivity = null;
+    if (r.gdp_ppp != null) {
+      const gdpNorm = norm(Math.log(Math.max(1, r.gdp_ppp)), gdpMin, gdpMax) ?? 0;
+      const growNorm = norm(r.gdp_growth, growMin, growMax) ?? 50;
+      const projBonus = (r.projects / Math.max(maxProjScore / 3, 1)) * 10; // up to ~10 pts tiebreaker
+      productivity = Math.min(100, gdpNorm * 0.55 + growNorm * 0.35 + projBonus);
+    }
+
+    // Livability: water + healthcare + inverted PM2.5
+    const waterN = norm(r.water, waterMin, waterMax);
+    const hcN = norm(r.healthcare, hcMin, hcMax);
+    const pm25N = invertNorm(r.pm25, pm25Min, pm25Max);
+    const livability = avgValid(waterN, hcN, pm25N);
+
+    // Digital
+    const digital = norm(r.digital, digMin, digMax);
+
+    // Safety: inverted homicide + inverted mental strain
+    const homN = invertNorm(r.homicide, homMin, homMax);
+    const mentN = invertNorm(r.mental, mentMin, mentMax);
+    const safety = avgValid(homN, mentN);
+
+    // Social: belonging + tolerance + cultural life
+    const belN = norm(r.belonging, belMin, belMax);
+    const tolN = norm(r.tolerance, tolMin, tolMax);
+    const culN = norm(r.cultural, culMin, culMax);
+    const social = avgValid(belN, tolN, culN);
+
+    // Momentum: always computable
+    const projScore = (r.live * 3 + r.completed * 5) / maxProjScore;
+    const recency = maxYear > minYear ? (r.year - minYear) / (maxYear - minYear) : 0.5;
+    const momentum = Math.round(projScore * 60 + recency * 40);
+
+    const pillars = { productivity, livability, digital, safety, social, momentum };
+    const coverage = pillarKeys.filter((k) => pillars[k] != null).length;
+    const coverageGrade = coverage >= 5 ? "A" : coverage >= 3 ? "B" : coverage >= 2 ? "C" : "D";
+
+    // Best pillar
+    let bestPillar = "momentum";
+    let bestScore = momentum;
+    for (const k of pillarKeys) {
+      if (pillars[k] != null && pillars[k] > bestScore) { bestScore = pillars[k]; bestPillar = k; }
+    }
+
+    return {
+      city: c.city, country: c.country, flag: c.flag, tags: c.tags,
+      pillars, coverage, coverageGrade, bestPillar,
+    };
+  });
+
+  // Update data count
+  const dataCount = slicLiteData.filter((d) => d.coverage >= 2).length;
+  const el = document.querySelector("#sl-data-count");
+  if (el) el.textContent = dataCount;
+}
+
+function scoreColor(val) {
+  if (val == null) return "sc-none";
+  if (val >= 80) return "sc-green";
+  if (val >= 65) return "sc-navy";
+  if (val >= 50) return "sc-amber";
+  return "sc-red";
+}
+
+function fmtScore(val) {
+  return val != null ? Math.round(val) : "---";
+}
+
+function renderSlicLiteCards(top, pillar) {
+  const el = document.querySelector("#sl-top-cards");
+  if (!el) return;
+  el.innerHTML = top.map((d, i) => {
+    const score = d.pillars[pillar];
+    const barsHtml = pillarKeys.map((k) => {
+      const v = d.pillars[k];
+      const isActive = k === pillar;
+      return `<div class="sl-bar">
+        <span class="sl-bar-label"${isActive ? ' style="font-weight:800"' : ""}>${pillarNames[k]}</span>
+        <div class="sl-bar-track"><div class="sl-bar-fill" style="width:${v != null ? v : 0}%${isActive ? ";background:var(--ink)" : ""}"></div></div>
+        <span class="sl-bar-val${v == null ? " no-data" : ""}">${v != null ? Math.round(v) : "n/a"}</span>
+      </div>`;
+    }).join("");
+    return `<div class="sl-card">
+      <span class="sl-card-rank">#${i + 1}</span>
+      <span class="sl-card-city">${d.flag} ${d.city}</span>
+      <span class="sl-card-country">${d.country}</span>
+      <span class="sl-card-score ${scoreColor(score)}">${fmtScore(score)}</span>
+      <span class="sl-card-score-label">${pillarNames[pillar]}</span>
+      <div class="sl-card-bars">${barsHtml}</div>
+      <span class="sl-card-coverage">Coverage ${d.coverageGrade}</span>
+      <span class="sl-card-best">Best: ${pillarNames[d.bestPillar]}</span>
+    </div>`;
+  }).join("");
+}
+
+function renderSlicLiteTable(rest, pillar) {
+  const wrap = document.querySelector("#sl-table-wrap");
+  if (!wrap) return;
+  if (!rest.length) { wrap.innerHTML = ""; return; }
+  const rows = rest.map((d, i) => {
+    const score = d.pillars[pillar];
+    const pending = d.coverage <= 1;
+    return `<tr class="${pending ? "pending" : ""}">
+      <td>${i + 6}</td>
+      <td>${d.flag} ${d.city}</td>
+      <td>${d.country}</td>
+      <td class="sl-score-cell ${scoreColor(score)}">${fmtScore(score)}</td>
+      <td class="sl-coverage-cell">${d.coverageGrade}</td>
+      <td class="sl-best-cell">${pillarNames[d.bestPillar]}</td>
+    </tr>`;
+  }).join("");
+  wrap.innerHTML = `<table class="sl-table">
+    <thead><tr><th>#</th><th>City</th><th>Country</th><th>${pillarNames[pillar]}</th><th>Cov.</th><th>Best</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function renderSlicLite() {
+  const sorted = [...slicLiteData].sort((a, b) => {
+    const av = a.pillars[slicLitePillar], bv = b.pillars[slicLitePillar];
+    if (av == null && bv == null) return 0;
+    if (av == null) return 1;
+    if (bv == null) return -1;
+    return bv - av;
+  });
+  renderSlicLiteCards(sorted.slice(0, 5), slicLitePillar);
+  renderSlicLiteTable(sorted.slice(5), slicLitePillar);
+}
+
+function wireSlicLitePillars() {
+  const btns = document.querySelectorAll("#sl-pillar-btns .sort-btn");
+  btns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      slicLitePillar = btn.dataset.pillar;
+      btns.forEach((b) => b.classList.toggle("active", b === btn));
+      renderSlicLite();
+    });
+  });
+}
+
 // ── Init ───────────────────────────────────────────────
 
 async function init() {
   await Promise.all([loadCityStats(), loadSlicData()]);
   enrichCities();
+  computeSlicLite();
   initMap();
   renderCountryFilter();
   renderFocusAndCohorts();
@@ -542,10 +757,12 @@ async function init() {
   renderPeople();
   renderLibrary();
   renderChair();
+  renderSlicLite();
   wireCounters();
   wireReveal();
   wireTabs();
   wireSorting();
+  wireSlicLitePillars();
 }
 
 init();
