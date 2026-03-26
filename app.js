@@ -578,19 +578,24 @@ function wireSorting() {
 
 // ── SLIC Index Lite (ASCN Version) ─────────────────────
 
-const pillarNames = { momentum: "Momentum", productivity: "Productivity", livability: "Livability", digital: "Digital", safety: "Safety", social: "Social" };
+const pillarNames = { momentum: "Momentum", productivity: "Productivity", livability: "Livability", affordability: "Affordability", safety: "Safety", social: "Social" };
 const pillarKeys = Object.keys(pillarNames);
 let slicLiteData = [];
 let slicLitePillar = "momentum";
 
-function norm(val, min, max) {
-  if (val == null || max === min) return null;
-  return Math.max(0, Math.min(100, ((val - min) / (max - min)) * 100));
+// Absolute-benchmark scoring: 100 = genuinely world-class, not just "best in group"
+// Each metric has a global reference ceiling so no city gets inflated scores
+
+function absScore(val, floor, ceiling) {
+  // Score against absolute benchmark, not group min/max
+  if (val == null) return null;
+  return Math.max(0, Math.min(100, ((val - floor) / (ceiling - floor)) * 100));
 }
 
-function invertNorm(val, min, max) {
-  const n = norm(val, min, max);
-  return n != null ? 100 - n : null;
+function invScore(val, bestVal, worstVal) {
+  // Lower raw value = better (e.g. PM2.5, homicide). bestVal < worstVal.
+  if (val == null) return null;
+  return Math.max(0, Math.min(100, ((worstVal - val) / (worstVal - bestVal)) * 100));
 }
 
 function avgValid(...vals) {
@@ -599,7 +604,6 @@ function avgValid(...vals) {
 }
 
 function computeSlicLite() {
-  // Collect raw values for normalization ranges
   const raw = cities.map((c) => {
     const s = slicData[c.city] || {};
     const ind = s.indicators || {};
@@ -624,22 +628,6 @@ function computeSlicLite() {
     };
   });
 
-  // Compute min/max for normalization
-  const vals = (key) => raw.map((r) => r[key]).filter((v) => v != null);
-  const range = (key) => { const v = vals(key); return [Math.min(...v), Math.max(...v)]; };
-
-  const [gdpMin, gdpMax] = vals("gdp_ppp").length ? [Math.log(Math.max(1, Math.min(...vals("gdp_ppp")))), Math.log(Math.max(...vals("gdp_ppp")))] : [0, 1];
-  const [growMin, growMax] = vals("gdp_growth").length ? range("gdp_growth") : [0, 1];
-  const [waterMin, waterMax] = vals("water").length ? range("water") : [0, 100];
-  const [hcMin, hcMax] = vals("healthcare").length ? range("healthcare") : [0, 100];
-  const [pm25Min, pm25Max] = vals("pm25").length ? range("pm25") : [0, 50];
-  const [digMin, digMax] = vals("digital").length ? range("digital") : [0, 30];
-  const [homMin, homMax] = vals("homicide").length ? range("homicide") : [0, 10];
-  const [mentMin, mentMax] = vals("mental").length ? range("mental") : [0, 20];
-  const [belMin, belMax] = vals("belonging").length ? range("belonging") : [0, 100];
-  const [tolMin, tolMax] = vals("tolerance").length ? range("tolerance") : [0, 100];
-  const [culMin, culMax] = vals("cultural").length ? range("cultural") : [0, 100];
-
   // Max project score for momentum
   const maxProjScore = Math.max(...raw.map((r) => r.live * 3 + r.completed * 5), 1);
   const years = raw.map((r) => r.year);
@@ -649,41 +637,73 @@ function computeSlicLite() {
   slicLiteData = raw.map((r) => {
     const c = r.city;
 
-    // Productivity: log GDP PPP + growth + project tiebreaker
+    const slic = slicData[c.city]?.slic; // global SLIC pillar scores if available
+
+    // ── Productivity ──
+    // Weight growth higher (rewards dynamism: Indonesia 5% > Singapore 4.4%)
     let productivity = null;
     if (r.gdp_ppp != null) {
-      const gdpNorm = norm(Math.log(Math.max(1, r.gdp_ppp)), gdpMin, gdpMax) ?? 0;
-      const growNorm = norm(r.gdp_growth, growMin, growMax) ?? 50;
-      const projBonus = (r.projects / Math.max(maxProjScore / 3, 1)) * 10; // up to ~10 pts tiebreaker
-      productivity = Math.min(100, gdpNorm * 0.55 + growNorm * 0.35 + projBonus);
+      const gdpS = absScore(Math.min(r.gdp_ppp, 80000), 5000, 80000) ?? 0;
+      const growS = absScore(r.gdp_growth, 0, 8) ?? 40;
+      const projBonus = (r.projects / Math.max(maxProjScore, 1)) * 8;
+      productivity = Math.min(100, gdpS * 0.35 + growS * 0.55 + projBonus);
     }
 
-    // Livability: water + healthcare + inverted PM2.5
-    const waterN = norm(r.water, waterMin, waterMax);
-    const hcN = norm(r.healthcare, hcMin, hcMax);
-    const pm25N = invertNorm(r.pm25, pm25Min, pm25Max);
-    const livability = avgValid(waterN, hcN, pm25N);
+    // ── Livability ──
+    // Use SLIC viability where available (already calibrated: SG 84, JKT 44, Phuket 68)
+    // Fallback: water + healthcare + inverted PM2.5
+    let livability = null;
+    if (slic) {
+      livability = slic.viability;
+    } else {
+      const waterS = r.water != null ? Math.min(r.water, 100) : null;
+      const hcS = absScore(r.healthcare, 40, 95);
+      const pm25S = invScore(r.pm25, 5, 50);
+      livability = avgValid(waterS, hcS, pm25S);
+    }
 
-    // Digital
-    const digital = norm(r.digital, digMin, digMax);
+    // ── Affordability (replaces Digital) ──
+    // SLIC pressure: higher = more affordable (SG 45.7 = expensive, JKT 84.6 = affordable)
+    // Fallback: inverse GDP PPP as proxy
+    let affordability = null;
+    if (slic) {
+      affordability = slic.pressure;
+    } else if (r.gdp_ppp != null) {
+      affordability = invScore(Math.min(r.gdp_ppp, 80000), 5000, 80000);
+    }
 
-    // Safety: inverted homicide + inverted mental strain
-    const homN = invertNorm(r.homicide, homMin, homMax);
-    const mentN = invertNorm(r.mental, mentMin, mentMax);
-    const safety = avgValid(homN, mentN);
+    // ── Safety ──
+    // SLIC cities: blend viability (60%) + community (40%) — already well-calibrated
+    // Non-SLIC: use indicators but cap at 70 to prevent proxy-data inflation
+    let safety = null;
+    if (slic) {
+      safety = Math.round(slic.viability * 0.6 + slic.community * 0.4);
+    } else {
+      const homS = invScore(r.homicide, 0, 8);
+      const mentS = invScore(r.mental, 2, 20);
+      const rawS = avgValid(homS, mentS);
+      safety = rawS != null ? Math.min(rawS, 70) : null;
+    }
 
-    // Social: belonging + tolerance + cultural life
-    const belN = norm(r.belonging, belMin, belMax);
-    const tolN = norm(r.tolerance, tolMin, tolMax);
-    const culN = norm(r.cultural, culMin, culMax);
-    const social = avgValid(belN, tolN, culN);
+    // ── Social ──
+    // SLIC cities: use community score (SG 58.7 = controlled, not open)
+    // Fallback: belonging + tolerance + cultural life
+    let social = null;
+    if (slic) {
+      social = slic.community;
+    } else {
+      const belS = absScore(r.belonging, 30, 70);
+      const tolS = absScore(r.tolerance, 0, 50);
+      const culS = absScore(r.cultural, 30, 80);
+      social = avgValid(belS, tolS, culS);
+    }
 
-    // Momentum: always computable
+    // ── Momentum ── (always computable)
     const projScore = (r.live * 3 + r.completed * 5) / maxProjScore;
     const recency = maxYear > minYear ? (r.year - minYear) / (maxYear - minYear) : 0.5;
     const momentum = Math.round(projScore * 60 + recency * 40);
 
-    const pillars = { productivity, livability, digital, safety, social, momentum };
+    const pillars = { productivity, livability, affordability, safety, social, momentum };
     const coverage = pillarKeys.filter((k) => pillars[k] != null).length;
     const coverageGrade = coverage >= 5 ? "A" : coverage >= 3 ? "B" : coverage >= 2 ? "C" : "D";
 

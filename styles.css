@@ -271,6 +271,13 @@ button,input,textarea,select { font: inherit; color: inherit; }
 .slic-val { display: block; font-size: 1.4rem; font-weight: 800; line-height: 1; }
 .slic-lbl { display: block; margin-top: 0.1rem; font-size: 0.56rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
 
+.slic-link {
+  display: inline-block; margin-top: 0.8rem;
+  font-size: 0.74rem; font-weight: 700;
+  text-decoration: underline; text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
 .slic-photo { margin: 0; overflow: hidden; }
 .slic-photo img { width: 100%; height: 14rem; object-fit: cover; }
 .slic-photo figcaption { margin-top: 0.3rem; font-size: 0.64rem; color: var(--muted); }
