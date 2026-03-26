@@ -110,7 +110,14 @@
         </div>
         <div class="city-layout reveal">
           <div id="map-callouts-west" class="callout-col"></div>
-          <div class="map-col"><div id="sea-map" class="sea-map"></div></div>
+          <div class="map-col">
+            <div class="map-layer-toggle">
+              <button type="button" class="sort-btn active" data-layer="map">Map</button>
+              <button type="button" class="sort-btn" data-layer="satellite">Satellite</button>
+              <button type="button" class="sort-btn" data-layer="night">Night</button>
+            </div>
+            <div id="sea-map" class="sea-map"></div>
+          </div>
           <div id="map-callouts-east" class="callout-col"></div>
         </div>
         <div class="city-detail-area reveal" id="city-detail-panel">

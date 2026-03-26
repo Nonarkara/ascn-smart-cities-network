@@ -227,6 +227,12 @@ button,input,textarea,select { font: inherit; color: inherit; }
 .map-callout small { display: block; font-size: 0.6rem; color: var(--muted); }
 .map-callout.is-active { border-left-color: var(--ink); }
 
+.map-layer-toggle {
+  display: flex; gap: 0.6rem;
+  padding-bottom: 0.4rem; margin-bottom: 0.4rem;
+  border-bottom: 1px solid var(--rule-light);
+}
+
 .sea-map { width: 100%; min-height: 32rem; border: 1px solid var(--rule-light); }
 .leaflet-control-zoom a { border-radius: 0 !important; }
 

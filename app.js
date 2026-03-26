@@ -100,6 +100,8 @@ let cities = baseCities.map((c) => ({ ...c }));
 let seaMap = null;
 let markerLayer = null;
 const markerByCity = new Map();
+let currentTileLayer = null;
+let mapMode = "map";
 
 // ── Helpers ────────────────────────────────────────────
 
@@ -209,14 +211,46 @@ function markerColor(y) {
   return "#1a3c6e";
 }
 
+const tileLayers = {
+  map: { url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", attr: "&copy; OpenStreetMap &copy; CARTO" },
+  satellite: { url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", attr: "Tiles &copy; Esri" },
+  night: { url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", attr: "&copy; OpenStreetMap &copy; CARTO" },
+};
+
 function initMap() {
   if (!window.L || !document.querySelector("#sea-map")) return;
   seaMap = L.map("sea-map", { zoomControl: true, scrollWheelZoom: false, minZoom: 3, maxZoom: 8 }).setView([8.5, 112], 4);
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-    attribution: "&copy; OpenStreetMap &copy; CARTO",
-  }).addTo(seaMap);
+  currentTileLayer = L.tileLayer(tileLayers.map.url, { attribution: tileLayers.map.attr }).addTo(seaMap);
   seaMap.setMaxBounds([[-15, 90], [25, 140]]);
   markerLayer = L.layerGroup().addTo(seaMap);
+}
+
+function switchMapLayer(mode) {
+  if (!seaMap || mode === mapMode) return;
+  mapMode = mode;
+  if (currentTileLayer) seaMap.removeLayer(currentTileLayer);
+  const t = tileLayers[mode];
+  currentTileLayer = L.tileLayer(t.url, { attribution: t.attr }).addTo(seaMap);
+  // Restyle markers for the new layer
+  for (const [name, m] of markerByCity) {
+    const isActive = name === state.selectedCity;
+    if (mode === "night") {
+      m.setStyle({ radius: isActive ? 10 : 7, fillColor: "#00e5ff", fillOpacity: 1, color: isActive ? "#fff" : "rgba(0,229,255,0.4)", weight: isActive ? 2.5 : 3 });
+    } else if (mode === "satellite") {
+      m.setStyle({ radius: isActive ? 9 : 5, fillColor: markerColor(m._cityYear), fillOpacity: 0.95, color: "#fff", weight: isActive ? 2.5 : 1.5 });
+    } else {
+      m.setStyle({ radius: isActive ? 8 : 5, fillColor: markerColor(m._cityYear), fillOpacity: isActive ? 1 : 0.85, color: isActive ? "#111" : "#fff", weight: isActive ? 2 : 1 });
+    }
+  }
+}
+
+function wireMapLayerToggle() {
+  document.querySelectorAll(".map-layer-toggle .sort-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".map-layer-toggle .sort-btn").forEach((b) => b.classList.toggle("active", b === btn));
+      switchMapLayer(btn.dataset.layer);
+    });
+  });
 }
 
 function renderMarkers(vis) {
@@ -224,7 +258,15 @@ function renderMarkers(vis) {
   markerLayer.clearLayers();
   markerByCity.clear();
   for (const c of vis) {
-    const m = L.circleMarker([c.lat, c.lon], { radius: 5, color: "#fff", weight: 1, fillColor: markerColor(c.year), fillOpacity: 0.9 });
+    const isNight = mapMode === "night";
+    const isSat = mapMode === "satellite";
+    const style = isNight
+      ? { radius: 7, color: "rgba(0,229,255,0.4)", weight: 3, fillColor: "#00e5ff", fillOpacity: 1 }
+      : isSat
+        ? { radius: 5, color: "#fff", weight: 1.5, fillColor: markerColor(c.year), fillOpacity: 0.95 }
+        : { radius: 5, color: "#fff", weight: 1, fillColor: markerColor(c.year), fillOpacity: 0.9 };
+    const m = L.circleMarker([c.lat, c.lon], style);
+    m._cityYear = c.year;
     m.bindTooltip(`${c.flag} ${c.city}`, { direction: "top", offset: [0, -2] });
     m.on("click", () => selectCity(c.city, true));
     m.addTo(markerLayer);
@@ -385,7 +427,13 @@ function renderDetail() {
 function highlightMarker(pan) {
   for (const [name, m] of markerByCity) {
     const a = name === state.selectedCity;
-    m.setStyle({ radius: a ? 8 : 5, fillOpacity: a ? 1 : 0.85, color: a ? "#111" : "#fff", weight: a ? 2 : 1 });
+    if (mapMode === "night") {
+      m.setStyle({ radius: a ? 10 : 7, fillColor: "#00e5ff", fillOpacity: 1, color: a ? "#fff" : "rgba(0,229,255,0.4)", weight: a ? 2.5 : 3 });
+    } else if (mapMode === "satellite") {
+      m.setStyle({ radius: a ? 9 : 5, fillColor: markerColor(m._cityYear), fillOpacity: 0.95, color: "#fff", weight: a ? 2.5 : 1.5 });
+    } else {
+      m.setStyle({ radius: a ? 8 : 5, fillOpacity: a ? 1 : 0.85, color: a ? "#111" : "#fff", weight: a ? 2 : 1 });
+    }
   }
   document.querySelectorAll(".map-callout").forEach((b) => b.classList.toggle("is-active", b.dataset.city === state.selectedCity));
   if (pan && seaMap && markerByCity.has(state.selectedCity)) {
@@ -763,6 +811,7 @@ async function init() {
   wireTabs();
   wireSorting();
   wireSlicLitePillars();
+  wireMapLayerToggle();
 }
 
 init();
