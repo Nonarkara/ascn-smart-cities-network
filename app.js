@@ -131,7 +131,7 @@ async function loadCityStats() {
 
 async function loadSlicData() {
   try {
-    const r = await fetch("slic-enrichment.json");
+    const r = await fetch("slic-enrichment.json?v=4");
     if (!r.ok) return;
     slicData = await r.json();
   } catch (_) {}
@@ -578,7 +578,7 @@ function wireSorting() {
 
 // ── SLIC Index Lite (ASCN Version) ─────────────────────
 
-const pillarNames = { momentum: "Momentum", productivity: "Productivity", livability: "Livability", affordability: "Affordability", safety: "Safety", social: "Social" };
+const pillarNames = { momentum: "Momentum", productivity: "Productivity", livability: "Livability", affordability: "Affordability", digital: "Digital", social: "Social" };
 const pillarKeys = Object.keys(pillarNames);
 let slicLiteData = [];
 let slicLitePillar = "momentum";
@@ -637,34 +637,44 @@ function computeSlicLite() {
   slicLiteData = raw.map((r) => {
     const c = r.city;
 
-    const slic = slicData[c.city]?.slic; // global SLIC pillar scores if available
+    const slic = slicData[c.city]?.slic;
+    const ind = slicData[c.city]?.indicators || {};
 
     // ── Productivity ──
-    // Weight growth higher (rewards dynamism: Indonesia 5% > Singapore 4.4%)
+    // Growth weighted 55% (Indonesia 5% > Singapore 4.4%), GDP level 35%, project bonus 10%
     let productivity = null;
     if (r.gdp_ppp != null) {
       const gdpS = absScore(Math.min(r.gdp_ppp, 80000), 5000, 80000) ?? 0;
       const growS = absScore(r.gdp_growth, 0, 8) ?? 40;
-      const projBonus = (r.projects / Math.max(maxProjScore, 1)) * 8;
+      const projBonus = (r.projects / Math.max(maxProjScore, 1)) * 10;
       productivity = Math.min(100, gdpS * 0.35 + growS * 0.55 + projBonus);
     }
 
     // ── Livability ──
-    // Use SLIC viability where available (already calibrated: SG 84, JKT 44, Phuket 68)
-    // Fallback: water + healthcare + inverted PM2.5
+    // TRUE livability = infrastructure quality MINUS stress/pressure
+    // Singapore has great infra but high stress → score should be moderate, not 84
+    // Kuching/Bangkok have good infra AND lower stress → should score higher
     let livability = null;
     if (slic) {
-      livability = slic.viability;
+      // Blend: viability (infra) + inverted pressure (affordability helps livability)
+      // + penalize high work hours and suicide
+      const infraS = slic.viability; // SG 84, KCH 73.9, JKT 44.4
+      const stressBonus = slic.pressure; // Higher = more affordable = less stress. SG 45.7, JKT 84.6
+      const workPenalty = ind.work_hours ? invScore(ind.work_hours, 35, 50) ?? 50 : 50; // SG 42.6→49, KL 44.7→35
+      const mentalPenalty = ind.mental_strain ? invScore(ind.mental_strain, 2, 20) ?? 50 : 50; // SG 8.1→66, TH 16.59→19
+      livability = Math.round(infraS * 0.30 + stressBonus * 0.25 + workPenalty * 0.20 + mentalPenalty * 0.25);
     } else {
+      // Non-SLIC: water + healthcare + inverted PM2.5 + inverted suicide
       const waterS = r.water != null ? Math.min(r.water, 100) : null;
       const hcS = absScore(r.healthcare, 40, 95);
       const pm25S = invScore(r.pm25, 5, 50);
-      livability = avgValid(waterS, hcS, pm25S);
+      const mentS = ind.mental_strain != null ? invScore(ind.mental_strain, 2, 20) : null;
+      livability = avgValid(waterS, hcS, pm25S, mentS);
     }
 
-    // ── Affordability (replaces Digital) ──
-    // SLIC pressure: higher = more affordable (SG 45.7 = expensive, JKT 84.6 = affordable)
-    // Fallback: inverse GDP PPP as proxy
+    // ── Affordability ──
+    // SLIC pressure: higher = more affordable
+    // Fallback: inverse GDP PPP
     let affordability = null;
     if (slic) {
       affordability = slic.pressure;
@@ -672,38 +682,28 @@ function computeSlicLite() {
       affordability = invScore(Math.min(r.gdp_ppp, 80000), 5000, 80000);
     }
 
-    // ── Safety ──
-    // SLIC cities: blend viability (60%) + community (40%) — already well-calibrated
-    // Non-SLIC: use indicators but cap at 70 to prevent proxy-data inflation
-    let safety = null;
-    if (slic) {
-      safety = Math.round(slic.viability * 0.6 + slic.community * 0.4);
-    } else {
-      const homS = invScore(r.homicide, 0, 8);
-      const mentS = invScore(r.mental, 2, 20);
-      const rawS = avgValid(homS, mentS);
-      safety = rawS != null ? Math.min(rawS, 70) : null;
-    }
+    // ── Digital ──
+    // Bangkok 18.0 Gbps/cap, Singapore 27.43, Thai cities ~15.75
+    // Benchmark: 0 = 0, 30 = 100 (global reference)
+    const digital = ind.digital_infra != null ? absScore(ind.digital_infra, 0, 30) : (r.digital != null ? absScore(r.digital, 0, 30) : null);
 
     // ── Social ──
-    // SLIC cities: use community score (SG 58.7 = controlled, not open)
-    // Fallback: belonging + tolerance + cultural life
+    // Directly use raw indicators — NOT the SLIC community score alone
+    // Singapore: tolerance 29, belonging 52.8, work_hours 42.6 (long!) → should score LOW
+    // Weight tolerance heavily (diversity matters), penalize long work hours
     let social = null;
-    if (slic) {
-      social = slic.community;
-    } else {
-      const belS = absScore(r.belonging, 30, 70);
-      const tolS = absScore(r.tolerance, 0, 50);
-      const culS = absScore(r.cultural, 30, 80);
-      social = avgValid(belS, tolS, culS);
-    }
+    const tolS = ind.tolerance != null ? absScore(ind.tolerance, 0, 50) : null; // SG 29→58, KL 13.5→27, CM 19.4→39
+    const belS = ind.belonging != null ? absScore(ind.belonging, 30, 70) : null; // SG 52.8→57, KL 54.7→62
+    const culS = ind.cultural_life != null ? absScore(ind.cultural_life, 30, 80) : null; // SG 66→72, KL 58→56
+    const workS = ind.work_hours != null ? invScore(ind.work_hours, 35, 50) : null; // SG 42.6→49, BKK 42.53→50, JKT 38.36→77
+    social = avgValid(tolS, belS, culS, workS);
 
     // ── Momentum ── (always computable)
     const projScore = (r.live * 3 + r.completed * 5) / maxProjScore;
     const recency = maxYear > minYear ? (r.year - minYear) / (maxYear - minYear) : 0.5;
     const momentum = Math.round(projScore * 60 + recency * 40);
 
-    const pillars = { productivity, livability, affordability, safety, social, momentum };
+    const pillars = { productivity, livability, affordability, digital, social, momentum };
     const coverage = pillarKeys.filter((k) => pillars[k] != null).length;
     const coverageGrade = coverage >= 5 ? "A" : coverage >= 3 ? "B" : coverage >= 2 ? "C" : "D";
 
