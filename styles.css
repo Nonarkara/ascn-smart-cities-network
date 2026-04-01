@@ -379,8 +379,12 @@ button,input,textarea,select { font: inherit; color: inherit; }
 
 /* ── Footer ──────────────────────────────────────────── */
 
-.site-footer { width: var(--content); margin: 0 auto; padding: 0 0 1.4rem; }
-.site-footer p { margin: 0; padding-top: 0.6rem; border-top: 1px solid var(--rule-light); color: var(--muted); font-size: 0.74rem; }
+.site-footer { width: var(--content); margin: 0 auto; padding: 2rem 0 1.4rem; border-top: 1px solid var(--rule-light); }
+.footer-content p { margin: 0 0 0.6rem; color: var(--muted); font-size: 0.74rem; line-height: 1.6; }
+.footer-content strong { color: var(--ink-2); }
+.footer-logos { display: flex; align-items: center; gap: 1.6rem; margin: 1.2rem 0; }
+.footer-logos img { height: 48px; width: auto; opacity: 0.7; filter: grayscale(30%); }
+.footer-fine { font-size: 0.64rem !important; color: var(--muted); margin-top: 1rem !important; }
 
 /* ── Utilities ───────────────────────────────────────── */
 
