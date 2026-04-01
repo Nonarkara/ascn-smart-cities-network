@@ -393,9 +393,10 @@ button,input,textarea,select { font: inherit; color: inherit; }
 
 .sl-table tr.pending td { color: var(--muted); }
 
-.sl-table .sl-score-cell { font-weight: 800; }
-.sl-table .sl-best-cell { font-size: 0.6rem; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
-.sl-table .sl-coverage-cell { font-size: 0.6rem; color: var(--muted); font-weight: 700; }
+.sl-table .sl-pillar-th { text-align: center; font-size: 0.48rem; }
+.sl-dot-cell { text-align: center; }
+.sl-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--rule-light); }
+.sl-dot.has-data { background: var(--accent); }
 
 /* Score colors */
 .sc-green { color: #2a6b42; }

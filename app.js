@@ -380,10 +380,10 @@ function renderDetail() {
     }
   }
 
-  // SLIC score
+  // SLIC section — hidden (scores not shown publicly)
   if (slicSection && slicGrid) {
     const sc = slic?.slic;
-    if (sc) {
+    if (false && sc) {
       slicSection.hidden = false;
       const pillars = [
         ["Pressure", sc.pressure],
@@ -738,65 +738,28 @@ function fmtScore(val) {
   return val != null ? Math.round(val) : "---";
 }
 
-function renderSlicLiteCards(top, pillar) {
-  const el = document.querySelector("#sl-top-cards");
-  if (!el) return;
-  el.innerHTML = top.map((d, i) => {
-    const score = d.pillars[pillar];
-    const barsHtml = pillarKeys.map((k) => {
-      const v = d.pillars[k];
-      const isActive = k === pillar;
-      return `<div class="sl-bar">
-        <span class="sl-bar-label"${isActive ? ' style="font-weight:800"' : ""}>${pillarNames[k]}</span>
-        <div class="sl-bar-track"><div class="sl-bar-fill" style="width:${v != null ? v : 0}%${isActive ? ";background:var(--ink)" : ""}"></div></div>
-        <span class="sl-bar-val${v == null ? " no-data" : ""}">${v != null ? Math.round(v) : "n/a"}</span>
-      </div>`;
-    }).join("");
-    return `<div class="sl-card">
-      <span class="sl-card-rank">#${i + 1}</span>
-      <span class="sl-card-city">${d.flag} ${d.city}</span>
-      <span class="sl-card-country">${d.country}</span>
-      <span class="sl-card-score ${scoreColor(score)}">${fmtScore(score)}</span>
-      <span class="sl-card-score-label">${pillarNames[pillar]}</span>
-      <div class="sl-card-bars">${barsHtml}</div>
-      <span class="sl-card-coverage">Coverage ${d.coverageGrade}</span>
-      <span class="sl-card-best">Best: ${pillarNames[d.bestPillar]}</span>
-    </div>`;
-  }).join("");
-}
-
-function renderSlicLiteTable(rest, pillar) {
+function renderSlicLiteTable(data) {
   const wrap = document.querySelector("#sl-table-wrap");
   if (!wrap) return;
-  if (!rest.length) { wrap.innerHTML = ""; return; }
-  const rows = rest.map((d, i) => {
-    const score = d.pillars[pillar];
-    const pending = d.coverage <= 1;
-    return `<tr class="${pending ? "pending" : ""}">
-      <td>${i + 6}</td>
+  if (!data.length) { wrap.innerHTML = ""; return; }
+  const dots = (d) => pillarKeys.map((k) => `<td class="sl-dot-cell">${d.pillars[k] != null ? '<span class="sl-dot has-data"></span>' : '<span class="sl-dot"></span>'}</td>`).join("");
+  const rows = data.map((d) => {
+    return `<tr>
       <td>${d.flag} ${d.city}</td>
       <td>${d.country}</td>
-      <td class="sl-score-cell ${scoreColor(score)}">${fmtScore(score)}</td>
-      <td class="sl-coverage-cell">${d.coverageGrade}</td>
-      <td class="sl-best-cell">${pillarNames[d.bestPillar]}</td>
+      ${dots(d)}
     </tr>`;
   }).join("");
+  const pillarHeaders = pillarKeys.map((k) => `<th class="sl-pillar-th">${pillarNames[k].substring(0, 4)}</th>`).join("");
   wrap.innerHTML = `<table class="sl-table">
-    <thead><tr><th>#</th><th>City</th><th>Country</th><th>${pillarNames[pillar]}</th><th>Cov.</th><th>Best</th></tr></thead>
+    <thead><tr><th>City</th><th>Country</th>${pillarHeaders}</tr></thead>
     <tbody>${rows}</tbody>
   </table>`;
 }
 
 function renderSlicLite() {
-  const sorted = [...slicLiteData].sort((a, b) => {
-    const av = a.pillars[slicLitePillar], bv = b.pillars[slicLitePillar];
-    if (av == null && bv == null) return 0;
-    if (av == null) return 1;
-    if (bv == null) return -1;
-    return bv - av;
-  });
-  renderSlicLiteCards(sorted.slice(0, 5), slicLitePillar);
-  renderSlicLiteTable(sorted.slice(5), slicLitePillar);
+  const sorted = [...slicLiteData].sort((a, b) => a.city.localeCompare(b.city));
+  renderSlicLiteTable(sorted);
 }
 
 function wireSlicLitePillars() {
