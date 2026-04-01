@@ -738,41 +738,6 @@ function fmtScore(val) {
   return val != null ? Math.round(val) : "---";
 }
 
-function renderSlicLiteTable(data) {
-  const wrap = document.querySelector("#sl-table-wrap");
-  if (!wrap) return;
-  if (!data.length) { wrap.innerHTML = ""; return; }
-  const dots = (d) => pillarKeys.map((k) => `<td class="sl-dot-cell">${d.pillars[k] != null ? '<span class="sl-dot has-data"></span>' : '<span class="sl-dot"></span>'}</td>`).join("");
-  const rows = data.map((d) => {
-    return `<tr>
-      <td>${d.flag} ${d.city}</td>
-      <td>${d.country}</td>
-      ${dots(d)}
-    </tr>`;
-  }).join("");
-  const pillarHeaders = pillarKeys.map((k) => `<th class="sl-pillar-th">${pillarNames[k].substring(0, 4)}</th>`).join("");
-  wrap.innerHTML = `<table class="sl-table">
-    <thead><tr><th>City</th><th>Country</th>${pillarHeaders}</tr></thead>
-    <tbody>${rows}</tbody>
-  </table>`;
-}
-
-function renderSlicLite() {
-  const sorted = [...slicLiteData].sort((a, b) => a.city.localeCompare(b.city));
-  renderSlicLiteTable(sorted);
-}
-
-function wireSlicLitePillars() {
-  const btns = document.querySelectorAll("#sl-pillar-btns .sort-btn");
-  btns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      slicLitePillar = btn.dataset.pillar;
-      btns.forEach((b) => b.classList.toggle("active", b === btn));
-      renderSlicLite();
-    });
-  });
-}
-
 // ── Init ───────────────────────────────────────────────
 
 async function init() {
@@ -788,12 +753,10 @@ async function init() {
   renderPeople();
   renderLibrary();
   renderChair();
-  renderSlicLite();
   wireCounters();
   wireReveal();
   wireTabs();
   wireSorting();
-  wireSlicLitePillars();
   wireMapLayerToggle();
 }
 
