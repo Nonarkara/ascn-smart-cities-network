@@ -758,6 +758,25 @@ async function init() {
   wireTabs();
   wireSorting();
   wireMapLayerToggle();
+  wireContactForm();
+}
+
+// Compose a pre-filled email to the ASEAN Connectivity Division instead of an
+// insecure mailto form POST (which Chrome flags + disables autofill on).
+function wireContactForm() {
+  const form = document.getElementById("contactForm");
+  if (!form) return;
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const els = form.elements;
+    const name = els["name"].value.trim();
+    const email = els["email"].value.trim();
+    const message = els["message"].value.trim();
+    const subject = `ASCN Smart Cities Network — message from ${name}`;
+    const body = `${message}\n\n— ${name}\n${email}`;
+    window.location.href =
+      `mailto:benazir.syahril@asean.org?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  });
 }
 
 init();
