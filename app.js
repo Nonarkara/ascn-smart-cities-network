@@ -62,6 +62,7 @@ const state = {
   data: null,
   country: "all",
   focus: "all",
+  search: "",
   reportYear: 2025,
   mapMode: "map",
   map: null,
@@ -231,6 +232,13 @@ function populateFilters() {
   $("#country-filter").insertAdjacentHTML("beforeend", countries.map((country) => `<option value="${esc(country)}">${esc(country)}</option>`).join(""));
   const focusAreas = Object.keys(latestReport().focus_share);
   $("#focus-filter").insertAdjacentHTML("beforeend", focusAreas.map((focus) => `<option value="${esc(focus)}">${esc(focus)}</option>`).join(""));
+  const params = new URLSearchParams(window.location.search);
+  state.country = params.get("country") || "all";
+  state.focus = params.get("focus") || "all";
+  state.search = params.get("q") || "";
+  $("#country-filter").value = state.country;
+  $("#focus-filter").value = state.focus;
+  $("#search-filter").value = state.search;
 }
 
 function latestProjects() {
@@ -239,10 +247,13 @@ function latestProjects() {
 }
 
 function filteredProjects() {
+  const query = state.search.trim().toLowerCase();
   return latestProjects().filter((project) => {
     const countryMatch = state.country === "all" || project.country === state.country;
     const focusMatch = state.focus === "all" || project.focus_area === state.focus;
-    return countryMatch && focusMatch;
+    const searchMatch = !query || [project.city, project.country, project.project, project.focus_area, project.status]
+      .some((value) => `${value}`.toLowerCase().includes(query));
+    return countryMatch && focusMatch && searchMatch;
   });
 }
 
@@ -282,6 +293,10 @@ function renderCities() {
 }
 
 function wireFilters() {
+  $("#search-filter").addEventListener("input", (event) => {
+    state.search = event.target.value;
+    renderCities();
+  });
   $("#country-filter").addEventListener("change", (event) => {
     state.country = event.target.value;
     renderCities();
@@ -291,6 +306,41 @@ function wireFilters() {
     renderCities();
   });
   $("#focus-year").addEventListener("change", renderFocusBars);
+  $("#export-csv").addEventListener("click", exportCsv);
+  $("#copy-view").addEventListener("click", copyCurrentView);
+}
+
+function currentViewUrl() {
+  const params = new URLSearchParams();
+  if (state.country !== "all") params.set("country", state.country);
+  if (state.focus !== "all") params.set("focus", state.focus);
+  if (state.search.trim()) params.set("q", state.search.trim());
+  const query = params.toString();
+  return `${window.location.origin}${window.location.pathname}${query ? `?${query}` : ""}#cities`;
+}
+
+function exportCsv() {
+  const header = ["city", "country", "project", "focus_area", "status", "source_page"];
+  const rows = filteredProjects().map((project) => header.map((key) => `"${`${project[key] ?? ""}`.replaceAll('"', '""')}"`).join(","));
+  const csv = [header.join(","), ...rows].join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "ascn-v2-project-evidence.csv";
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+async function copyCurrentView() {
+  const url = currentViewUrl();
+  try {
+    await navigator.clipboard.writeText(url);
+    $("#copy-view").textContent = "Copied";
+  } catch (_) {
+    window.prompt("Copy this filtered view URL", url);
+  }
+  window.setTimeout(() => { $("#copy-view").textContent = "Share View"; }, 1400);
 }
 
 function renderReportTabs() {
@@ -341,6 +391,42 @@ function renderSources() {
   `).join("");
 }
 
+function renderMethodology() {
+  const reportDates = state.data.reports.map((report) => `${report.year}: ${report.as_of}`).join(" | ");
+  const cards = [
+    {
+      title: "Source model",
+      body: "V2 commits structured JSON and source URLs, while raw PDFs stay outside git under .tmp/ascn-sources. This keeps the repository light and the analytics auditable.",
+    },
+    {
+      title: "Freshness",
+      body: `Dataset generated ${state.data.metadata.generated_at}. Report dates are ${reportDates}.`,
+    },
+    {
+      title: "Status counts",
+      body: "Implementation KPIs use the counts stated in report text. 2022 and 2023 counts are rounded from published percentages and marked as estimates in the data.",
+    },
+    {
+      title: "Appendix rows",
+      body: "The project table is extracted from PDF appendices. Wrapped source tables may need manual cleanup before using row-level counts as official statistics.",
+    },
+    {
+      title: "Public information",
+      body: "The 2026 contact list is cited as a source document, but personal contact details are not exposed in this public dataset.",
+    },
+    {
+      title: "Next analytics layer",
+      body: "Best next step: manually normalize appendix rows by city, project, focus area, and status so future charts can separate ongoing from planning at project level.",
+    },
+  ];
+  $("#methodology-grid").innerHTML = cards.map((card) => `
+    <article>
+      <p class="label">${esc(card.title)}</p>
+      <p>${esc(card.body)}</p>
+    </article>
+  `).join("");
+}
+
 async function loadData() {
   const response = await fetch("data/ascn-v2-data.json?v=1");
   if (!response.ok) throw new Error(`Unable to load ASCN data: ${response.status}`);
@@ -360,6 +446,7 @@ async function init() {
     renderCities();
     renderReportTabs();
     renderSources();
+    renderMethodology();
   } catch (error) {
     $("#evidence-status").textContent = error.message;
     console.error(error);

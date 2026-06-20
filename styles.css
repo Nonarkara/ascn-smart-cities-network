@@ -40,7 +40,8 @@ a {
 }
 
 button,
-select {
+select,
+input {
   font: inherit;
 }
 
@@ -411,6 +412,31 @@ select {
   padding: 0.5rem 0.65rem;
 }
 
+input[type="search"] {
+  min-width: min(18rem, 100%);
+  border: 1px solid var(--line-soft);
+  background: #fff;
+  color: var(--ink);
+  padding: 0.5rem 0.65rem;
+}
+
+.text-button {
+  border: 1px solid var(--line-soft);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 0.5rem 0.65rem;
+  text-transform: uppercase;
+}
+
+.text-button:hover {
+  background: var(--ink);
+  color: #fff;
+}
+
 .table-wrap {
   width: 100%;
   max-width: 100%;
@@ -471,7 +497,8 @@ td {
 
 .mini-stat span,
 .report-detail li,
-.source-grid p {
+.source-grid p,
+.methodology-grid p {
   color: var(--ink-2);
 }
 
@@ -480,13 +507,16 @@ td {
   padding-left: 1.1rem;
 }
 
-.source-grid {
+.source-grid,
+.methodology-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
 }
 
-.source-grid article {
+.source-grid article,
+.methodology-grid article {
+  border-top: 1px solid var(--line);
   padding-top: 0.75rem;
 }
 
@@ -546,6 +576,7 @@ select:focus-visible {
   .city-grid,
   .report-detail,
   .source-grid,
+  .methodology-grid,
   .footer-content {
     grid-template-columns: 1fr;
   }

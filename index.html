@@ -24,6 +24,7 @@
         <a href="#cities">Cities</a>
         <a href="#evidence">Evidence</a>
         <a href="#sources">Sources</a>
+        <a href="#methodology">Method</a>
       </nav>
     </header>
 
@@ -106,12 +107,15 @@
             <h2>Project load, cohorts, and focus areas</h2>
           </div>
           <div class="controls">
+            <input id="search-filter" type="search" placeholder="Search projects or cities" aria-label="Search projects or cities" />
             <select id="country-filter" aria-label="Filter by country">
               <option value="all">All countries</option>
             </select>
             <select id="focus-filter" aria-label="Filter by focus area">
               <option value="all">All focus areas</option>
             </select>
+            <button id="export-csv" class="text-button" type="button">Export CSV</button>
+            <button id="copy-view" class="text-button" type="button">Share View</button>
           </div>
         </div>
         <div class="city-grid">
@@ -162,6 +166,14 @@
           <h2>Traceable inputs, light repository</h2>
         </div>
         <div id="source-grid" class="source-grid"></div>
+      </section>
+
+      <section class="analytics-section" id="methodology">
+        <div class="section-head">
+          <p class="label">Methodology</p>
+          <h2>How this V2 dataset should be read</h2>
+        </div>
+        <div id="methodology-grid" class="methodology-grid"></div>
       </section>
     </main>
 

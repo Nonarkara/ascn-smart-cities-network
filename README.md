@@ -10,8 +10,10 @@ The live V2 target is `https://ascn.nonarkara.org`. V1 at `https://ascn.depa.or.
 - Current network KPIs: 38 cities, 11 countries, 134 projects, 108 ongoing, 18 completed, 8 planning.
 - Focus-area analytics across Civic & Social, Health & Well-Being, Safety & Security, Quality Environment, Built Infrastructure, and Industry & Innovation.
 - Interactive Southeast Asia map with ASCN city cohort markers.
-- Filterable project evidence table generated from official report appendices.
+- Searchable and filterable project evidence table generated from official report appendices.
+- CSV export and shareable filtered views for analysts and reviewers.
 - Source library linking back to official ASEAN pages and PDFs.
+- Methodology and limitations section so users can judge freshness, source reliability, and row-level caveats.
 - Repeatable extraction pipeline that keeps raw PDFs out of the repository.
 
 ## Data Pipeline
