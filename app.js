@@ -553,7 +553,79 @@ function renderInsights() {
   const investments = [...state.K.financing.big_projects].sort((a, b) => b.investment_usd - a.investment_usd);
   const invMax = investments[0]?.investment_usd || 1;
   $("#ig-investment").innerHTML = investments.map((p) => bar(`${p.city} — ${p.project.slice(0, 42)}`, p.investment_usd, invMax, "amber", "", true)).join("");
-  $("#ig-compare").innerHTML = `<table><thead><tr><th>Network</th><th>M&amp;E approach</th><th>Maturity</th></tr></thead><tbody>${state.K.me_gap.comparison.map((c) => `<tr class="${c.network === "ASCN" ? "is-ascn" : ""}"><td><b>${esc(c.network)}</b></td><td>${esc(c.approach)}</td><td>${esc(c.maturity)}</td></tr>`).join("")}</tbody></table>`;
+
+  // ── "What Completed Actually Means" ─────────────────────────────────────
+  // Source: ASCN M&E Report 2025, Appendix + ascn_dim05.md §4.2
+  // These are the actual 18 projects the 2025 report classes as "completed"
+  const COMPLETED = [
+    { city: "Bandar Seri Begawan", project: "National Information Hub",               type: "digital" },
+    { city: "Bandar Seri Begawan", project: "Clean River Management",                 type: "physical" },
+    { city: "Bandar Seri Begawan", project: "Digital Payment Hub",                    type: "digital" },
+    { city: "Phnom Penh",          project: "Smart City Strategic Planning",          type: "planning" },
+    { city: "Siem Reap",           project: "Formulation of Smart City Roadmap",      type: "planning" },
+    { city: "Siem Reap",           project: "38-Road Construction",                   type: "physical" },
+    { city: "Siem Reap",           project: "Smart Waste Management",                 type: "digital" },
+    { city: "Banyuwangi",          project: "Tourism-Based Development",              type: "planning" },
+    { city: "Luang Prabang",       project: "Smart City Planning and Development",    type: "planning" },
+    { city: "Luang Prabang",       project: "Smart and Integrated Urban Strategy",    type: "planning" },
+    { city: "Johor Bahru",         project: "Iskandar Malaysia Integrated Urban Services", type: "digital" },
+    { city: "Johor Bahru",         project: "Management of Water Resources",          type: "physical" },
+    { city: "Kuala Lumpur",        project: "OSC 3.0 Plus Online",                   type: "digital" },
+    { city: "Kuching",             project: "Introduction of Blockchain Technology",  type: "digital" },
+    { city: "Mandalay",            project: "Cadastral Map and GIS Database",         type: "planning" },
+    { city: "Singapore",           project: "E-Payments",                             type: "digital" },
+    { city: "Singapore",           project: "National Digital Identity",              type: "digital" },
+    { city: "Singapore",           project: "Smart Nation 1.0 Initiatives",          type: "planning" },
+  ];
+  const planningCount = COMPLETED.filter((p) => p.type === "planning").length;
+  const typeColor = { planning: "var(--muted)", digital: "var(--ink-2)", physical: "var(--amber)" };
+  const typeLabel = { planning: "Plan / strategy", digital: "Digital system", physical: "Physical infra" };
+  const compRows = COMPLETED.map((p) => `<div class="comp-row"><span class="comp-city">${esc(p.city)}</span><span class="comp-proj">${esc(p.project)}</span><span class="comp-type" style="color:${typeColor[p.type]}">${typeLabel[p.type]}</span></div>`).join("");
+  $("#ig-completed").innerHTML = `
+    <div class="comp-summary">
+      <span class="comp-sum-n" style="color:var(--muted)">${planningCount}/18</span><span class="comp-sum-label">are planning or strategy documents — no physical delivery, no resident outcomes verifiable</span>
+      <span class="comp-sum-n" style="color:var(--amber)">3/18</span><span class="comp-sum-label">are physical infrastructure — a road, a river, a water pipe</span>
+    </div>
+    <p class="ig-note">Completion criterion: "successfully concluded." No standardized thresholds, no external verification, no post-completion check. Source: ASCN M&E Report 2025, Appendix + ascn_dim05.md §4.2.</p>
+    <div class="comp-list">${compRows}</div>`;
+
+  // ── M&E maturity vs peers (7-feature matrix) ──────────────────────────────
+  // Source: ascn_dim05.md §11.6
+  const ME_FEATURES = ["Standardized KPIs", "Independent verification", "Citizen feedback", "City benchmarking / ranking", "Digital monitoring dashboard", "Outcome indicators", "Annual public reporting"];
+  const ME_SYSTEMS = [
+    { name: "ASCN",    vals: [0, 0, 0, 0, 0, 0, 1] },
+    { name: "India",   vals: [1, 1, 0.5, 1, 1, 0.5, 1] },
+    { name: "Thailand",vals: [1, 0.5, 1, 1, 0.5, 1, 1] },
+    { name: "Korea",   vals: [1, 1, 1, 1, 1, 1, 1] },
+    { name: "EU",      vals: [1, 1, 1, 1, 1, 1, 1] },
+  ];
+  const cellIcon = (v) => v === 1 ? `<span class="me-yes">✓</span>` : v === 0.5 ? `<span class="me-partial">~</span>` : `<span class="me-no">✗</span>`;
+  const meHead = ME_SYSTEMS.map((s) => `<th class="${s.name === "ASCN" ? "me-ascn-col" : ""}">${esc(s.name)}</th>`).join("");
+  const meRows = ME_FEATURES.map((f) => `<tr><td class="me-feature">${esc(f)}</td>${ME_SYSTEMS.map((s, i) => `<td class="me-cell${s.name === "ASCN" ? " me-ascn-col" : ""}">${cellIcon(s.vals[ME_FEATURES.indexOf(f)])}</td>`).join("")}</tr>`).join("");
+  $("#ig-compare").innerHTML = `<table class="me-table"><thead><tr><th></th>${meHead}</tr></thead><tbody>${meRows}</tbody></table><p class="ig-note">Source: ascn_dim05.md §11.6. ✓ = yes · ~ = partial · ✗ = no</p>`;
+
+  // ── IMD Smart City Index 2024 — ASEAN cities ────────────────────────────
+  // Source: IMD World Competitiveness Center, ascn_dim05.md §7.1
+  const IMD = [
+    { city: "Singapore",       rank: 5,   rating: "A",   prev: 7,   country: "SG" },
+    { city: "Kuala Lumpur",    rank: 73,  rating: "B",   prev: 89,  country: "MY" },
+    { city: "Bangkok",         rank: 84,  rating: "CCC", prev: 88,  country: "TH" },
+    { city: "Hanoi",           rank: 97,  rating: "CCC", prev: 100, country: "VN" },
+    { city: "Jakarta",         rank: 103, rating: "CC",  prev: 102, country: "ID" },
+    { city: "Ho Chi Minh City",rank: 105, rating: "CC",  prev: 103, country: "VN" },
+    { city: "Medan",           rank: 112, rating: "CC",  prev: 112, country: "ID" },
+    { city: "Makassar",        rank: 115, rating: "CC",  prev: 114, country: "ID" },
+    { city: "Manila",          rank: 124, rating: "C",   prev: 115, country: "PH" },
+  ];
+  const imdMax = 142;
+  const imdRows = IMD.map((c) => {
+    const delta = c.prev - c.rank; // positive = improved
+    const dStr = delta > 0 ? `↑${delta}` : delta < 0 ? `↓${Math.abs(delta)}` : "—";
+    const dCls = delta > 0 ? "traj-up" : delta < 0 ? "traj-dn" : "";
+    const barW = Math.max(2, ((imdMax - c.rank) / (imdMax - 5)) * 100);
+    return `<div class="imd-row"><span class="imd-rank">#${c.rank}</span><span class="imd-city">${esc(c.city)}</span><div class="imd-track"><div class="imd-fill${c.city === "Singapore" ? " imd-fill--sg" : ""}" style="width:${barW}%"></div></div><span class="imd-rating ${c.rating === "A" ? "imd-rating--a" : c.rating === "B" ? "imd-rating--b" : "imd-rating--c"}">${esc(c.rating)}</span><span class="ig-traj-delta ${dCls}">${dStr}</span></div>`;
+  }).join("");
+  $("#ig-imd").innerHTML = `<div class="imd-wrap">${imdRows}</div><p class="ig-note">142 cities ranked by resident perception of structures &amp; technology. ASCN produces no internal ranking of its cities. Source: IMD World Competitiveness Center 2024.</p>`;
 }
 
 /* ---------------- Open Data / Library ---------------- */
@@ -1600,7 +1672,7 @@ function renderEssay() {
       <ul class="author-list">
         <li><b>The Smart City Primer (2022)</b> — Co-authored with Reilly Paul Rabitaille; released with C-ASEAN and the U.S. Embassy Bangkok; educational baseline from the YSEALI programme for young leaders across Southeast Asia.</li>
         <li><b>Guide to Building Smart Cities for People in a Hurry (2023)</b> — Practical guide for rapid, citizen-centric smart city implementation.</li>
-        <li><b>Academic portfolio</b> — 469 Google Scholar citations across Urban Studies, Asian Anthropology, International Journal of Heritage Studies, Cities, Journal of Urban Design. h-index 12. The concept of 'gentrification from within' adopted by researchers in 12+ countries across 4 continents.</li>
+        <li><b>Academic portfolio</b> — 469 Google Scholar citations. h-index 12 (above architecture full-professor mean of 9). 48.8% of lifetime citations accrued since 2021 — citation velocity doubled after the practitioner pivot, not despite it. 'Gentrification from within' adopted in 12+ countries across 4 continents, cited in the SAGE Handbook of Cultural Anthropology and Routledge Handbook of Planning Theory. The practitioner work — 5,000+ officials trained, 27→100+ cities scaled — generates zero Google Scholar citations and 100% of the policy impact.</li>
       </ul>
     </div>
 
