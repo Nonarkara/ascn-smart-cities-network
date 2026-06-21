@@ -883,70 +883,80 @@ async function loadJson(path) {
 
 /* ---------------- Contacts ---------------- */
 function renderContacts() {
-  // National Representatives — April 2026 contact list
+  // National Representatives — as of 30 April 2026 contact list
   const NRS = {
-    "Brunei Darussalam": { name: null, title: "National Focal Point", org: "Ministry of Transport and Infocommunications (MTIC)", url: "https://www.mtic.gov.bn" },
-    "Cambodia":          { name: null, title: "National Focal Point", org: "Ministry of Land Management, Urban Planning and Construction (MLMUPC)", url: "https://www.mlmupc.gov.kh" },
-    "Indonesia":         { name: "Dr. Amran", title: "National Representative", org: "Ministry of Home Affairs — Directorate General of Territorial Administration", url: "https://www.kemendagri.go.id", badge: "Shepherd 2023–2027" },
-    "Lao PDR":           { name: null, title: "National Focal Point", org: "Ministry of Public Works and Transport (MPWT)", url: "https://www.mpwt.gov.la", badge: "Chair 2024" },
-    "Malaysia":          { name: "Mohd Hazli Bin Ahmad Adnan", title: "Deputy Secretary General · National Representative", org: "Ministry of Local Government Development (KPKT)", url: "https://www.kpkt.gov.my", badge: "Chair 2025" },
-    "Myanmar":           { name: null, title: "National Focal Point", org: "Ministry of Construction", url: "https://www.moc.gov.mm" },
-    "Philippines":       { name: null, title: "National Focal Point", org: "Department of the Interior and Local Government (DILG)", url: "https://www.dilg.gov.ph" },
-    "Singapore":         { name: null, title: "National Focal Point · Founding Shepherd", org: "Centre for Liveable Cities (CLC) / SNDGO", url: "https://www.clc.gov.sg", badge: "Founding Shepherd 2018–2022" },
-    "Thailand":          { name: "Non Arkaraprasertkul, PhD", title: "Senior Expert · National Representative", org: "Digital Economy Promotion Agency (DEPA)", url: "https://www.depa.or.th", badge: "Chair 2019" },
-    "Timor-Leste":       { name: null, title: "National Focal Point", org: "Ministry of Public Works", url: "https://www.mop.gov.tl", badge: "Newest Member" },
-    "Viet Nam":          { name: "Dr. Tran Quoc Thai", title: "Director General · National Representative", org: "Urban Development Agency, Ministry of Construction", url: "https://www.xaydung.gov.vn" },
+    "Brunei Darussalam": { name: "Ir. Mohammad Nazri Mohammad Yusof", title: "Permanent Secretary", org: "Ministry of Transport and Infocommunications (MTIC)", url: "https://www.mtic.gov.bn" },
+    "Cambodia":          { name: "Mr. Sor Vorin", title: "Under Secretary of State", org: "Ministry of Interior", url: "" },
+    "Indonesia":         { name: "Dr. Safrizal ZA", title: "Director General, Directorate General of Regional Administration", org: "Ministry of Home Affairs", url: "https://www.kemendagri.go.id", badge: "Shepherd 2023–2027" },
+    "Lao PDR":           { name: "Dr. Bounta Onnavong", title: "Director General, Department of Housing and Urban Planning", org: "Ministry of Public Works and Transport (MPWT)", url: "https://www.mpwt.gov.la", badge: "Chair 2024" },
+    "Malaysia":          { name: "Mr. Mohd Hazli bin Ahmad @ Adnan", title: "Deputy Secretary General (Sustainability and Strategic Planning)", org: "Ministry of Housing and Local Government (KPKT)", url: "https://www.kpkt.gov.my", badge: "Chair 2025" },
+    "Myanmar":           { name: "Mr. Zaw Myint Oo", title: "Permanent Secretary", org: "Nay Pyi Taw Development Committee", url: "" },
+    "Philippines":       { name: "Mr. Juanito Victor C. Remulla", title: "Secretary", org: "Department of the Interior and Local Government (DILG)", url: "https://www.dilg.gov.ph" },
+    "Singapore":         { name: "Mr. Hugh Lim", title: "Executive Director, Centre for Liveable Cities", org: "Ministry of National Development", url: "https://www.clc.gov.sg", badge: "Founding Shepherd 2018–2022" },
+    "Thailand":          { name: "Distinguished Professor Wisit Wisitsora-at", title: "Permanent Secretary", org: "Ministry of Digital Economy and Society (MDES)", url: "https://www.mdes.go.th", badge: "Chair 2019" },
+    "Timor-Leste":       { name: "Mr. Roger Tertuliano de F. B. Belo", title: "Director General for Spatial Planning", org: "Ministry of Planning and Strategic Investment", url: "", badge: "Newest Member" },
+    "Viet Nam":          { name: "Dr. Nguyen Thanh Nghi", title: "Minister of Construction", org: "Ministry of Construction", url: "https://www.xaydung.gov.vn" },
   };
 
-  // Chief Smart City Officers — per city, April 2026 contact list
-  // Roles: primary CSCO listed first, alternates follow
+  // Chief Smart City Officers — per city, as of 30 April 2026 contact list
   const CSCOS = {
     "Bandar Seri Begawan": [{ name: null, org: "Bandar Seri Begawan Municipal Department" }],
-    "Battambang":          [{ name: null, org: "Battambang Municipal Administration" }],
-    "Phnom Penh":          [{ name: null, org: "Phnom Penh Capital Administration" }],
-    "Siem Reap":           [{ name: null, org: "Siem Reap Administration" }],
-    "Sihanoukville City":  [{ name: null, org: "Sihanoukville Administration" }],
-    "Jakarta":             [{ name: null, org: "Jakarta Provincial Government" }],
-    "Makassar":            [{ name: null, org: "Makassar City Government" }],
-    "Banyuwangi":          [{ name: null, org: "Banyuwangi Regency Government" }],
-    "Sumedang":            [{ name: null, org: "Sumedang Regency Government" }],
-    "Denpasar":            [{ name: null, org: "Denpasar City Government" }],
-    "Semarang":            [{ name: null, org: "Semarang City Government" }],
-    "Luang Prabang":       [{ name: "Viengthong Hatsachanh", title: "Mayor", org: "Luang Prabang City" }],
-    "Vientiane":           [{ name: null, org: "Vientiane Capital Administration" }],
-    "Johor Bahru":         [{ name: "Maimunah Jaffar", title: "Director, Strategic Driver", org: "Iskandar Regional Development Authority (IRDA)" }],
-    "Kota Kinabalu":       [{ name: null, org: "Kota Kinabalu City Hall" }],
-    "Kuching":             [{ name: null, org: "Kuching City" }],
-    "Kuala Lumpur":        [{ name: null, org: "Kuala Lumpur City Hall (DBKL)" }],
-    "Ipoh":                [{ name: null, org: "Ipoh City Council" }],
-    "Putrajaya":           [{ name: null, org: "Putrajaya Corporation" }],
-    "Seberang Perai":      [{ name: null, org: "Seberang Perai City Council" }],
-    "Mandalay":            [{ name: null, org: "Mandalay City Development Committee" }],
-    "Nay Pyi Taw":         [{ name: null, org: "Nay Pyi Taw Development Committee" }],
-    "Yangon":              [{ name: null, org: "Yangon City Development Committee" }],
-    "Davao":               [{ name: null, org: "Davao City Government" }],
-    "Manila":              [{ name: null, org: "City of Manila Government" }],
-    "Pasig":               [{ name: null, org: "Pasig City Government" }],
-    "Cebu City":           [{ name: null, org: "Cebu City Government" }],
-    "Singapore":           [{ name: null, org: "Ministry of Digital Development and Information (MDDI)" }],
-    "Bangkok":             [{ name: null, org: "Ministry of Transport (Bangkok), Office of Transport Policy and Planning" }],
-    "Chiang Mai":          [{ name: null, org: "Chiang Mai Municipality / DEPA" }],
-    "Phuket":              [{ name: null, org: "Phuket Municipality / DEPA" }],
-    "Khon Kaen":           [{ name: null, org: "Khon Kaen Municipality / DEPA" }],
+    "Battambang":          [{ name: "Mr. Sok Lou", title: "Governor", org: "Battambang Provincial Administration" }],
+    "Phnom Penh":          [{ name: "Mr. Seng Vannak", title: "Vice Governor", org: "Phnom Penh Capital Administration" }],
+    "Siem Reap":           [{ name: "Mr. Yun Linne", title: "Deputy Governor", org: "Siem Reap Province" }],
+    "Sihanoukville City":  [{ name: "Mr. Em Pheap", title: "Vice Governor", org: "Preah Sihanouk Province" }],
+    "Jakarta":             [{ name: "Mr. Sigit Wijatmoko", title: "Acting Head of Communications, Informatics, & Statistics Department", org: "Jakarta Provincial Government" }],
+    "Makassar":            [{ name: "Dr. Andi Zulkifly Nanda", title: "Makassar Regional Secretary", org: "Makassar City Government" }],
+    "Banyuwangi":          [{ name: "Mr. Budi Santoso", title: "Head of Communication, Informatics and Encryption", org: "Banyuwangi Government" }],
+    "Sumedang":            [{ name: "Ms. Tuti Ruswati", title: "Sumedang Regional Secretary", org: "Sumedang Regency Government" }],
+    "Denpasar":            [{ name: "Mr. Gde Wirakusuma Wahyudi", title: "Head of the Communication Informatics and Statistic Agency", org: "Denpasar City Government" }],
+    "Semarang":            [{ name: "Mr. Budi Prakosa", title: "Head of the Regional Development Planning Agency", org: "Semarang City Government" }],
+    "Luang Prabang":       [{ name: "Mr. Saveuy Silavanh", title: "Chairman", org: "Luang Prabang City Government Committee" }],
+    "Vientiane":           [{ name: "Mr. Bounyavath Niraxay", title: "Director General, Department of Public Works and Transport", org: "Vientiane Capital" }],
+    "Johor Bahru":         [{ name: "Mr. Shamsudin Yusoff", title: "Head, Innovation & Technology", org: "Iskandar Regional Development Authority (IRDA)" }],
+    "Kota Kinabalu":       [{ name: "Sr. Lifred Wong", title: "Director General", org: "Kota Kinabalu City Hall" }],
+    "Kuching":             [{ name: "Mr. Hemlet Kiai", title: "Head of Digital Technology Division", org: "Sarawak Multimedia Authority" }],
+    "Kuala Lumpur":        [{ name: "Mr. Zulkurnain bin Hassan", title: "Executive Director, City Planning Department", org: "Kuala Lumpur City Hall (DBKL)" }],
+    "Ipoh":                [{ name: "Mr. Abdul Afiq bin Muhammad", title: "Assistant Director, Town Planning Department", org: "Ipoh City Council" }],
+    "Putrajaya":           [{ name: "Mr. Mohd Musabri bin Shaharom", title: "Head of Smart City Section", org: "Putrajaya Corporation" }],
+    "Seberang Perai":      [{ name: "Dato Haji Baderul Amin bin Abdul Hamid", title: "Mayor of Seberang Perai", org: "Seberang Perai City Council" }],
+    "Mandalay":            [{ name: "Mr. Htun Linn Saw", title: "Deputy Director, Urban Planning and Land Administration Department", org: "Mandalay City Development Committee" }],
+    "Nay Pyi Taw":         [{ name: "Mr. Moe Thar", title: "Director, Urban Planning and GIS Team", org: "Nay Pyi Taw Development Committee" }],
+    "Yangon":              [{ name: "Mrs. Tin Tin Kyi", title: "Deputy Director General, Urban Planning Department", org: "Yangon City Development Committee" }],
+    "Davao":               [{ name: "Atty. Tristan Dwight P. Domingo", title: "Asst. City Administrator", org: "Davao City Government" }],
+    "Manila":              [{ name: "Mr. Arnel Eustacio M. Angeles", title: "Head III, Disaster Risk Reduction and Management Office", org: "City of Manila" }],
+    "Cauayan City":        [{ name: "Atty. Reina Consorcia M. Santos", title: "Over-all Project Coordinator, Smart and Sustainable Cities Program", org: "Cauayan City Infotech Office" }],
+    "Cebu City":           [{ name: "Ar. Ann Marie Y. Cuizon", title: "Department Head, City Planning and Development Office", org: "Cebu City Government" }],
+    "Singapore":           [{ name: "Mr. Joel Chua", title: "Director of Smart City Division, Smart Nation Group", org: "Ministry of Digital Development and Information (MDDI)" }],
+    "Bangkok":             [{ name: "Mr. Jiraroth Sukolrat", title: "Director General, Office of Transport and Traffic Policy and Planning", org: "Ministry of Transport" }],
+    "Chiang Mai":          [{ name: "Mr. Nirat Phongsittithavorn", title: "Governor", org: "Chiang Mai Province" }],
+    "Chonburi":            [{ name: "Mr. Wattanapong Kurovat", title: "Director General, Energy Policy and Planning Office", org: "Ministry of Energy" }],
+    "Khon Kaen":           [{ name: "Mr. Kaisorn Kongchalad", title: "Governor", org: "Khon Kaen Province" }],
+    "Phuket":              [{ name: "Mr. Pracha Asavateera", title: "District Manager, Upper Southern Region Office", org: "Digital Economy Promotion Agency (DEPA)" }],
+    "Rayong":              [{ name: "Mr. Pirun Hemarak", title: "Vice Governor", org: "Rayong Province" }],
     "EEC":                 [{ name: null, org: "Eastern Economic Corridor Office (EECO)" }],
-    "Dili":                [{ name: null, org: "Dili District Administration" }],
-    "Da Nang":             [{ name: null, org: "Da Nang People's Committee" }],
-    "Ha Noi":              [{ name: "Nguyen The Hung", title: "Vice Chairperson", org: "People's Committee of Ha Noi City" }],
-    "Ho Chi Minh City":    [{ name: null, org: "Ho Chi Minh City People's Committee" }],
+    "Dili":                [{ name: "Mr. Antonio Guterres", title: "Director General for Local Administration", org: "Ministry of State Administration" }],
+    "Da Nang":             [{ name: "Mr. Le Trung Chinh", title: "Vice Chairperson", org: "People's Committee of Da Nang City" }],
+    "Ha Noi":              [{ name: "Mr. Le Hong Son", title: "Vice Chairman", org: "People's Committee of Ha Noi City" }],
+    "Ho Chi Minh City":    [{ name: "Mr. Duong Anh Duc", title: "Vice Chairman", org: "Ho Chi Minh City People's Committee" }],
+  };
+
+  // Staff contacts per city — April 2026 contact list
+  const STAFF = {
+    "Chiang Mai": [{ name: "Dr. Non Arkaraprasertkul", title: "Senior Expert in Smart City Promotion", org: "Digital Economy Promotion Agency (DEPA)" }],
+    "Khon Kaen":  [{ name: "Dr. Non Arkaraprasertkul", title: "Senior Expert in Smart City Promotion", org: "Digital Economy Promotion Agency (DEPA)" }],
+    "Phuket":     [{ name: "Dr. Non Arkaraprasertkul", title: "Senior Expert in Smart City Promotion", org: "Digital Economy Promotion Agency (DEPA)" }],
+    "Rayong":     [{ name: "Dr. Non Arkaraprasertkul", title: "Senior Expert in Smart City Promotion", org: "Digital Economy Promotion Agency (DEPA)" }],
   };
 
   function cityPopupHtml(city) {
     const nr = NRS[city.country] || {};
     const cscos = CSCOS[city.name] || [];
+    const staff = STAFF[city.name] || [];
     const officialListUrl = "https://asean.org/body/asean-smart-cities-network/";
     let h = `<div class="cpop">`;
     h += `<div class="cpop-city">${esc(city.name)}<span class="cpop-ctry"> · ${esc(city.country)}</span></div>`;
-    // NR block — always shown
+    // NR block
     h += `<div class="cpop-block">`;
     h += `<div class="cpop-role-label">National Representative</div>`;
     if (nr.name) {
@@ -971,7 +981,19 @@ function renderContacts() {
     } else {
       h += `<div class="cpop-verify"><a href="${officialListUrl}" target="_blank" rel="noopener">See official April 2026 list ↗</a></div>`;
     }
-    h += `</div></div>`;
+    h += `</div>`;
+    // Staff contacts block (where listed)
+    if (staff.length) {
+      h += `<div class="cpop-block">`;
+      h += `<div class="cpop-role-label">Staff Contact</div>`;
+      staff.forEach((s) => {
+        h += `<div class="cpop-name">${esc(s.name)}</div>`;
+        h += `<div class="cpop-detail">${esc(s.title)}</div>`;
+        h += `<div class="cpop-org">${esc(s.org)}</div>`;
+      });
+      h += `</div>`;
+    }
+    h += `</div>`;
     return h;
   }
 
