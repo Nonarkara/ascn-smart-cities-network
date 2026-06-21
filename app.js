@@ -159,6 +159,26 @@ function renderHistory() {
   const sheps = state.K.governance.shepherds.map((s) => `
     <div class="chair-row"><b>${esc(s.term)}</b><span>${esc(s.country)} — Shepherd<em>${esc(s.note)}</em></span></div>`).join("");
   $("#chair-roster").innerHTML = chairs + `<div class="chair-row"><b>Shepherd</b><span class="muted" style="text-transform:none;letter-spacing:0">Multi-year continuity role</span></div>` + sheps;
+
+  if (h.clc_quote) {
+    const q = h.clc_quote;
+    $("#history-quote").innerHTML = `
+      <blockquote>${esc(q.text)}</blockquote>
+      <cite><b>${esc(q.attribution)}</b> · ${esc(q.role)}<br><span class="quote-source">${esc(q.source)}</span></cite>`;
+  }
+
+  if (h.moments) {
+    $("#history-moments").innerHTML = h.moments.map((m) => `
+      <div class="moment-card">
+        <figure><img src="${esc(m.photo)}" alt="${esc(m.label)}" loading="lazy" /></figure>
+        <div class="moment-body">
+          <span class="moment-year">${esc(m.year)}</span>
+          <span class="moment-label">${esc(m.label)}</span>
+          <p class="moment-caption">${esc(m.caption)}</p>
+        </div>
+      </div>`).join("");
+  }
+
   $("#meetings-grid").innerHTML = h.annual_meetings.map((m) => `
     <article class="meeting-card"><span class="yr">${esc(m.year)}</span><b>${esc(m.n)} ASCN</b><p>${esc(m.host)} — ${esc(m.outcome)}</p></article>`).join("");
   $("#ascap-panel").innerHTML = ascapHtml();
@@ -501,7 +521,7 @@ function wireNav() {
 }
 
 async function loadJson(path) {
-  const res = await fetch(`${path}?v=31`);
+  const res = await fetch(`${path}?v=32`);
   if (!res.ok) throw new Error(`Failed to load ${path}: ${res.status}`);
   return res.json();
 }
