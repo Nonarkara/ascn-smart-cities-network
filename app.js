@@ -1634,7 +1634,7 @@ function renderEssay() {
       <img src="Photos/author-bio.jpg" alt="Non Arkaraprasertkul" class="bio-thumb" />
       <div class="bio-summary-text">
         <strong>Non Arkaraprasertkul, PhD</strong>
-        <span>Director, Smart City Office · DEPA Thailand · ASCN National Representative 2018–present</span>
+        <span>Senior Expert in Smart City Promotion · DEPA Thailand · ASEAN Smart Cities Network since 2019</span>
       </div>
       <span class="bio-expand-hint">About the author</span>
     </summary>
@@ -1645,57 +1645,13 @@ function renderEssay() {
       </figure>
       <div class="bio-text">
         <p>Non Arkaraprasertkul holds a doctorate in Urban Planning and Design from Harvard University's Graduate School of Design. His doctoral research examined urban informality and neighbourhood transformation in Bangkok and Shanghai. From 2013 to 2014 he was a Henry Luce Foundation Research Fellow based in Shanghai, where his fieldwork produced the concept of <em>gentrification from within</em> — the process by which original residents leverage rising property markets from inside a neighbourhood rather than being displaced by them — subsequently applied by researchers in twelve countries.</p>
-        <p>He has served as Thailand's national representative to the ASEAN Smart Cities Network since its founding meeting in Singapore in July 2018, through eight consecutive annual meetings and four M&amp;E cycles. He directs the Smart City Office at Thailand's Digital Economy Promotion Agency (DEPA) under the Ministry of Digital Economy and Society, and has spoken on smart city governance at Tomorrow.City Shanghai, GITEX Ai Asia Singapore, and the Smart City Summit Taipei. This essay draws on seven years of direct participation in the network's meetings, data, and debates.</p>
+        <p>He has worked within the ASEAN Smart Cities Network as Senior Expert in Smart City Promotion at Thailand's Digital Economy Promotion Agency (DEPA), under the Ministry of Digital Economy and Society, since 2019 — across seven annual meetings and four M&amp;E cycles. He has spoken on smart city governance at Tomorrow.City Shanghai, GITEX Ai Asia Singapore, and the Smart City Summit Taipei. This essay draws on seven years of direct participation in the network's meetings, data, and debates.</p>
         <ul class="bio-credentials">
           <li>PhD, Urban Planning and Design, Harvard University Graduate School of Design</li>
           <li>Henry Luce Foundation Research Fellow, Shanghai, 2013–2014</li>
-          <li>Director, Smart City Office, Digital Economy Promotion Agency (DEPA), Thailand</li>
-          <li>National Representative, ASEAN Smart Cities Network, 2018–present</li>
-          <li>Eight consecutive ASCN Annual Meetings · Four M&amp;E cycles</li>
-        </ul>
-      </div>
-    </div>
-  </details>
-
-  <p class="essay-pilot-note">Essay No. 1 on the ASCN Open Platform. Future perspectives from officials, researchers, and city practitioners across the region will follow. If you represent an ASCN member city or institution and would like to contribute, write to the platform team.</p>
-</div>
-
-<div class="essay-body">
-<div class="essay-header">
-  <div class="essay-series-bar">
-    <span class="essay-series-label">ASCN Essays</span>
-    <span class="essay-series-sep">·</span>
-    <span class="essay-series-num">No. 1</span>
-    <span class="essay-series-date">June 2026</span>
-    <span class="essay-series-time">20 min read</span>
-  </div>
-
-  <h2 class="essay-title">The Network at Seven</h2>
-  <p class="essay-subtitle">What four M&amp;E cycles and thirty-eight cities reveal about Southeast Asia's most ambitious governance experiment</p>
-
-  <details class="essay-bio">
-    <summary class="essay-bio-summary">
-      <img src="Photos/author-bio.jpg" alt="Non Arkaraprasertkul" class="bio-thumb" />
-      <div class="bio-summary-text">
-        <strong>Non Arkaraprasertkul, PhD</strong>
-        <span>Director, Smart City Office · DEPA Thailand · ASCN National Representative 2018–present</span>
-      </div>
-      <span class="bio-expand-hint">About the author</span>
-    </summary>
-    <div class="essay-bio-body">
-      <figure class="bio-photo-wrap">
-        <img src="Photos/author-bio.jpg" alt="Non Arkaraprasertkul speaking at GITEX Ai Asia Singapore 2026" class="bio-photo" />
-        <figcaption>GITEX Ai Asia — Main Stage, Singapore, 2026</figcaption>
-      </figure>
-      <div class="bio-text">
-        <p>Non Arkaraprasertkul holds a doctorate in Urban Planning and Design from Harvard University's Graduate School of Design. His doctoral research examined urban informality and neighbourhood transformation in Bangkok and Shanghai. From 2013 to 2014 he was a Henry Luce Foundation Research Fellow based in Shanghai, where his fieldwork produced the concept of <em>gentrification from within</em> — the process by which original residents leverage rising property markets from inside a neighbourhood rather than being displaced by them — subsequently applied by researchers in twelve countries.</p>
-        <p>He has served as Thailand's national representative to the ASEAN Smart Cities Network since its founding meeting in Singapore in July 2018, through eight consecutive annual meetings and four M&amp;E cycles. He directs the Smart City Office at Thailand's Digital Economy Promotion Agency (DEPA) under the Ministry of Digital Economy and Society, and has spoken on smart city governance at Tomorrow.City Shanghai, GITEX Ai Asia Singapore, and the Smart City Summit Taipei. This essay draws on seven years of direct participation in the network's meetings, data, and debates.</p>
-        <ul class="bio-credentials">
-          <li>PhD, Urban Planning and Design, Harvard University Graduate School of Design</li>
-          <li>Henry Luce Foundation Research Fellow, Shanghai, 2013–2014</li>
-          <li>Director, Smart City Office, Digital Economy Promotion Agency (DEPA), Thailand</li>
-          <li>National Representative, ASEAN Smart Cities Network, 2018–present</li>
-          <li>Eight consecutive ASCN Annual Meetings · Four M&amp;E cycles</li>
+          <li>Senior Expert in Smart City Promotion, Digital Economy Promotion Agency (DEPA), Thailand</li>
+          <li>ASEAN Smart Cities Network — DEPA Senior Expert / Thailand staff contact since 2019</li>
+          <li>Seven ASCN Annual Meetings · Four M&amp;E cycles</li>
         </ul>
       </div>
     </div>
@@ -1765,10 +1721,10 @@ function renderEssay() {
   <div class="essay-section">
     ${h(3, "V. Less meetings. More building.")}
     <figure class="essay-photo">
-      <img src="Photos/AFS_2670.JPG" alt="Opening ceremony of the 8th ASCN Annual Meeting, Kuala Lumpur, 2025" loading="lazy" />
-      <figcaption>Opening ceremony, 8th ASCN Annual Meeting, Kuala Lumpur, September 2025. Ceremonies are easy. Building systems is hard.</figcaption>
+      <img src="Photos/ASCN-8th-2025-KL-expert-talk.jpg" alt="Expert session at the 8th ASCN Annual Meeting, Kuala Lumpur, 2025" loading="lazy" />
+      <figcaption>Expert session, 8th ASCN Annual Meeting, Kuala Lumpur, September 2025. Ceremonies are easy. Building systems is hard.</figcaption>
     </figure>
-    ${p("I have been part of ASCN since 2018. Eight annual meetings. Four M&amp;E cycles. Two changes of chair. One change of shepherd. I leave every annual meeting with the same thought: the people in the room understand the problems. The chief smart city officers from Nakhon Si Thammarat and Phnom Penh and Bandar Seri Begawan and Ha Noi have spent years navigating flood drainage and informal settlement formalisation under conditions that no Singapore planning document has had to account for. They know things no knowledge institution could have produced without being there.")}
+    ${p("I have been part of ASCN since 2019. Seven annual meetings. Four M&amp;E cycles. Two changes of chair. One change of shepherd. I leave every annual meeting with the same thought: the people in the room understand the problems. The chief smart city officers from Nakhon Si Thammarat and Phnom Penh and Bandar Seri Begawan and Ha Noi have spent years navigating flood drainage and informal settlement formalisation under conditions that no Singapore planning document has had to account for. They know things no knowledge institution could have produced without being there.")}
     ${p("The problem is that the network does not yet have a systematic way to make that knowledge visible, portable, and actionable across the thirty-eight cities. We meet. We exchange business cards. We take photos in batik shirts. Then we go home and the knowledge stays in the room.")}
     ${p("This is where Axiom comes in. Axiom is my private-sector experiment in building what governments plan but cannot execute. In Nakhon Si Thammarat, we did not write a master plan and hope someone would implement it. We built a flood-resilience operating system with the municipality during an actual flood season. We trained their staff. We left the system running. That is the model ASCN needs: not more reports, but transferable systems built by the people who will operate them.")}
     ${p("Artificial intelligence makes this more possible than ever. Not chatbots that answer tourist questions. AI agents that can read a city's permit backlog, route flood complaints to the right department, predict which drainage pumps will fail, and explain their reasoning in a language a mid-level official can act on. These are not science fiction. They are buildable now. They are cheaper than the consultants we currently fly in to tell us what we already know.")}
@@ -1802,7 +1758,6 @@ function renderEssay() {
     <p class="essay-fn">The Shanghai fieldwork (2013–2015, Henry Luce Foundation fellowship) was a study of neighbourhood change in the lilong alleyway-house districts of central Shanghai. The concept of gentrification from within emerged from that study and provides the analytical frame for sections I–IV above. The Shanghai case itself is not the subject of this essay; it is a set of methods applied to a different set of cities. Readers interested in the original fieldwork should start with Arkaraprasertkul (2016) in Asian Anthropology or the 2018 Urban Studies paper listed below.</p>
   </div>
 
-</div>
 </div>
 
 <div class="essay-refs">
