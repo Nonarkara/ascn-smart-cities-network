@@ -1377,7 +1377,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 .cpop-verify a:hover { opacity: 1; }
 
 @media (max-width: 640px) {
-  .contacts-map { height: 320px; }
+  .contacts-map { height: 460px; }
 }
 
 /* ---- Research tab ---- */

@@ -1044,7 +1044,22 @@ function ensureContactsMap(popupFn) {
   state.cMap = L.map("contacts-map", { zoomControl: true, scrollWheelZoom: true, minZoom: 3, maxZoom: 9, worldCopyJump: false })
     .setView([8.5, 112], 4);
   L.tileLayer(tileLayers.map.url, { attribution: tileLayers.map.attr }).addTo(state.cMap);
-  state.cMap.setMaxBounds([[-15, 88], [25, 142]]);
+  // Tall popups (NR + CSCO + Staff) open above the marker and can clip the map's top
+  // edge. Leaflet's autoPan/panInside are unreliable on programmatic opens, so recenter
+  // explicitly: place the marker ~52px above the map's bottom edge, leaving the full
+  // height above it for the popup. Deterministic — fires on every open.
+  state.cMap.on("popupopen", function (e) {
+    const map = state.cMap;
+    setTimeout(function () {
+      map.invalidateSize({ animate: false }); // first open after a tab switch can have a stale size
+      const z = map.getZoom();
+      const size = map.getSize();
+      const mPx = map.project(e.popup.getLatLng(), z);
+      const centerX = map.project(map.getCenter(), z).x;
+      const newCenter = map.unproject(L.point(centerX, mPx.y - size.y / 2 + 52), z);
+      map.setView(newCenter, z, { animate: false });
+    }, 120);
+  });
   for (const city of state.C) {
     const nr = (function(c) {
       const nrs = { "Brunei Darussalam": null, "Cambodia": null, "Indonesia": "Dr. Amran", "Lao PDR": null, "Malaysia": "Mohd Hazli Bin Ahmad Adnan", "Myanmar": null, "Philippines": null, "Singapore": null, "Thailand": "Non Arkaraprasertkul, PhD", "Timor-Leste": null, "Viet Nam": "Dr. Tran Quoc Thai" };
@@ -1055,7 +1070,7 @@ function ensureContactsMap(popupFn) {
       fillColor: nr ? "#f59e0b" : "#183a5a", fillOpacity: 0.9,
     });
     m.bindTooltip(`<b>${city.name}</b> · ${city.country}`, { direction: "top", offset: [0, -4] });
-    m.bindPopup(popupFn(city), { maxWidth: 280, className: "cpop-wrap" });
+    m.bindPopup(popupFn(city), { maxWidth: 280, maxHeight: 310, className: "cpop-wrap", autoPan: false });
     m.addTo(state.cMap);
   }
   state.cMapReady = true;
@@ -1644,11 +1659,11 @@ function renderEssay() {
         <figcaption>GITEX Ai Asia — Main Stage, Singapore, 2026</figcaption>
       </figure>
       <div class="bio-text">
-        <p>Non Arkaraprasertkul holds a doctorate in anthropology from Harvard University. His doctoral research examined urban informality and neighbourhood transformation in Bangkok and Shanghai. From 2013 to 2014 he was a Henry Luce Foundation Research Fellow based in Shanghai, where his fieldwork produced the concept of <em>gentrification from within</em> — the process by which original residents leverage rising property markets from inside a neighbourhood rather than being displaced by them — subsequently applied by researchers in twelve countries.</p>
+        <p>Non Arkaraprasertkul holds a doctorate in anthropology from Harvard University. His doctoral research examined urban informality and neighbourhood transformation in Bangkok and Shanghai. From 2013 to 2014 he conducted doctoral fieldwork in Shanghai — supported by the Harvard-Yenching Institute, the Fairbank Center for Chinese Studies, and the Cora Du Bois Anthropology Fellowship — where his work produced the concept of <em>gentrification from within</em> — the process by which original residents leverage rising property markets from inside a neighbourhood rather than being displaced by them — subsequently applied by researchers in twelve countries.</p>
         <p>He has worked within the ASEAN Smart Cities Network as Senior Expert in Smart City Promotion at Thailand's Digital Economy Promotion Agency (DEPA), under the Ministry of Digital Economy and Society, since 2019 — across seven annual meetings and four M&amp;E cycles. He has spoken on smart city governance at Tomorrow.City Shanghai, GITEX Ai Asia Singapore, and the Smart City Summit Taipei. This essay draws on seven years of direct participation in the network's meetings, data, and debates.</p>
         <ul class="bio-credentials">
           <li>PhD, Anthropology, Harvard University</li>
-          <li>Henry Luce Foundation Research Fellow, Shanghai, 2013–2014</li>
+          <li>Shanghai fieldwork fellowships — Harvard-Yenching Institute · Fairbank Center for Chinese Studies · Cora Du Bois Anthropology Fellowship</li>
           <li>Senior Expert in Smart City Promotion, Digital Economy Promotion Agency (DEPA), Thailand</li>
           <li>ASEAN Smart Cities Network — DEPA Senior Expert / Thailand staff contact since 2019</li>
           <li>Seven ASCN Annual Meetings · Four M&amp;E cycles</li>
@@ -1693,8 +1708,8 @@ function renderEssay() {
   <div class="essay-section">
     ${h(3, "III. The Singapore question")}
     <figure class="essay-photo">
-      <img src="Photos/ASCN-1st-2018-Singapore.jpg" alt="Prime Minister Lee Hsien Loong opens the Inaugural ASCN Meeting, Singapore, 8 July 2018" loading="lazy" />
-      <figcaption>Prime Minister Lee Hsien Loong opens the Inaugural ASEAN Smart Cities Network Meeting, Marina Bay Sands, Singapore, 8 July 2018. Singapore designed the network's architecture before handing the chair forward.</figcaption>
+      <img src="Photos/ASCN-1st-2018-Singapore.jpg" alt="Minister Vivian Balakrishnan at the Inaugural ASCN Meeting, Singapore, 8 July 2018" loading="lazy" />
+      <figcaption>Minister Vivian Balakrishnan, Singapore's Minister-in-charge of the Smart Nation Initiative, at the Inaugural ASEAN Smart Cities Network Meeting, Singapore, 8 July 2018. Singapore designed the network's architecture before handing the chair forward.</figcaption>
     </figure>
     ${p("Let me say the obvious thing first. Singapore founded ASCN. Singapore provided the first chair, the first shepherd, and the primary knowledge institution. Without Singapore, there is no ASCN. That is a fact. It is also a problem.")}
     ${p("The problem is not that Singapore helped. The problem is that Singapore cannot stop being Singapore. It is a city-state. The government owns the land. The Housing Development Board houses 80% of the population under a unified planning authority with no federal system, no competing local governments, and no electorate that votes against development plans. This model produced remarkable results. It produced them under conditions that do not exist in Bangkok, Manila, Phnom Penh, or any other ASEAN city except Singapore.")}
@@ -1709,7 +1724,7 @@ function renderEssay() {
   <div class="essay-section">
     ${h(3, "IV. A different theory of change")}
     ${p("There is another way to think about how cities improve. It does not come from Singapore. It comes from watching what residents actually do when the market changes around them.")}
-    ${p("In 2013 and 2014, while embedded in a working-class neighbourhood in Shanghai as a Henry Luce Foundation research fellow, I documented something the displacement literature had not named: original residents who were not being pushed out by rising markets but were leveraging those markets from the inside. I called it gentrification from within.<sup>[1][2]</sup> The concept has since been applied by researchers in twelve countries. The underlying principle matters for ASCN: cities improve when the people already in them gain the capacity to read what is happening and act on that reading.")}
+    ${p("In 2013 and 2014, while embedded in a working-class neighbourhood in Shanghai on doctoral fieldwork, I documented something the displacement literature had not named: original residents who were not being pushed out by rising markets but were leveraging those markets from the inside. I called it gentrification from within.<sup>[1][2]</sup> The concept has since been applied by researchers in twelve countries. The underlying principle matters for ASCN: cities improve when the people already in them gain the capacity to read what is happening and act on that reading.")}
     ${p("The version of smart-city policy I encounter most frequently in ASEAN is backward on this principle. Technology arrives first. Sensors. Platforms. Vendor partnerships with people who are very enthusiastic about the regional opportunity. The prior questions — who has access to the data, who is authorized to act on it, what governance structure will outlast the vendor contract — are treated as implementation details.")}
     ${p("In Nakhon Si Thammarat, my team built a citizen engagement system on LINE. Not a purpose-built government platform. LINE. Forty-four million Thais use it every day. The result: forty-four thousand users within the first year, roughly 40% of the municipality's population, and approximately 10 million baht in operational cost savings. The design decision was not technical. It was the decision to meet the city where it was rather than where a procurement specification said it should be.")}
     ${pull("The prior question — who has access to the data? who is authorized to act on it? what governance structure will outlast the vendor contract? — is treated as an implementation detail. It is not a detail. It is the whole argument.")}
@@ -1753,7 +1768,9 @@ function renderEssay() {
 
   <div class="essay-section essay-footnotes">
     <p class="essay-fn-label">Note on Shanghai</p>
-    <p class="essay-fn">The Shanghai fieldwork (2013–2015, Henry Luce Foundation fellowship) was a study of neighbourhood change in the lilong alleyway-house districts of central Shanghai. The concept of gentrification from within emerged from that study and provides the analytical frame for sections I–IV above. The Shanghai case itself is not the subject of this essay; it is a set of methods applied to a different set of cities. Readers interested in the original fieldwork should start with Arkaraprasertkul (2016) in Asian Anthropology or the 2018 Urban Studies paper listed below.</p>
+    <p class="essay-fn">The Shanghai fieldwork (2013–2015) — supported by the Harvard-Yenching Institute, the Fairbank Center for Chinese Studies at Harvard University, the Cora Du Bois Anthropology Fellowship, a New York University Postdoctoral Global Fellowship, a Fudan Fellowship, and the China Scholarship Council (CSC) Research Fund — was a study of neighbourhood change in the lilong alleyway-house districts of central Shanghai. The concept of gentrification from within emerged from that study and provides the analytical frame for sections I–IV above. The Shanghai case itself is not the subject of this essay; it is a set of methods applied to a different set of cities. Readers interested in the original fieldwork should start with Arkaraprasertkul (2016) in Asian Anthropology or the 2018 Urban Studies paper listed below.</p>
+    <p class="essay-fn-label">Note on interviews</p>
+    <p class="essay-fn">The characterisations of officials, delegations, and institutions in this essay draw on the author's own conversations and interviews with leaders both inside and outside the ASEAN Smart Cities Network, gathered across seven years of direct participation. Specific quotes and observations are kept anonymous by design — to protect candour and working relationships — but each reflects real statements made by real people in real meetings and interviews. None are composite or invented.</p>
   </div>
 
 </div>
