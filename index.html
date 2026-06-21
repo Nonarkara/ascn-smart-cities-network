@@ -3,194 +3,303 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ASCN Progress Observatory</title>
-    <meta name="description" content="ASCN V2 analytics workbench for ASEAN Smart Cities Network progress, projects, focus areas, and source evidence." />
+    <title>ASCN — ASEAN Smart Cities Network · Open Platform</title>
+    <meta name="description" content="A living open-data platform for the ASEAN Smart Cities Network: 38 cities, 134 projects, history, framework, partnerships, infographics, downloadable reports, and an open dataset synthesized from official ASEAN documents." />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <link rel="stylesheet" href="styles.css?v=21" />
+    <link rel="stylesheet" href="styles.css?v=31" />
   </head>
   <body>
     <header class="site-nav">
-      <a class="brand" href="#overview">
+      <a class="brand" href="#overview" data-tab="overview">
         <img src="Photos/logos/asean-logo-519575871.png" alt="ASEAN" class="brand-mark" />
-        <span>ASCN V2</span>
+        <span>ASCN<i>Open Platform</i></span>
       </a>
-      <nav aria-label="Primary">
-        <a href="#overview">Overview</a>
-        <a href="#progress">Progress</a>
-        <a href="#cities">Cities</a>
-        <a href="#evidence">Evidence</a>
-        <a href="#sources">Sources</a>
-        <a href="#methodology">Method</a>
+      <nav aria-label="Primary" id="tab-nav">
+        <a href="#overview" data-tab="overview">Overview</a>
+        <a href="#history" data-tab="history">History</a>
+        <a href="#cities" data-tab="cities">Cities</a>
+        <a href="#projects" data-tab="projects">Projects</a>
+        <a href="#framework" data-tab="framework">Framework</a>
+        <a href="#partners" data-tab="partners">Partners</a>
+        <a href="#insights" data-tab="insights">Insights</a>
+        <a href="#data" data-tab="data">Library</a>
       </nav>
     </header>
 
     <main>
-      <section class="observatory" id="overview">
-        <div class="intro-panel">
-          <p class="label">ASEAN Smart Cities Network</p>
-          <h1>ASCN Progress Observatory</h1>
-          <p class="lede">A lightweight V2 analytics layer built from official ASCN M&E reports, framework documents, and current roster evidence.</p>
-          <div class="source-note">
-            <strong>Evidence status</strong>
-            <span id="evidence-status">Loading official report dataset...</span>
+      <!-- OVERVIEW -->
+      <section class="view" id="view-overview" data-view="overview">
+        <div class="hero">
+          <div class="hero-text">
+            <p class="label">ASEAN Smart Cities Network</p>
+            <h1>38 cities.<br />One network.<br />Open in public.</h1>
+            <p class="lede">A living observatory for the ASEAN Smart Cities Network — turning a decade of official reports into open data anyone can explore, download, and build on.</p>
+            <div class="hero-cta">
+              <a class="text-button" href="#cities" data-tab="cities">Explore the cities</a>
+              <a class="text-button" href="#data" data-tab="data">Open data</a>
+            </div>
           </div>
+          <figure class="hero-photo">
+            <img src="Photos/AFS_2670.JPG" alt="ASCN 8 Opening Ceremony, Malaysia 2025" />
+            <figcaption>ASCN 8 Opening Ceremony — Kuala Lumpur, Malaysia · 2025</figcaption>
+          </figure>
         </div>
 
         <div class="kpi-grid" id="kpi-grid" aria-label="Network key metrics"></div>
 
-        <div class="map-panel">
-          <div class="panel-head">
-            <div>
-              <p class="label">Network Geography</p>
-              <h2>38-city ASEAN footprint</h2>
-            </div>
+        <div class="overview-grid">
+          <article class="gap-panel">
+            <p class="label">Why this platform exists</p>
+            <h2 id="gap-headline"></h2>
+            <p class="lede" id="gap-body"></p>
+            <div class="source-note"><strong>Evidence base</strong><span id="evidence-status">Loading official report dataset…</span></div>
+          </article>
+          <aside class="glance-panel">
+            <p class="label">At a glance</p>
+            <div id="focus-mini" class="focus-mini"></div>
+            <div class="glance-note" id="glance-note"></div>
+          </aside>
+        </div>
+
+        <article class="perspective" id="perspective" aria-label="Perspective"></article>
+      </section>
+
+      <!-- HISTORY -->
+      <section class="view" id="view-history" data-view="history" hidden>
+        <div class="section-head">
+          <p class="label">History</p>
+          <h2>From 26 pilot cities to a regional network</h2>
+          <p class="lede">Established at the 32nd ASEAN Summit in April 2018, the network has grown across eight chair years and five rounds of expansion.</p>
+        </div>
+        <div class="history-grid">
+          <div class="timeline-rail" id="history-timeline"></div>
+          <aside class="history-side">
+            <article class="side-block">
+              <p class="label">Membership growth</p>
+              <div id="growth-bars" class="growth-bars"></div>
+            </article>
+            <article class="side-block">
+              <p class="label">Chair &amp; Shepherd</p>
+              <div id="chair-roster" class="chair-roster"></div>
+            </article>
+          </aside>
+        </div>
+        <div class="sub-head"><p class="label">Annual meetings</p><h3>The ASCN Annual Meeting cycle</h3></div>
+        <div id="meetings-grid" class="meetings-grid"></div>
+        <article class="ascap-panel" id="ascap-panel"></article>
+      </section>
+
+      <!-- CITIES -->
+      <section class="view" id="view-cities" data-view="cities" hidden>
+        <div class="section-head split">
+          <div>
+            <p class="label">Member Cities</p>
+            <h2>38 cities, 11 countries — and what each is building</h2>
+          </div>
+          <div class="controls">
+            <input id="city-search" type="search" placeholder="Search a city" aria-label="Search a city" />
+            <select id="city-country" aria-label="Filter by country"><option value="all">All countries</option></select>
             <div class="segmented" id="map-mode">
               <button type="button" class="active" data-mode="map">Map</button>
               <button type="button" data-mode="night">Night</button>
             </div>
           </div>
-          <div id="sea-map" class="sea-map"></div>
         </div>
-
-        <aside class="timeline-panel">
-          <p class="label">Network Cycle</p>
-          <h2>2018 to 2026</h2>
-          <div id="milestone-list" class="milestone-list"></div>
-        </aside>
+        <div class="cities-layout">
+          <div class="map-col">
+            <div id="sea-map" class="sea-map"></div>
+            <p class="map-legend" id="map-legend"></p>
+          </div>
+          <div class="city-detail" id="city-detail"></div>
+        </div>
+        <div class="city-cards" id="city-cards"></div>
       </section>
 
-      <section class="analytics-section" id="progress">
-        <div class="section-head">
-          <p class="label">Progress Analytics</p>
-          <h2>How the portfolio changed across M&E cycles</h2>
+      <!-- PROJECTS -->
+      <section class="view" id="view-projects" data-view="projects" hidden>
+        <div class="section-head split">
+          <div>
+            <p class="label">Projects</p>
+            <h2>The smart-city project portfolio</h2>
+          </div>
+          <div class="controls">
+            <input id="search-filter" type="search" placeholder="Search projects" aria-label="Search projects" />
+            <select id="country-filter" aria-label="Filter by country"><option value="all">All countries</option></select>
+            <select id="focus-filter" aria-label="Filter by focus area"><option value="all">All focus areas</option></select>
+            <button id="export-csv" class="text-button" type="button">Export CSV</button>
+          </div>
         </div>
+        <div class="kpi-grid kpi-grid--four" id="project-kpis"></div>
         <div class="analytics-grid">
-          <article class="chart-panel wide">
-            <div class="panel-head">
-              <h3>Project portfolio by report year</h3>
-              <span class="muted">2022-2025 M&E</span>
-            </div>
-            <div id="year-bars" class="year-bars"></div>
+          <article class="chart-panel">
+            <div class="panel-head"><h3>Focus-area mix</h3><span class="muted">latest cycle</span></div>
+            <div id="focus-bars" class="focus-bars"></div>
           </article>
           <article class="chart-panel">
-            <div class="panel-head">
-              <h3>2025 implementation funnel</h3>
-              <span class="muted">134 projects</span>
-            </div>
+            <div class="panel-head"><h3>Implementation status</h3><span class="muted" id="status-count"></span></div>
             <div id="status-bars" class="stack-bars"></div>
           </article>
           <article class="chart-panel">
-            <div class="panel-head">
-              <h3>Focus-area mix</h3>
-              <select id="focus-year" aria-label="Select report year"></select>
-            </div>
-            <div id="focus-bars" class="focus-bars"></div>
-          </article>
-          <article class="chart-panel wide">
-            <div class="panel-head">
-              <h3>Focus trend, percentage share</h3>
-              <span class="muted">Official report charts</span>
-            </div>
-            <div id="trend-grid" class="trend-grid"></div>
-          </article>
-        </div>
-      </section>
-
-      <section class="analytics-section" id="cities">
-        <div class="section-head split">
-          <div>
-            <p class="label">City Intelligence</p>
-            <h2>Project load, cohorts, and focus areas</h2>
-          </div>
-          <div class="controls">
-            <input id="search-filter" type="search" placeholder="Search projects or cities" aria-label="Search projects or cities" />
-            <select id="country-filter" aria-label="Filter by country">
-              <option value="all">All countries</option>
-            </select>
-            <select id="focus-filter" aria-label="Filter by focus area">
-              <option value="all">All focus areas</option>
-            </select>
-            <button id="export-csv" class="text-button" type="button">Export CSV</button>
-            <button id="copy-view" class="text-button" type="button">Share View</button>
-          </div>
-        </div>
-        <div class="city-grid">
-          <article class="chart-panel">
-            <div class="panel-head">
-              <h3>Latest city project load</h3>
-              <span class="muted">from 2025 appendix</span>
-            </div>
+            <div class="panel-head"><h3>Top cities by project load</h3><span class="muted">filtered</span></div>
             <div id="city-load" class="city-load"></div>
           </article>
-          <article class="table-panel">
-            <div class="panel-head">
-              <h3>Project evidence table</h3>
-              <span id="project-count" class="muted"></span>
-            </div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>City</th>
-                    <th>Country</th>
-                    <th>Project</th>
-                    <th>Focus</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody id="project-table"></tbody>
-              </table>
-            </div>
+        </div>
+        <article class="table-panel">
+          <div class="panel-head"><h3>Project evidence table</h3><span id="project-count" class="muted"></span></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>City</th><th>Country</th><th>Project</th><th>Focus</th><th>Status</th></tr></thead>
+              <tbody id="project-table"></tbody>
+            </table>
+          </div>
+        </article>
+        <div class="sub-head"><p class="label">Flagship investments</p><h3>Largest documented projects by investment</h3></div>
+        <div id="big-projects" class="big-projects"></div>
+      </section>
+
+      <!-- FRAMEWORK / BY-LAWS -->
+      <section class="view" id="view-framework" data-view="framework" hidden>
+        <div class="section-head">
+          <p class="label">Framework &amp; By-laws</p>
+          <h2>The ASEAN Smart Cities Framework</h2>
+          <p class="lede" id="framework-status"></p>
+        </div>
+        <div class="framework-grid">
+          <article class="fw-block" id="fw-outcomes"></article>
+          <article class="fw-block" id="fw-systems"></article>
+          <article class="fw-block" id="fw-enablers"></article>
+        </div>
+        <div class="sub-head"><p class="label">Six focus areas</p><h3>Where the work is concentrated</h3></div>
+        <div id="focus-detail" class="focus-detail"></div>
+        <div class="sub-head"><p class="label">Governance</p><h3>How the network is run</h3></div>
+        <div class="gov-grid" id="gov-grid"></div>
+        <article class="ascap-panel" id="framework-ascap"></article>
+      </section>
+
+      <!-- PARTNERS -->
+      <section class="view" id="view-partners" data-view="partners" hidden>
+        <div class="section-head">
+          <p class="label">Partnerships &amp; Finance</p>
+          <h2>A multi-stakeholder ecosystem</h2>
+          <p class="lede">ASCN coordinates rather than funds. Bilateral partners, multilateral banks, and blended finance carry the projects.</p>
+        </div>
+        <div class="sub-head"><p class="label">Dialogue partners</p><h3>Major bilateral programmes</h3></div>
+        <div id="partner-cards" class="partner-cards"></div>
+        <div class="partners-split">
+          <article class="side-block">
+            <p class="label">Multilateral partners</p>
+            <div id="multi-list" class="def-list"></div>
+          </article>
+          <article class="side-block">
+            <p class="label">Financing landscape</p>
+            <div id="finance-block"></div>
+          </article>
+        </div>
+        <figure class="studio-photo">
+          <img src="Photos/slic-panel-taipei.jpg" alt="ASEAN smart-city panel discussion" loading="lazy" />
+          <figcaption>Regional knowledge exchange — smart-city panel, Taipei</figcaption>
+        </figure>
+      </section>
+
+      <!-- INSIGHTS / INFOGRAPHICS -->
+      <section class="view" id="view-insights" data-view="insights" hidden>
+        <div class="section-head">
+          <p class="label">Insights</p>
+          <h2>The network in numbers</h2>
+          <p class="lede">Synthesized indicators from the official record. Counts are project-level; outcome measurement remains the network's open challenge.</p>
+        </div>
+        <div class="info-grid">
+          <article class="info-card wide">
+            <p class="label">Focus-area distribution — 134 projects, 2025</p>
+            <div id="ig-focus"></div>
+          </article>
+          <article class="info-card">
+            <p class="label">Roster growth</p>
+            <div id="ig-growth"></div>
+          </article>
+          <article class="info-card">
+            <p class="label">Implementation status</p>
+            <div id="ig-status"></div>
+          </article>
+          <article class="info-card wide">
+            <p class="label">Citizen impact, documented</p>
+            <div id="ig-impact" class="impact-grid"></div>
+          </article>
+          <article class="info-card wide">
+            <p class="label">Top investments — largest documented projects by value</p>
+            <div id="ig-investment" class="ig-bars"></div>
+          </article>
+          <article class="info-card wide">
+            <p class="label">Projects by country — 2025 M&amp;E cycle</p>
+            <div id="ig-country" class="ig-bars"></div>
+          </article>
+          <article class="info-card wide">
+            <p class="label">M&amp;E maturity vs peer networks</p>
+            <div id="ig-compare" class="compare-wrap"></div>
           </article>
         </div>
       </section>
 
-      <section class="analytics-section" id="evidence">
-        <div class="section-head split">
-          <div>
-            <p class="label">Evidence</p>
-            <h2>What the reports say has changed</h2>
+      <!-- LIBRARY / OPEN DATA -->
+      <section class="view" id="view-data" data-view="data" hidden>
+        <div class="section-head">
+          <p class="label">Library &amp; Open Data</p>
+          <h2>The knowledge base behind this platform.</h2>
+          <p class="lede" id="data-lede"></p>
+        </div>
+        <div class="download-grid" id="dataset-downloads"></div>
+        <div class="sub-head"><p class="label">Official documents</p><h3>Source reports, free to download</h3></div>
+        <div id="document-grid" class="document-grid"></div>
+
+        <div class="sub-head">
+          <p class="label">Knowledge library</p>
+          <h3>Everything we read — official docs, academic papers, reports, research</h3>
+        </div>
+        <div class="lib-search-bar">
+          <input type="search" id="lib-search" placeholder="Search all 62 sources…" aria-label="Search the knowledge library" />
+          <div class="lib-type-chips" id="lib-type-chips" role="group" aria-label="Filter by source type">
+            <button class="lib-chip active" data-type="all" type="button">All <span id="lib-count"></span></button>
+            <button class="lib-chip" data-type="official" type="button">Official</button>
+            <button class="lib-chip" data-type="academic" type="button">Academic</button>
+            <button class="lib-chip" data-type="report" type="button">Reports</button>
+            <button class="lib-chip" data-type="research" type="button">Research</button>
+            <button class="lib-chip" data-type="data" type="button">Data</button>
           </div>
-          <div class="segmented" id="report-tabs"></div>
         </div>
-        <div id="report-detail" class="report-detail"></div>
-      </section>
+        <div id="lib-results" class="lib-results"></div>
 
-      <section class="analytics-section" id="sources">
-        <div class="section-head">
-          <p class="label">Sources</p>
-          <h2>Traceable inputs, light repository</h2>
+        <div class="sub-head"><p class="label">Methodology &amp; sources</p></div>
+        <div class="partners-split">
+          <article class="side-block">
+            <p class="label">External data sources</p>
+            <div id="source-list" class="def-list"></div>
+          </article>
+          <article class="side-block">
+            <p class="label">Methodology &amp; limits</p>
+            <div id="method-list" class="method-list"></div>
+          </article>
         </div>
-        <div id="source-grid" class="source-grid"></div>
-      </section>
-
-      <section class="analytics-section" id="methodology">
-        <div class="section-head">
-          <p class="label">Methodology</p>
-          <h2>How this V2 dataset should be read</h2>
-        </div>
-        <div id="methodology-grid" class="methodology-grid"></div>
       </section>
     </main>
 
     <footer class="site-footer">
       <div class="footer-content">
-        <p>This platform is developed by the <strong>Digital Economy Promotion Agency (DEPA)</strong> and the <strong>Smart City Thailand Office</strong>, under the Ministry of Digital Economy and Society of Thailand.</p>
-        <p>This V2 workbench keeps raw reports out of git while preserving structured analytics and source links for review.</p>
+        <p>This platform is developed by the <strong>Digital Economy Promotion Agency (DEPA)</strong> and the <strong>Smart City Thailand Office</strong>, under the Ministry of Digital Economy and Society of Thailand — a contribution to the ASEAN Smart Cities Network.</p>
+        <p>A space to share, learn, and build. The data behind it is synthesized from official ASEAN documents and released as open data for everyone.</p>
         <div class="footer-logos">
           <img src="logos/depa.png" alt="Digital Economy Promotion Agency (DEPA)" />
           <img src="logos/mdes.png" alt="Ministry of Digital Economy and Society" />
           <img src="logos/smart-city-thailand.svg" alt="Smart City Thailand Office" />
         </div>
-        <p class="footer-fine">Built from ASEAN source documents. Public information only.</p>
+        <p class="footer-fine">Built from ASEAN source documents. Public information only. Not an official ASEAN publication.</p>
       </div>
     </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <script src="app.js?v=21"></script>
+    <script src="app.js?v=31"></script>
   </body>
 </html>
