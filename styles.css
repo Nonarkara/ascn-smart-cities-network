@@ -185,6 +185,11 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .ascap-pillar .num { color: var(--muted); font-weight: 800; font-size: 0.7rem; }
 
 /* ---------- Cities ---------- */
+.cities-related { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.8rem; }
+.cities-rel-link { display: block; border: 1px solid var(--line); padding: 0.6rem 0.9rem; text-decoration: none; flex: 1; min-width: 200px; }
+.cities-rel-link:hover { border-color: var(--navy); }
+.cities-rel-label { display: block; font-size: 0.66rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--navy); }
+.cities-rel-desc { display: block; font-size: 0.78rem; color: var(--ink-2); margin-top: 0.2rem; }
 .cities-layout { display: grid; grid-template-columns: 1.45fr 1fr; gap: 1.4rem; margin-bottom: 1.6rem; }
 .map-col { display: grid; gap: 0.5rem; align-content: start; }
 .sea-map { width: 100%; height: 30rem; border: 1px solid var(--line-soft); background: var(--surface); }
