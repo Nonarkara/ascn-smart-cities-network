@@ -1747,3 +1747,24 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 @media (max-width: 720px) {
   .geo-grid { grid-template-columns: 1fr; }
 }
+
+
+/* ── Essay executive summary ───────────────────────────────────────────── */
+.essay-exec-summary {
+  background: var(--surface);
+  border-left: 3px solid var(--amber);
+  padding: 1.2rem 1.4rem;
+  margin-bottom: 1.5rem;
+}
+.essay-exec-summary h3 {
+  margin-top: 0;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--amber);
+}
+.essay-exec-summary p {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--ink-2);
+}
