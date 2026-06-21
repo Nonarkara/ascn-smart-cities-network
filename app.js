@@ -134,7 +134,7 @@ function renderOverview() {
     [s.completed, "Completed", "concluded"],
   ];
   $("#kpi-grid").innerHTML = kpis.map(([v, l, n]) => `<article class="kpi"><strong>${fmt.format(v)}</strong><span>${l} — ${n}</span></article>`).join("");
-  $("#gap-headline").textContent = "The dashboard the network never had.";
+  $("#gap-headline").textContent = "The performance question no official report asks.";
   $("#gap-body").textContent = s.the_gap;
   $("#evidence-status").textContent = `${state.data.reports.length} M&E reports · ${state.data.projects.length} appendix rows · ${state.K.documents.length} source documents.`;
   const fa = [...state.K.framework.focus_areas].sort((a, b) => b.share - a.share);
@@ -626,6 +626,151 @@ function renderInsights() {
     return `<div class="imd-row"><span class="imd-rank">#${c.rank}</span><span class="imd-city">${esc(c.city)}</span><div class="imd-track"><div class="imd-fill${c.city === "Singapore" ? " imd-fill--sg" : ""}" style="width:${barW}%"></div></div><span class="imd-rating ${c.rating === "A" ? "imd-rating--a" : c.rating === "B" ? "imd-rating--b" : "imd-rating--c"}">${esc(c.rating)}</span><span class="ig-traj-delta ${dCls}">${dStr}</span></div>`;
   }).join("");
   $("#ig-imd").innerHTML = `<div class="imd-wrap">${imdRows}</div><p class="ig-note">142 cities ranked by resident perception of structures &amp; technology. ASCN produces no internal ranking of its cities. Source: IMD World Competitiveness Center 2024.</p>`;
+
+  // ── 10. Academic research map — languages & countries of origin ───────────
+  // Source: Kimi_Agent_ASCN Research/ASCN_Academic_Perspectives_Report.md
+  const LANG_DATA = [
+    { lang: "English", n: 218, share: 95.2, countries: "Singapore, UK, Australia, US, Indonesia, Thailand, Malaysia, Philippines" },
+    { lang: "Indonesian/Malay", n: 4, share: 1.7, countries: "Indonesia" },
+    { lang: "Thai", n: 3, share: 1.3, countries: "Thailand" },
+    { lang: "Chinese", n: 2, share: 0.9, countries: "China" },
+    { lang: "Korean", n: 1, share: 0.4, countries: "South Korea" },
+    { lang: "Vietnamese", n: 1, share: 0.4, countries: "Vietnam" },
+  ];
+  const langMax = LANG_DATA[0].n;
+  const langRows = LANG_DATA.map((l) => {
+    const barW = Math.max(2, (l.n / langMax) * 100);
+    return `<div class="bar-row"><span>${esc(l.lang)} <em class="bar-sub">${esc(l.countries)}</em></span><div class="bar-track"><div class="bar-fill" style="width:${barW}%"></div></div><strong>${l.n} <em class="bar-sub">${l.share}%</em></strong></div>`;
+  }).join("");
+  const countrySchol = [
+    { country: "Singapore", n: 45, note: "NUS, LKYSPP, SMU, ISEAS — dominant critical voice" },
+    { country: "Indonesia", n: 35, note: "UGM, UI, Unhas, BINUS — implementation & diplomacy focus" },
+    { country: "UK / Australia", n: 30, note: "Bristol, Cambridge, Sydney, ANU — governance & rights" },
+    { country: "Thailand", n: 18, note: "Chula, Thammasat, KMUTT — city-level & policy studies" },
+    { country: "Malaysia / Philippines", n: 16, note: "UKM, UP Diliman, De La Salle — digital inclusion, LGU capacity" },
+    { country: "Japan / Korea / China", n: 12, note: "Partner-country perspectives on investment & technology transfer" },
+  ];
+  const csRows = countrySchol.map((c) => `<div class="lang-country-row"><span class="lang-country-n">${c.n}</span><span class="lang-country-name">${esc(c.country)}</span><span class="lang-country-note">${esc(c.note)}</span></div>`).join("");
+  $("#ig-language-map").innerHTML = `
+    <div class="lang-split">
+      <div class="lang-col">
+        <p class="ig-subhead">Languages of ASCN scholarship (229+ works)</p>
+        <div class="ig-bars">${langRows}</div>
+      </div>
+      <div class="lang-col">
+        <p class="ig-subhead">Research production by country/institution</p>
+        <div class="lang-country-list">${csRows}</div>
+      </div>
+    </div>
+    <p class="ig-note">Source: ASCN Academic Perspectives Report (July 2025). English-language scholarship dominates; local-language work is growing but remains underrepresented in the critical canon.</p>`;
+
+  // ── 11. Stacked area — portfolio composition by focus area, 2022–2025 ─────
+  const FOCUS_ORDER = ["Civic & Social", "Built Infrastructure", "Quality Environment", "Safety & Security", "Industry & Innovation", "Health & Well-Being"];
+  const YEARS_F = ["2022", "2023", "2024", "2025"];
+  const focusStack = YEARS_F.map((y) => {
+    const segs = FOCUS_ORDER.map((fa) => ({ fa, pct: state.data.derived.focus_trends[fa][y] })).reverse();
+    let acc = 0;
+    const divs = segs.map((s) => {
+      const h = s.pct;
+      const style = `bottom:${acc}%;height:${h}%;background:${FOCUS_COLORS[s.fa]};width:100%;position:absolute;`;
+      acc += h;
+      return `<div class="stack-seg" style="${style}" title="${esc(s.fa)}: ${h}% (${y})"></div>`;
+    }).join("");
+    const labels = segs.filter((s) => s.pct >= 10).map((s) => `<span style="color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4)">${s.pct}%</span>`).join("");
+    return `<div class="stack-col"><div class="stack-bars">${divs}</div><span class="stack-year">${y}</span></div>`;
+  }).join("");
+  const focusLegend = FOCUS_ORDER.map((fa) => `<span class="ig-spec-leg"><span style="background:${FOCUS_COLORS[fa]}"></span>${esc(fa)}</span>`).join("");
+  $("#ig-focus-stack").innerHTML = `
+    <div class="stack-wrap">${focusStack}</div>
+    <div class="stack-legend">${focusLegend}</div>
+    <p class="ig-note">Built Infrastructure overtook Civic &amp; Social by 2024. Health &amp; Well-Being has stayed at 6% for four consecutive years. Source: ASCN M&amp;E Reports 2022–2025.</p>`;
+
+  // ── 12. Country slope graph — 2022 baseline vs 2025 ───────────────────────
+  const countrySlopeData = Object.entries(state.data.derived.appendix_summaries).reduce((acc, [year, sum]) => {
+    Object.entries(sum.by_country).forEach(([country, n]) => {
+      if (!acc[country]) acc[country] = {};
+      acc[country][year] = n;
+    });
+    return acc;
+  }, {});
+  const slopeRows = Object.entries(countrySlopeData)
+    .map(([country, vals]) => ({ country, base: vals["2022"] || 0, curr: vals["2025"] || 0 }))
+    .filter((r) => r.base > 0 || r.curr > 0)
+    .sort((a, b) => b.curr - a.curr);
+  const slopeMax = Math.max(...slopeRows.map((r) => Math.max(r.base, r.curr)), 1);
+  const slopeHtml = slopeRows.map((r) => {
+    const delta = r.curr - r.base;
+    const dStr = delta > 0 ? `+${delta}` : `${delta}`;
+    const dCls = delta > 0 ? "traj-up" : delta < 0 ? "traj-dn" : "traj-flat";
+    const leftPct = (r.base / slopeMax) * 100;
+    const rightPct = (r.curr / slopeMax) * 100;
+    const flat = delta === 0;
+    return `
+      <div class="slope-row">
+        <span class="slope-country">${esc(r.country)}</span>
+        <span class="slope-val slope-val--base">${r.base}</span>
+        <div class="slope-track">
+          <div class="slope-dot slope-dot--base" style="left:${leftPct}%"></div>
+          <div class="slope-dot slope-dot--curr${flat ? " slope-dot--flat" : ""}" style="left:${rightPct}%"></div>
+          <div class="slope-line${flat ? " slope-line--flat" : delta > 0 ? " slope-line--up" : " slope-line--dn"}" style="left:${Math.min(leftPct, rightPct)}%;width:${Math.abs(rightPct - leftPct)}%"></div>
+        </div>
+        <span class="slope-val slope-val--curr">${r.curr}</span>
+        <span class="ig-traj-delta ${dCls}">${esc(dStr)}</span>
+      </div>`;
+  }).join("");
+  $("#ig-country-slope").innerHTML = `
+    <div class="slope-header"><span class="slope-h-country">Country</span><span class="slope-h-val">2022</span><span class="slope-h-track">→</span><span class="slope-h-val">2025</span><span class="slope-h-delta">Δ</span></div>
+    <div class="slope-wrap">${slopeHtml}</div>
+    <p class="ig-note">Thailand and Malaysia drove the 2024–25 surge. Vietnam is the only country with zero growth across all four cycles. Myanmar kept adding projects despite the 2021 crisis. Source: ASCN M&amp;E Reports 2022–2025.</p>`;
+
+  // ── 13. Project churn funnel ──────────────────────────────────────────────
+  // Track unique city+project combinations across the four cycles
+  const uniq = {};
+  state.data.projects.forEach((p) => {
+    const key = `${p.country}|${p.city}|${p.project}`;
+    if (!uniq[key]) uniq[key] = { key, country: p.country, city: p.city, project: p.project, years: new Set() };
+    uniq[key].years.add(String(p.report_year));
+  });
+  const allKeys = Object.values(uniq);
+  const allFour = allKeys.filter((p) => p.years.size === 4).length;
+  const only2025 = allKeys.filter((p) => p.years.size === 1 && p.years.has("2025")).length;
+  const only2022 = allKeys.filter((p) => p.years.size === 1 && p.years.has("2022")).length;
+  const intermittent = allKeys.filter((p) => p.years.size >= 2 && p.years.size <= 3).length;
+  $("#ig-churn").innerHTML = `
+    <div class="churn-funnel">
+      <div class="churn-total"><span class="churn-n">${allKeys.length}</span><span class="churn-label">unique city+project combinations, 2022–2025</span></div>
+      <div class="churn-bar churn-bar--total" style="width:100%"></div>
+      <div class="churn-segs">
+        <div class="churn-seg" style="width:${(allFour / allKeys.length) * 100}%"><span class="churn-seg-n">${allFour}</span><span class="churn-seg-label">Tracked all 4 cycles</span></div>
+        <div class="churn-seg churn-seg--new" style="width:${(only2025 / allKeys.length) * 100}%"><span class="churn-seg-n">${only2025}</span><span class="churn-seg-label">New in 2025</span></div>
+        <div class="churn-seg churn-seg--drop" style="width:${(only2022 / allKeys.length) * 100}%"><span class="churn-seg-n">${only2022}</span><span class="churn-seg-label">Dropped after 2022</span></div>
+        <div class="churn-seg churn-seg--int" style="width:${(intermittent / allKeys.length) * 100}%"><span class="churn-seg-n">${intermittent}</span><span class="churn-seg-label">Intermittent</span></div>
+      </div>
+    </div>
+    <p class="ig-note">A project that disappears from the appendix is not necessarily cancelled — but it cannot be verified or compared across cycles. Source: ASCN M&amp;E appendix rows 2022–2025.</p>`;
+
+  // ── 14. Completion rate by country ────────────────────────────────────────
+  // Source: ASCN M&E Report 2025 Appendix + ascn_dim05.md §4.2
+  const compByCountry = [
+    { country: "Singapore", completed: 4, total: 4, rate: 100 },
+    { country: "Lao PDR", completed: 2, total: 9, rate: 22.2 },
+    { country: "Cambodia", completed: 4, total: 17, rate: 23.5 },
+    { country: "Brunei Darussalam", completed: 3, total: 4, rate: 75 },
+    { country: "Malaysia", completed: 1, total: 26, rate: 3.8 },
+    { country: "Myanmar", completed: 1, total: 14, rate: 7.1 },
+    { country: "Indonesia", completed: 1, total: 13, rate: 7.7 },
+    { country: "Philippines", completed: 0, total: 8, rate: 0 },
+    { country: "Thailand", completed: 0, total: 20, rate: 0 },
+    { country: "Viet Nam", completed: 0, total: 6, rate: 0 },
+  ].sort((a, b) => b.rate - a.rate);
+  const compMax = 100;
+  const compRows2 = compByCountry.map((c) => {
+    const barW = Math.max(2, (c.rate / compMax) * 100);
+    return `<div class="bar-row"><span>${esc(c.country)}</span><div class="bar-track"><div class="bar-fill ${c.rate === 100 ? "amber" : c.rate === 0 ? "" : ""}" style="width:${barW}%;background:${c.rate === 0 ? "var(--muted)" : c.rate === 100 ? "var(--ink-2)" : "var(--amber)"}"></div></div><strong>${c.rate}% <em class="bar-sub">${c.completed}/${c.total}</em></strong></div>`;
+  }).join("");
+  $("#ig-completion-rate").innerHTML = `
+    <div class="ig-bars">${compRows2}</div>
+    <p class="ig-note">Completion is self-defined by cities with no standardized criteria. 39% of the 18 "completed" projects are planning or strategy documents. Source: ASCN M&amp;E Report 2025 + ascn_dim05.md §4.2.</p>`;
 }
 
 /* ---------------- Open Data / Library ---------------- */
@@ -1044,6 +1189,12 @@ function renderResearch() {
       body: "Half of ASEAN's member states rank as authoritarian or semi-authoritarian. The Democracy Index 2023 places Cambodia at rank 121, Vietnam at 136, Laos at 159, Myanmar at 166. Putra (2026), in F1000Research with open international peer review, identifies two structural risks: surveillance and control infrastructure deployed into governance contexts where democratic accountability is already constrained; and development models imposed by external funders (JICA, China BRI/Huawei) whose interests may not align with vulnerable communities. De Jonge (2023), applying a knowledge commons framework to ASCN's transport and energy projects, adds a related finding: the same top-down governance structures administering the network's smart city ambitions have historically treated economic efficiency as a constraint on rights, not the reverse. AI-driven civic participation is not a current feature of any ASCN project. Phnom Penh's experience of forced privatisation disadvantaging low-income residents is documented in the same literature. This is not a fringe concern — it is the convergent finding of the most recent wave of ASCN scholarship.",
       tags: ["Putra 2026", "de Jonge 2023", "Crumpton et al. 2021"],
     },
+    {
+      n: "08", label: "Perceptions &amp; Languages",
+      heading: "Who writes about ASCN — and from where",
+      body: "The academic literature on ASCN is overwhelmingly in English (95% of 229+ catalogued works) and produced from Singaporean, British, Australian, and Indonesian institutions. Local-language scholarship — Indonesian, Thai, Vietnamese, Chinese, Korean — exists but is underrepresented in the critical canon. Country perceptions diverge sharply: Indonesia frames its Shepherd role as regional leadership; Singapore is read as architect and knowledge broker; Thailand treats ASCN as an extension of its national smart-city programme; Vietnam is quiet in both M&amp;E reporting and critical scholarship; Cambodia and Laos emphasize external-partner support; Myanmar's participation persists through crisis. The result is not one ASCN narrative but several — each shaped by national capacity, political system, and proximity to the network's power centre.",
+      tags: ["Academic Perspectives Report 2025", "Prayogo &amp; Juned 2025", "Kong &amp; Woods 2021"],
+    },
   ];
 
   const FAQ = [
@@ -1052,6 +1203,7 @@ function renderResearch() {
     { q: "What is a Smart City Action Plan (SCAP)?", a: "Each ASCN member city develops a SCAP: Vision (what the city aims to achieve), Focus Areas (which of the 6 ASCN categories it is prioritising), Strategic Targets (measurable, time-bound goals), and Priority Projects (2–3 projects the city wants to implement, with support requirements specified). The original 26 SCAPs were developed at the Smart Cities Governance Workshop in Singapore, May 2018. They are living documents updated annually." },
     { q: "Has ASCN produced measurable results?", a: "The network has produced measurable outputs: 134 documented projects, 38 cities, 4 M&E cycles, bilateral partnerships with Japan, South Korea, Australia, the EU, and others, and an ASEAN Smart City Investment Toolkit launched in 2024. Whether those outputs have produced measurable outcomes — improved quality of life for residents — is a question the current M&E framework is not yet designed to answer systematically. Individual cities have documented results: Sumedang's stunting rate fell from 32.2% to 7.89% through data-driven social services governance. Cross-network outcome measurement remains an open challenge." },
     { q: "What are the main academic criticisms?", a: "Five structural concerns appear consistently across the literature. (1) Kong &amp; Woods (2021): Singapore's foundational role produces technocratic regionalism — its urban model circulates as neutral regional knowledge. (2) Tan et al. (2021): knowledge transfer is voluntary and shallow; cities inspire each other but do not systematically learn from each other. (3) Crumpton et al. (2021): vast capacity gaps between member states — and authoritarian governance tendencies in several — undermine the conditions for participatory smart city outcomes. (4) Kanaev &amp; Fedorenko (2023): what is trivially achievable for Singapore is a genuine developmental challenge for Cambodia, Laos, and Myanmar. (5) Putra (2026): deploying surveillance infrastructure into authoritarian and semi-authoritarian governance contexts is not a neutral technical act — half of ASEAN ranks as authoritarian or semi-authoritarian in the Democracy Index 2023; de Jonge (2023) adds that existing top-down governance structures treat economic efficiency as a constraint on rights, not a complement. The most consistent finding across all five: the gap between output tracking and outcome measurement." },
+  { q: "Is ASCN viewed the same way across Southeast Asia?", a: "No. Country perceptions diverge with capacity and political context. Indonesia frames its Shepherd role as regional smart-city leadership. Singapore is seen — including by its own scholars — as the network's architect and primary knowledge broker. Thailand treats ASCN as a regional extension of its domestic smart-city programme. Vietnam participates but produces little public commentary or critical scholarship. Cambodia and Lao PDR emphasize external partner support and capacity gaps. Myanmar's participation continues technically despite the post-2021 crisis, though civil society opposes engagement with the junta. Brunei and Timor-Leste have the smallest footprints and the quietest public debates." },
     { q: "What happens at the annual meeting?", a: "The ASCN Annual Meeting is hosted by the Chair country and attended by National Representatives (SOM level) and Chief Smart City Officers (Director level) from each member city. Agenda: progress reporting against SCAPs, M&E results discussion, new projects seeking partnerships, and bilateral engagement sessions with external partners. Meeting outcomes are submitted to ASEAN Leaders through the Joint Consultative Meeting and ASEAN Coordinating Council. Eight consecutive meetings have been held since 2018." },
     { q: "How does a city join?", a: "Membership is state-based: a city is nominated by its national government, not independently. The original 26 were nominated at founding in 2018; subsequent additions were added through national nomination endorsed at annual meetings. A city interested in joining should engage its national ministry responsible for urban development or digital economy to initiate the nomination process." },
   ];
@@ -1135,7 +1287,7 @@ function renderResearch() {
 <div class="section-head">
   <p class="label">Research</p>
   <h2>What the scholarship says — and what it misses</h2>
-  <p class="lede">A synthesis of fourteen peer-reviewed papers and official documents on ASCN. Seven structural themes, an insider FAQ, and a full bibliography — written by a participant who has attended every annual meeting since 2018.</p>
+  <p class="lede">A synthesis of fourteen peer-reviewed papers and official documents on ASCN. Eight structural themes, an insider FAQ, and a full bibliography — written by a participant who has attended every annual meeting since 2018.</p>
 </div>
 
 <div class="research-section">
@@ -1178,6 +1330,27 @@ function renderResearch() {
       <p class="paper-summary">${p.summary}</p>
       <div class="paper-themes">${p.themes.map(th => `<span class="paper-theme-tag">${th}</span>`).join("")}</div>
     </article>`).join("")}
+  </div>
+</div>
+
+<div class="research-section">
+  <p class="research-section-label label">ACADEMIC GEOGRAPHY</p>
+  <div class="geo-grid">
+    <div class="geo-col">
+      <p class="geo-h">Languages of scholarship</p>
+      <p class="geo-body">Of 229+ works catalogued, 218 (95%) are in English. Indonesian/Malay contributes 4, Thai 3, Chinese 2, Korean 1, Vietnamese 1, Japanese-linked English 3. Local-language scholarship is growing — especially in Indonesia and Thailand — but the critical canon is still written largely in English from Singapore, UK, and Australian institutions.</p>
+    </div>
+    <div class="geo-col">
+      <p class="geo-h">Country narratives</p>
+      <ul class="geo-list">
+        <li><b>Indonesia</b> — Shepherd as smart-city diplomacy; pivot to bankable projects.</li>
+        <li><b>Singapore</b> — Architect, knowledge broker, and object of technocratic-regionalism critique.</li>
+        <li><b>Thailand</b> — National smart-city programme as regional showcase.</li>
+        <li><b>Vietnam</b> — State-led, quiet in ASCN deliberations; strong domestic tech vendors.</li>
+        <li><b>Cambodia / Lao PDR</b> — External-partner dependent; capacity and rights concerns.</li>
+        <li><b>Myanmar</b> — Participation persists through crisis; civil-society opposition.</li>
+      </ul>
+    </div>
   </div>
 </div>
 
