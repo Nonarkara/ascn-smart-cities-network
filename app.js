@@ -12,7 +12,7 @@ const tileLayers = {
   night: { url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", attr: "&copy; OpenStreetMap &copy; CARTO" },
 };
 
-const TABS = ["overview", "history", "cities", "projects", "framework", "partners", "insights", "data"];
+const TABS = ["overview", "history", "cities", "projects", "framework", "partners", "insights", "data", "essay"];
 
 const state = {
   data: null, K: null, C: [], L: null, LF: null,
@@ -102,7 +102,7 @@ function renderTab(tab) {
   ({
     overview: renderOverview, history: renderHistory, cities: renderCitiesView,
     projects: renderProjects, framework: renderFramework, partners: renderPartners,
-    insights: renderInsights, data: renderOpenData,
+    insights: renderInsights, data: renderOpenData, essay: renderEssay,
   }[tab] || (() => {}))();
   state.rendered.add(tab);
 }
@@ -524,6 +524,118 @@ async function loadJson(path) {
   const res = await fetch(`${path}?v=32`);
   if (!res.ok) throw new Error(`Failed to load ${path}: ${res.status}`);
   return res.json();
+}
+
+/* ---------------- Essay ---------------- */
+function renderEssay() {
+  const p = (text) => `<p class="essay-p">${text}</p>`;
+  const h = (n, text) => `<h${n} class="essay-h${n}">${text}</h${n}>`;
+  const pull = (text, attr) => `<blockquote class="essay-pull">${text}${attr ? `<cite>${attr}</cite>` : ""}</blockquote>`;
+  const note = (n, text) => `<div class="essay-note"><span class="essay-n">[${n}]</span>${text}</div>`;
+
+  const essay = `
+<div class="essay-header">
+  <p class="label">Essay</p>
+  <h2 class="essay-title">Cities are the whole story.<br>We just never had the data to tell it.</h2>
+  <p class="essay-byline">Non Arkaraprasertkul, PhD — Senior Expert, Smart City Promotion, DEPA Thailand · Architect · Urban Planner</p>
+  <p class="essay-meta-line">Published 2026 · ASCN Open Platform · <span class="essay-tag">Perspective</span></p>
+</div>
+
+<div class="essay-body">
+
+  <div class="essay-section">
+    ${h(3, "I. The room where it started")}
+    ${p("It was a Sunday morning in Singapore, July 2018. I was sitting in a meeting room at Marina Bay Sands — that building shaped like a tray balanced on three towers, which Singapore built to show the world what ambition looks like when you have enough money and a good architect — listening to Lee Hsien Loong announce something called the ASEAN Smart Cities Network. Twenty-six cities. Ten countries. One network. He sounded very certain about it. I was less certain, but polite about it, which is a skill you develop quickly when you are Thai, surrounded by Singaporeans, in a room where Singapore wrote the agenda.")}
+    ${p("What struck me was not the announcement. Announcements in ASEAN are cheap. What struck me was the governance structure that came with it: a rotating annual Chair, which is how ASEAN does everything, and a 'Shepherd' — a new concept, proposed by Singapore, accepted without much debate, which would hold institutional continuity across the rotating chairs. Singapore was the Inaugural Shepherd. I noted this and said nothing, which is also a skill you develop quickly.")}
+    ${p("I have been working in this network since its founding year. DEPA — Thailand's Digital Economy Promotion Agency — was the national focal point during Thailand's chair year in 2019, and has remained one of the more active member institutions since. I have attended enough ASCN meetings to know which of the 26 cities in the original pilot have serious programs and which sent someone from the communications department who was not entirely sure why they were there. I have read all four M&E reports. I built this platform because I got tired of information that existed only in PDF appendices that nobody reads.")}
+    ${p("This essay is my read on why any of this matters, what is actually happening, and what is being carefully not said.")}
+  </div>
+
+  <div class="essay-section">
+    ${h(3, "II. Why cities at all")}
+    ${p("The city is not a policy problem. It is the oldest human invention. For ten thousand years — before electricity, before sewage systems, before anything we would recognise as governance — people chose to live in density. They chose the noise and the competition and the disease risk because the alternative, being alone or in a small group away from other people, was worse. Cities are where ideas meet other ideas and produce things neither could produce alone. They are, if you want to get philosophical about it (and I do), the physical infrastructure of civilisation.")}
+    ${p("The urbanisation happening in ASEAN right now is not unprecedented in human history, but it is unprecedented in speed. By 2030, the region will add roughly 90 million new urban residents — the population of Germany — in cities that were not designed for this density, managed by administrations that were not designed for this speed, with data systems that were built for the populations that used to live there. Phnom Penh's population doubled in fifteen years. Da Nang went from a provincial town to a regional hub in a decade. Vientiane is absorbing migrants from across Lao PDR faster than its housing stock can accommodate them. None of this is happening according to a masterplan. It is happening because people are making rational individual decisions to move to where the opportunities are, which is what cities have always been: the place where the opportunities are.")}
+    ${pull("Without data, decisions are made based on precedents, heuristics and beliefs, which are only useful when the problem you face now is the same as the problem you faced before. City governments managing rapid urbanisation are not facing the same problems they faced before. They are facing new problems at speed, with old tools.", "Non Arkaraprasertkul — The ASEAN Magazine, Issue 14, 2021")}
+    ${p("What makes cities legible to themselves — what allows them to manage rather than just react — is data. Traffic patterns. Energy loads. Health outcomes by district. School enrollment against housing density. Air quality against industrial zoning decisions. Most of this data already exists, in sensors and cameras and phones and payment terminals scattered across every major ASEAN city. The question is not whether the data exists. The question is whether anybody is reading it, and what they are authorised to do when they do.")}
+  </div>
+
+  <div class="essay-section">
+    ${h(3, "III. Why smart cities, and why markets")}
+    ${p("When DEPA published the Smart City Primer — a framework document I helped develop, which I mention only because most government publications have no named author, which is its own kind of institutional critique — the framing we chose was deliberately not about technology. The technology was always secondary. The argument was about governance: that the gap between what cities know about themselves and what they are managing to is the fundamental problem, and that closing it is a precondition for everything else.")}
+    ${p("The version of smart cities I am not interested in is the one that leads with surveillance infrastructure. Facial recognition at transit stations. Social credit systems that rank citizen behaviour. The authoritarian applications of the same underlying sensor networks that, in a different governance context, would show you which intersections are dangerous, which clinics are overcrowded, which neighborhoods are being underserved. The technology is neutral. The governance is not.")}
+    ${p("The version I am interested in starts from a different premise: that a viable, competitive market introduces and scales technology faster and more effectively than any government mandate. One Laptop per Child is the cautionary tale everybody who works in this space should have memorised. The programme spent over a billion dollars placing laptops in the hands of children who did not have reliable electricity, in schools whose teachers had not been trained to use them, in countries whose infrastructure could not support them. Meanwhile, cheap smartphones scaled on their own because people wanted them and the market obliged. The lesson should be obvious: technology that serves a genuine human need does not need to be mandated. It gets adopted. What government can do is not push technology, but remove the obstacles that prevent adoption — interoperability standards, open data infrastructure, regulatory clarity for private actors who want to build on city data, procurement rules that do not automatically favour the largest vendor over the most appropriate solution.")}
+    ${p("This is what makes ASCN worth defending. In its best reading, it is a network that creates exactly these conditions: a shared framework that reduces the coordination cost of cross-border data exchange, a bilateral-partner ecosystem that brings financing for infrastructure that individual cities cannot fund alone, and a learning platform that lets Mandalay benefit from what Da Nang figured out about water management without having to spend ten years figuring it out independently. The problem is that this best reading is aspirational. The actual reading is more complicated.")}
+  </div>
+
+  <div class="essay-section">
+    ${h(3, "IV. The Singapore problem")}
+    ${p("In early 2024, the Thai entertainment industry was furious. Taylor Swift was coming to Southeast Asia — six shows in Singapore, none anywhere else. This was not an accident of logistics. Thailand's Prime Minister Srettha Thavisin publicly claimed that Singapore had paid approximately USD $3 million per show to AEG, Swift's promoter, with a contractual condition that no other ASEAN country could host the Eras Tour. Singapore's Culture Minister Edwin Tong confirmed that grants had been paid but said the actual figure was 'not accurate and not anywhere as high as speculated'; the precise amount remained undisclosed behind a confidentiality clause. PM Lee Hsien Loong confirmed 'certain incentives' and called it a 'very successful arrangement.' Thailand, the Philippines, and Indonesia lodged formal protests. Philippines lawmaker Joey Salceda estimated USD $60 million in regional tourism revenue that would have been distributed across the region had Swift performed in multiple cities. Singapore said it was doing what cities do: compete for investment.")}
+    ${p("I want to sit with that phrase: compete for investment. Singapore is a city-state of 6 million people with a GDP per capita that exceeds Switzerland, a public transport system that is a graduate-school case study in urban infrastructure, and a government that owns the land its citizens live on and therefore controls its urban development with a precision that no other ASEAN member could legally replicate even if it wanted to. Using public tourism grants to lock a concert out of countries that collectively have 600 million people and significantly less capital is not competition between comparable actors. It is a much larger and richer player purchasing exclusivity at its neighbors' expense. The former Singapore Permanent Secretary for Foreign Affairs dismissed the criticism as 'sour grapes' and called it 'being better, faster and more creative than the competition.' You may judge for yourself how that reads.")}
+    ${p("The ASEAN Smart Cities Network has the same structure. Singapore wrote the governance framework. Singapore proposed the Shepherd model, which it designed as a role distinct from the annual rotating Chair — a role that holds institutional memory, coordinates bilateral partnerships, and sets the knowledge agenda across administrations. Singapore was the Inaugural Shepherd, from 2019 to 2023. When that term ended, Indonesia took over, which is better, but the institutional patterns were set. The frameworks, the capacity-building curricula, the bilateral partnership channels that generate data and implementation experience — all of these were routed through Singapore's institutional apparatus during the formative years of the network. This is not a conspiracy. It is a design choice, and design choices have consequences even when the intentions are benign.")}
+    ${pull("The city-model that gets held up as the ASCN exemplar — Jurong Innovation District, Tengah eco-town, the city-state's various masterplanned developments — is built by a government that owns the land, manages a population that has no independent city government to vote against the plan, and operates with a budget that no other ASEAN municipality commands. Translating that model to Bangkok or Manila or Phnom Penh is not a knowledge-transfer problem. It is a category error.")}
+    ${p("I have colleagues who work at the Singaporean institutions involved in ASCN and they are serious people doing serious work. I am not arguing that Singapore is malicious. I am arguing that the structure produces malicious effects even when the individuals within it are acting in good faith, which is what structural critique actually means. The network should not be dissolved. It should be restructured. Indonesia's shepherdship, which began in 2023, is a meaningful step. What comes next matters more than what has happened so far.")}
+  </div>
+
+  <div class="essay-section">
+    ${h(3, "V. A note on the Centre for Livable Cities")}
+    ${p("The Centre for Livable Cities is Singapore's research institution that produces most of the published knowledge product circulated through ASCN. It publishes reports. They are well-designed, professionally produced, and packaged in layouts that make government officials feel that something serious has been accomplished. The question I want to answer precisely, because precision matters more than politeness here, is: how much of this is actually read and used, and by whom?")}
+    ${p("The academic literature on ASCN — which I have read in full, because it is not long — cites CLC rarely. Taeihagh, Tan & Sivarajah, writing in Sustainability in 2021, conducted nineteen key-informant interviews with ASCN participants and produced the most rigorous empirical analysis of the network to date. They cite ASEAN Secretariat documents. They cite the policy transfer and regional governance literature. They do not cite CLC. Costoya, writing in Politics and Governance in 2022, characterised ASCN as 'experimentalist governance without diagnostic monitoring' — a phrase that is simultaneously the most accurate description of the network I have encountered and a polite way of saying that the knowledge production is not connected to outcomes measurement. Kong and Woods, in Cities in 2021, examined 'technocratic regionalism' in ASCN — the way a Singapore-led technical network can inadvertently export Singapore's institutional assumptions as if they were neutral methodologies. They do not cite CLC either.")}
+    ${p("CLC publishes what is called grey literature: government reports and white papers that circulate within the institutional system that funded them. Grey literature is not automatically useless — it can be an excellent primary source for understanding what institutions believe about themselves. But CLC's Urban Systems Studies series are essentially Singapore's city management practices, packaged as transferable models, distributed at workshops attended by the mid-level officials of cities where the conditions that made those practices work in Singapore simply do not exist. The report goes to the bookshelf. The bookshelf is in the office of someone who attended the workshop because their director told them to, and who will be transferred to a different portfolio in eighteen months. I have been in this room. I know what happens to the book.")}
+    ${p("A blank page is more honest than a report that asserts knowledge transfer that is not happening. What knowledge-building actually requires is the accumulation of city-specific evidence by people who live in those cities and have to answer for the results. That work, for most ASEAN cities, has barely started. CLC is not doing it, and is not designed to do it. An institution that answers to Singapore's Ministry of National Development is not designed to produce findings that are inconvenient for Singapore's institutional position in the network. This is not a criticism of the people who work there. It is a description of what institutions do.")}
+  </div>
+
+  <div class="essay-section">
+    ${h(3, "VI. So why are we here")}
+    ${p("I built this platform because the data existed and had no public face. Four M&E reports. Thirty-eight cities. A hundred and thirty-four projects. Hundreds of rows in PDF appendix tables that nobody downloads because the PDFs themselves are not easy to find, and the tables require extraction to be useful. Seven years of accumulated evidence about what the network is actually doing, invisible to everyone who is not already inside the institutional system.")}
+    ${p("The harder problem — whether ASCN evolves from a Singapore-Shepherd model into something that genuinely belongs to all ten member states, whether the M&E framework starts measuring outcomes instead of outputs, whether the knowledge production escapes the institutional gravity of its current configuration — is not a dashboard problem. It is a political problem. What a dashboard can do is make the political problem visible. Which city has the most projects? Bangkok, because Thailand staffed its participation seriously. Which has the fewest? Several, because the capacity to participate is not evenly distributed and the network has not addressed this. Which focus area is most funded? Transport, where bilateral partners like Japan and Australia have specific infrastructure interests. Which is least? Health and wellbeing, where outcomes are hardest to measure and therefore easiest to deprioritise.")}
+    ${p("You can see all of this in the data here. Whether it changes anything is a question I cannot answer. But the data is public, the platform is open, and the network — whatever its structural problems — is real. Thirty-eight cities. Eleven countries. Seven years. A hundred and thirty-four projects, some number of which have actually improved some number of people's lives in ways that nobody has yet measured. That is a starting point. The network that decides to own this data, and to use it to hold itself accountable, could be something different from the network that currently exists. Whether it will decide to be is what I am watching.")}
+  </div>
+
+</div>
+
+<div class="essay-refs">
+  <p class="label">Sources cited</p>
+  <div class="essay-ref-grid">
+    <div class="essay-ref-item">
+      <span class="essay-ref-n">[1]</span>
+      <div><b>Taeihagh, A., Tan, J.S. & Sivarajah, U.</b> (2021). "Smart City Policies and the Policy Transfer Process: A Case Study of the ASEAN Smart Cities Network." <i>Sustainability</i>, 13(11), 6502. MDPI. Based on 19 key informant interviews.</div>
+    </div>
+    <div class="essay-ref-item">
+      <span class="essay-ref-n">[2]</span>
+      <div><b>Costoya, X.</b> (2022). "South-South Cooperation and the Promise of Experimentalist Governance in ASCN." <i>Politics and Governance</i>, 10(3). Source of the characterisation "experimentalist governance without diagnostic monitoring."</div>
+    </div>
+    <div class="essay-ref-item">
+      <span class="essay-ref-n">[3]</span>
+      <div><b>Kong, L. & Woods, O.</b> (2021). "Scaling smartness, (de)provincialising the city? Singapore, ASEAN and the politics of smart urbanism." <i>Cities</i>, 115. Analysis of technocratic regionalism in ASCN.</div>
+    </div>
+    <div class="essay-ref-item">
+      <span class="essay-ref-n">[4]</span>
+      <div><b>Putra, B.A.</b> (2025). "Human Rights and the ASEAN Smart Cities Network." <i>F1000Research</i>, 14:733. The most direct critical analysis of ASCN's risks for marginalised communities.</div>
+    </div>
+    <div class="essay-ref-item">
+      <span class="essay-ref-n">[5]</span>
+      <div><b>Non Arkaraprasertkul, PhD</b> (2021). "Read the market. Respect the behaviour. Choose for yourselves." <i>The ASEAN Magazine</i>, Issue 14 — "The Road to Sustainable Cities." ASEAN Secretariat.</div>
+    </div>
+    <div class="essay-ref-item">
+      <span class="essay-ref-n">[6]</span>
+      <div><b>DEPA Thailand</b> (2023). <i>Smart City Primer</i> (Article No. 33). Digital Economy Promotion Agency. The framework document referenced in Section III.</div>
+    </div>
+    <div class="essay-ref-item">
+      <span class="essay-ref-n">[7]</span>
+      <div><b>Singapore Tourism Board / AEG grant, 2024</b>. Reported by Reuters, Bangkok Post, Philippine Star, Bloomberg. Thai PM Srettha Thavisin publicly claimed USD $3M per show paid to AEG (Anschutz Entertainment Group) with ASEAN exclusivity clause. Singapore's Culture Minister Edwin Tong confirmed grants were paid but denied the reported figure; PM Lee Hsien Loong confirmed "certain incentives." Estimated SGD $500M (~USD $370M) in tourist spending return. Formal protests from Thailand, Philippines, Indonesia.</div>
+    </div>
+    <div class="essay-ref-item">
+      <span class="essay-ref-n">[8]</span>
+      <div><b>ASCN M&E Reports 2022–2025</b>. ASEAN Secretariat. The primary data source for all project counts, city rosters, and focus-area breakdowns cited in Section VI. Full reports downloadable in the Library tab.</div>
+    </div>
+    <div class="essay-ref-item">
+      <span class="essay-ref-n">[9]</span>
+      <div><b>Prayogo, D. & Juned, M.</b> (2025). "Indonesia's Smart City Diplomacy Through ASCN Shepherdship (2023–2025)." <i>Journal of Social and Political Sciences</i>. Analyses Indonesia's shift from Singapore's conceptual framing toward pragmatic implementation.</div>
+    </div>
+  </div>
+</div>`;
+
+  $("#essay-content").innerHTML = essay;
 }
 
 async function init() {

@@ -345,6 +345,33 @@ td { color: var(--ink-2); font-size: 0.82rem; }
 .lib-src { color: var(--muted); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin: 0.15rem 0 0.45rem; }
 .lib-item p { margin: 0; color: var(--ink-2); font-size: 0.83rem; }
 
+/* ---------- Essay ---------- */
+.essay-wrap { width: var(--content); margin: 0 auto; padding: 2.5rem 0 4rem; }
+.essay-header { padding-bottom: 2rem; border-bottom: 1px solid var(--line); margin-bottom: 2.5rem; }
+.essay-title { font-size: 2rem; font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; color: var(--ink); margin: 0.75rem 0 1rem; }
+.essay-byline { font-size: 0.82rem; color: var(--ink-2); margin: 0 0 0.4rem; }
+.essay-meta-line { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+.essay-tag { border: 1px solid var(--line); padding: 0.1rem 0.4rem; color: var(--muted); font-size: 0.62rem; }
+.essay-body { max-width: 720px; }
+.essay-section { padding: 2rem 0; border-top: 1px solid var(--line-soft); }
+.essay-section:first-child { border-top: 0; padding-top: 0; }
+.essay-h3 { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber); margin: 0 0 1.25rem; }
+.essay-p { font-size: 0.95rem; line-height: 1.85; color: var(--ink-2); margin: 0 0 1.2em; }
+.essay-pull { border-left: 2px solid var(--amber); margin: 1.8rem 0; padding: 0.8rem 1.4rem; background: var(--surface); }
+.essay-pull p, .essay-pull { font-size: 0.93rem; line-height: 1.75; color: var(--ink); font-style: italic; margin: 0; }
+.essay-pull cite { display: block; margin-top: 0.5rem; font-size: 0.7rem; font-style: normal; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+.essay-refs { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--line); }
+.essay-refs .label { margin-bottom: 1rem; }
+.essay-ref-grid { display: grid; gap: 0; }
+.essay-ref-item { display: grid; grid-template-columns: 2.4rem 1fr; gap: 0.5rem 0.75rem; padding: 0.85rem 0; border-top: 1px solid var(--line-soft); align-items: start; font-size: 0.82rem; line-height: 1.55; color: var(--ink-2); }
+.essay-ref-item:first-child { border-top: 0; }
+.essay-ref-n { font-family: var(--mono, monospace); font-size: 0.7rem; font-weight: 700; color: var(--muted); padding-top: 0.15rem; }
+@media (max-width: 640px) {
+  .essay-title { font-size: 1.5rem; }
+  .essay-p { font-size: 0.88rem; line-height: 1.75; }
+  .essay-pull { padding: 0.6rem 1rem; }
+}
+
 /* ---------- Footer ---------- */
 .site-footer { margin-top: 2rem; padding: 2rem 0 2.5rem; border-top: 1px solid var(--line-soft); }
 .footer-content { width: var(--content); margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr auto; gap: 1rem; align-items: start; }
