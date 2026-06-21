@@ -3,3 +3,6 @@
 .wrangler/
 node_modules/
 dist/
+docs/
+research/
+Photos/

@@ -10,6 +10,7 @@ const entries = [
   "app.js",
   "favicon.svg",
   "data",
+  "docs",
   "Photos",
   "logos",
 ];
