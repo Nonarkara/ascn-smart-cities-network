@@ -12,7 +12,7 @@ const tileLayers = {
   night: { url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", attr: "&copy; OpenStreetMap &copy; CARTO" },
 };
 
-const TABS = ["overview", "history", "cities", "projects", "framework", "partners"];
+const TABS = ["overview", "history", "cities", "projects", "framework", "partners", "contacts", "insights", "data", "research", "essay"];
 
 const state = {
   data: null, K: null, C: [], L: null, LF: null,
@@ -118,6 +118,7 @@ function renderTab(tab) {
   ({
     overview: renderOverview, history: renderHistory, cities: renderCitiesView,
     projects: renderProjects, framework: renderFramework, partners: renderPartners,
+    contacts: renderContacts, insights: renderInsights, data: renderOpenData, research: renderResearch, essay: renderEssay,
   }[tab] || (() => {}))();
   state.rendered.add(tab);
 }

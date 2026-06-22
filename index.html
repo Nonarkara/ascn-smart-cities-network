@@ -25,6 +25,11 @@
         <a href="#projects" data-tab="projects">Projects</a>
         <a href="#framework" data-tab="framework">Framework</a>
         <a href="#partners" data-tab="partners">Partners</a>
+        <a href="#contacts" data-tab="contacts">Contacts</a>
+        <a href="#insights" data-tab="insights">Insights</a>
+        <a href="#data" data-tab="data">Library</a>
+        <a href="#research" data-tab="research">Research</a>
+        <a href="#essay" data-tab="essay">Essay</a>
       </nav>
     </header>
 
@@ -43,7 +48,7 @@
             <p class="lede">134 projects tracked since 2018. Not one public platform has asked how the network is performing against its own goals. This one does.</p>
             <div class="hero-cta">
               <a class="text-button" href="#cities" data-tab="cities">Explore the cities</a>
-              <a class="text-button" href="#projects" data-tab="projects">Browse projects</a>
+              <a class="text-button" href="#data" data-tab="data">Open data</a>
             </div>
           </div>
           <figure class="hero-photo">
@@ -226,7 +231,142 @@
 
       </section>
 
+      <!-- INSIGHTS / INFOGRAPHICS -->
+      <section class="view" id="view-insights" data-view="insights" hidden>
+        <div class="section-head">
+          <p class="label">Insights</p>
+          <h2>The network in numbers</h2>
+          <p class="lede">Four M&amp;E cycles, 134 projects, 38 cities. What the official record shows — and what it doesn't.</p>
+        </div>
+        <div class="info-grid">
+          <article class="info-card wide">
+            <p class="label">Portfolio momentum — four cycles, 2022 to 2025</p>
+            <div id="ig-momentum"></div>
+          </article>
+          <article class="info-card wide">
+            <p class="label">Focus area shifts — how priorities moved across four M&amp;E cycles</p>
+            <div id="ig-focus-trends"></div>
+          </article>
+          <article class="info-card wide">
+            <p class="label">Country participation — projects documented per cycle, 2022 → 2025</p>
+            <div id="ig-country-traj"></div>
+          </article>
+          <article class="info-card wide">
+            <p class="label">Country specialisation — portfolio mix by focus area, 2025</p>
+            <div id="ig-country-spec"></div>
+          </article>
+          <article class="info-card wide">
+            <p class="label">Projects per million city residents — 2025</p>
+            <div id="ig-density"></div>
+          </article>
+          <article class="info-card wide">
+            <p class="label">Four patterns the record shows</p>
+            <div id="ig-signals"></div>
+          </article>
+          <article class="info-card wide">
+            <p class="label">Citizen impact, documented</p>
+            <div id="ig-impact" class="impact-grid"></div>
+          </article>
+          <article class="info-card wide">
+            <p class="label">Top investments — largest documented projects by value</p>
+            <div id="ig-investment" class="ig-bars"></div>
+          </article>
+          <article class="info-card wide">
+            <p class="label">What "completed" actually means — 18 projects self-defined as done</p>
+            <div id="ig-completed"></div>
+          </article>
+          <article class="info-card wide">
+            <p class="label">M&amp;E maturity vs peer networks — 7 features, 5 systems</p>
+            <div id="ig-compare" class="compare-wrap"></div>
+          </article>
+          <article class="info-card wide">
+            <p class="label">IMD Smart City Index 2024 — how ASEAN cities rank globally</p>
+            <div id="ig-imd"></div>
+          </article>
+
+          <article class="info-card wide">
+            <p class="label">The research map — where ASCN scholarship comes from</p>
+            <div id="ig-language-map"></div>
+          </article>
+
+          <article class="info-card wide">
+            <p class="label">Portfolio composition over four cycles — how the mix shifted</p>
+            <div id="ig-focus-stack"></div>
+          </article>
+
+          <article class="info-card wide">
+            <p class="label">Country trajectories — who accelerated, who flatlined, 2022 → 2025</p>
+            <div id="ig-country-slope"></div>
+          </article>
+
+          <article class="info-card wide">
+            <p class="label">Project churn — of 164 unique projects, what survived four cycles?</p>
+            <div id="ig-churn"></div>
+          </article>
+
+          <article class="info-card wide">
+            <p class="label">Who finishes what — completion rates by country, 2025</p>
+            <div id="ig-completion-rate"></div>
+          </article>
+        </div>
+      </section>
+
+      <!-- LIBRARY / OPEN DATA -->
+      <section class="view" id="view-data" data-view="data" hidden>
+        <div class="section-head">
+          <p class="label">Library &amp; Open Data</p>
+          <h2>The knowledge base behind this platform.</h2>
+          <p class="lede" id="data-lede"></p>
+        </div>
+        <div class="download-grid" id="dataset-downloads"></div>
+        <div class="sub-head"><p class="label">Official documents</p><h3>Source reports, free to download</h3></div>
+        <div id="document-grid" class="document-grid"></div>
+
+        <div class="sub-head">
+          <p class="label">Knowledge library</p>
+          <h3>Everything we read — official docs, academic papers, reports, research</h3>
+        </div>
+        <div class="lib-search-bar">
+          <input type="search" id="lib-search" placeholder="Search all 62 sources…" aria-label="Search the knowledge library" />
+          <div class="lib-type-chips" id="lib-type-chips" role="group" aria-label="Filter by source type">
+            <button class="lib-chip active" data-type="all" type="button">All <span id="lib-count"></span></button>
+            <button class="lib-chip" data-type="official" type="button">Official</button>
+            <button class="lib-chip" data-type="academic" type="button">Academic</button>
+            <button class="lib-chip" data-type="report" type="button">Reports</button>
+            <button class="lib-chip" data-type="research" type="button">Research</button>
+            <button class="lib-chip" data-type="data" type="button">Data</button>
+          </div>
+        </div>
+        <div id="lib-results" class="lib-results"></div>
+
+        <div class="sub-head"><p class="label">Methodology &amp; sources</p></div>
+        <div class="partners-split">
+          <article class="side-block">
+            <p class="label">External data sources</p>
+            <div id="source-list" class="def-list"></div>
+          </article>
+          <article class="side-block">
+            <p class="label">Methodology &amp; limits</p>
+            <div id="method-list" class="method-list"></div>
+          </article>
+        </div>
+      </section>
     </main>
+
+      <!-- CONTACTS -->
+      <section class="view" id="view-contacts" data-view="contacts" hidden>
+        <div id="contacts-content"></div>
+      </section>
+
+      <!-- RESEARCH -->
+      <section class="view" id="view-research" data-view="research" hidden>
+        <div id="research-content"></div>
+      </section>
+
+      <!-- ESSAY -->
+      <section class="view" id="view-essay" data-view="essay" hidden>
+        <div class="essay-wrap" id="essay-content"></div>
+      </section>
 
     <footer class="site-footer">
       <div class="footer-content">
