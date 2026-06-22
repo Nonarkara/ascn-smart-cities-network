@@ -1467,7 +1467,7 @@ function renderEssay() {
 
   /* ---- Focus area bar chart ---- */
   const focusDiagram = `<figure class="essay-diagram" aria-label="ASCN project distribution by focus area">
-  <svg viewBox="0 0 580 218" xmlns="http://www.w3.org/2000/svg">
+  <svg viewBox="0 0 580 248" xmlns="http://www.w3.org/2000/svg">
     <text x="0" y="16" font-size="9.5" font-family="'Source Sans 3',sans-serif" font-weight="700" letter-spacing="0.07em" fill="#1a1a1a">FOCUS AREA DISTRIBUTION — 134 PROJECTS · M&amp;E CYCLE 4 (2025)</text>
     <text x="0" y="32" font-size="9" font-family="'Source Sans 3',sans-serif" fill="#888">Approximate shares derived from ASCN M&amp;E reporting.</text>
     ${[["Smart Mobility",28,0],["Smart Living",26,28],["Smart Environment",22,56],["Smart Governance",18,84],["Smart Economy",12,112],["Smart People",8,140]].map(([label,pct,y])=>{
@@ -1477,7 +1477,7 @@ function renderEssay() {
       <rect x="142" y="${52+y}" width="${barW}" height="17" fill="${hi?"#f59e0b":"#1a1a1a"}" opacity="${hi?1:0.75}"/>
       <text x="${142+barW+6}" y="${52+y+12}" font-size="9" font-family="'Source Sans 3',sans-serif" fill="#888">${pct}%</text>`;
     }).join("")}
-    <text x="0" y="204" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#999">Smart Mobility + Smart Living account for more than half of documented projects. Smart Governance and Smart People remain underrepresented relative to the framework's stated priorities.</text>
+    <text x="0" y="226" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#999">Smart Mobility + Smart Living account for more than half of documented projects. Smart Governance and Smart People remain underrepresented relative to the framework's stated priorities.</text>
   </svg>
   <figcaption>Project distribution reflects city demand, not network design. Mobility and living services are visible and fundable; governance-strengthening work — which underpins everything else — is harder to count and harder to fund.</figcaption>
 </figure>`;
