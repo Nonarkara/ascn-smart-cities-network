@@ -183,7 +183,51 @@
       "Digital Governance",
       "Innovation & Economic Growth",
       "Rural-Village Collaboration"
-    ]
+    ],
+    "alignment": [
+      {
+        "focus": "Built Infrastructure",
+        "pillar_ids": [1, 4],
+        "projects_2025": 34,
+        "note": "The network's largest focus area (25%) splits between digital infrastructure (P1) and physical mobility systems (P4)."
+      },
+      {
+        "focus": "Civic & Social",
+        "pillar_ids": [6, 3],
+        "projects_2025": 32,
+        "note": "Digital governance (P6) is the primary match; social services and inclusion map partially to Smart Housing & Health (P3)."
+      },
+      {
+        "focus": "Quality Environment",
+        "pillar_ids": [2, 5],
+        "projects_2025": 25,
+        "note": "Strong alignment: ASCAP's green development (P2) and resilience (P5) pillars directly continue existing water, waste, and climate work."
+      },
+      {
+        "focus": "Safety & Security",
+        "pillar_ids": [5, 6],
+        "projects_2025": 19,
+        "note": "Disaster preparedness (P5) is the primary match; surveillance and emergency response map to Digital Governance (P6)."
+      },
+      {
+        "focus": "Industry & Innovation",
+        "pillar_ids": [1, 7],
+        "projects_2025": 16,
+        "note": "Innovation & Economic Growth (P7) is the direct match; digital infrastructure (P1) captures the underlying tech stack."
+      },
+      {
+        "focus": "Health & Well-Being",
+        "pillar_ids": [3],
+        "projects_2025": 8,
+        "note": "The only focus area with a single-pillar match. At 6% of the portfolio, this exposes Smart Housing & Health (P3) as critically underfunded."
+      }
+    ],
+    "coverage_gap": {
+      "pillar_id": 8,
+      "name": "Rural-Village Collaboration",
+      "current_coverage": 0,
+      "note": "No existing ASCN focus area maps to Pillar 8. All 38 member cities are municipal-scale — rural-urban linkage work is absent from the entire 2022–2025 portfolio. ASCAP 2026-2035 introduces a structural expectation the network has never yet met."
+    }
   },
   "history": {
     "milestones": [
@@ -574,32 +618,65 @@
     {
       "metric": "405,052 MSMEs registered",
       "project": "JakPreneur platform",
-      "city": "Jakarta"
+      "city": "Jakarta",
+      "focus": "Industry & Innovation",
+      "note": "Feb 2020 – Jun 2025; city's small-business formalization engine."
     },
     {
-      "metric": "1.2M+ registrants",
+      "metric": "1.2M+ registrants · PHP 15.9B collected",
       "project": "Go! Manila app",
-      "city": "Manila"
+      "city": "Manila",
+      "focus": "Civic & Social",
+      "note": "1.4M transactions as of May 2024; target: 80% city registration within 3 years."
     },
     {
-      "metric": "6,973+ patients served (2024)",
+      "metric": "9,773+ patients served",
       "project": "Dottoro'ta telemedicine",
-      "city": "Makassar"
+      "city": "Makassar",
+      "focus": "Health & Well-being",
+      "note": "6,973 in 2024 + 2,800 Jan–Jul 2025; 48 homecare electric ambulances deployed."
     },
     {
       "metric": "8,000+ households benefitting",
-      "project": "Wastewater treatment",
-      "city": "Vientiane"
+      "project": "Wastewater Treatment Plant",
+      "city": "Vientiane",
+      "focus": "Quality Environment",
+      "note": "52,000 m³/day capacity; restored 15% domestic wastewater treatment. ADB-financed."
     },
     {
       "metric": "5,000+ residents screened",
-      "project": "Public health monitoring",
-      "city": "Rayong"
+      "project": "Public Health Monitoring & Care System",
+      "city": "Rayong",
+      "focus": "Health & Well-being",
+      "note": "Community-based health monitoring across Ban Chang municipality."
     },
     {
-      "metric": "3,000 low-cost units completed",
-      "project": "Thu Kha Taw Win housing",
-      "city": "Nay Pyi Taw"
+      "metric": "3,000 low-cost housing units",
+      "project": "Thu Kha Taw Win low-cost housing",
+      "city": "Nay Pyi Taw",
+      "focus": "Built Infrastructure",
+      "note": "Phase I & II complete; affordable housing for government workers."
+    },
+    {
+      "metric": "78 flood telemetry stations",
+      "project": "IHYDRO flood monitoring system",
+      "city": "Kuching",
+      "focus": "Safety & Security",
+      "note": "Real-time river telemetry protecting ~350,000 residents in flood-prone Sarawak."
+    },
+    {
+      "metric": "200,000+ individuals trained",
+      "project": "ASEAN Digital Literacy Programme",
+      "city": "ASEAN-wide",
+      "focus": "Civic & Social",
+      "note": "Network-wide initiative. Only 55% of ASEAN population has internet access; programme targets the remainder."
+    },
+    {
+      "metric": "100 tons/day material recovery",
+      "project": "Material Recovery Facility",
+      "city": "Cauayan City",
+      "focus": "Quality Environment",
+      "note": "Circular economy pilot; one of the most measurable waste outcomes in the network."
     }
   ],
   "documents": [

@@ -5,10 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ASCN — ASEAN Smart Cities Network · Performance Review</title>
     <meta name="description" content="The first public platform to ask — with data — how the ASEAN Smart Cities Network is performing. 38 cities, 134 projects, 10 annual reports synthesized and laid open. Built by Thailand's ASCN representative since 2019." />
+
+    <!-- Open Graph / social sharing (§11.8 — the link is opened first on a phone in WhatsApp/LINE/Telegram) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ASCN Performance Review" />
+    <meta property="og:title" content="ASCN Performance Review — ASEAN Smart Cities Network" />
+    <meta property="og:description" content="The first public platform to ask — with data — how the ASEAN Smart Cities Network is performing. 38 cities, 134 projects, four M&E cycles synthesized and laid open." />
+    <meta property="og:url" content="https://ascn-smart-cities-network.pages.dev/" />
+    <meta property="og:image" content="https://ascn-smart-cities-network.pages.dev/Photos/ASCN-7th-2024-Laos-panel.jpg" />
+    <meta property="og:image:alt" content="ASCN Annual Meeting panel, Luang Prabang, Lao PDR, 2024" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ASCN Performance Review — ASEAN Smart Cities Network" />
+    <meta name="twitter:description" content="38 cities, 134 projects, four M&E cycles — the performance question no official report asks." />
+    <meta name="twitter:image" content="https://ascn-smart-cities-network.pages.dev/Photos/ASCN-7th-2024-Laos-panel.jpg" />
+
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400..900;1,400..600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <link rel="stylesheet" href="styles.css?v=33" />
   </head>
@@ -96,6 +110,8 @@
             </article>
           </aside>
         </div>
+        <div class="sub-head"><p class="label">The rotating chair &amp; the persistent shepherd</p><h3>Nine years of leadership — and the continuity role built to survive the annual hand-off</h3></div>
+        <div id="chair-ribbon"></div>
         <div id="history-quote" class="history-quote"></div>
         <div class="sub-head"><p class="label">The network in the field</p><h3>Seven years of meetings, partnerships, and knowledge exchange</h3></div>
         <div id="history-moments" class="moments-strip"></div>
@@ -199,6 +215,8 @@
         <div class="sub-head"><p class="label">Governance</p><h3>How the network is run</h3></div>
         <div class="gov-grid" id="gov-grid"></div>
         <article class="ascap-panel" id="framework-ascap"></article>
+        <div class="sub-head"><p class="label">Capacity building</p><h3>How the network trains the people who run the cities</h3></div>
+        <div id="capacity-building"></div>
       </section>
 
       <!-- PARTNERS -->
@@ -264,6 +282,10 @@
             <div id="ig-signals"></div>
           </article>
           <article class="info-card wide">
+            <p class="label">Evidence quality — what can be verified row by row</p>
+            <div id="ig-data-quality"></div>
+          </article>
+          <article class="info-card wide">
             <p class="label">Citizen impact, documented</p>
             <div id="ig-impact" class="impact-grid"></div>
           </article>
@@ -276,12 +298,50 @@
             <div id="ig-completed"></div>
           </article>
           <article class="info-card wide">
+            <p class="label">What ASCN measures — and what it doesn't</p>
+            <div id="ig-me-ledger"></div>
+          </article>
+          <article class="info-card wide">
             <p class="label">M&amp;E maturity vs peer networks — 7 features, 5 systems</p>
             <div id="ig-compare" class="compare-wrap"></div>
           </article>
           <article class="info-card wide">
             <p class="label">IMD Smart City Index 2024 — how ASEAN cities rank globally</p>
             <div id="ig-imd"></div>
+          </article>
+          <article class="info-card wide">
+            <p class="label">ASCN in global context — beside India, the EU and China</p>
+            <div id="ig-global-context" class="compare-wrap"></div>
+          </article>
+
+          <article class="info-card wide">
+            <p class="label">ASCAP 2026–2035 alignment — where today's portfolio maps to tomorrow's pillars</p>
+            <div id="ig-ascap-coverage"></div>
+          </article>
+
+          <article class="info-card wide">
+            <p class="label">The delivery gap — completed vs ongoing by focus area, 2025</p>
+            <div id="ig-delivery-gap"></div>
+          </article>
+
+          <article class="info-card wide">
+            <p class="label">Digital maturity vs ASCN activity — connectivity, rankings, project volume</p>
+            <div id="ig-maturity"></div>
+          </article>
+
+          <article class="info-card wide">
+            <p class="label">5G readiness 2024 → 2030 — and the vendor geopolitics beneath it</p>
+            <div id="ig-5g"></div>
+          </article>
+
+          <article class="info-card wide">
+            <p class="label">The inclusivity test — Timor-Leste joins in 2026</p>
+            <div id="ig-dili"></div>
+          </article>
+
+          <article class="info-card wide">
+            <p class="label">Bilateral &amp; multilateral commitments at scale — the ~170× gap</p>
+            <div id="ig-funding-scale"></div>
           </article>
 
           <article class="info-card wide">
@@ -300,7 +360,7 @@
           </article>
 
           <article class="info-card wide">
-            <p class="label">Project churn — of 164 unique projects, what survived four cycles?</p>
+            <p class="label">Project churn — unique projects, what survived four cycles?</p>
             <div id="ig-churn"></div>
           </article>
 
