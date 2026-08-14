@@ -12,8 +12,8 @@ const tileLayers = {
   night: { url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", attr: "&copy; OpenStreetMap &copy; CARTO" },
 };
 
-const TABS = ["overview", "history", "cities", "projects", "framework", "partners", "contacts", "insights", "data", "research", "essay"];
-const DATA_VERSION = "33";
+const TABS = ["overview", "ascn9", "history", "cities", "projects", "framework", "partners", "contacts", "insights", "data", "research", "essay"];
+const DATA_VERSION = "34";
 
 const state = {
   data: null, K: null, C: [], L: null, LF: null,

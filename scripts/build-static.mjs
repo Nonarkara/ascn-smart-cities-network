@@ -13,6 +13,7 @@ const entries = [
   "docs",
   "Photos",
   "logos",
+  "media",
 ];
 
 await rm(dist, { recursive: true, force: true });
