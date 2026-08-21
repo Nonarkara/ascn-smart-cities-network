@@ -9,3 +9,8 @@ research/
 Photos/
 papers/
 Kimi_Agent_ASCN Research/
+
+# env files
+.env
+.env.*
+!.env.example
