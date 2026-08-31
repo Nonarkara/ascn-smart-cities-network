@@ -71,3 +71,7 @@ Long repository description:
 Suggested topics:
 
 `asean`, `smart-cities`, `ascn`, `civic-tech`, `urban-data`, `data-visualization`, `cloudflare-pages`, `static-site`
+
+## License
+
+This independent project is released under the MIT License; see [LICENSE](LICENSE).
