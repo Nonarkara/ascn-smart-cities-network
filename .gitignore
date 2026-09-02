@@ -4,7 +4,9 @@
 .claude/
 node_modules/
 dist/
-docs/
+# Local working notes; keep the public README hero tracked.
+docs/*
+!docs/hero-banner.png
 research/
 Photos/
 papers/
