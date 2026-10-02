@@ -146,6 +146,27 @@ Attach a custom domain in the Cloudflare dashboard if you want one. Do not put a
 
 ---
 
+## Innovation-as-a-Service Videos
+
+The overview plays three complete demonstrations from `media/showcase/`. Playback starts on request, and leaving Overview pauses it. The ASCN 2026 meeting summary links to the full record below the player.
+
+To rebuild the web copies from the Desktop originals (requires FFmpeg):
+
+```bash
+npm run prepare:showcase
+```
+
+Set `ASCN_VIDEO_SOURCE_DIR` when the originals are in another folder. The preparation script keeps the original files intact, creates H.264/AAC copies with fast-start metadata, and checks the hosting size limit. Source filenames and media properties are recorded in `media/showcase/metadata.json`.
+
+Run the browser checks with Chromium installed:
+
+```bash
+npx playwright install chromium
+npm test
+```
+
+To use an installed Chrome instead: `PLAYWRIGHT_CHANNEL=chrome npm test`. To check a deployed site, set `ASCN_TEST_URL` to its URL; this skips the local server and checks seeking on the real host.
+
 ## License
 
 Copyright (c) 2026 Non Arkaraprasertkul.

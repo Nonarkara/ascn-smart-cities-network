@@ -1,0 +1,35 @@
+[
+  {
+    "id": "flood-field",
+    "original": "VID-20260927-WA0006.mp4",
+    "originalBytes": 26707992,
+    "bytes": 10841257,
+    "duration": 273.833333,
+    "width": 640,
+    "height": 360,
+    "videoCodec": "h264",
+    "audioCodec": "aac"
+  },
+  {
+    "id": "city-operations",
+    "original": "VID_20260929_163012_897.mp4",
+    "originalBytes": 61200006,
+    "bytes": 23086386,
+    "duration": 441,
+    "width": 1280,
+    "height": 720,
+    "videoCodec": "h264",
+    "audioCodec": "aac"
+  },
+  {
+    "id": "flood-analysis",
+    "original": "2_5325870699577911300.mp4",
+    "originalBytes": 119896526,
+    "bytes": 23207645,
+    "duration": 444.4,
+    "width": 1280,
+    "height": 720,
+    "videoCodec": "h264",
+    "audioCodec": "aac"
+  }
+]

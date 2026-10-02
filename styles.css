@@ -159,6 +159,63 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .hero-feature-hook { margin: 0; color: var(--ink-2); max-width: 38rem; }
 
 /* ---------- ASCN 9 record ---------- */
+#view-overview { padding-top: 1.4rem; }
+.showcase-heading { max-width: 54rem; margin-bottom: 1.1rem; }
+.showcase-heading h1 { font-size: 2.2rem; line-height: 1.1; letter-spacing: 0; }
+.showcase-heading .label { color: var(--muted); letter-spacing: 0; }
+.showcase-heading .lede { max-width: 48rem; }
+.showcase-layout { display: grid; grid-template-columns: minmax(0, 3fr) minmax(16rem, 1fr); gap: 1.25rem; align-items: start; }
+.showcase-feature { margin: 0; min-width: 0; }
+.showcase-feature video { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: contain; background: #101418; }
+.showcase-feature figcaption { margin-top: 0.7rem; }
+.showcase-caption-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+.showcase-caption-head h2, .meeting-summary h2 { font-size: 1rem; line-height: 1.35; letter-spacing: 0; }
+.showcase-feature figcaption p { margin: 0.3rem 0 0; color: var(--ink-2); font-size: 0.86rem; max-width: 48rem; }
+.showcase-open, .meeting-summary-link { display: inline-flex; align-items: center; min-height: 44px; flex-shrink: 0; font-size: 0.86rem; font-weight: 700; }
+.showcase-open:hover { text-decoration: underline; }
+.showcase-selector { display: grid; gap: 0; min-width: 0; }
+.showcase-selector[hidden] { display: none; }
+.showcase-clip { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); gap: 0.7rem; align-items: start; text-align: left; width: 100%; border: 0; border-top: 1px solid var(--line); border-left: 3px solid transparent; background: transparent; padding: 0.8rem 0.6rem; color: var(--ink); cursor: pointer; }
+.showcase-clip:first-child { border-top: 0; }
+.showcase-clip[aria-pressed="true"] { border-left-color: #f59e0b; background: var(--surface); }
+.showcase-clip:hover { background: var(--surface); }
+.showcase-clip:focus-visible, .showcase-open:focus-visible, .meeting-summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.showcase-clip:active { transform: scale(0.97); }
+.showcase-clip img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
+.showcase-clip-copy { display: grid; gap: 0.35rem; min-width: 0; }
+.showcase-clip-meta { font-size: 0.72rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.showcase-clip strong { font-size: 0.86rem; line-height: 1.3; }
+.showcase-clip-description { font-size: 0.86rem; color: var(--ink-2); line-height: 1.45; }
+.meeting-summary { display: grid; grid-template-columns: 10rem minmax(0, 1fr) auto; gap: 1.2rem; align-items: center; margin-top: 1.7rem; padding: 1rem 0; border-top: 2px solid var(--ink); border-bottom: 1px solid var(--line); }
+.meeting-summary img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
+.meeting-summary .label { color: var(--muted); letter-spacing: 0; }
+.meeting-summary p:not(.label) { margin: 0.3rem 0 0; max-width: 48rem; color: var(--ink-2); font-size: 0.86rem; }
+.meeting-summary:hover .meeting-summary-link { text-decoration: underline; }
+.overview-intro { margin-top: 1.7rem; }
+.overview-intro h2 { font-size: 1.5rem; line-height: 1.15; letter-spacing: 0; margin-bottom: 0.6rem; }
+.overview-intro .lede { max-width: 52rem; }
+.overview-intro .hero-cta { margin-top: 0.8rem; }
+
+@media (max-width: 900px) {
+  .showcase-layout { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+  .showcase-selector { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .showcase-clip { grid-template-columns: minmax(0, 1fr); padding: 0.6rem; border-top: 0; }
+  .showcase-clip-description { display: none; }
+  .meeting-summary { grid-template-columns: 7rem minmax(0, 1fr); gap: 0.6rem 1rem; }
+  .meeting-summary-link { grid-column: 2; }
+}
+
+@media (max-width: 480px) {
+  .showcase-heading h1 { font-size: 1.5rem; }
+  .showcase-heading .lede { font-size: 0.86rem; }
+  .showcase-clip { padding: 0.45rem; gap: 0.45rem; }
+  .showcase-clip-meta { font-size: 0.72rem; }
+  .showcase-caption-head { flex-wrap: wrap; gap: 0; }
+  .meeting-summary { grid-template-columns: minmax(0, 1fr); }
+  .meeting-summary img { display: none; }
+  .meeting-summary-link { grid-column: 1; }
+}
+
 .record { max-width: 40rem; }
 .record h1 { margin-bottom: 0.7rem; }
 .record > p { margin: 0 0 1em; color: var(--ink-2); }
@@ -606,6 +663,9 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 
 /* ---------- Responsive ---------- */
 @media (max-width: 1100px) {
+  .site-nav { align-items: flex-start; flex-direction: column; gap: 0.5rem; }
+  .site-nav nav { width: 100%; overflow-x: auto; scrollbar-width: none; }
+  .site-nav nav::-webkit-scrollbar { display: none; }
   .hero, .overview-grid, .history-grid, .cities-layout, .partners-split,
   .analytics-grid, .framework-grid, .gov-grid, .focus-detail, .info-grid,
   .footer-content, .dq-grid { grid-template-columns: 1fr; }

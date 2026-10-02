@@ -8,6 +8,7 @@ const entries = [
   "index.html",
   "styles.css",
   "app.js",
+  "showcase.js",
   "favicon.svg",
   "data",
   "docs",

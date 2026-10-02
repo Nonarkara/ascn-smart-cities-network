@@ -24,7 +24,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400..900;1,400..600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <link rel="stylesheet" href="styles.css?v=34" />
+    <link rel="stylesheet" href="styles.css?v=35" />
   </head>
   <body>
     <header class="site-nav">
@@ -55,10 +55,59 @@
     <main>
       <!-- OVERVIEW -->
       <section class="view" id="view-overview" data-view="overview">
-        <div class="hero">
+        <section class="innovation-showcase" aria-labelledby="innovation-heading">
+          <header class="showcase-heading">
+            <p class="label">ASEAN Smart Cities Network · Demonstrations</p>
+            <h1 id="innovation-heading">Innovation-as-a-Service</h1>
+            <p class="lede">Flood intelligence in the field, at the operations desk, and on the map. Data made useful for cities.</p>
+          </header>
+          <div class="showcase-layout">
+            <figure class="showcase-feature">
+              <video id="showcase-player" controls playsinline preload="none" poster="media/showcase/flood-field.jpg" aria-label="Flood intelligence in the field" aria-describedby="showcase-description">
+                <source src="media/showcase/flood-field.mp4" type="video/mp4" />
+                <p><a href="media/showcase/flood-field.mp4">Open Flood intelligence in the field</a></p>
+              </video>
+              <figcaption>
+                <div class="showcase-caption-head">
+                  <h2 id="showcase-title">Flood intelligence in the field</h2>
+                  <a id="showcase-open" class="showcase-open" href="media/showcase/flood-field.mp4" target="_blank" rel="noopener">Open video ↗</a>
+                </div>
+                <p id="showcase-description">A tablet-based flood dashboard demonstrated on a flooded street, connecting conditions on the ground with mapped data.</p>
+                <p id="showcase-error" role="status" hidden>This video could not play here. Open the video directly to try again.</p>
+              </figcaption>
+            </figure>
+            <div id="showcase-selector" class="showcase-selector" role="group" aria-label="Choose a demonstration" hidden>
+              <button type="button" class="showcase-clip" data-video="flood-field" aria-pressed="true" aria-controls="showcase-player">
+                <img src="media/showcase/flood-field.jpg" width="640" height="360" alt="" />
+                <span class="showcase-clip-copy"><span class="showcase-clip-meta">01 · Field demonstration · 4:34</span><strong>Flood intelligence in the field</strong><span class="showcase-clip-description">A tablet-based flood dashboard demonstrated on a flooded street, connecting conditions on the ground with mapped data.</span></span>
+              </button>
+              <button type="button" class="showcase-clip" data-video="city-operations" aria-pressed="false" aria-controls="showcase-player">
+                <img src="media/showcase/city-operations.jpg" width="1280" height="720" alt="" />
+                <span class="showcase-clip-copy"><span class="showcase-clip-meta">02 · Operations desk · 7:21</span><strong>City operations on one screen</strong><span class="showcase-clip-description">Maps, camera feeds, and dashboards brought together in a multi-screen city operations setup.</span></span>
+              </button>
+              <button type="button" class="showcase-clip" data-video="flood-analysis" aria-pressed="false" aria-controls="showcase-player">
+                <img src="media/showcase/flood-analysis.jpg" width="1280" height="720" alt="" />
+                <span class="showcase-clip-copy"><span class="showcase-clip-meta">03 · Maps &amp; modelling · 7:24</span><strong>From flood data to decisions</strong><span class="showcase-clip-description">A walkthrough of flood maps, a Bangkok flood simulation, and analysis alongside the data.</span></span>
+              </button>
+            </div>
+          </div>
+          <noscript><p><a href="media/showcase/city-operations.mp4">City operations on one screen</a> · <a href="media/showcase/flood-analysis.mp4">From flood data to decisions</a></p></noscript>
+        </section>
+
+        <a class="meeting-summary" href="#ascn9" data-tab="ascn9">
+          <img src="media/ascn9/ASCN_2026-07-20_IMG_air-dash.png?v=34" width="320" height="180" loading="lazy" alt="Air-quality map presented at the ninth ASCN annual meeting." />
+          <div>
+            <p class="label">ASCN 2026 · 9th Annual Meeting · 20 July</p>
+            <h2>What they actually did</h2>
+            <p>The Philippines chaired. Twenty-five cities joined. Three new members. Japan, Korea, UN-Habitat, and a finance pilot all presented. Draft record, not yet adopted.</p>
+          </div>
+          <span class="meeting-summary-link">Read the full record ↗</span>
+        </a>
+
+        <div class="overview-intro">
           <div class="hero-text">
             <p class="label">ASEAN Smart Cities Network</p>
-            <h1>38 cities.<br />134 projects.<br />How is it performing?</h1>
+            <h2>38 cities. 134 projects. How is it performing?</h2>
             <p class="lede">134 projects tracked since 2018. Not one public platform has asked how the network is performing against its own goals. This one does.</p>
             <div class="hero-cta">
               <a class="text-button" href="#ascn9" data-tab="ascn9">ASCN 9 record</a>
@@ -66,14 +115,6 @@
               <a class="text-button" href="#data" data-tab="data">Open data</a>
             </div>
           </div>
-          <a class="hero-feature" href="#ascn9" data-tab="ascn9">
-            <figure class="hero-photo hero-photo--meeting">
-              <img src="media/ascn9/ASCN_2026-07-20_IMG_air-dash.png?v=34" alt="Ninth ASCN annual meeting on a video call, 20 July 2026. National representatives on the right; a live air-quality map of mainland Southeast Asia on screen." />
-              <figcaption>9th Annual Meeting · 20 July 2026 · video call</figcaption>
-            </figure>
-            <p class="hero-feature-hook">The Philippines chaired. Twenty-five cities joined. Three new members. Japan, Korea, UN-Habitat, and a finance pilot all presented.</p>
-            <span class="text-button">What they actually did</span>
-          </a>
         </div>
 
         <div class="kpi-grid" id="kpi-grid" aria-label="Network key metrics"></div>
@@ -524,6 +565,7 @@
     </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="showcase.js?v=35"></script>
     <script src="app.js?v=34"></script>
   </body>
 </html>

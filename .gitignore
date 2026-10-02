@@ -3,6 +3,8 @@
 .wrangler/
 .claude/
 node_modules/
+test-results/
+playwright-report/
 dist/
 # Local working notes; keep the public README hero tracked.
 docs/*

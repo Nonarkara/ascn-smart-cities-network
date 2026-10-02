@@ -5,6 +5,8 @@
   "description": "ASCN V2 Progress Observatory: a lightweight analytics workbench for ASEAN Smart Cities Network reports, city projects, and evidence.",
   "scripts": {
     "extract:data": "python3 scripts/extract_ascn_data.py",
+    "prepare:showcase": "node scripts/prepare-showcase.mjs",
+    "test": "playwright test",
     "validate": "node scripts/validate-data.mjs",
     "check": "npm run validate && npm run build",
     "build": "node scripts/build-static.mjs",
@@ -12,6 +14,7 @@
     "deploy": "npm run build && npx wrangler pages deploy dist --project-name ascn-smart-cities-network --branch main"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "wrangler": "^4"
   }
 }
