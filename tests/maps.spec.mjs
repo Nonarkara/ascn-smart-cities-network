@@ -34,7 +34,8 @@ for (const width of [375, 768, 1280]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/#cities");
     await expect(page.locator("#city-cards .city-card")).toHaveCount(38);
-    await expect(page.locator("#tab-nav [data-tab]")).toHaveCount(11);
+    await expect(page.locator("#tab-nav [data-tab]")).toHaveCount(12);
+    await expect(page.locator('#tab-nav [data-tab="news"]')).toHaveAttribute("href", "#news");
     await expectBasemap(page, "#sea-map");
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await page.screenshot({ path: testInfo.outputPath("cities.png"), fullPage: true });
