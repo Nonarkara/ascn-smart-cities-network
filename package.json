@@ -2,19 +2,34 @@
   "name": "ascn-smart-cities-network",
   "version": "2.0.0",
   "private": true,
+  "type": "module",
   "description": "ASCN V2 Progress Observatory: a lightweight analytics workbench for ASEAN Smart Cities Network reports, city projects, and evidence.",
   "scripts": {
     "extract:data": "python3 scripts/extract_ascn_data.py",
     "prepare:showcase": "node scripts/prepare-showcase.mjs",
-    "test": "playwright test",
+    "refresh:news": "node scripts/refresh-news.mjs",
+    "vendor:leaflet": "node scripts/vendor-leaflet.mjs",
+    "test": "npm run test:unit && playwright test",
+    "test:unit": "node --test tests/security.unit.mjs tests/news.unit.mjs",
     "validate": "node scripts/validate-data.mjs",
-    "check": "npm run validate && npm run build",
-    "build": "node scripts/build-static.mjs",
+    "check": "npm run validate && npm run test:unit && npm run build",
+    "build": "npm run vendor:leaflet && node scripts/build-static.mjs",
     "dev": "npm run build && npx wrangler pages dev dist --compatibility-date=2026-06-20",
-    "deploy": "npm run build && npx wrangler pages deploy dist --project-name ascn-smart-cities-network --branch main"
+    "deploy": "npm run check && npx wrangler pages deploy dist --project-name ascn-smart-cities-network --branch main"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
-    "wrangler": "^4"
+    "wrangler": "^4.147.0"
+  },
+  "dependencies": {
+    "leaflet": "1.9.4"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "overrides": {
+    "miniflare": {
+      "sharp": "0.35.5"
+    }
   }
 }

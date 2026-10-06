@@ -1,4 +1,5 @@
 import { readFile } from "node:fs/promises";
+import { validateDataset, safeUrl } from "../lib/security.mjs";
 
 const files = {
   engine: "data/ascn-v2-data.json",
@@ -21,7 +22,16 @@ const requiredProjectFields = ["report_year", "country", "city", "project", "foc
 const requiredCityFields = ["name", "country", "year", "pop", "lat", "lon", "summary", "flagship"];
 
 async function json(path) {
-  return JSON.parse(await readFile(new URL(`../${path}`, import.meta.url), "utf8"));
+  const data = validateDataset(path, JSON.parse(await readFile(new URL(`../${path}`, import.meta.url), "utf8")));
+  function checkLinks(value) {
+    if (!value || typeof value !== "object") return;
+    for (const [key, child] of Object.entries(value)) {
+      if (["url", "portal"].includes(key) && child && safeUrl(child) === "#") throw new Error(`${path}: unsafe ${key}`);
+      checkLinks(child);
+    }
+  }
+  checkLinks(data);
+  return data;
 }
 
 function fail(errors, message) {

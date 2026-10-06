@@ -14,5 +14,6 @@ export default defineConfig({
     command: "npm run build && npx wrangler pages dev dist --ip 127.0.0.1 --port 4187 --compatibility-date=2026-06-20",
     url: "http://127.0.0.1:4187",
     reuseExistingServer: false,
+    timeout: 120_000,
   },
 });

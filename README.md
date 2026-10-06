@@ -171,6 +171,14 @@ npm test
 
 To use an installed Chrome instead: `PLAYWRIGHT_CHANNEL=chrome npm test`. To check a deployed site, set `ASCN_TEST_URL` to its URL; this skips the local server and checks seeking on the real host.
 
+## Regional News
+
+Open the News tab for regional city-development headlines, location/topic/publisher filters, date ranges, and source links. Overview also shows a short reading strip beneath the video showcase. The existing ASCN record, maps, and analytics remain available.
+
+`functions/api/news.js` reads the fixed public feed registry and caches nonempty results. Saved reading lists keep the portal usable during feed outages; freshness and source availability are shown explicitly. Refresh the bundled reading list with `npm run refresh:news`.
+
+The Pages Function runs with `npm run dev` and is deployed by `npm run deploy`. GitHub's static mirror uses the saved collection. See [SECURITY.md](SECURITY.md) for boundary checks, browser policies, publisher provenance, and verification commands.
+
 ## License
 
 Copyright (c) 2026 Non Arkaraprasertkul.

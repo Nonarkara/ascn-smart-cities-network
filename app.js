@@ -1,4 +1,4 @@
-"use strict";
+import { escapeHtml as esc, safeUrl, csvCell, validateDataset } from "./lib/security.mjs";
 
 /* ============================================================
    ASCN Open Platform — tabbed living observatory
@@ -12,8 +12,8 @@ const tileLayers = {
   night: { url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", attr: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>', className: "ascn-night-tiles" },
 };
 
-const TABS = ["overview", "ascn9", "history", "cities", "projects", "framework", "partners", "contacts", "insights", "data", "research", "essay"];
-const DATA_VERSION = "34";
+const TABS = ["overview", "news", "ascn9", "history", "cities", "projects", "framework", "partners", "contacts", "insights", "data", "research", "essay"];
+const DATA_VERSION = "36";
 
 const state = {
   data: null, K: null, C: [], L: null, LF: null,
@@ -37,9 +37,6 @@ const FOCUS_COLORS = {
   "Health & Well-Being": "#5a5a6a",
 };
 
-function esc(v) {
-  return `${v ?? ""}`.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[c]));
-}
 function latestReport() { return state.data.reports[state.data.reports.length - 1]; }
 function usd(n) {
   if (n >= 1e9) return `$${(n / 1e9).toFixed(n >= 1e10 ? 0 : 2)}B`;
@@ -62,7 +59,7 @@ function countBy(list, key) {
     const value = typeof key === "function" ? key(item) : item[key];
     acc[value] = (acc[value] || 0) + 1;
     return acc;
-  }, {});
+  }, Object.create(null));
 }
 
 function svgDonut(segments, size = 160) {
@@ -183,7 +180,7 @@ function renderPerspective() {
       <p class="persp-framing">${esc(p.framing)}</p>
       <blockquote class="persp-quote">${esc(p.pull_quote)}</blockquote>
       <div class="persp-points">${p.points.map((pt) => `<div class="persp-point"><b>${esc(pt.h)}</b><span>${esc(pt.t)}</span></div>`).join("")}</div>
-      <a class="persp-link" href="${esc(p.url)}" target="_blank" rel="noreferrer">Read the full essay — ${esc(p.source)} ↗</a>
+      <a class="persp-link" href="${esc(safeUrl(p.url))}" target="_blank" rel="noopener noreferrer">Read the full essay — ${esc(p.source)} ↗</a>
     </div>`;
 }
 
@@ -224,7 +221,7 @@ function renderHistory() {
   if (h.moments) {
     $("#history-moments").innerHTML = h.moments.map((m) => `
       <div class="moment-card">
-        <figure><img src="${esc(m.photo)}" alt="${esc(m.label)}" loading="lazy" /></figure>
+        <figure><img src="${esc(safeUrl(m.photo, location.href))}" alt="${esc(m.label)}" loading="lazy" /></figure>
         <div class="moment-body">
           <span class="moment-year">${esc(m.year)}</span>
           <span class="moment-label">${esc(m.label)}</span>
@@ -255,7 +252,7 @@ function ascapHtml() {
     const feeds = pillarFocusMap[pid] || [];
     const isGap = pid === gapPillar;
     const feedHtml = feeds.length
-      ? feeds.map((f) => `<span class="ascap-feed">${esc(f.focus)} <em>${f.projects}p</em></span>`).join("")
+      ? feeds.map((f) => `<span class="ascap-feed">${esc(f.focus)} <em>${esc(f.projects)}p</em></span>`).join("")
       : `<span class="ascap-feed ascap-feed--gap">No current portfolio coverage</span>`;
     return `<div class="ascap-pillar${isGap ? " ascap-pillar--gap" : ""}"><span class="num">P${pid}</span><b>${esc(p)}</b><div class="ascap-feeds">${feedHtml}</div></div>`;
   }).join("");
@@ -307,7 +304,7 @@ function renderCityCards() {
   $("#city-cards").innerHTML = list.map((c) => `
     <button class="city-card${state.selectedCity && c.name === state.selectedCity.name ? " active" : ""}" data-city="${esc(c.name)}">
       <b>${esc(c.name)}</b><span class="cc-country">${esc(c.country)}</span>
-      <span class="cc-meta">Joined ${c.year} · ${esc(c.pop)}</span></button>`).join("") ||
+      <span class="cc-meta">Joined ${esc(c.year)} · ${esc(c.pop)}</span></button>`).join("") ||
     `<p class="muted" style="padding:1rem 0">No cities match.</p>`;
   $$("#city-cards .city-card").forEach((b) => b.addEventListener("click", () => {
     const city = state.C.find((c) => c.name === b.dataset.city);
@@ -327,19 +324,19 @@ function selectCity(city) {
   const connLabel = { advanced: "Advanced", expanding: "Expanding", limited: "Limited" };
   const connTip   = { advanced: "5G broadly deployed", expanding: "5G rolling out in major areas", limited: "Pre-5G / early deployment" };
   const connChip  = city.connectivity ? `<span class="cd-chip cd-chip--conn cd-chip--${city.connectivity}" title="${connTip[city.connectivity] || ""}">${connLabel[city.connectivity] || city.connectivity} connectivity</span>` : "";
-  const imdChip   = city.imd_rank ? `<span class="cd-chip cd-chip--imd" title="IMD Smart City Index 2024">#${city.imd_rank} IMD ${city.imd_rating || ""}</span>` : "";
+  const imdChip   = city.imd_rank ? `<span class="cd-chip cd-chip--imd" title="IMD Smart City Index 2024">#${esc(city.imd_rank)} IMD ${esc(city.imd_rating || "")}</span>` : "";
   const outcomeChip = city.key_outcome ? `<span class="cd-chip cd-chip--outcome" title="Documented citizen outcome">${esc(city.key_outcome)}</span>` : "";
   const chipsHtml = (connChip || imdChip || outcomeChip) ? `<div class="cd-chips">${connChip}${imdChip}${outcomeChip}</div>` : "";
 
   $("#city-detail").innerHTML = `
-    <div class="cd-place">${esc(city.country)} · joined ${city.year}</div>
+    <div class="cd-place">${esc(city.country)} · joined ${esc(city.year)}</div>
     <h2>${esc(city.name)}</h2>
     <div class="cd-meta"><span>Population <b>${esc(city.pop)}</b></span><span>Documented projects <b>${projects.length || city.flagship.length}</b></span></div>
     ${chipsHtml}
     <p style="color:var(--ink-2);margin:0 0 0.4rem">${esc(city.summary)}</p>
     ${flagHtml ? `<div class="cd-section-label">Flagship work</div><div class="cd-projects">${flagHtml}</div>` : ""}
     ${extraHtml ? `<div class="cd-section-label">From the M&E appendix</div><div class="cd-projects">${extraHtml}</div>` : (projects.length ? "" : `<p class="cd-empty">Detailed project rows pending in the public appendix.</p>`)}
-    ${city.portal ? `<a class="cd-portal" href="${esc(city.portal)}" target="_blank" rel="noreferrer">Open city data portal ↗</a>` : ""}`;
+    ${city.portal ? `<a class="cd-portal" href="${esc(safeUrl(city.portal))}" target="_blank" rel="noopener noreferrer">Open city data portal ↗</a>` : ""}`;
   $$("#city-cards .city-card").forEach((b) => b.classList.toggle("active", b.dataset.city === city.name));
   // Reflect the selected city in the URL so it can be deep-linked / shared (§11.8)
   if (state.tab === "cities") history.replaceState(null, "", "#cities/" + citySlug(city.name));
@@ -378,7 +375,7 @@ function buildMarkers() {
       color: state.mapMode === "night" ? "rgba(255,255,255,0.8)" : "#fff",
       weight: 1.5, fillColor: markerColor(c.year), fillOpacity: 0.92,
     });
-    m.bindTooltip(`${c.name} — ${c.country} (${c.year})`, { direction: "top", offset: [0, -3] });
+    m.bindTooltip(`${esc(c.name)} — ${esc(c.country)} (${esc(c.year)})`, { direction: "top", offset: [0, -3] });
     m.on("click", () => selectCity(c));
     m.addTo(state.markerLayer);
     state.markers[c.name] = m;
@@ -538,7 +535,7 @@ function renderFramework() {
   $("#fw-enablers").innerHTML = `<h3>Two enablers</h3>` + block("Enablers", f.enablers);
   const fmax = Math.max(...f.focus_areas.map((a) => a.share));
   $("#focus-detail").innerHTML = f.focus_areas.map((a) => `
-    <div class="focus-item"><div class="fi-head"><b>${esc(a.name)}</b><span class="fi-share">${a.share}%</span></div>
+    <div class="focus-item"><div class="fi-head"><b>${esc(a.name)}</b><span class="fi-share">${esc(a.share)}%</span></div>
       <p>${esc(a.blurb)}</p><div class="bar-track"><div class="bar-fill${a.name.includes("Built") ? " red" : ""}" style="width:${(a.share / fmax) * 100}%"></div></div></div>`).join("");
   $("#gov-grid").innerHTML = `
     <article class="gov-card"><h3>Leadership model</h3><p>${esc(g.model)}</p></article>
@@ -1159,11 +1156,11 @@ function renderOpenData() {
   $$("#dataset-downloads [data-dl]").forEach((b) => b.addEventListener("click", () => downloads[Number(b.dataset.dl)][2]()));
 
   $("#document-grid").innerHTML = state.K.documents.map((d) => `
-    <article class="doc-card"><span class="dc-kind">${esc(d.kind)} · ${d.year}</span><b>${esc(d.title)}</b><p>${esc(d.note)}</p>
+    <article class="doc-card"><span class="dc-kind">${esc(d.kind)} · ${esc(d.year)}</span><b>${esc(d.title)}</b><p>${esc(d.note)}</p>
       <div class="dc-foot"><span class="dc-size">${esc(d.size || "PDF")}</span><a class="dc-dl" href="docs/${encodeURIComponent(d.file)}" download>Download ↓</a></div></article>`).join("");
 
   $("#source-list").innerHTML = state.K.data_sources.map((s) => `
-    <div class="def-row"><b><a href="${esc(s.url)}" target="_blank" rel="noreferrer">${esc(s.name)} ↗</a></b><em>${esc(s.type)}</em></div>`).join("");
+    <div class="def-row"><b><a href="${esc(safeUrl(s.url))}" target="_blank" rel="noopener noreferrer">${esc(s.name)} ↗</a></b><em>${esc(s.type)}</em></div>`).join("");
 
   const m = state.data.metadata || {};
   const methods = [
@@ -1205,12 +1202,12 @@ function renderLibrary() {
   $("#lib-results").innerHTML = filtered.map((e) => {
     const actions = [];
     if (e.file) actions.push(`<a class="le-dl" href="docs/${encodeURIComponent(e.file)}" download>PDF ↓</a>`);
-    if (e.url) actions.push(`<a class="le-ext" href="${esc(e.url)}" target="_blank" rel="noreferrer">View ↗</a>`);
+    if (e.url) actions.push(`<a class="le-ext" href="${esc(safeUrl(e.url))}" target="_blank" rel="noopener noreferrer">View ↗</a>`);
     return `<div class="lib-entry">
       <span class="le-badge ${esc(e.type)}">${esc(e.type)}</span>
       <div class="le-body">
         <div class="le-title">${esc(e.title)}</div>
-        <div class="le-meta">${esc(e.source)}${e.year ? ` · ${e.year}` : ""}${e.category ? ` · ${esc(e.category)}` : ""}</div>
+        <div class="le-meta">${esc(e.source)}${e.year ? ` · ${esc(e.year)}` : ""}${e.category ? ` · ${esc(e.category)}` : ""}</div>
         <p class="le-takeaway">${esc(e.takeaway)}</p>
       </div>
       <div class="le-actions">${actions.join("")}</div>
@@ -1219,7 +1216,6 @@ function renderLibrary() {
 }
 
 /* ---------------- Exports ---------------- */
-function csvCell(v) { return `"${`${v ?? ""}`.replaceAll('"', '""')}"`; }
 function projectsCsv(rows, all = false) {
   const head = ["report_year", "country", "city", "project", "focus_area", "status", "source_page"];
   return [head.join(","), ...rows.map((p) => head.map((k) => csvCell(p[k])).join(","))].join("\n");
@@ -1250,7 +1246,8 @@ function wireNav() {
 async function loadJson(path) {
   const res = await fetch(`${path}?v=${DATA_VERSION}`);
   if (!res.ok) throw new Error(`Failed to load ${path}: ${res.status}`);
-  return res.json();
+  if (!res.headers.get("content-type")?.includes("application/json")) throw new Error(`Expected JSON from ${path}`);
+  return validateDataset(path, await res.json());
 }
 
 /* ---------------- Contacts ---------------- */
@@ -1335,7 +1332,7 @@ function renderContacts() {
       h += `<div class="cpop-name">${esc(nr.name)}</div>`;
       h += `<div class="cpop-detail">${esc(nr.title)}</div>`;
     }
-    h += `<div class="cpop-org"><a href="${esc(nr.url || "#")}" target="_blank" rel="noopener">${esc(nr.org)}</a>`;
+    h += `<div class="cpop-org"><a href="${esc(safeUrl(nr.url || "#"))}" target="_blank" rel="noopener">${esc(nr.org)}</a>`;
     if (nr.badge) h += ` <span class="cpop-badge">${esc(nr.badge)}</span>`;
     h += `</div></div>`;
     // CSCO block
@@ -1376,7 +1373,7 @@ function renderContacts() {
         ${nr.badge ? `<span class="cc-badge">${esc(nr.badge)}</span>` : ""}
       </div>
       ${nr.name ? `<div class="cc-nr-name">${esc(nr.name)} <span class="cc-nr-role">NR</span></div>` : ""}
-      <a class="cc-inst" href="${esc(nr.url)}" target="_blank" rel="noopener">${esc(nr.org)}</a>
+      <a class="cc-inst" href="${esc(safeUrl(nr.url))}" target="_blank" rel="noopener">${esc(nr.org)}</a>
     </article>`).join("");
 
   $("#contacts-content").innerHTML = `
@@ -1442,7 +1439,7 @@ function ensureContactsMap(popupFn) {
       radius: 7, color: "#fff", weight: 1.5,
       fillColor: nr ? "#946012" : "#183a5a", fillOpacity: 0.9,
     });
-    m.bindTooltip(`<b>${city.name}</b> · ${city.country}`, { direction: "top", offset: [0, -4] });
+    m.bindTooltip(`<b>${esc(city.name)}</b> · ${esc(city.country)}`, { direction: "top", offset: [0, -4] });
     m.bindPopup(popupFn(city), { maxWidth: 280, maxHeight: 310, className: "cpop-wrap", autoPan: false });
     m.addTo(state.cMap);
   }

@@ -43,7 +43,7 @@ test("loads no video on arrival; all selections decode, play, and pause on navig
     await player.evaluate(async (video) => { video.muted = true; await video.play(); });
     await expect.poll(() => player.evaluate((video) => video.currentTime)).toBeGreaterThan(0.1);
     // Pages' local simulator streams without range headers; verify seeking on the real host.
-    if (process.env.ASCN_TEST_URL) {
+    if (process.env.ASCN_TEST_URL && !["127.0.0.1", "localhost"].includes(new URL(process.env.ASCN_TEST_URL).hostname)) {
       await player.evaluate((video) => { video.currentTime = 90; });
       await expect.poll(() => player.evaluate((video) => video.currentTime), { timeout: 15_000 }).toBeGreaterThan(90.1);
     }
