@@ -10,6 +10,10 @@ An independent civic workbench that turns **public ASEAN Smart Cities Network (A
 
 **Live:** [ascn.nonarkara.org](https://ascn.nonarkara.org) · **Source:** this repository · **License:** [MIT](LICENSE)
 
+Use the live custom domain to review the current V2. Hash-prefixed Pages URLs
+are fixed deployment snapshots and can show an older, smaller system.
+See [view recovery and map repair](RECOVERY.md) for the October 2026 findings.
+
 This is not the official ASCN website. The network’s own pages and PDFs live on [asean.org](https://asean.org/our-communities/asean-smart-cities-network/). A separate agency-facing site, treated as V1 and not modified from this path, is [ascn.depa.or.th](https://ascn.depa.or.th).
 
 ---

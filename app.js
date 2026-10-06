@@ -8,8 +8,8 @@
    ============================================================ */
 
 const tileLayers = {
-  map: { url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", attr: "&copy; OpenStreetMap &copy; CARTO" },
-  night: { url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", attr: "&copy; OpenStreetMap &copy; CARTO" },
+  map: { url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", attr: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>' },
+  night: { url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", attr: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>', className: "ascn-night-tiles" },
 };
 
 const TABS = ["overview", "ascn9", "history", "cities", "projects", "framework", "partners", "contacts", "insights", "data", "research", "essay"];
@@ -360,7 +360,8 @@ function ensureMap() {
     state.mapMode = btn.dataset.mode;
     $$("#map-mode button").forEach((b) => b.classList.toggle("active", b === btn));
     if (state.tileLayer) state.map.removeLayer(state.tileLayer);
-    state.tileLayer = L.tileLayer(tileLayers[state.mapMode].url, { attribution: tileLayers[state.mapMode].attr }).addTo(state.map);
+    const layer = tileLayers[state.mapMode];
+    state.tileLayer = L.tileLayer(layer.url, { attribution: layer.attr, className: layer.className || "" }).addTo(state.map);
     buildMarkers();
   });
   state.mapReady = true;

@@ -2111,3 +2111,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 
 /* §11.8 — keep the momentum mini-line SVG from overflowing narrow viewports */
 .ig-mini-line svg, .line-wrap svg { max-width: 100%; height: auto; }
+/* Apply night styling to the basemap alone; city markers retain their colours. */
+.ascn-night-tiles {
+  filter: invert(1) hue-rotate(180deg) saturate(0.5) brightness(0.85);
+}
