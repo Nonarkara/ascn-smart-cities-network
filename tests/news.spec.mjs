@@ -52,6 +52,21 @@ test("phone filters expand on request and keep the first headline visible initia
   await expect(page.locator("#news-filter-summary")).toContainText("2 active");
 });
 
+test("news and the meeting record remain usable when report data is unavailable", async ({ page }) => {
+  await page.route("**/data/ascn-v2-data.json*", (route) => route.fulfill({ json: { reports: null, projects: [] } }));
+  await page.route("**/data/news-snapshot.json", (route) => route.fulfill({ json: fixture }));
+  await page.route("**/api/news", (route) => route.fulfill({ status: 503, json: { checkedAt: "2026-10-07", articles: [], sources: [] } }));
+  await page.goto("/#news");
+  await expect(page.locator(".load-error")).toContainText("ASCN report datasets");
+  await expect(page.locator("#view-news")).toBeVisible();
+  await expect(page.locator("#news-results .news-story")).toHaveCount(3);
+  await page.locator("#news-country").selectOption("Malaysia");
+  await expect(page.locator("#news-results .news-story")).toHaveCount(1);
+  await page.locator('#tab-nav [data-tab="overview"]').click();
+  await page.locator(".meeting-summary").click();
+  await expect(page.locator("#view-ascn9")).toBeVisible();
+});
+
 for (const width of [1280, 768, 390, 375]) {
   test(`news layout fits ${width}px`, async ({ page }, testInfo) => {
     await page.route("**/api/news", (route) => route.fulfill({ status: 503, json: { checkedAt: "2026-10-07", articles: [], sources: [] } }));

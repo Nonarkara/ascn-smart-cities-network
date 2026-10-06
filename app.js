@@ -134,6 +134,7 @@ function routeFromHash() {
 }
 
 function renderTab(tab) {
+  if (!state.data || !state.K) return;
   if (tab === "cities") ensureMap();
   if (state.rendered.has(tab)) return;
   ({
@@ -2559,6 +2560,8 @@ function renderIntegrity_UNUSED() {
 }
 
 async function init() {
+  wireNav();
+  routeFromHash();
   try {
     const [data, K, cities, library, libraryFull, cityStats] = await Promise.all([
       loadJson("data/ascn-v2-data.json"),
@@ -2569,7 +2572,6 @@ async function init() {
       loadJson("data/city-stats-merged.json").catch(() => []),
     ]);
     state.data = data; state.K = K; state.C = cities.cities; state.L = library; state.LF = libraryFull; state.CS = Array.isArray(cityStats) ? cityStats : [];
-    wireNav();
     routeFromHash();
   } catch (err) {
     console.error(err);
@@ -2581,8 +2583,8 @@ async function init() {
       main.insertAdjacentHTML("afterbegin", `
         <section class="load-error" role="alert">
           <p class="label">Data load failed</p>
-          <h2>The platform could not load its source datasets.</h2>
-          <p>${esc(err.message)}. Run <code>npm run check</code> locally to validate JSON contracts and rebuild the static site.</p>
+          <h2>The ASCN report datasets could not load.</h2>
+          <p>${esc(err.message)}. Regional news, the meeting record, and the video showcase remain available.</p>
         </section>`);
     }
   }
