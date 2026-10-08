@@ -23,6 +23,14 @@ Nonempty responses are cached for 15 minutes at the edge; empty failures are not
 
 Refresh the shipped fallback with `npm run refresh:news`. A failed refresh preserves the previous snapshot. Confirm every newly added publisher's RSS endpoint and usage terms before adding it. The current registry links to each publisher's feed documentation; availability can differ between local and Worker egress.
 
+## ASCN Evidence and Discovery
+
+`functions/api/ascn-news.js` uses two fixed, public Google News RSS searches. It does not accept user-selected URLs, follow redirects, fetch article bodies, or call a paid service. The shared feed reader rejects XML entities and oversized responses. Historical matches bypass the regional feed's rolling 180-day window but remain unreviewed leads. Index dates and partial feed failures are labelled.
+
+The reviewed archive is an editorial input, not generated from headline sentiment or volume. Its runtime and build validators check provenance, dates, city membership, metric types and project links. Discovery cannot alter official M&E status. CSV exports use the existing formula-neutralization helper. Source text remains untrusted and is escaped before display.
+
+`npm run refresh:ascn-news` preserves historical discoveries and refuses an empty refresh or an archive over 10,000 leads. Runtime refresh merges saved and live leads in memory; it does not silently write public evidence. New claims require a source review and a committed archive record.
+
 ## Checks
 
 Run `npm run check`, `npm audit --audit-level=high`, and `npm test`. To exercise a deployed site, set `ASCN_TEST_URL` to its URL. The browser suite covers the news filters, saved/live states, unsafe links, CSV exports, XML boundaries, maps, existing routes, and complete video playback.

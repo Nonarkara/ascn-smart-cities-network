@@ -116,6 +116,7 @@ function setTab(tab, push = true) {
   renderTab(tab);
   // Compare only the first path segment so a #cities/{slug} sub-route survives a tab re-entry
   if (push && location.hash.split("/")[0] !== `#${tab}`) history.replaceState(null, "", `#${tab}`);
+  window.dispatchEvent(new CustomEvent("ascn:tabchange", { detail: { tab } }));
   window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
 }
 
@@ -123,7 +124,7 @@ function setTab(tab, push = true) {
 function routeFromHash() {
   const [tab, sub] = (location.hash || "#overview").slice(1).split("/");
   setTab(tab, false);
-  if (tab === "cities" && sub) {
+  if (tab === "cities" && sub && state.data && state.C) {
     const city = state.C.find((c) => citySlug(c.name) === sub);
     if (city) {
       ensureMap();
@@ -337,7 +338,8 @@ function selectCity(city) {
     <p style="color:var(--ink-2);margin:0 0 0.4rem">${esc(city.summary)}</p>
     ${flagHtml ? `<div class="cd-section-label">Flagship work</div><div class="cd-projects">${flagHtml}</div>` : ""}
     ${extraHtml ? `<div class="cd-section-label">From the M&E appendix</div><div class="cd-projects">${extraHtml}</div>` : (projects.length ? "" : `<p class="cd-empty">Detailed project rows pending in the public appendix.</p>`)}
-    ${city.portal ? `<a class="cd-portal" href="${esc(safeUrl(city.portal))}" target="_blank" rel="noopener noreferrer">Open city data portal ↗</a>` : ""}`;
+    ${city.portal ? `<a class="cd-portal" href="${esc(safeUrl(city.portal))}" target="_blank" rel="noopener noreferrer">Open city data portal ↗</a>` : ""}
+    <a class="cd-portal" href="#news/archive?city=${encodeURIComponent(city.name)}">Review public evidence for ${esc(city.name)} ↗</a>`;
   $$("#city-cards .city-card").forEach((b) => b.classList.toggle("active", b.dataset.city === city.name));
   // Reflect the selected city in the URL so it can be deep-linked / shared (§11.8)
   if (state.tab === "cities") history.replaceState(null, "", "#cities/" + citySlug(city.name));

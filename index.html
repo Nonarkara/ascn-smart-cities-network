@@ -23,7 +23,7 @@
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link href="fonts/source-sans-3.css" rel="stylesheet" />
     <link rel="stylesheet" href="vendor/leaflet/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" />
-    <link rel="stylesheet" href="styles.css?v=38" />
+    <link rel="stylesheet" href="styles.css?v=40" />
   </head>
   <body>
     <header class="site-nav">
@@ -95,7 +95,7 @@
         </section>
 
         <section class="news-preview" aria-labelledby="news-preview-heading">
-          <div class="news-band-head"><h2 id="news-preview-heading">Across the region</h2><a href="#news" data-tab="news">All news ↗</a></div>
+          <div class="news-band-head"><h2 id="news-preview-heading">Across the region</h2><a href="#news/regional">All news ↗</a></div>
           <div id="news-preview-list"><p class="news-muted">Loading regional headlines…</p></div>
         </section>
 
@@ -142,9 +142,54 @@
       </section>
 
       <section class="view" id="view-news" data-view="news" hidden>
+        <header class="review-head">
+          <p class="label">ASEAN Smart Cities Network · Evidence review</p>
+          <h1>ASCN in the public record</h1>
+          <p>What was promised, what was delivered, and what still needs evidence.</p>
+        </header>
+        <nav class="review-tabs" aria-label="News views">
+          <a href="#news/review" data-news-view="review">Performance review</a>
+          <a href="#news/archive" data-news-view="archive">ASCN archive</a>
+          <a href="#news/discovery" data-news-view="discovery">Discovery</a>
+          <a href="#news/regional" data-news-view="regional">Regional news</a>
+        </nav>
+        <div id="review-controls" class="review-controls">
+          <label class="review-search"><span>Search evidence</span><input type="search" id="review-search" placeholder="City, project or claim" /></label>
+          <label><span>City</span><select id="review-city"><option value="all">All cities</option></select></label>
+          <details id="review-filter-panel"><summary>More filters</summary><div class="review-filter-fields">
+            <label><span>Year</span><select id="review-year"><option value="all">All years</option></select></label>
+            <label><span>Evidence stage</span><select id="review-stage"><option value="all">All stages</option></select></label>
+            <label><span>Source type</span><select id="review-sourceType"><option value="all">All sources</option></select></label>
+            <label><span>ASCN objective</span><select id="review-mandate"><option value="all">All objectives</option></select></label>
+          </div></details>
+          <button type="button" id="review-clear" class="text-button">Reset</button>
+          <button type="button" id="review-export" class="news-icon-button" aria-label="Download filtered evidence as CSV" title="Download filtered evidence as CSV">↓</button>
+        </div>
+        <p id="review-status" class="review-note" role="status">Loading ASCN evidence…</p>
+        <div id="news-panel-review" data-news-panel="review">
+          <div id="review-verdict" class="review-verdict"></div>
+          <div id="review-baseline" class="review-baseline"></div>
+          <section class="review-section"><h2>What the coverage establishes</h2><div id="review-stage-chart"></div><p class="review-note">Counts describe this archive, not all ASCN activity. A source can establish an output without demonstrating an outcome.</p></section>
+          <section class="review-section"><h2>Coverage over time</h2><div id="review-timeline"></div><p class="review-note">Records by publication year, or context year when the publication date is unknown. Missing coverage is not inactivity.</p></section>
+          <section class="review-section"><h2>Against ASCN's three objectives</h2><div id="review-mandates"></div></section>
+          <section class="review-section"><h2>Questions the record leaves open</h2><div id="review-followups"></div></section>
+          <section class="review-section"><h2>City evidence gaps</h2><p class="review-note">Only explicit city-specific evidence counts here. Hosting a regional meeting does not count as local project delivery. Project rows come from the latest available official cycle; absent rows are not zero projects.</p><div class="review-table-wrap"><table class="review-city-table"><thead><tr><th>City</th><th>Evidence records</th><th>Delivery records</th><th>Outcome records</th><th>Project rows</th></tr></thead><tbody id="review-cities"></tbody></table></div></section>
+        </div>
+        <div id="news-panel-archive" data-news-panel="archive" hidden>
+          <div class="review-band-head"><h2>Historical evidence ledger</h2><a href="data/ascn-news-archive.json" download>Source data ↓</a></div>
+          <div id="review-archive"></div><div id="review-pagination" class="review-pagination"></div>
+        </div>
+        <div id="news-panel-discovery" data-news-panel="discovery" hidden>
+          <div class="review-band-head"><h2>ASCN discovery leads</h2><button type="button" id="discovery-refresh" class="news-icon-button" aria-label="Check ASCN news index" title="Check ASCN news index">↻</button></div>
+          <p class="review-note">Unreviewed search matches, excluded from performance findings. Index dates may differ from publication dates. Coverage includes old and new articles, research and announcements; duplicate reporting may remain.</p>
+          <label class="discovery-search"><span>Search discovery</span><input type="search" id="discovery-search" placeholder="Search indexed titles or publishers" /></label>
+          <p id="discovery-status" class="review-note" role="status">Loading saved discovery leads…</p>
+          <div id="discovery-results"></div><div id="discovery-pagination" class="review-pagination"></div>
+        </div>
+        <div id="news-panel-regional" data-news-panel="regional" hidden>
         <header class="news-head">
           <p class="label">ASEAN · City development</p>
-          <h1>Regional news</h1>
+          <h2>Regional news</h2>
           <p class="lede">Public services, transport, infrastructure, and the technology shaping Southeast Asia’s cities.</p>
         </header>
         <div class="news-controls">
@@ -169,6 +214,8 @@
             <section><h2>Publisher feeds</h2><div id="news-sources"></div><p class="news-muted">Headline links only. Reporting and article rights remain with each publisher.</p></section>
           </aside>
         </div>
+        </div>
+        <details class="review-method"><summary>Sources, method and coverage limits</summary><div id="review-method"></div></details>
       </section>
 
       <!-- ASCN 9 RECORD -->
@@ -182,7 +229,7 @@
 
           <p>In the room, on camera: national representatives from Brunei, Cambodia, Indonesia, Malaysia, and Myanmar. Officials standing in for Lao PDR, Singapore, Thailand, Viet Nam, and Timor-Leste. City officers from 25 member cities. The ASEAN Secretariat. Japan’s land ministry, Korea’s land ministry, UN-Habitat, and Evercity came to present.</p>
 
-          <p>Three cities had joined since last September: Denpasar and Semarang from Indonesia, and Dili from Timor-Leste. That is not yet in this platform’s city count of 38, which still follows the last published monitoring cycle.</p>
+          <p>Three cities had joined since last September: Denpasar and Semarang from Indonesia, and Dili from Timor-Leste. All three are included in this platform’s 38-city roster, following the <a href="https://asean.org/asean-smart-cities-network/" target="_blank" rel="noopener noreferrer">official membership list as of January 2026</a>. Project totals still follow the September 2025 monitoring cycle.</p>
 
           <p>Malaysia, last year’s chair, recapped 2025. A sustainable-urbanisation forum in Kuala Lumpur in August. The eighth annual meeting, an expert talk, an exhibition, and site visits in September. Adoption of the ASEAN Smart Cities Action Plan for 2026–2035. Another round of the Korea-funded professional programme at Seoul National University, including master’s scholarships.</p>
 
@@ -601,7 +648,8 @@
 
     <script src="vendor/leaflet/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="></script>
     <script src="showcase.js?v=35"></script>
-    <script type="module" src="app.js?v=39"></script>
+    <script type="module" src="app.js?v=40"></script>
     <script type="module" src="news.js?v=1"></script>
+    <script type="module" src="ascn-news.js?v=1"></script>
   </body>
 </html>

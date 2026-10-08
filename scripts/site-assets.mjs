@@ -1,7 +1,7 @@
 import { cp, lstat, mkdir, readdir } from "node:fs/promises";
 import { extname, join } from "node:path";
 
-export const siteEntries = ["index.html", "styles.css", "app.js", "showcase.js", "news.js", "favicon.svg", "_headers",
+export const siteEntries = ["index.html", "styles.css", "app.js", "showcase.js", "news.js", "ascn-news.js", "favicon.svg", "_headers",
   "lib", "vendor", "fonts", "data", "docs", "Photos", "logos", "media"];
 
 const extensions = {

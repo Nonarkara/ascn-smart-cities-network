@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-10-08",
+  "scope": "Public ASCN coverage and supporting evidence, 2018–2026. A growing research archive, not an exhaustive census of all news. English, Indonesian, Malay and Thai sources were searched. Paywalls, removed pages, search indexing and local-language coverage limit completeness.",
+  "queries": ["\"ASEAN Smart Cities Network\" by year, 2018–2026", "ASCN annual meeting, financing, implementation, outcomes", "ASCN plus member-city names", "Jaringan Kota Cerdas ASEAN", "เครือข่ายเมืองอัจฉริยะอาเซียน"],
+  "records": [
+    {
+      "id": "au-2018", "eventId": "australia-smart-cities-initiative", "title": "ASEAN-Australia collaboration on smart and sustainable city development",
+      "url": "https://www.foreignminister.gov.au/minister/julie-bishop/media-release/asean-australia-collaboration-smart-and-sustainable-city-development", "publisher": "Australian Foreign Minister", "publishedAt": "2018-03-18", "year": 2018, "language": "English", "sourceType": "Official statement", "access": "Full text", "stage": "Commitment", "mandates": ["Funding", "Cooperation"], "cities": [], "projectLinks": [],
+      "claim": "Australia announced A$30 million over five years for training and technical assistance, including support for the emerging network.", "analysis": "A regional funding commitment; it is not evidence that individual ASCN projects received this amount.", "followUp": "Trace allocations, disbursements and completed city activities through donor accounts.", "metrics": [{"label": "Announced regional investment", "value": 30, "unit": "million AUD", "asOf": "2018-03-18"}]
+    },
+    {
+      "id": "id-2018", "eventId": "network-founding", "title": "Indonesia expands smart city network to ASEAN",
+      "url": "https://en.antaranews.com/news/115517/indonesia-expands-smart-city-network-to-asean", "publisher": "ANTARA", "publishedAt": "2018-04-29", "year": 2018, "language": "English", "sourceType": "News reporting", "access": "Full text", "stage": "Commitment", "mandates": ["Cooperation"], "cities": ["Jakarta", "Makassar", "Banyuwangi"], "projectLinks": [],
+      "claim": "Indonesia proposed Jakarta, Makassar and Banyuwangi for the network, alongside its national smart-city programme.", "analysis": "Membership and national ambition establish participation, not delivery attributable to ASCN.", "followUp": "Compare each city's original priorities with later project records and service results.", "metrics": []
+    },
+    {
+      "id": "sg-2018", "eventId": "inaugural-meeting", "title": "Opening address at the Inaugural ASEAN Smart Cities Network Meeting",
+      "url": "https://www.mfa.gov.sg/newsroom/press-statements-transcripts-and-photos/20180708-ascntranscript-08-jul-2018/", "publisher": "Singapore MFA", "publishedAt": "2018-07-08", "year": 2018, "language": "English", "sourceType": "Official statement", "access": "Full text", "stage": "Cooperation", "mandates": ["Cooperation", "Bankable projects", "Funding"], "cities": [], "projectLinks": [],
+      "claim": "The inaugural meeting described city action plans and discussions with more than 60 potential global partners.", "analysis": "Potential partners are a pipeline, not signed deals or funded projects.", "followUp": "Identify which discussions became agreements and which agreements produced operating services.", "metrics": [{"label": "Potential partners discussed", "value": 60, "unit": "more than this number", "asOf": "2018-07-08"}]
+    },
+    {
+      "id": "framework-2018", "eventId": "framework-adoption", "title": "ASEAN Smart Cities Framework",
+      "url": "https://asean.mfa.gov.sg/newsroom/press-2018-11-14-2-14-nov-2018/", "publisher": "Singapore Mission to ASEAN", "publishedAt": "2018-11-14", "year": 2018, "language": "English", "sourceType": "Official statement", "access": "Full text", "stage": "Output", "mandates": ["Cooperation"], "cities": [], "projectLinks": [],
+      "claim": "The framework links urban development to quality of life, inclusion, governance and partnership funding.", "analysis": "The framework defines what delivery should serve. Technology deployment alone does not establish these outcomes.", "followUp": "Require service and inclusion indicators alongside each project's implementation status.", "metrics": []
+    },
+    {
+      "id": "bangkok-2019", "eventId": "annual-meeting-2019", "title": "ASCN reviews work on smart cities",
+      "url": "https://asean.org/ascn-reviews-work-on-smart-cities/", "publisher": "ASEAN Secretariat", "publishedAt": "2019-08-23", "year": 2019, "language": "English", "sourceType": "Official statement", "access": "Full text", "stage": "Output", "mandates": ["Cooperation"], "cities": ["Phuket"], "projectLinks": [],
+      "claim": "The meeting adopted terms of reference, elected Singapore as shepherd and launched the Phuket Smart City White Paper.", "analysis": "Governance and knowledge products are documented outputs; the release does not measure service improvements.", "followUp": "Track adoption of the white paper and continuity of city projects across chair changes.", "metrics": []
+    },
+    {
+      "id": "adb-fund", "eventId": "aasctf", "title": "ASEAN Australia Smart Cities Trust Fund",
+      "url": "https://www.adb.org/what-we-do/funds/asean-australia-smart-cities-fund", "publisher": "Asian Development Bank", "publishedAt": null, "year": 2019, "language": "English", "sourceType": "Partner report", "access": "Full text", "stage": "Cooperation", "mandates": ["Funding", "Bankable projects"], "cities": [], "projectLinks": [],
+      "claim": "ADB records the trust fund's establishment in April 2019 and its support for planning, service delivery and financial management.", "analysis": "An operational funding mechanism supports the mandate. Its regional scope is wider than the ASCN project register.", "followUp": "Match funded activities to cities and distinguish technical assistance from capital investment.", "metrics": []
+    },
+    {
+      "id": "depa-2020", "eventId": "annual-meeting-2020", "title": "3rd ASEAN Smart Cities Network Annual Meeting",
+      "url": "https://www.depa.or.th/en/article-view/20200717_01", "publisher": "depa Thailand", "publishedAt": "2020-07-17", "year": 2020, "language": "English", "sourceType": "Official statement", "access": "Full text", "stage": "Output", "mandates": ["Cooperation"], "cities": [], "projectLinks": [],
+      "claim": "The virtual meeting endorsed the M&E framework, external-partner guidelines and membership-expansion options.", "analysis": "Reporting rules were established. Their adoption does not itself validate the later self-reported project results.", "followUp": "Check whether subsequent reports publish comparable measures and evidence behind completion claims.", "metrics": []
+    },
+    {
+      "id": "un-cambodia-2021", "eventId": "sihanoukville-inclusion", "title": "Smart City Working Group Meeting",
+      "url": "https://cambodia.un.org/en/113255-smart-city-working-group-meeting", "publisher": "United Nations Cambodia", "publishedAt": "2021-02-23", "year": 2021, "language": "English", "sourceType": "Partner report", "access": "Full text", "stage": "Implementation", "mandates": ["Cooperation"], "cities": ["Sihanoukville City"], "projectLinks": [],
+      "claim": "The UN described its inclusive-city programme in Sihanoukville and called for consultation, housing rights and resident participation.", "analysis": "This is related city evidence before Sihanoukville joined ASCN in 2024, not an ASCN-funded result.", "followUp": "Look for public consultation records, participation measures and safeguards against displacement.", "metrics": []
+    },
+    {
+      "id": "gma-2021", "eventId": "philippines-privacy-review", "title": "Makatizen, smart cities, and good governance",
+      "url": "https://www.gmanetwork.com/news/topstories/opinion/803010/makatizen-smart-cities-and-good-governance/story/", "publisher": "GMA News / Jessamine Pacis", "publishedAt": "2021-09-12", "year": 2021, "language": "English", "sourceType": "Commentary", "access": "Full text", "stage": "Scrutiny", "mandates": ["Cooperation"], "cities": ["Davao City", "Cebu City", "Manila"], "projectLinks": [],
+      "claim": "The author questioned surveillance-led smart-city programmes and transparency of data-sharing arrangements in the Philippines.", "analysis": "An attributed opinion identifies safeguards to examine; it is not a finding of misconduct by ASCN or every named city.", "followUp": "Request privacy impact assessments, retention rules and citizen complaint mechanisms for linked systems.", "metrics": []
+    },
+    {
+      "id": "eppo-2022", "eventId": "annual-meeting-2022", "title": "เครือข่ายเมืองอัจฉริยะอาเซียน",
+      "url": "https://www.eppo.go.th/index.php/en/component/k2/item/18336-news-310865-01", "publisher": "EPPO Thailand", "publishedAt": "2022-08-31", "year": 2022, "language": "Thai", "sourceType": "Official statement", "access": "Full text", "stage": "Cooperation", "mandates": ["Cooperation"], "cities": ["Bangkok", "Chonburi", "Phuket"], "projectLinks": [],
+      "claim": "Thailand reported participation in the fifth annual meeting, held online on 30 August under Cambodia's chairmanship.", "analysis": "Participation and reporting activity are documented. This article does not provide comparable city outcome measures.", "followUp": "Follow the reported priorities into the 2022 M&E register and later operating evidence.", "metrics": []
+    },
+    {
+      "id": "bali-2023", "eventId": "annual-meeting-2023", "title": "ASEAN Smart Cities Network steps up efforts on promoting smart, sustainable cities",
+      "url": "https://asean.org/asean-smart-cities-network-steps-up-efforts-on-promoting-smart-sustainable-cities/", "publisher": "ASEAN Secretariat", "publishedAt": "2023-07-12", "year": 2023, "language": "English", "sourceType": "Official statement", "access": "Full text", "stage": "Cooperation", "mandates": ["Cooperation", "Bankable projects"], "cities": [], "projectLinks": [],
+      "claim": "The sixth meeting discussed project implementation, an investment toolkit and membership expansion with external partners.", "analysis": "The release documents coordination and toolkit development, without identifying financing closed or citizen outcomes.", "followUp": "Trace the toolkit through publication, city use and transactions completed.", "metrics": []
+    },
+    {
+      "id": "thai-expansion-2023", "eventId": "thai-expansion-2023", "title": "Three more Thai provinces join ASEAN Smart Cities Network expanding digital reach",
+      "url": "https://thethaiger.com/news/national/three-more-thai-provinces-join-asean-smart-cities-network-expanding-digital-reach", "publisher": "Thaiger", "publishedAt": "2023-07-28", "year": 2023, "language": "English", "sourceType": "News reporting", "access": "Full text", "stage": "Commitment", "mandates": ["Cooperation"], "cities": ["Chiang Mai", "Khon Kaen", "Rayong"], "projectLinks": [],
+      "claim": "Chiang Mai, Khon Kaen and Rayong joined ASCN, expanding the roster from 26 to 29 cities.", "analysis": "The article also discusses national programmes; those should not be counted automatically as ASCN achievements.", "followUp": "Assess the new members' project baselines and subsequent service delivery separately from membership growth.", "metrics": []
+    },
+    {
+      "id": "japan-2023", "eventId": "japan-meeting-2023", "title": "Secretary-General of ASEAN attends ASEAN-Japan Smart Cities Network High Level Meeting",
+      "url": "https://asean.org/secretary-general-of-asean-attends-asean-japan-smart-cities-network-high-level-meeting/", "publisher": "ASEAN Secretariat", "publishedAt": "2023-10-26", "year": 2023, "language": "English", "sourceType": "Official statement", "access": "Full text", "stage": "Cooperation", "mandates": ["Cooperation"], "cities": [], "projectLinks": [],
+      "claim": "The Secretary-General attended the fifth ASEAN-Japan high-level meeting in Tsukuba and encouraged stronger cooperation.", "analysis": "A bilateral meeting is documented; no project-specific output is stated in this short release.", "followUp": "Find the resulting city agreements, implementing agencies and project updates.", "metrics": []
+    },
+    {
+      "id": "indonesia-2024", "eventId": "indonesia-coordination-2024", "title": "Ditjen Bina Adwil matangkan persiapan RI di ASEAN Smart Cities Network",
+      "url": "https://www.antaranews.com/berita/4167270/ditjen-bina-adwil-matangkan-persiapan-ri-di-asean-smart-cities-network", "publisher": "ANTARA", "publishedAt": "2024-06-25", "year": 2024, "language": "Indonesian", "sourceType": "News reporting", "access": "Full text", "stage": "Implementation", "mandates": ["Cooperation"], "cities": ["Jakarta", "Banyuwangi", "Makassar", "Sumedang"], "projectLinks": [{"city": "Makassar", "project": "Smart Health Care"}],
+      "claim": "Indonesia's coordination meeting discussed JAKI, Homestay Naik Kelas, HomeCare and WA KEPO, alongside its shepherd role.", "analysis": "Named services provide follow-up leads. Their uptake and effectiveness are not quantified in this report.", "followUp": "Obtain service logs, active-user counts and before/after measures for each named programme.", "metrics": []
+    },
+    {
+      "id": "laos-2024", "eventId": "annual-meeting-2024", "title": "ASEAN Smart Cities Network reaffirms commitment to drive smart, sustainable urban development",
+      "url": "https://asean.org/asean-smart-cities-network-reaffirms-commitment-to-drive-smart-sustainable-urban-development/", "publisher": "ASEAN Secretariat", "publishedAt": "2024-07-30", "year": 2024, "language": "English", "sourceType": "Official statement", "access": "Full text", "stage": "Cooperation", "mandates": ["Cooperation", "Funding"], "cities": [], "projectLinks": [],
+      "claim": "The seventh meeting in Luang Prabang discussed finance, capacity building and the post-2025 agenda, including data governance needs.", "analysis": "Recurring financing and governance themes identify work still to follow through; recurrence alone does not prove failure.", "followUp": "Identify financing decisions and published data-governance safeguards resulting from the meeting.", "metrics": []
+    },
+    {
+      "id": "akp-siem-2025", "eventId": "siem-reap-pilots", "title": "Siem Reap Smart City Project Phase 2 to be Launched with Continued Japanese Support",
+      "url": "https://akp.gov.kh/post/detail/330574", "publisher": "Agence Kampuchea Presse", "publishedAt": "2025-03-05", "year": 2025, "language": "English", "sourceType": "News reporting", "access": "Full text", "stage": "Output", "mandates": ["Cooperation"], "cities": ["Siem Reap"], "projectLinks": [{"city": "Siem Reap", "project": "Data Platform"}, {"city": "Siem Reap", "project": "Smart Waste Management"}],
+      "claim": "The report describes eight pilots, six being implemented and expanded, and a planned second phase with JICA support.", "analysis": "Pilot delivery is reported. Phase 2 was still a future plan at publication, and resident benefits were not measured here.", "followUp": "Confirm the second phase began and obtain waste-service and platform-use measures.", "metrics": [{"label": "Pilots reported", "value": 8, "unit": "initiatives", "asOf": "2025-03-05"}, {"label": "Pilots being implemented and expanded", "value": 6, "unit": "initiatives", "asOf": "2025-03-05"}]
+    },
+    {
+      "id": "jica-siem", "eventId": "siem-reap-pilots", "title": "Official Release: Siem Reap Smart City Project Introduction Video",
+      "url": "https://www.jica.go.jp/oda/project/201903200/en_news/1566906_55788.html", "publisher": "JICA", "publishedAt": null, "year": 2025, "language": "English", "sourceType": "Partner report", "access": "Full text", "stage": "Implementation", "mandates": ["Cooperation"], "cities": ["Siem Reap"], "projectLinks": [{"city": "Siem Reap", "project": "Data Platform"}],
+      "claim": "JICA describes its 2022–2025 project, pilot work and the public Siem Reap data platform.", "analysis": "The implementing partner corroborates a project and platform, but the page is promotional and supplies no comparable impact evaluation.", "followUp": "Check platform availability, reuse and measured improvements to the pilot services.", "metrics": []
+    },
+    {
+      "id": "rtm-2025", "eventId": "annual-meeting-2025", "title": "ASCN8 tumpu ASEAN Smart City Action Plan 2026-2035",
+      "url": "https://berita.rtm.gov.my/nasional/senarai-berita-nasional/senarai-artikel/ascn8-tumpu-asean-smart-city-action-plan-2026-2035/", "publisher": "RTM", "publishedAt": "2025-09-09", "year": 2025, "language": "Malay", "sourceType": "News reporting", "access": "Full text", "stage": "Cooperation", "mandates": ["Cooperation"], "cities": [], "projectLinks": [],
+      "claim": "The eighth annual meeting focused on the 2026–2035 action plan, expert exchanges and planned site visits.", "analysis": "This meeting-day report describes preparation and discussion, not proof that action-plan targets were achieved.", "followUp": "Check the adopted plan, implementation owners, deadlines and later measures.", "metrics": []
+    },
+    {
+      "id": "asean-2025", "eventId": "annual-meeting-2025", "title": "ASEAN Smart Cities Network fosters stronger cooperation towards overcoming regional urbanisation challenges",
+      "url": "https://asean.org/asean-smart-cities-network-fosters-stronger-cooperation-towards-overcoming-regional-urbanisation-challenges/", "publisher": "ASEAN Secretariat", "publishedAt": "2025-09-10", "year": 2025, "language": "English", "sourceType": "Official statement", "access": "Indexed text", "stage": "Cooperation", "mandates": ["Cooperation", "Bankable projects"], "cities": [], "projectLinks": [],
+      "claim": "ASEAN's release records deliberation on the action plan, membership growth and cooperation with external partners.", "analysis": "The accessible indexed text confirms meeting activity. The direct page could not be retrieved during this review.", "followUp": "Read the adopted decisions and follow financing or delivery claims to project-level sources.", "metrics": []
+    },
+    {
+      "id": "dilg-2025", "eventId": "annual-meeting-2025", "title": "PH, DILG to Chair ASEAN Smart Cities Network in 2026: Setting the Standard for Resilient and Accountable Local Governance",
+      "url": "https://region6.dilg.gov.ph/ph-dilg-to-chair-asean-smart-cities-network-in-2026-setting-the-standard-for-resilient-and-accountable-local-governance/", "publisher": "DILG Western Visayas", "publishedAt": null, "year": 2025, "language": "English", "sourceType": "Official statement", "access": "Full text", "stage": "Implementation", "mandates": ["Cooperation"], "cities": ["Manila", "Davao City", "Cebu City", "Cauayan City"], "projectLinks": [{"city": "Manila", "project": "E-Government Services"}, {"city": "Davao City", "project": "Converged Command and Control Center"}, {"city": "Cebu City", "project": "Cebu City Bus Rapid Transit"}],
+      "claim": "DILG reports the chairmanship handover, Cauayan's inclusion and service, command-centre and transport initiatives in Philippine cities.", "analysis": "Named projects connect news to the register. The release does not establish completed transport services or independently measured impact.", "followUp": "Check operating dates, ridership, response times and service uptake against the published project statuses.", "metrics": []
+    },
+    {
+      "id": "denpasar-2025", "eventId": "indonesia-expansion-2025", "title": "Pemerintah Kota Denpasar Sampaikan Program Smart City pada Rapat Penambahan Daerah Anggota ASCN",
+      "url": "https://kominfostatistik.denpasarkota.go.id/berita/pemerintah-kota-denpasar-sampaikan-program-smart-city-pada-rapat-penambahan-daerah-anggota-ascn", "publisher": "Denpasar City Government", "publishedAt": "2025-12-12", "year": 2025, "language": "Indonesian", "sourceType": "Official statement", "access": "Full text", "stage": "Commitment", "mandates": ["Cooperation"], "cities": ["Denpasar"], "projectLinks": [],
+      "claim": "Denpasar presented social, economic and governance programmes at Indonesia's new-member assessment meeting on 11 December.", "analysis": "Candidate presentations are not membership decisions. Surabaya and Palembang also presenting does not make them current ASCN members.", "followUp": "Use the official roster to verify admission, then establish Denpasar's project and outcome baseline.", "metrics": []
+    },
+    {
+      "id": "cidob-2025", "eventId": "city-diplomacy-research", "title": "Singapore's role in city diplomacy: lessons from its leadership in developing the ASEAN Smart Cities Network",
+      "url": "https://www.cidob.org/en/publications/singapores-role-city-diplomacy-lessons-its-leadership-developing-asean-smart-cities", "publisher": "CIDOB / Melinda Martinus", "publishedAt": null, "year": 2025, "language": "English", "sourceType": "Research", "access": "Full text", "stage": "Scrutiny", "mandates": ["Cooperation", "Bankable projects"], "cities": [], "projectLinks": [],
+      "claim": "This December 2025 research examines Singapore's city diplomacy, commercial interests and ASCN's governance model.", "analysis": "Institutional analysis helps test whose priorities shape projects. It is not a network-wide causal evaluation of citizen benefits.", "followUp": "Compare partner interests with city-defined priorities and inclusion measures.", "metrics": []
+    },
+    {
+      "id": "ascn-2026", "eventId": "annual-meeting-2026", "title": "ASEAN Smart Cities Network leads the region drive for smarter, more resilient cities",
+      "url": "https://asean.org/asean-smart-cities-network-leads-the-region-drive-for-smarter-more-resilient-cities/", "publisher": "ASEAN Secretariat", "publishedAt": "2026-07-21", "year": 2026, "language": "English", "sourceType": "Official statement", "access": "Indexed text", "stage": "Cooperation", "mandates": ["Cooperation"], "cities": [], "projectLinks": [],
+      "claim": "The Philippines chaired the ninth annual meeting and Smart City Talks on 20–21 July by videoconference.", "analysis": "The public release confirms the meeting and theme. It does not confirm adoption of every proposal in the draft meeting record.", "followUp": "Compare adopted decisions and the eventual 2026 M&E report with the draft record on this platform.", "metrics": []
+    },
+    {
+      "id": "official-roster", "eventId": "membership-roster", "title": "ASEAN Smart Cities Network: official membership and mandate",
+      "url": "https://asean.org/asean-smart-cities-network/", "publisher": "ASEAN Secretariat", "publishedAt": null, "year": 2026, "language": "English", "sourceType": "Official monitoring", "access": "Full text", "stage": "Output", "mandates": ["Cooperation", "Bankable projects", "Funding"], "cities": ["Dili", "Denpasar", "Semarang", "Ipoh", "Putrajaya", "Seberang Perai", "Cauayan City", "Sumedang", "Sihanoukville City", "Chiang Mai", "Khon Kaen", "Rayong"], "projectLinks": [],
+      "claim": "The official roster records 38 cities as of January 2026, including Dili, and sets out ASCN's three cooperation, project and funding objectives.", "analysis": "Membership is reconciled to the official roster. Growth is an institutional output, not a measure of improvements to city life.", "followUp": "Track outcome evidence for new members without assigning projects to cities absent from a reporting cycle.", "metrics": [{"label": "Official member cities", "value": 38, "unit": "cities", "asOf": "2026-01"}]
+    },
+    {
+      "id": "me-2025", "eventId": "monitoring-2025", "title": "ASCN Monitoring and Evaluation Report 2025",
+      "url": "https://asean.org/wp-content/uploads/2025/11/2025-ASCN-ME-Report-Final_30Sep2025-for-public.pdf#page=5", "publisher": "ASEAN Secretariat", "publishedAt": null, "year": 2025, "language": "English", "sourceType": "Official monitoring", "access": "Full text", "stage": "Output", "mandates": ["Cooperation", "Bankable projects", "Funding"], "cities": [], "projectLinks": [],
+      "claim": "The September 2025 register records 134 projects: 108 ongoing, 18 completed and eight planning. The report records adoption of ASCAP.", "analysis": "Implementation categories are self-reported status, not comparable impact measures or finance disbursement.", "followUp": "Verify completed assets are operating and measure benefits against baseline conditions.", "metrics": []
+    },
+    {
+      "id": "makassar-service-2025", "eventId": "makassar-homecare", "title": "Makassar homecare: reported service reach in the 2025 M&E report",
+      "url": "https://asean.org/wp-content/uploads/2025/11/2025-ASCN-ME-Report-Final_30Sep2025-for-public.pdf#page=12", "publisher": "ASEAN Secretariat", "publishedAt": null, "year": 2025, "language": "English", "sourceType": "Official monitoring", "access": "Full text", "stage": "Output", "mandates": ["Cooperation"], "cities": ["Makassar"], "projectLinks": [{"city": "Makassar", "project": "Smart Health Care"}],
+      "claim": "Dottoro'ta attended 6,973 patients in 2024 and more than 2,800 by July 2025.", "analysis": "Service reach is an output. Repeat visits, health improvements and unequal access are not resolved by these counts.", "followUp": "Obtain unique-patient measures, referral changes and access by neighbourhood.", "metrics": [{"label": "Patients attended in 2024", "value": 6973, "unit": "reported patients", "asOf": "2024"}, {"label": "Patients attended by July 2025", "value": 2800, "unit": "more than this number", "asOf": "2025-07"}]
+    },
+    {
+      "id": "jakpreneur-2025", "eventId": "jakpreneur", "title": "JakPreneur: reported registrations in the 2025 M&E report",
+      "url": "https://asean.org/wp-content/uploads/2025/11/2025-ASCN-ME-Report-Final_30Sep2025-for-public.pdf#page=24", "publisher": "ASEAN Secretariat", "publishedAt": null, "year": 2025, "language": "English", "sourceType": "Official monitoring", "access": "Full text", "stage": "Output", "mandates": ["Cooperation"], "cities": ["Jakarta"], "projectLinks": [{"city": "Jakarta", "project": "JakPreneur"}],
+      "claim": "JakPreneur recorded 405,052 MSME registrations from February 2020 through June 2025.", "analysis": "Registrations show reach, not business survival, income gains or causation by ASCN.", "followUp": "Check active participation, business survival and income against a stated baseline.", "metrics": [{"label": "Cumulative MSME registrations", "value": 405052, "unit": "registrations", "asOf": "2025-06"}]
+    }
+  ]
+}

@@ -17,3 +17,11 @@ Register: Index, on the existing white ASCN surface. Design read: a dated headli
 The overview video showcase, full ASCN 2026 record, city maps, analytics, and library stay available. News links retain publisher attribution; no article bodies or publisher images are republished. Country/topic tags are inferred from feed metadata. Saved reading lists, unavailable feeds, unknown dates, and last-check times remain visible.
 
 The news endpoint fetches only the fixed registry in `lib/news-sources.mjs`, without credentials or caller-provided URLs. It caches nonempty results, rejects XML entity declarations, and caps response sizes. Local fonts and Leaflet remove external dependencies from app startup.
+
+# ASCN Evidence Review
+
+Register: Index. Design read: a public review ledger that places claims beside their limits and the official project register. Reference: the UK National Audit Office's report summaries and evidence tables. The review finding is the dominant first element; charts use zero-based neutral bars, and source-ledger records carry square-edged amber interpretation markers. Section rules are 2px; record separators are 1px.
+
+Invariant: news volume never changes official project status, implies city failure, or establishes causation by ASCN. Reviewed claims in `data/ascn-news-archive.json` and unreviewed indexed leads in `data/ascn-news-discovery.json` remain separate. Membership announcements are not city-delivery evidence. Unknown dates stay unknown; event keys prevent duplicate coverage being counted as independent events. Outcome classification requires comparison evidence.
+
+The existing News tab retains regional feeds under `#news/regional`. ASCN review, archive and discovery have deep links. City profiles link to filtered evidence; exact project names and city aliases connect claims to the latest official appendix without changing that dataset. No floating cards or new landing page.

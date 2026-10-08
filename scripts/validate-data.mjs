@@ -1,5 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { validateDataset, safeUrl } from "../lib/security.mjs";
+import { validateArchive, linkProjects } from "../lib/ascn-review.mjs";
+import { validateDiscovery } from "../lib/ascn-discovery.mjs";
 
 const files = {
   engine: "data/ascn-v2-data.json",
@@ -51,6 +53,12 @@ function countBy(list, key) {
 const [engine, knowledge, citiesDoc, library, cityStats] = await Promise.all(Object.values(files).map(json));
 const errors = [];
 const warnings = [];
+const archive = validateArchive(JSON.parse(await readFile(new URL("../data/ascn-news-archive.json", import.meta.url), "utf8")), citiesDoc.cities);
+const discovery = JSON.parse(await readFile(new URL("../data/ascn-news-discovery.json", import.meta.url), "utf8"));
+if (validateDiscovery(discovery).articles.length !== discovery.articles.length) fail(errors, "ASCN discovery contains invalid records.");
+for (const record of archive.records) {
+  for (const link of linkProjects(record, engine.projects, engine.reports.at(-1).year)) if (!link.row) fail(errors, `${record.id}: project link does not match the current register: ${link.project}`);
+}
 
 if (!Array.isArray(engine.reports) || engine.reports.length < 1) fail(errors, "Engine must include at least one report.");
 if (!Array.isArray(engine.projects) || engine.projects.length < 1) fail(errors, "Engine must include project rows.");
@@ -129,4 +137,5 @@ if (errors.length) {
 }
 
 console.log(`Data validation passed: ${citiesDoc.cities.length} cities, ${engine.projects.length} project rows, ${libraryEntries.length} library sources.`);
+console.log(`ASCN archive: ${archive.records.length} reviewed records; ${discovery.articles.length} unreviewed discovery leads.`);
 for (const message of warnings) console.warn(`Warning: ${message}`);

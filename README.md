@@ -179,6 +179,18 @@ Open the News tab for regional city-development headlines, location/topic/publis
 
 The Pages Function runs with `npm run dev` and is deployed by `npm run deploy`. GitHub's static mirror uses the saved collection. See [SECURITY.md](SECURITY.md) for boundary checks, browser policies, publisher provenance, and verification commands.
 
+## ASCN News and Performance Evidence
+
+The News tab opens at `#news/review`. `#news/archive` is the historical claim ledger; `#news/discovery` keeps unreviewed search leads; `#news/regional` preserves the regional headline feed. City profiles link directly to their evidence selection.
+
+`data/ascn-news-archive.json` contains sourced claims, review interpretations, follow-up questions, source-access limits, city/project links and reported metrics. The validator checks the roster, exact project matches, dates and outcome evidence. Coverage counts are not performance scores. Official M&E totals remain a separately sourced baseline.
+
+Run `npm run refresh:ascn-news` to append deduplicated public index matches to the saved discovery archive. `functions/api/ascn-news.js` checks two fixed Google News RSS queries with the same size/timeout/redirect protections as the regional feeds. Indexed dates are not treated as verified publication dates. Runtime refresh does not persist to the repository; the refresh script preserves old matches. Neither path promotes a headline into reviewed evidence automatically.
+
+Review new leads against the publisher, classify the evidence, record limits and follow-up needs, and link only known roster cities and exact M&E project rows before committing. Research queries and coverage limits are recorded in the archive. Filtered CSV and the source JSON are downloadable. Sources with only indexed text are labelled; exhaustive global or local-language coverage is not claimed.
+
+`npm run backfill:ascn-news` adds fixed year-by-year searches from 2018 through the archive's review year, in batches of three. The discovery JSON records query URLs, success/failure and returned counts. Use this for historical coverage; the live endpoint keeps its two bounded searches. See `NEWS_REVIEW.md` for the review method and what evidence would change a finding.
+
 ## License
 
 Copyright (c) 2026 Non Arkaraprasertkul.
