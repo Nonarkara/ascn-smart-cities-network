@@ -46,6 +46,24 @@ test("coverage gaps and missing project rows are distinct from zero performance"
   assert.ok(matrix.find((row) => row.name === "Manila").projects > 0);
   assert.equal(cityEvidence([], cities)[0].projects, null);
   assert.equal(matrix.find((row) => row.name === "Luang Prabang").delivery, 0);
+  assert.ok(matrix.find((row) => row.name === "Luang Prabang").evidence > 0);
+  assert.ok(matrix.find((row) => row.name === "Vientiane").delivery > 0);
+  assert.equal(matrix.find((row) => row.name === "Bandar Seri Begawan").delivery, 0);
+  assert.ok(matrix.find((row) => row.name === "Bandar Seri Begawan").evidence > 0);
+});
+
+test("added donor and city sources keep announcement, delivery and outcome apart", () => {
+  const byId = Object.fromEntries(archive.records.map((row) => [row.id, row]));
+  for (const id of ["scap-2018", "aasctf-mtr-2022", "adb-luangprabang-2026", "adb-vientiane-vsutp-2025", "danang-wb-icr-2022", "hcmc-ioc-2026", "kk-basmy-2025"]) assert.ok(byId[id], id);
+  assert.equal(byId["danang-wb-icr-2022"].stage, "Output");
+  assert.equal(byId["hcmc-ioc-2026"].stage, "Output");
+  assert.equal(byId["kk-basmy-2025"].stage, "Implementation");
+  assert.equal(byId["aasctf-mtr-2022"].stage, "Scrutiny");
+  assert.equal(byId["adb-luangprabang-2026"].projectLinks.length, 0);
+  assert.equal(summarizeEvidence(archive.records).outcomeEvents, 0);
+  for (const record of [byId["adb-vientiane-vsutp-2025"], byId["hcmc-ioc-2026"], byId["yangon-onemap-2022"], byId["phnompenh-hub-2025"]]) {
+    for (const link of linkProjects(record, engine.projects, 2025)) assert.ok(link.row, `${record.id}: ${link.project}`);
+  }
 });
 
 test("discovery retains old indexed matches and rejects XML and foreign-host links", () => {
