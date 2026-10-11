@@ -12,7 +12,7 @@ const tileLayers = {
   night: { url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", attr: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>', className: "ascn-night-tiles" },
 };
 
-const TABS = ["overview", "news", "ascn9", "history", "cities", "projects", "framework", "partners", "contacts", "insights", "data", "research", "essay"];
+const TABS = ["overview", "innovation", "news", "ascn9", "history", "cities", "projects", "framework", "partners", "contacts", "insights", "data", "research", "essay"];
 const DATA_VERSION = "36";
 
 const state = {
@@ -139,11 +139,16 @@ function renderTab(tab) {
   if (tab === "cities") ensureMap();
   if (state.rendered.has(tab)) return;
   ({
-    overview: renderOverview, history: renderHistory, cities: renderCitiesView,
+    overview: renderOverview, innovation: renderInnovation, history: renderHistory, cities: renderCitiesView,
     projects: renderProjects, framework: renderFramework, partners: renderPartners,
     contacts: renderContacts, insights: renderInsights, data: renderOpenData, research: renderResearch, essay: renderEssay,
   }[tab] || (() => {}))();
   state.rendered.add(tab);
+}
+
+/* ---------------- Innovation ---------------- */
+function renderInnovation() {
+  // Static content in view-innovation is rendered from HTML and styled via CSS.
 }
 
 /* ---------------- Overview ---------------- */

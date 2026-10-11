@@ -33,6 +33,7 @@
       </a>
       <nav aria-label="Primary" id="tab-nav">
         <a href="#overview" data-tab="overview">Overview</a>
+        <a href="#innovation" data-tab="innovation">Innovation</a>
         <a href="#news" data-tab="news">News</a>
         <a href="#history" data-tab="history">History</a>
         <a href="#cities" data-tab="cities">Cities</a>
@@ -122,6 +123,95 @@
           </div>
         </div>
 
+        <!-- DIGITAL TWINS SHOWCASE ROW -->
+        <section class="twins-showcase" aria-labelledby="twins-heading">
+          <div class="twins-header">
+            <div class="twins-header-main">
+              <p class="label">ASCN Operational Intelligence · Applied Digital Twins</p>
+              <h2 id="twins-heading">From static reports to living cities: 5 operational digital twins</h2>
+            </div>
+            <div class="twins-explainer">
+              <p><strong>What is an urban digital twin?</strong> Rather than a static PDF report or a conventional map, an urban digital twin connects a city’s 3D spatial geometry with live sensor feeds, weather models, telemetry, and civic infrastructure. It enables city operators, emergency teams, and citizens to track real-time conditions — from canal gates and rainfall radar to air quality and traffic — as they unfold on the ground. Explore the live digital twins built for ASEAN member cities below:</p>
+              <div class="twins-meta-badge">
+                <span class="twins-badge-pill">DT · Level 2 Operational</span>
+                <span class="twins-badge-ref">UNDP-JTC Digital Twins for Cities · ADB Digital Twin Framework</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="twins-grid" role="list" aria-label="Digital twins for ASCN cities">
+            <!-- Bangkok -->
+            <a class="twin-card" href="https://atlas.nonarkara.org" target="_blank" rel="noopener" role="listitem">
+              <div class="twin-thumb-wrap">
+                <img src="media/twins/bangkok.png" width="1024" height="571" loading="lazy" alt="Bangkok digital twin interface" class="twin-thumb" />
+                <span class="twin-status-tag">Live · Flood Edition</span>
+              </div>
+              <div class="twin-body">
+                <div class="twin-city-tag">Bangkok · Thailand</div>
+                <h3 class="twin-title">BKKX Live Atlas</h3>
+                <p class="twin-desc">432,000+ 3D buildings, canal gates, CCTV streams, rainfall radar, and real-time flood emergency telemetry.</p>
+                <span class="twin-link-label">atlas.nonarkara.org ↗</span>
+              </div>
+            </a>
+
+            <!-- Jakarta -->
+            <a class="twin-card" href="https://jakarta.nonarkara.org" target="_blank" rel="noopener" role="listitem">
+              <div class="twin-thumb-wrap">
+                <img src="media/twins/jakarta.jpg" width="1024" height="589" loading="lazy" alt="Jakarta digital twin interface" class="twin-thumb" />
+                <span class="twin-status-tag">Live · 3D Blocks</span>
+              </div>
+              <div class="twin-body">
+                <div class="twin-city-tag">Jakarta · Indonesia</div>
+                <h3 class="twin-title">JKTX Blok demi Blok</h3>
+                <p class="twin-desc">3D urban mesh, BMKG CAP disaster alerts, air quality indices, Himawari satellite clouds, and block-level flood screening.</p>
+                <span class="twin-link-label">jakarta.nonarkara.org ↗</span>
+              </div>
+            </a>
+
+            <!-- Ho Chi Minh City -->
+            <a class="twin-card" href="https://hcmc.nonarkara.org" target="_blank" rel="noopener" role="listitem">
+              <div class="twin-thumb-wrap">
+                <img src="media/twins/hcmc.jpg" width="1024" height="586" loading="lazy" alt="Ho Chi Minh City digital twin interface" class="twin-thumb" />
+                <span class="twin-status-tag">Live · Simulation</span>
+              </div>
+              <div class="twin-body">
+                <div class="twin-city-tag">Ho Chi Minh City · Viet Nam</div>
+                <h3 class="twin-title">HCMC Block by Block</h3>
+                <p class="twin-desc">Saigon River drainage corridors, 3D skyline geometry, recurring flood screening, satellite layers, and urban runoff models.</p>
+                <span class="twin-link-label">hcmc.nonarkara.org ↗</span>
+              </div>
+            </a>
+
+            <!-- Kuching -->
+            <a class="twin-card" href="https://kuching.nonarkara.org" target="_blank" rel="noopener" role="listitem">
+              <div class="twin-thumb-wrap">
+                <img src="media/twins/kuching.jpg" width="1024" height="576" loading="lazy" alt="Kuching digital twin interface" class="twin-thumb" />
+                <span class="twin-status-tag">Live · Basin Telemetry</span>
+              </div>
+              <div class="twin-body">
+                <div class="twin-city-tag">Kuching · Malaysia</div>
+                <h3 class="twin-title">Greater Kuching Telemetry</h3>
+                <p class="twin-desc">River telemetry (Buso, Siniawan, Kampung Git), drainage catchment models, and MET Malaysia weather warnings.</p>
+                <span class="twin-link-label">kuching.nonarkara.org ↗</span>
+              </div>
+            </a>
+
+            <!-- Chiang Mai -->
+            <a class="twin-card" href="https://cnx.nonarkara.org" target="_blank" rel="noopener" role="listitem">
+              <div class="twin-thumb-wrap">
+                <img src="media/twins/cnx.jpg" width="1024" height="589" loading="lazy" alt="Chiang Mai digital twin interface" class="twin-thumb" />
+                <span class="twin-status-tag">Live · War Room</span>
+              </div>
+              <div class="twin-body">
+                <div class="twin-city-tag">Chiang Mai · Thailand</div>
+                <h3 class="twin-title">CNX OPS War Room</h3>
+                <p class="twin-desc">Ping River telemetry, PM2.5 air sensors, NASA FIRMS fire hotspot detection, CCTV network, and 3D urban relief.</p>
+                <span class="twin-link-label">cnx.nonarkara.org ↗</span>
+              </div>
+            </a>
+          </div>
+        </section>
+
         <div class="kpi-grid" id="kpi-grid" aria-label="Network key metrics"></div>
 
         <div class="overview-grid">
@@ -139,6 +229,200 @@
         </div>
 
         <article class="perspective" id="perspective" aria-label="Perspective"></article>
+      </section>
+
+      <!-- INNOVATION-AS-A-SERVICE SHOWCASE -->
+      <section class="view" id="view-innovation" data-view="innovation" hidden>
+        <header class="section-head split">
+          <div>
+            <p class="label">ASEAN Smart Cities Network · Applied Technology</p>
+            <h1>Innovation-as-a-Service</h1>
+            <p class="lede">Practical, operational tools deployed for ASEAN cities — bridging ground truth, field telemetry, computer vision, and simulation models so city officials and citizens can take decisive action.</p>
+          </div>
+          <div class="innovation-status-badge">
+            <span class="label">Active Innovation Sandbox</span>
+            <p class="muted">Live platforms, operational prototypes, and applied city tools.</p>
+          </div>
+        </header>
+
+        <!-- SPOTLIGHT: VISION (vision.nonarkara.org) -->
+        <section class="innovation-spotlight" aria-labelledby="vision-heading">
+          <div class="spotlight-card">
+            <div class="spotlight-media">
+              <a href="https://vision.nonarkara.org" target="_blank" rel="noopener">
+                <img src="media/showcase/vision.jpg" width="1600" height="1200" loading="lazy" alt="Vision control room interface showing urban CCTV feeds" class="spotlight-img" />
+              </a>
+              <div class="spotlight-media-caption">
+                <span class="spotlight-live-tag">● Live Public Platform</span>
+                <span>Municipal camera feeds &amp; in-browser edge perception</span>
+              </div>
+            </div>
+
+            <div class="spotlight-content">
+              <div class="spotlight-meta">
+                <span class="spotlight-tag">Featured Project</span>
+                <span class="spotlight-domain">vision.nonarkara.org</span>
+              </div>
+              <h2 id="vision-heading"><a href="https://vision.nonarkara.org" target="_blank" rel="noopener">Vision — How a Computer Sees <span class="th-title">คอมพิวเตอร์มองเห็นอย่างไร</span></a></h2>
+              <p class="spotlight-intro">A public classroom and operational workbench for computer vision, built on Thailand’s open traffic and municipal CCTV cameras. Learn, train models, and detect real-world urban activity directly in the browser.</p>
+
+              <div class="spotlight-points">
+                <div class="spotlight-point">
+                  <strong>Cameras everywhere. Eyes nowhere.</strong>
+                  <p>Cities across ASEAN operate tens of thousands of CCTV feeds that sit idle or overwhelmed. Vision transforms passive feeds into automated edge awareness for traffic flows, pedestrian surges, and rising floodwaters.</p>
+                </div>
+                <div class="spotlight-point">
+                  <strong>Five-step perception pipeline</strong>
+                  <p>Demystifies how machines interpret spatial imagery: moving from raw light and pixel matrices to edge detection, motion estimation, neural object recognition, and confidence metrics.</p>
+                </div>
+                <div class="spotlight-point">
+                  <strong>Local-first &amp; privacy preserving</strong>
+                  <p>Neural inference runs directly inside the client browser. No camera video streams or private citizen data are sent to foreign third-party cloud servers.</p>
+                </div>
+              </div>
+
+              <div class="spotlight-actions">
+                <a class="text-button primary" href="https://vision.nonarkara.org" target="_blank" rel="noopener">Launch Vision Platform ↗</a>
+                <span class="spotlight-note">Open access · Bilingual Thai / English · Zero installation required</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- VIDEO FIELD DEMONSTRATIONS -->
+        <section class="innovation-demos" aria-labelledby="demos-heading">
+          <div class="section-head">
+            <p class="label">Operational Fieldwork &amp; Command Dashboards</p>
+            <h2 id="demos-heading">Demonstrations in action</h2>
+            <p class="lede">From floodwater on street level to multi-screen municipal operations rooms and predictive models.</p>
+          </div>
+
+          <div class="demo-cards-grid">
+            <article class="demo-card">
+              <div class="demo-card-media">
+                <img src="media/showcase/flood-field.jpg" width="640" height="360" loading="lazy" alt="Flood intelligence in the field" />
+                <a href="media/showcase/flood-field.mp4" target="_blank" rel="noopener" class="demo-play-btn" aria-label="Play Flood intelligence in the field">▶ 4:34</a>
+              </div>
+              <div class="demo-card-body">
+                <span class="label">Field demonstration</span>
+                <h3>Flood intelligence in the field</h3>
+                <p>A ruggedized tablet-based dashboard operated on flooded streets, correlating physical water marks with live sensor telemetry.</p>
+                <a href="media/showcase/flood-field.mp4" target="_blank" rel="noopener" class="demo-link">Watch field recording ↗</a>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-card-media">
+                <img src="media/showcase/city-operations.jpg" width="1280" height="720" loading="lazy" alt="City operations on one screen" />
+                <a href="media/showcase/city-operations.mp4" target="_blank" rel="noopener" class="demo-play-btn" aria-label="Play City operations on one screen">▶ 7:21</a>
+              </div>
+              <div class="demo-card-body">
+                <span class="label">Operations desk</span>
+                <h3>City operations on one screen</h3>
+                <p>Telemetry layers, live CCTV camera grids, and municipal GIS integrated into unified situation dashboards for emergency war rooms.</p>
+                <a href="media/showcase/city-operations.mp4" target="_blank" rel="noopener" class="demo-link">Watch operations recording ↗</a>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-card-media">
+                <img src="media/showcase/flood-analysis.jpg" width="1280" height="720" loading="lazy" alt="From flood data to decisions" />
+                <a href="media/showcase/flood-analysis.mp4" target="_blank" rel="noopener" class="demo-play-btn" aria-label="Play From flood data to decisions">▶ 7:24</a>
+              </div>
+              <div class="demo-card-body">
+                <span class="label">Maps &amp; modelling</span>
+                <h3>From flood data to decisions</h3>
+                <p>High-resolution terrain elevation masks, 3D flood simulations, and drainage bottleneck analytics informing municipal infrastructure investments.</p>
+                <a href="media/showcase/flood-analysis.mp4" target="_blank" rel="noopener" class="demo-link">Watch modelling walkthrough ↗</a>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- PORTFOLIO PIPELINE (Populated as more projects arrive) -->
+        <section class="innovation-pipeline" aria-labelledby="pipeline-heading">
+          <div class="section-head split">
+            <div>
+              <p class="label">Innovation-as-a-Service Portfolio</p>
+              <h2 id="pipeline-heading">Deployed tools &amp; pipeline</h2>
+              <p class="lede">Active tools deployed across ASEAN member cities and forthcoming capabilities under continuous development.</p>
+            </div>
+            <div class="pipeline-badge">
+              <span class="twins-badge-pill">Continuous Rollout</span>
+            </div>
+          </div>
+
+          <div class="pipeline-grid">
+            <div class="pipeline-card active">
+              <div class="pipeline-num">01</div>
+              <div class="pipeline-content">
+                <div class="pipeline-cat">Spatial Intelligence</div>
+                <h3>5 ASEAN Urban Digital Twins</h3>
+                <p>Operational 3D digital twins integrating sensor networks and elevation models for Bangkok, Jakarta, Ho Chi Minh City, Kuching, and Chiang Mai.</p>
+                <div class="pipeline-links">
+                  <a href="https://atlas.nonarkara.org" target="_blank" rel="noopener">Bangkok</a> ·
+                  <a href="https://jakarta.nonarkara.org" target="_blank" rel="noopener">Jakarta</a> ·
+                  <a href="https://hcmc.nonarkara.org" target="_blank" rel="noopener">HCMC</a> ·
+                  <a href="https://kuching.nonarkara.org" target="_blank" rel="noopener">Kuching</a> ·
+                  <a href="https://cnx.nonarkara.org" target="_blank" rel="noopener">Chiang Mai</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="pipeline-card active">
+              <div class="pipeline-num">02</div>
+              <div class="pipeline-content">
+                <div class="pipeline-cat">Edge Computer Vision</div>
+                <h3>Vision — Automated CCTV Perception</h3>
+                <p>In-browser neural inference turning municipal camera networks into automated vehicle count, flood, and congestion monitors without cloud dependencies.</p>
+                <div class="pipeline-links">
+                  <a href="https://vision.nonarkara.org" target="_blank" rel="noopener">vision.nonarkara.org ↗</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="pipeline-card active">
+              <div class="pipeline-num">03</div>
+              <div class="pipeline-content">
+                <div class="pipeline-cat">Regional Benchmarking</div>
+                <h3>SLIC Liveability &amp; Competitiveness Index</h3>
+                <p>Comprehensive benchmarking of 174 Southeast Asian cities across infrastructure, economy, governance, environment, and social liveability pillars.</p>
+                <div class="pipeline-links">
+                  <a href="https://slic.nonarkara.org" target="_blank" rel="noopener">slic.nonarkara.org ↗</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="pipeline-card coming-soon">
+              <div class="pipeline-num">04</div>
+              <div class="pipeline-content">
+                <div class="pipeline-cat">Atmospheric Sentinel · In Progress</div>
+                <h3>Himawari &amp; CAMS Microclimate Fusion</h3>
+                <p>Satellite cloud tracking and aerosol particulate modelling integrated with hyper-local low-cost urban heat and PM2.5 air quality sensor arrays.</p>
+                <span class="pipeline-status-pill">Deploying across Northern Thailand &amp; Mekong</span>
+              </div>
+            </div>
+
+            <div class="pipeline-card coming-soon">
+              <div class="pipeline-num">05</div>
+              <div class="pipeline-content">
+                <div class="pipeline-cat">Civic Engagement · In Progress</div>
+                <h3>Citizen Sensor Feeds &amp; Micro-Auditing</h3>
+                <p>Lightweight citizen reporting web components for real-time localized road condition verification, drain clogs, and heat shelters.</p>
+                <span class="pipeline-status-pill">Pilot in preparation</span>
+              </div>
+            </div>
+
+            <div class="pipeline-card callout">
+              <div class="pipeline-content">
+                <p class="label">Partner With Us</p>
+                <h3>Have an urban dataset or challenge?</h3>
+                <p>ASCN Innovation-as-a-Service is an open testbed built by ASEAN city practitioners. We help member cities turn static datasets into live operational tools.</p>
+                <a href="#contacts" data-tab="contacts" class="text-button">Contact ASCN Team ↗</a>
+              </div>
+            </div>
+          </div>
+        </section>
       </section>
 
       <section class="view" id="view-news" data-view="news" hidden>
