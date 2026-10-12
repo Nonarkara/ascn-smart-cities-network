@@ -1,0 +1,89 @@
+name: Security
+
+on:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    # Weekly, Monday 06:17 UTC.
+    - cron: "17 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    name: Report-only security scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - name: Semgrep OSS
+        shell: bash
+        run: |
+          set -o pipefail
+          status=0
+          # Semgrep OSS 1.180.0, pinned by image digest. Registry packs only; metrics stay off.
+          docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            -e HOME=/tmp \
+            -e SEMGREP_SEND_METRICS=off \
+            -v "${GITHUB_WORKSPACE}:/src" \
+            -w /src \
+            semgrep/semgrep@sha256:529ee8a277ec8adc5b534d7c74eea0a47e9de21d62852b6ba7ac6ba9566845c3 \
+            semgrep scan \
+              --metrics=off \
+              --disable-version-check \
+              --config p/javascript \
+              --config p/nodejs \
+              --config p/python \
+              --config p/secrets \
+              --config p/github-actions \
+              --sarif \
+              --output semgrep.sarif \
+            >/tmp/semgrep.stdout 2>/tmp/semgrep.stderr || status=$?
+          # Exit 0 is a clean scan. Exit 1 is reserved for findings (--error) and must not fail this report-only job.
+          if [ "$status" -eq 0 ] || [ "$status" -eq 1 ]; then
+            exit 0
+          fi
+          echo "Semgrep exited ${status}."
+          tail -n 40 /tmp/semgrep.stderr || true
+          exit "$status"
+
+      - name: Trivy filesystem scan
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: "."
+          scanners: vuln,secret,misconfig
+          format: sarif
+          output: trivy.sarif
+          exit-code: "0"
+          version: v0.70.0
+          # The cache action needs actions: write. This job only grants contents and security-events.
+          cache: "false"
+
+      - name: Write job summary
+        if: always()
+        shell: bash
+        run: python3 .github/scripts/security-summary.py semgrep.sarif trivy.sarif
+
+      - name: Upload Semgrep SARIF
+        if: success() && hashFiles('semgrep.sarif') != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+        with:
+          sarif_file: semgrep.sarif
+          category: semgrep-oss
+
+      - name: Upload Trivy SARIF
+        if: success() && hashFiles('trivy.sarif') != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+        with:
+          sarif_file: trivy.sarif
+          category: trivy-fs
