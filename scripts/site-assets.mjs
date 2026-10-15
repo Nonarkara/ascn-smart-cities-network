@@ -4,6 +4,12 @@ import { extname, join } from "node:path";
 export const siteEntries = ["index.html", "styles.css", "app.js", "showcase.js", "news.js", "ascn-news.js", "favicon.svg", "_headers",
   "lib", "vendor", "fonts", "data", "docs", "Photos", "logos", "media"];
 
+export const publishedDatasets = new Set([
+  "ascn-cities.json", "ascn-correspondence.json", "ascn-knowledge.json",
+  "ascn-library.json", "ascn-library-full.json", "ascn-news-archive.json",
+  "ascn-news-discovery.json", "ascn-v2-data.json", "city-stats-merged.json", "news-snapshot.json",
+]);
+
 const extensions = {
   lib: new Set([".mjs"]), vendor: new Set([".js", ".css", ".png"]),
   fonts: new Set([".css", ".woff", ".woff2"]),
@@ -13,6 +19,7 @@ const extensions = {
 };
 
 export async function copySiteEntry(root, output, entry, relative = entry) {
+  if (entry === "data" && relative !== "data" && !publishedDatasets.has(relative.slice(5))) return;
   const source = join(root, relative);
   const info = await lstat(source);
   if (info.isSymbolicLink()) throw new Error(`Refusing to publish symbolic link: ${relative}`);

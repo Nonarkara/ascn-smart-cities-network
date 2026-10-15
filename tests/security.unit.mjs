@@ -75,3 +75,18 @@ test("HTML fallback CSP and Pages CSP stay consistent", async () => {
   assert.ok(csp.includes("script-src 'self' https://static.cloudflareinsights.com;"));
   assert.ok(!/script-src[^;]*'unsafe-(inline|eval)'/.test(csp));
 });
+
+
+test("publication only copies reviewed datasets even when raw mailbox JSON exists", async () => {
+  const root = await mkdtemp(join(tmpdir(), "ascn-private-build-"));
+  const output = join(root, "out");
+  try {
+    await mkdir(join(root, "data"));
+    for (const name of ["ascn-correspondence.json", "ascn-email-evidence.json", "unreviewed.json"]) {
+      await writeFile(join(root, "data", name), "{}");
+    }
+    await copySiteEntry(root, output, "data");
+    await access(join(output, "data", "ascn-correspondence.json"));
+    for (const name of ["ascn-email-evidence.json", "unreviewed.json"]) await assert.rejects(access(join(output, "data", name)));
+  } finally { await rm(root, { recursive: true, force: true }); }
+});

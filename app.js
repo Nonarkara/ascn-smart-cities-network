@@ -13,12 +13,12 @@ const tileLayers = {
 };
 
 const TABS = ["overview", "innovation", "record", "news", "ascn9", "history", "cities", "projects", "framework", "partners", "contacts", "insights", "data", "research", "essay"];
-const DATA_VERSION = "36";
+const DATA_VERSION = "41";
 
 const state = {
   data: null, K: null, C: [], L: null, LF: null,
   country: "all", focus: "all", search: "",
-  citySearch: "", cityCountry: "all", selectedCity: null,
+  citySearch: "", cityCountry: "all", selectedCity: null, CORR: null, corrKind: "all", corrOrigin: "all",
   mapMode: "map", map: null, tileLayer: null, markerLayer: null, markers: {}, mapReady: false,
   tab: "overview", rendered: new Set(),
   libSearch: "", libType: "all",
@@ -29,12 +29,12 @@ const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
 const FOCUS_COLORS = {
-  "Civic & Social": "#183a5a",
-  "Built Infrastructure": "#b53a2e",
-  "Quality Environment": "#2a7a4f",
-  "Safety & Security": "#946012",
-  "Industry & Innovation": "#5a3070",
-  "Health & Well-Being": "#5a5a6a",
+  "Civic & Social": "#b0c1cd",
+  "Built Infrastructure": "#dda692",
+  "Quality Environment": "#9ac4a9",
+  "Safety & Security": "#d6bd88",
+  "Industry & Innovation": "#b9acc8",
+  "Health & Well-Being": "#c3c4bd",
 };
 
 function latestReport() { return state.data.reports[state.data.reports.length - 1]; }
@@ -117,7 +117,7 @@ function setTab(tab, push = true) {
   // Compare only the first path segment so a #cities/{slug} sub-route survives a tab re-entry
   if (push && location.hash.split("/")[0] !== `#${tab}`) history.replaceState(null, "", `#${tab}`);
   window.dispatchEvent(new CustomEvent("ascn:tabchange", { detail: { tab } }));
-  window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+  window.scrollTo({ top: 0, behavior: "instant" });
 }
 
 // Parse hash into tab + optional sub-route (e.g. #cities/jakarta)
@@ -167,8 +167,120 @@ function renderInnovation() {
 /* ---------------- The Record ---------------- */
 function renderRecord() {
   // Static content in view-record is rendered from HTML and styled via CSS.
-  // Every figure is pre-sourced in the markup; nothing is computed here.
+  renderCorrespondence();
 }
+
+/* ---------------- Correspondence ledger ---------------- */
+const COST_LABELS = {
+  airfare: "airfare",
+  accommodation: "accommodation",
+  per_diem: "per diem",
+  local_transport: "local transport",
+  fee_waived: "fee waived",
+  fully_funded: "stated as funded",
+};
+
+const KIND_LABELS = {
+  funded_travel: "Cost mention · unreviewed",
+  event: "Event",
+  training: "Training",
+  monitoring: "Monitoring",
+  agreement: "Agreement",
+  other: "Unclassified",
+};
+
+function corrYear(t) { return (t.date || "").slice(0, 4); }
+
+function renderCorrespondence() {
+  const host = document.getElementById("corr-summary");
+  if (!host) return;
+  const corr = state.CORR;
+  if (!corr) {
+    host.innerHTML = '<p class="corr-missing">The correspondence ledger is not available in this build.</p>';
+    return;
+  }
+  const t = corr.totals;
+
+  const travelByOrigin = Object.entries(t.fundedTravelByOrigin || {});
+  const caps = corr.threads.filter((x) => x.fundedTravel && x.fundingAmounts.length);
+
+  host.innerHTML = `
+    <div class="corr-stat"><p class="corr-stat-num">${t.emails}</p><p class="corr-stat-label">messages held</p></div>
+    <div class="corr-stat"><p class="corr-stat-num">${t.threads}</p><p class="corr-stat-label">threads after collapsing replies</p></div>
+    <div class="corr-stat corr-stat-key"><p class="corr-stat-num">${t.fundedTravelThreads}</p><p class="corr-stat-label">threads with cost-related keywords · unreviewed candidates</p></div>
+    <div class="corr-stat"><p class="corr-stat-num">${caps.length}</p><p class="corr-stat-label">of those, with a detected amount · context requires review</p></div>`;
+
+  const maxOrigin = Math.max(...travelByOrigin.map(([, v]) => v), 1);
+
+  const originHtml = travelByOrigin.map(([origin, n]) => `
+    <div class="corr-bar">
+      <span class="corr-bar-name">${esc(origin)}</span>
+      <span class="corr-bar-track"><span class="corr-bar-fill${origin.startsWith("ASEAN") ? " corr-bar-self" : ""}" style="width:${Math.round((n / maxOrigin) * 100)}%"></span></span>
+      <span class="corr-bar-num">${n}</span>
+    </div>`).join("");
+
+  document.getElementById("corr-origin").innerHTML = `
+    <h3 class="corr-h3">Sending organisations in cost-related threads</h3>
+    <p class="corr-lede">Counted by sending organisation, not by who is mentioned inside the text — a single newsletter names every partner, so in-text mentions cannot carry a count.</p>
+    <div class="corr-bars">${originHtml}</div>
+    <p class="corr-note">Marked bar: the network's own Secretariat. The ASEAN Secretariat originated
+      ${(t.fundedTravelByOrigin || {})["ASEAN Secretariat"] ?? 0} of the cost-related threads in this mailbox. Sender attribution does not identify the payer.</p>
+    <p class="corr-note corr-note-dim">Threads attributed to a mail relay or a notification bot carry no institutional sender in their headers, so they cannot be tied to a funder from the metadata alone. They are counted, not hidden, and left unattributed rather than guessed.</p>`;
+
+  document.getElementById("corr-caps").innerHTML = caps.length ? `
+    <h3 class="corr-h3">Detected amounts in context</h3>
+    <p class="corr-lede">Extracted snippets and detected amounts from unreviewed keyword matches. A matched amount may refer to another part of the message; it is not a verified cap, payment or network total.</p>
+    <ul class="corr-quotes">${caps.map((c) => `
+      <li class="corr-quote">
+        <p class="corr-quote-head"><span class="corr-quote-origin">${esc(c.origin)}</span>
+          <span class="corr-quote-date">${esc((c.date || "").slice(0, 10))}</span></p>
+        <p class="corr-quote-subject">${esc(c.subjectClean || c.subject || "")}</p>
+        <blockquote>${esc(c.fundingQuote || "")}</blockquote>
+        <p class="corr-quote-meta">${c.fundingAmounts.map((a) => `<span class="corr-amount">${esc(a)}</span>`).join("")}
+          ${c.costHeads.map((h) => `<span class="corr-head-tag">${esc(COST_LABELS[h] || h)}</span>`).join("")}</p>
+      </li>`).join("")}</ul>` : '<p class="corr-missing">No candidate thread contains a detected amount.</p>';
+
+  // Filters
+  const kindSel = document.getElementById("corr-kind");
+  const originSel = document.getElementById("corr-origin-filter");
+  const origins = [...new Set(corr.threads.map((x) => x.origin))].sort();
+  originSel.innerHTML = '<option value="all">All origins</option>' +
+    origins.map((o) => `<option value="${esc(o)}">${esc(o)} (${corr.threads.filter((x) => x.origin === o).length})</option>`).join("");
+
+  const search = document.getElementById("corr-search");
+  const more = document.getElementById("corr-more");
+  let limit = 60;
+  const apply = () => {
+    state.corrKind = kindSel.value;
+    state.corrOrigin = originSel.value;
+    const list = corr.threads.filter((x) =>
+      (state.corrKind === "all" || x.kinds.includes(state.corrKind)) &&
+      (state.corrOrigin === "all" || x.origin === state.corrOrigin) &&
+      (!search.value.trim() || `${x.subjectClean || x.subject} ${x.origin}`.toLowerCase().includes(search.value.trim().toLowerCase()))).sort((a, b) => b.date.localeCompare(a.date));
+    document.getElementById("corr-count").textContent =
+      `${list.length} of ${corr.threads.length} threads · ${Math.min(limit, list.length)} shown`;
+    document.getElementById("corr-list").innerHTML = list.slice(0, limit).map((x) => `
+      <li class="corr-item${x.fundedTravel ? " corr-item-funded" : ""}">
+        <p class="corr-item-top">
+          <span class="corr-item-date">${esc((x.date || "").slice(0, 10))}</span>
+          <span class="corr-item-origin">${esc(x.origin)}</span>
+          ${x.messages > 1 ? `<span class="corr-item-msgs" title="messages in this thread">${x.messages} msgs</span>` : ""}
+        </p>
+        <p class="corr-item-subject">${esc(x.subjectClean || x.subject || "")}</p>
+        <p class="corr-item-tags">${x.kinds.map((k) => `<span class="corr-tag corr-tag-${k}">${esc(KIND_LABELS[k] || k)}</span>`).join("")}</p>
+      </li>`).join("") || '<li class="corr-item-more">No threads match these filters.</li>';
+    more.hidden = list.length <= limit;
+  };
+  const reset = () => { limit = 60; apply(); };
+  kindSel.onchange = reset;
+  originSel.onchange = reset;
+  search.oninput = reset;
+  more.onclick = () => { limit += 60; apply(); };
+  apply();
+
+  document.getElementById("corr-method").textContent = `Source: one official’s mailbox · extracted ${corr.generatedAt.slice(0, 10)} · ${t.correspondenceSpan[0].slice(0, 10)} to ${t.correspondenceSpan[1].slice(0, 10)}. ${corr.method.limitation} Method: ${corr.method.unit} ${corr.method.fundedTravel}`;
+}
+
 
 /* ---------------- Overview ---------------- */
 function renderOverview() {
@@ -2589,15 +2701,19 @@ async function init() {
   wireNav();
   routeFromHash();
   try {
-    const [data, K, cities, library, libraryFull, cityStats] = await Promise.all([
+    const [data, K, cities, library, libraryFull, cityStats, correspondence] = await Promise.all([
       loadJson("data/ascn-v2-data.json"),
       loadJson("data/ascn-knowledge.json"),
       loadJson("data/ascn-cities.json"),
       loadJson("data/ascn-library.json"),
       loadJson("data/ascn-library-full.json").catch(() => null),
       loadJson("data/city-stats-merged.json").catch(() => []),
+      // Correspondence ledger is optional: the rest of the site must still work
+      // if it is absent, so a failure degrades this one section only.
+      loadJson("data/ascn-correspondence.json").catch(() => null),
     ]);
     state.data = data; state.K = K; state.C = cities.cities; state.L = library; state.LF = libraryFull; state.CS = Array.isArray(cityStats) ? cityStats : [];
+    state.CORR = correspondence;
     routeFromHash();
   } catch (err) {
     console.error(err);

@@ -23,13 +23,13 @@
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link href="fonts/source-sans-3.css" rel="stylesheet" />
     <link rel="stylesheet" href="vendor/leaflet/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" />
-    <link rel="stylesheet" href="styles.css?v=40" />
+    <link rel="stylesheet" href="styles.css?v=41" />
   </head>
   <body>
     <header class="site-nav">
       <a class="brand" href="#overview" data-tab="overview">
         <img src="logos/asean.png" alt="ASEAN" class="brand-mark" />
-        <span>ASCN<i>Performance Review</i></span>
+        <span>ASCN<i>Independent Review</i></span>
       </a>
       <nav aria-label="Primary" id="tab-nav">
         <a href="#overview" data-tab="overview">Overview</a>
@@ -50,7 +50,7 @@
     </header>
 
     <div class="site-notice">
-      Built by <strong>Non Arkaraprasertkul</strong> — Senior Expert, Smart City Promotion, DEPA · ASCN staff contact since 2019.
+      Independent observatory · Built by <strong>Non Arkaraprasertkul</strong> — Senior Expert, Smart City Promotion, DEPA · ASCN staff contact since 2019.
       &nbsp;·&nbsp; Official site: <a href="https://ascn.depa.or.th" target="_blank" rel="noopener">ascn.depa.or.th</a>
     </div>
 
@@ -743,17 +743,41 @@
           <p class="rec-footnote">Two things are worth being precise about. First, none of the four M&amp;E cycles attaches a single currency amount to anything: the reports name ADB, JICA, USTDA, AASCTF, SmartJAMP, Aus4ASEAN, KOICA and BMBF as funders, and never state what any of them paid. The envelope figures above come from partner programme documentation, not from ASCN's own monitoring. Second, no source itemises what any envelope paid for, per city, per project. Individual ASCN projects in the tracker range from USD 100K to USD 6.7B, and the gap between those two ends is where both the network's coordinating role and its accounting vacuum sit.</p>
         </section>
 
-        <!-- LEDGER: TRAVEL AND EVENTS -->
+        <!-- LEDGER: TRAVEL — the correspondence record -->
         <section class="iaas-row rec-row" aria-labelledby="rec-travel-heading">
           <header class="iaas-row-head">
             <p class="iaas-row-num">B</p>
             <div>
-              <p class="label">Ledger · Travel &amp; events</p>
-              <h2 id="rec-travel-heading">Meetings are counted. Who paid for them is not.</h2>
-              <p class="lede">Annual meetings, working groups and high-level meetings are public. The cost, the delegation size and the funder for any of them are not — which is what makes sponsored travel by developed-country partners invisible rather than absent.</p>
+              <p class="label">Ledger · Travel &amp; funding</p>
+              <h2 id="rec-travel-heading">What the correspondence records</h2>
+              <p class="lede">One member-state official’s received mailbox, grouped into threads. Cost-related language is indexed for review; it does not prove who travelled, who paid, or how much was spent.</p>
             </div>
           </header>
 
+          <div id="corr-summary" class="corr-summary"></div>
+          <div id="corr-origin" class="corr-origin"></div>
+          <div id="corr-caps" class="corr-caps"></div>
+
+          <div class="corr-ledger" id="corr-ledger">
+            <div class="corr-controls">
+              <label><span>Activity</span><select id="corr-kind">
+                <option value="all">All threads</option>
+                <option value="funded_travel">Cost mentions · unreviewed</option>
+                <option value="event">Events</option>
+                <option value="training">Training</option>
+                <option value="monitoring">Monitoring &amp; reporting</option>
+                <option value="agreement">Agreements &amp; endorsement</option>
+                <option value="other">Unclassified</option>
+              </select></label>
+              <label><span>Sending organisation</span><select id="corr-origin-filter"><option value="all">All origins</option></select></label>
+              <label><span>Search threads</span><input id="corr-search" type="search" placeholder="Subject or organisation" /></label>
+              <p class="corr-count" id="corr-count" role="status"></p>
+            </div>
+            <ol class="corr-list" id="corr-list"></ol>
+            <button id="corr-more" class="text-button" type="button" hidden>Show 60 more threads</button>
+          </div>
+
+          <details class="rec-public-context"><summary>Public reporting rules and first-hand disclosure</summary>
           <div class="rec-uncounted">
             <div class="rec-uncounted-row">
               <p class="rec-uncounted-num">Rule, 2019</p>
@@ -784,7 +808,9 @@
             <p class="rec-witness-caveat">This is offered as a single witness statement, not as a network statistic, and no number above is derived from it. It is included because it makes the disclosure problem concrete: the network's most frequent beneficiary is a person who can produce his own travel log, while the network itself cannot produce a single participant number for anything it has organised.</p>
           </div>
 
-          <p class="rec-footnote">The honest summary is neither "officials are bought" nor "the travel is unremarkable". It is that a decade of international convening has run on rotating national budgets and donor-funded programmes, and has never once been counted. A network answerable to member-state taxpayers should be able to state, in one line, how many people it moved and at whose cost.</p>
+          </details>
+
+          <p class="rec-footnote">Scope, stated plainly: this is one official's received mail, 2024 to date, not the network's full correspondence. It indexes subjects and cost-related language for source review. It cannot establish what was offered to officials this person was not copied on, and no figure on this page is a network-wide total. Replies with matching subjects are grouped together. Personal identifiers are redacted before publication. <span id="corr-method"></span></p>
         </section>
 
         <!-- LEDGER: AGREEMENTS AND COMMUNICATIONS -->
@@ -1408,13 +1434,13 @@
           <img src="logos/mdes.png" alt="Ministry of Digital Economy and Society" />
           <img src="logos/smart-city-thailand.svg" alt="Smart City Thailand Office" />
         </div>
-        <p class="footer-fine">Built from ASEAN source documents. Public information only. Not an official ASEAN publication.</p>
+        <p class="footer-fine">Built from ASEAN source documents and redacted correspondence metadata. An independent review; not an official ASEAN publication.</p>
       </div>
     </footer>
 
     <script src="vendor/leaflet/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="></script>
     <script src="showcase.js?v=35"></script>
-    <script type="module" src="app.js?v=40"></script>
+    <script type="module" src="app.js?v=41"></script>
     <script type="module" src="news.js?v=1"></script>
     <script type="module" src="ascn-news.js?v=1"></script>
   </body>

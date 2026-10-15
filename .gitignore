@@ -18,3 +18,9 @@ Kimi_Agent_ASCN Research/
 .env
 .env.*
 !.env.example
+
+# Raw correspondence extraction: contains real personal email addresses and
+# full message bodies. Never commit or publish. The redacted, organisation-level
+# ledger is derived from it by scripts/classify_ascn_emails.py.
+data/ascn-email-evidence.json
+ascn-emails-text.jsonl

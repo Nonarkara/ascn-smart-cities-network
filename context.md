@@ -25,3 +25,32 @@ Register: Index. Design read: a public review ledger that places claims beside t
 Invariant: news volume never changes official project status, implies city failure, or establishes causation by ASCN. Reviewed claims in `data/ascn-news-archive.json` and unreviewed indexed leads in `data/ascn-news-discovery.json` remain separate. Membership announcements are not city-delivery evidence. Unknown dates stay unknown; event keys prevent duplicate coverage being counted as independent events. Outcome classification requires comparison evidence.
 
 The existing News tab retains regional feeds under `#news/regional`. ASCN review, archive and discovery have deep links. City profiles link to filtered evidence; exact project names and city aliases connect claims to the latest official appendix without changing that dataset. No floating cards or new landing page.
+
+
+# Underground review, October 2026
+
+Register: Index with a dark reading ground. Design read: an independent evidence
+ledger whose provenance and uncertainty remain as visible as its findings.
+Reference: Braun ET66 for the charcoal/ivory/amber hierarchy; the UK National
+Audit Office evidence tables for the ledger rhythm. Existing maps, charts,
+video controls, fourteen navigation sections, and curated content remain.
+
+Palette intent: distinguish this independent review from the agency-facing site.
+Relationship: warm ivory against charcoal, with amber pointing and a bounded
+mineral-green opening field. Chord: charcoal #191d1c, ivory #eeeae0, amber
+#f59e0b, mineral #283d37. This is Wada-inspired, not a source-verified plate.
+Roles/budget: neutral carrier ~85%, opening field ~10%, amber controls ~5%;
+real status colours remain separate. The opening field holds the introduction;
+tables and evidence stay on neutral grounds. Rules: 2px sections, 1px records.
+Verify text contrast, phone/tablet/desktop fit, keyboard focus, all existing maps
+and videos, and the ledger's failed-data state.
+
+Implementation scope: complete the inherited correspondence ledger in app.js,
+index.html, lib/correspondence.mjs, extraction/classification scripts and tests;
+exclude all non-reviewed JSON from publication in scripts/site-assets.mjs;
+apply palette tokens and targeted surface overrides in styles.css. Validate,
+build, exercise browser routes, commit, push, deploy and verify the live build.
+Invariant: only the reviewed publication allowlist enters dist; a keyword match
+is a candidate for review, never proof of accepted funding or completed travel.
+Counts describe subject-grouped threads in one mailbox, not unique events or
+network-wide totals. Raw messages remain local and are never build assets.

@@ -198,3 +198,26 @@ Copyright (c) 2026 Non Arkaraprasertkul.
 This independent project is released under the MIT License. See [LICENSE](LICENSE).
 
 ASEAN, ASCN, and member-state names, documents, and marks remain with their respective owners. Their appearance here is citation and commentary, not a license grant and not an official product claim.
+
+
+### Independent review and correspondence ledger
+
+The independent observatory uses charcoal, ivory and amber, with a bounded
+mineral-green introduction. The agency-facing V1 remains at ascn.depa.or.th.
+All maps, videos, project analytics and source documents remain available.
+
+`#record` includes 458 messages grouped into 367 normalised-subject threads,
+with search, organisation/activity filters and access to every matching row.
+The 57 cost-keyword matches are **unreviewed candidates**. They do not prove
+funding offers, accepted subsidies, expenditure or completed travel. A sender
+is not necessarily a payer; a subject group is not necessarily a unique event.
+The page displays the extraction date, source scope and classification method.
+
+The extraction and classification scripts run locally. Raw mailbox exports stay
+ignored and are excluded from the build independently of Git. Only datasets
+named in `scripts/site-assets.mjs` can enter the published data directory.
+`lib/correspondence.mjs` validates the public ledger in both validation and the
+browser, retaining provenance and rejecting private source fields, addresses,
+invalid dates/counts and mismatched summary totals. Invalid ledger data leaves
+the other views available. `tests/correspondence.spec.mjs` exercises loading,
+filtering, all rows, unavailable data and three viewport sizes.
