@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { readFile } from "node:fs/promises";
+import { openTab } from "./open-tab.mjs";
 
 const snapshot = JSON.parse(await readFile(new URL("../data/news-snapshot.json", import.meta.url)));
 const fixture = { mode: "saved", checkedAt: "2026-10-07", sources: [], articles: [
@@ -23,7 +24,7 @@ test("news filters and clear action work and failed feeds keep saved headlines v
   await expect(page.locator("#news-results .news-story")).toHaveCount(fixture.articles.length);
   await page.locator('[data-topic="Energy"]').click();
   await expect(page.locator("#news-results .news-story")).toHaveCount(2);
-  await page.locator('#tab-nav [data-tab="overview"]').click();
+  await openTab(page, "overview");
   await expect(page.locator("#news-preview-list .news-story")).toHaveCount(3);
   await expect(page.locator("#showcase-player")).toBeVisible();
 });
@@ -62,7 +63,7 @@ test("news and the meeting record remain usable when report data is unavailable"
   await expect(page.locator("#news-results .news-story")).toHaveCount(3);
   await page.locator("#news-country").selectOption("Malaysia");
   await expect(page.locator("#news-results .news-story")).toHaveCount(1);
-  await page.locator('#tab-nav [data-tab="overview"]').click();
+  await openTab(page, "overview");
   await page.locator(".meeting-summary").click();
   await expect(page.locator("#view-ascn9")).toBeVisible();
 });

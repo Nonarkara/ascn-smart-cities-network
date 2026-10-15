@@ -22,6 +22,18 @@ function route() {
   const [path, query = ""] = location.hash.slice(1).split("?");
   const [tab, view = "review"] = path.split("/");
   const selected = ["review", "archive", "discovery", "regional"].includes(view) ? view : "review";
+  const newsTitles = {
+    review: ["The promises still waiting on evidence", "What was promised, what was delivered, and what still needs a source."],
+    archive: ["A ledger of what ASCN actually published", "Historical evidence, row by row, with the claim and the follow-up still open."],
+    discovery: ["Leads the official record has not absorbed", "Unreviewed matches. They stay out of the performance findings until someone reads them."],
+    regional: ["What city desks published this season", "Public services, transport, infrastructure, and the technology shaping Southeast Asian cities."],
+  };
+  const [newsTitle, newsLede] = newsTitles[selected];
+  const newsHeading = document.getElementById("news-title");
+  const newsIntro = document.getElementById("news-lede");
+  if (newsHeading) newsHeading.textContent = newsTitle;
+  if (newsIntro) newsIntro.textContent = newsLede;
+  if (tab === "news") document.title = `${newsTitle} — ASCN`;
   document.querySelectorAll("[data-news-panel]").forEach((panel) => { panel.hidden = panel.dataset.newsPanel !== selected; });
   document.querySelectorAll("[data-news-view]").forEach((link) => { if (link.dataset.newsView === selected) link.setAttribute("aria-current", "page"); else link.removeAttribute("aria-current"); });
   $("#review-controls").hidden = !["review", "archive"].includes(selected);

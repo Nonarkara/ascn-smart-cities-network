@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { readFile } from "node:fs/promises";
+import { openTab } from "./open-tab.mjs";
 const archive = JSON.parse(await readFile(new URL("../data/ascn-news-archive.json", import.meta.url)));
 const offline = (page) => page.route("**/api/ascn-news", (route) => route.fulfill({ status: 503, json: { checkedAt: "2026-10-08", articles: [] } }));
 
@@ -55,8 +56,8 @@ test("discovery fallback stays readable and cannot change performance findings",
   await expect(page.locator("#review-verdict")).toContainText("0 events");
   await page.locator('[data-news-view="regional"]').click();
   await expect(page.locator("#news-panel-regional")).toBeVisible();
-  await page.locator('#tab-nav [data-tab="overview"]').click();
-  await page.locator('#tab-nav [data-tab="news"]').click();
+  await openTab(page, "overview");
+  await openTab(page, "news");
   await expect(page.locator("#news-panel-review")).toBeVisible();
 });
 
