@@ -106,4 +106,74 @@ test("essay keeps a section list and a next step", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.locator(".essay-sections-phone summary")).toBeVisible();
   await expect(page.locator(".essay-sections-desk")).toBeHidden();
+  await page.locator(".essay-sections-phone summary").click();
+  await expect(page.locator(".essay-sections-phone ol")).toBeVisible();
+  await expect(page.locator(".essay-sections-desk ol")).toBeHidden();
+  expect(await page.locator(".essay-sections ol:visible").count()).toBe(1);
+});
+
+test("phone menu spaces its links and centres the label", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#overview");
+  const menu = page.locator("#nav-menu");
+  const centred = await menu.evaluate((el) => {
+    const button = el.getBoundingClientRect();
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const text = range.getBoundingClientRect();
+    return Math.abs((text.top + text.height / 2) - (button.top + button.height / 2));
+  });
+  expect(centred).toBeLessThan(3);
+  await menu.click();
+  const links = page.locator("#tab-nav .nav-panel a");
+  await expect(links.first()).toBeVisible();
+  const boxes = await links.evaluateAll((els) => els.map((el) => {
+    const box = el.getBoundingClientRect();
+    return { top: box.top, height: box.height, width: box.width, text: el.textContent.trim() };
+  }));
+  for (const box of boxes) {
+    expect(box.height, box.text).toBeGreaterThanOrEqual(44);
+    expect(box.width, box.text).toBeGreaterThan(80);
+  }
+  const field = boxes.filter((box) => box.text === "Overview" || box.text === "Innovation");
+  expect(field[1].top - (field[0].top + field[0].height)).toBeGreaterThanOrEqual(12);
+});
+
+test("named controls clear 44px and the growth chart stays short", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/#overview");
+  const news = await page.locator(".nav-direct").boundingBox();
+  expect(news.width).toBeGreaterThanOrEqual(44);
+  expect(news.height).toBeGreaterThanOrEqual(44);
+
+  await page.goto("/#innovation");
+  await expect(page.locator(".iaas-card-link").first()).toBeVisible();
+  const open = await page.locator(".iaas-card-link").first().boundingBox();
+  expect(open.height).toBeGreaterThanOrEqual(44);
+
+  await page.goto("/#data");
+  await page.locator(".dc-dl").first().waitFor();
+  const download = await page.locator(".dc-dl").first().boundingBox();
+  expect(download.height).toBeGreaterThanOrEqual(44);
+
+  await page.goto("/#partners");
+  const partner = page.locator(".prog-link").first();
+  await partner.waitFor();
+  const mark = await partner.boundingBox();
+  expect(mark.width).toBeGreaterThanOrEqual(44);
+  expect(mark.height).toBeGreaterThanOrEqual(44);
+  await expect(partner).toHaveAttribute("aria-label", /Open /);
+
+  await page.goto("/#cities");
+  const zoom = page.locator(".leaflet-control-zoom-in");
+  await zoom.waitFor();
+  const zoomBox = await zoom.boundingBox();
+  expect(zoomBox.width).toBeGreaterThanOrEqual(44);
+  expect(zoomBox.height).toBeGreaterThanOrEqual(44);
+
+  await page.goto("/#insights");
+  const chart = page.locator(".ig-mini-line .growth-line");
+  await chart.waitFor();
+  const chartBox = await chart.boundingBox();
+  expect(chartBox.height).toBeLessThanOrEqual(160);
 });

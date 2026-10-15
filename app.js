@@ -121,13 +121,13 @@ function svgLine(points, w = 280, h = 90) {
   if (points.length < 2) return "";
   const vals = points.map((p) => p.v);
   const minV = Math.min(...vals), maxV = Math.max(...vals);
-  const padT = 8, padB = 22, padL = 16, padR = 16;
+  const padT = 10, padB = 28, padL = 16, padR = 16;
   const scX = (i) => padL + (i / (points.length - 1)) * (w - padL - padR);
   const scY = (v) => padT + (1 - (v - minV) / (maxV - minV || 1)) * (h - padT - padB);
   const ptStr = points.map((p, i) => `${scX(i).toFixed(1)},${scY(p.v).toFixed(1)}`);
   const dots = points.map((p, i) => `<circle cx="${scX(i).toFixed(1)}" cy="${scY(p.v).toFixed(1)}" r="3" fill="var(--palette-chord)" />`).join("");
-  const labels = points.map((p, i) => `<text x="${scX(i).toFixed(1)}" y="${h - 4}" text-anchor="middle" fill="currentColor">${esc(p.label)}</text>`).join("");
-  return `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" preserveAspectRatio="none" role="img" aria-label="${points.map((p) => `${p.label} ${p.v}`).join(", ")}"><polyline points="${ptStr.join(" ")}" fill="none" stroke="var(--palette-chord)" stroke-width="2" vector-effect="non-scaling-stroke" />${dots}${labels}</svg>`;
+  const labels = points.map((p, i) => `<text class="growth-year" x="${scX(i).toFixed(1)}" y="${h - 6}" text-anchor="middle" fill="currentColor">${esc(p.label)}</text>`).join("");
+  return `<svg class="growth-line" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${points.map((p) => `${p.label} ${p.v}`).join(", ")}"><polyline points="${ptStr.join(" ")}" fill="none" stroke="var(--palette-chord)" stroke-width="2" vector-effect="non-scaling-stroke" />${dots}${labels}</svg>`;
 }
 
 function sparkTile(name, vals, years) {
@@ -820,7 +820,7 @@ function renderPartners() {
       <div class="prog-head">
         <span class="prog-flag" aria-label="${esc(p.country)}">${esc(p.flag)}</span>
         <div><b>${esc(p.name)}</b><span class="prog-country">${esc(p.country)}</span></div>
-        <a class="prog-link" href="${p.url}" target="_blank" rel="noopener">↗</a>
+        <a class="prog-link" href="${p.url}" target="_blank" rel="noopener" aria-label="Open ${esc(p.name)}">↗</a>
       </div>
       <p class="prog-tagline">${esc(p.tagline)}</p>
       <p class="prog-desc">${p.desc}</p>
@@ -869,7 +869,7 @@ function renderInsights() {
     { v: `+${deltas[0].project_delta} / +${deltas[1].project_delta} / +${deltas[2].project_delta}`, label: "Annual additions 2022→23→24→25", note: "Accelerating each cycle; 2024 jump driven by completion surge" },
   ];
   const linePoints = totals.map((t) => ({ v: t.total, label: `'${String(t.year).slice(2)}` }));
-  $("#ig-momentum").innerHTML = `<div class="ig-momentum-row">${momentumStats.map((s) => `<div class="ig-stat-card"><strong>${esc(String(s.v))}</strong><span>${esc(s.label)}</span><em>${esc(s.note)}</em></div>`).join("")}</div><div class="ig-mini-line">${svgLine(linePoints, 380, 72)}</div>`;
+  $("#ig-momentum").innerHTML = `<div class="ig-momentum-row">${momentumStats.map((s) => `<div class="ig-stat-card"><strong>${esc(String(s.v))}</strong><span>${esc(s.label)}</span><em>${esc(s.note)}</em></div>`).join("")}</div><div class="ig-mini-line">${svgLine(linePoints, 380, 96)}</div>`;
 
   // Flat series are one sentence. Moving series get a full-width spark.
   const focusTrends = derived.focus_trends;
