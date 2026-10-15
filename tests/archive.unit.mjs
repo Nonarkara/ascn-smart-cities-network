@@ -150,6 +150,31 @@ test("a public CSV merges duplicates, keeps confidence, and does not quote an un
   assert.equal(parseRecordsCsv("id,date,year,amount,currency,source_url,source_type,confidence\n").length, 0);
 });
 
+test("round 2 csv files are merged when the folder exists and other files stay out", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "ascn-archive-round2-"));
+  await mkdir(join(dir, "public", "round2"), { recursive: true });
+  await writeFile(join(dir, "records.json"), JSON.stringify([inbox("hlm2-2020", { date: "2020" })]));
+  await writeFile(join(dir, "public", "round2", "records.csv"), [
+    "id,category,year,date,title,funder_or_party,amount,currency,cities,summary,source_url,source_type,confidence",
+    "E02,evaluation,2024,2024-09-25,M&E 2024,ASEAN Secretariat,,,31 cities,Self-reported counts.,https://asean.org/wp-content/uploads/2024/10/2024-ASCN-ME-Report-Final_25Sep2024-for-public.pdf,official (self-reported),high",
+  ].join("\n"));
+  await writeFile(join(dir, "public", "round2", "secret.txt"), "secret@example.com");
+  await writeFile(join(dir, "public", "round2", "unread.pdf"), "Baguio financial-management Gold");
+  const { document, report } = await buildFromDirectory(dir);
+  assert.deepEqual(document.items.map((item) => item.id), ["hlm2-2020", "E02"]);
+  assert.equal(document.items.find((item) => item.id === "E02").selfReported, true);
+  assert.match(report, /Round 2 files 1/);
+  const raw = JSON.stringify(document);
+  assert.equal(raw.includes("secret@example.com"), false);
+  assert.equal(raw.includes("Baguio"), false);
+  const empty = await mkdtemp(join(tmpdir(), "ascn-archive-empty-round2-"));
+  await mkdir(join(empty, "public", "round2"), { recursive: true });
+  await writeFile(join(empty, "records.json"), JSON.stringify([inbox("hlm2-2020", { date: "2020" })]));
+  const quiet = await buildFromDirectory(empty);
+  assert.deepEqual(quiet.document.items.map((item) => item.id), ["hlm2-2020"]);
+  assert.match(quiet.report, /Round 2 files 0/);
+});
+
 test("the committed public record excludes the three borderline inbox rows", async () => {
   const doc = validateRecordArchive(JSON.parse(await readFile(new URL("../data/ascn-archive.json", import.meta.url), "utf8")));
   assert.equal(doc.items.length, 46);
@@ -180,6 +205,28 @@ test("the committed public record excludes the three borderline inbox rows", asy
   for (const item of doc.items) assert.equal(item.public, true);
   assert.equal(privateTextIssue(doc), null);
   assert.equal(raw.includes("thread_ids"), false);
+  const byDonor = Object.fromEntries(doc.funding.donors.map((donor) => [donor.id, donor]));
+  assert.deepEqual(byDonor["united-states"].committed, {
+    currency: "USD", amount: 10000000, includesSelfReported: false, includesMedium: false, limit: null,
+  });
+  assert.equal(byDonor["united-states"].disbursed, null);
+  assert.equal(byDonor.australia.committed.amount, 21000000);
+  assert.equal(byDonor.australia.committed.currency, "AUD");
+  assert.equal(byDonor.australia.committed.includesSelfReported, false);
+  assert.equal(byDonor.australia.disbursed.amount, 13180000);
+  assert.equal(byDonor.korea.committed.amount, 1500000000000);
+  assert.equal(byDonor.korea.committed.includesMedium, true);
+  assert.equal(byDonor.korea.disbursed, null);
+  assert.equal(byDonor.japan.committed, null);
+  assert.equal(byDonor.japan.disbursed, null);
+  assert.equal(byDonor.akcf.committed, null);
+  assert.equal(byDonor.aus4asean.committed, null);
+  assert.equal(byDonor.jaif.committed, null);
+  assert.equal(doc.funding.unassigned.length, 0);
+  assert.equal(doc.funding.donors.some((donor) => donor.rows.some((row) => row.itemId === "E01" || row.counts && row.selfReported)), false);
+  assert.equal(doc.account.text.en, "depa never received fund transfers.");
+  assert.equal(Object.hasOwn(doc.account, "source"), false);
+  assert.equal(doc.items.some((item) => item.flow), false);
 });
 
 test("rebuilding the mailbox source matches the committed record when the source is present", async () => {

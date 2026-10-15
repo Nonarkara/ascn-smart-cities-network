@@ -2888,6 +2888,57 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 }
 .archive-outcomes ul { margin: 0; padding: 0; list-style: none; }
 .archive-outcomes ul li { display: block; border: 0; padding: 0.12rem 0; }
+.archive-funding { margin-top: 1.7rem; }
+.archive-funding-title {
+  margin: 0 0 0.35rem;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: 0;
+}
+.archive-funding > p,
+.archive-money > p { max-width: 38rem; color: var(--ink-2); }
+.archive-donor {
+  display: grid;
+  grid-template-columns: 1.618fr 0.5fr 0.5fr;
+  gap: 0.35rem 1.5rem;
+  align-items: start;
+  border-top: 1px solid var(--ink);
+  padding: 0.9rem 0 1rem;
+}
+.archive-donor h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.archive-figure,
+.archive-gap {
+  display: block;
+  margin-top: 0.15rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.archive-figure { font-size: clamp(1.45rem, 2.8vw, 2.2rem); }
+.archive-gap { font-size: 1.2rem; }
+.archive-funding details { border-top: 1px solid var(--ink); padding-top: 0.75rem; }
+.archive-funding summary {
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  cursor: pointer;
+}
+.archive-funding details ul,
+.archive-money ul { list-style: none; margin: 0.6rem 0 0; padding: 0; }
+.archive-funding details li,
+.archive-money li { border-top: 1px solid var(--line); padding: 0.55rem 0; }
+.archive-money { margin-top: 1.7rem; }
+.archive-account-block { border-top: 1px solid var(--ink); margin-top: 0.9rem; padding-top: 0.8rem; max-width: 40rem; }
+.archive-account { margin: 0.2rem 0 0; font-size: 1.35rem; font-weight: 700; letter-spacing: 0; }
 .archive-pending,
 .archive-withheld { margin-top: 1.6rem; border-top: 1px solid var(--ink); padding-top: 0.9rem; }
 .archive-pending ul { margin: 0.4rem 0 0; padding: 0; list-style: none; }
@@ -2901,6 +2952,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 #view-archive select:focus-visible,
 #view-archive input:focus-visible,
 #view-archive a:focus-visible,
+#view-archive summary:focus-visible,
 .archive-rule:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 3px;
@@ -2914,13 +2966,24 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 #view-archive[lang="th"] .archive-subtitle,
 #view-archive[lang="zh"] .archive-subtitle,
 #view-archive[lang="th"] .archive-flag,
-#view-archive[lang="zh"] .archive-flag {
+#view-archive[lang="zh"] .archive-flag,
+#view-archive[lang="th"] .archive-funding-title,
+#view-archive[lang="zh"] .archive-funding-title,
+#view-archive[lang="th"] .archive-figure,
+#view-archive[lang="zh"] .archive-figure,
+#view-archive[lang="th"] .archive-gap,
+#view-archive[lang="zh"] .archive-gap,
+#view-archive[lang="th"] .archive-account,
+#view-archive[lang="zh"] .archive-account,
+#view-archive[lang="th"] .archive-funding summary,
+#view-archive[lang="zh"] .archive-funding summary {
   letter-spacing: 0;
   text-transform: none;
 }
 @media (max-width: 720px) {
   .archive-head,
-  .archive-counts { grid-template-columns: 1fr; }
+  .archive-counts,
+  .archive-donor { grid-template-columns: 1fr; }
   .archive-counts section + section { border-top: 1px solid var(--ink); }
   .archive-outcomes li { grid-template-columns: 7.2rem 2rem minmax(0, 1fr); }
   #view-archive table.archive-table thead {

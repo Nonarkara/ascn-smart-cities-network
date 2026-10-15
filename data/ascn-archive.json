@@ -1172,5 +1172,554 @@
       "confidence": "medium",
       "status": "pending review"
     }
-  ]
+  ],
+  "funding": {
+    "donors": [
+      {
+        "id": "united-states",
+        "name": {
+          "en": "United States",
+          "th": "สหรัฐฯ",
+          "zh": "美国"
+        },
+        "committed": {
+          "currency": "USD",
+          "amount": 10000000,
+          "includesSelfReported": false,
+          "includesMedium": false,
+          "limit": null
+        },
+        "disbursed": null,
+        "rows": [
+          {
+            "id": "F01-committed",
+            "itemId": "F01",
+            "date": "2018-11-15",
+            "kind": "committed",
+            "amount": 10000000,
+            "currency": "USD",
+            "over": false,
+            "counts": true,
+            "confidence": "high",
+            "selfReported": false,
+            "source": "https://www.usascp.org/vice-president-announces-usascp-at-6th-asean-u-s-summit/",
+            "title": {
+              "en": "U.S.–ASEAN Smart Cities Partnership announced",
+              "th": "ประกาศความร่วมมือเมืองอัจฉริยะสหรัฐ–อาเซียน",
+              "zh": "美国—东盟智慧城市伙伴关系宣布成立"
+            },
+            "note": {
+              "en": "Initial commitment announced on 15 November 2018. Added to the committed total.",
+              "th": "คำมั่นเริ่มต้นที่ประกาศเมื่อ 15 พฤศจิกายน 2018 นำไปรวมในยอดให้คำมั่น",
+              "zh": "2018年11月15日宣布的初始承诺。计入承诺合计。"
+            },
+            "limit": null
+          },
+          {
+            "id": "F02-committed",
+            "itemId": "F02",
+            "date": "2024-01",
+            "kind": "committed",
+            "amount": 10000000,
+            "currency": "USD",
+            "over": true,
+            "counts": false,
+            "confidence": "high",
+            "selfReported": true,
+            "source": "https://www.usascp.org/wp-content/uploads/2024/01/USASCP-Overview-Flyer-01.24.pdf",
+            "title": {
+              "en": "U.S.–ASEAN Smart Cities Partnership: later portfolio claim",
+              "th": "ความร่วมมือเมืองอัจฉริยะสหรัฐ–อาเซียน: ข้ออ้างขนาดพอร์ตในภายหลัง",
+              "zh": "美国—东盟智慧城市伙伴关系：后来的组合规模说法"
+            },
+            "note": {
+              "en": "Not added. The partnership’s own later flyer describes the same commitment as over this amount, and that description is self-reported.",
+              "th": "ไม่นำไปรวม ใบปลิวภายหลังของความร่วมมือเองบรรยายคำมั่นก้อนเดียวกันว่ามากกว่าจำนวนนี้ และคำบรรยายนั้นเป็นรายงานเอง",
+              "zh": "不计入。伙伴关系自己后来的单页把同一笔承诺说成超过此数，该说法是自行报告。"
+            },
+            "limit": null
+          },
+          {
+            "id": "F01-disbursed",
+            "itemId": "F01",
+            "date": "2018-11-15",
+            "kind": "disbursed",
+            "amount": null,
+            "currency": null,
+            "over": false,
+            "counts": false,
+            "confidence": "high",
+            "selfReported": false,
+            "source": "https://www.usascp.org/vice-president-announces-usascp-at-6th-asean-u-s-summit/",
+            "title": {
+              "en": "U.S.–ASEAN Smart Cities Partnership announced",
+              "th": "ประกาศความร่วมมือเมืองอัจฉริยะสหรัฐ–อาเซียน",
+              "zh": "美国—东盟智慧城市伙伴关系宣布成立"
+            },
+            "note": {
+              "en": "No disbursed figure is public.",
+              "th": "ไม่มีตัวเลขที่จ่ายแล้วต่อสาธารณะ",
+              "zh": "没有公开的已拨付数字。"
+            },
+            "limit": null
+          }
+        ]
+      },
+      {
+        "id": "australia",
+        "name": {
+          "en": "Australia",
+          "th": "ออสเตรเลีย",
+          "zh": "澳大利亚"
+        },
+        "committed": {
+          "currency": "AUD",
+          "amount": 21000000,
+          "includesSelfReported": false,
+          "includesMedium": false,
+          "limit": null
+        },
+        "disbursed": {
+          "currency": "AUD",
+          "amount": 13180000,
+          "includesSelfReported": false,
+          "includesMedium": false,
+          "limit": {
+            "en": "Received by the fund by the end of 2020.",
+            "th": "กองทุนได้รับภายในสิ้นปี 2020",
+            "zh": "截至2020年底由基金收到。"
+          }
+        },
+        "rows": [
+          {
+            "id": "F03-committed",
+            "itemId": "F03",
+            "date": "2019-04-02",
+            "kind": "committed",
+            "amount": 20000000,
+            "currency": "AUD",
+            "over": false,
+            "counts": true,
+            "confidence": "high",
+            "selfReported": false,
+            "source": "https://www.adb.org/sites/default/files/institutional-document/729721/aasctf-annual-progress-report-2020.pdf",
+            "title": {
+              "en": "ASEAN Australia Smart Cities Trust Fund established",
+              "th": "จัดตั้งกองทุนเมืองอัจฉริยะอาเซียน–ออสเตรเลีย",
+              "zh": "设立东盟澳大利亚智慧城市信托基金"
+            },
+            "note": {
+              "en": "Commitment of 2 April 2019. Added to the committed total.",
+              "th": "คำมั่นวันที่ 2 เมษายน 2019 นำไปรวมในยอดให้คำมั่น",
+              "zh": "2019年4月2日的承诺。计入承诺合计。"
+            },
+            "limit": null
+          },
+          {
+            "id": "F04-committed",
+            "itemId": "F04",
+            "date": "2023-06",
+            "kind": "committed",
+            "amount": 1000000,
+            "currency": "AUD",
+            "over": false,
+            "counts": true,
+            "confidence": "high",
+            "selfReported": false,
+            "source": "https://www.adb.org/who-we-are/partners/australia/overview",
+            "title": {
+              "en": "Additional Australian contribution to the ASEAN Australia Smart Cities Trust Fund",
+              "th": "เงินสมทบเพิ่มจากออสเตรเลียให้กองทุนเมืองอัจฉริยะอาเซียน–ออสเตรเลีย",
+              "zh": "澳大利亚对东盟澳大利亚智慧城市信托基金的追加出资"
+            },
+            "note": {
+              "en": "Additional commitment in June 2023. Added to the committed total.",
+              "th": "คำมั่นเพิ่มในเดือนมิถุนายน 2023 นำไปรวมในยอดให้คำมั่น",
+              "zh": "2023年6月的追加承诺。计入承诺合计。"
+            },
+            "limit": null
+          },
+          {
+            "id": "F03-disbursed",
+            "itemId": "F03",
+            "date": "2019-04-02",
+            "kind": "disbursed",
+            "amount": 13180000,
+            "currency": "AUD",
+            "over": false,
+            "counts": true,
+            "confidence": "high",
+            "selfReported": false,
+            "source": "https://www.adb.org/sites/default/files/institutional-document/729721/aasctf-annual-progress-report-2020.pdf",
+            "title": {
+              "en": "ASEAN Australia Smart Cities Trust Fund established",
+              "th": "จัดตั้งกองทุนเมืองอัจฉริยะอาเซียน–ออสเตรเลีย",
+              "zh": "设立东盟澳大利亚智慧城市信托基金"
+            },
+            "note": {
+              "en": "The 2020 progress report says the fund had received this much by the end of 2020. Added to the disbursed total. It is not a figure for later years.",
+              "th": "รายงานความคืบหน้าปี 2020 ระบุว่ากองทุนได้รับจำนวนนี้ภายในสิ้นปี 2020 นำไปรวมในยอดจ่ายแล้ว ไม่ใช่ตัวเลขของปีถัดไป",
+              "zh": "2020年进展报告称基金在2020年底前收到这一金额。计入已拨付合计。它不是其后年份的数字。"
+            },
+            "limit": {
+              "en": "Received by the fund by the end of 2020.",
+              "th": "กองทุนได้รับภายในสิ้นปี 2020",
+              "zh": "截至2020年底由基金收到。"
+            }
+          },
+          {
+            "id": "F04-disbursed",
+            "itemId": "F04",
+            "date": "2023-06",
+            "kind": "disbursed",
+            "amount": null,
+            "currency": null,
+            "over": false,
+            "counts": false,
+            "confidence": "high",
+            "selfReported": false,
+            "source": "https://www.adb.org/who-we-are/partners/australia/overview",
+            "title": {
+              "en": "Additional Australian contribution to the ASEAN Australia Smart Cities Trust Fund",
+              "th": "เงินสมทบเพิ่มจากออสเตรเลียให้กองทุนเมืองอัจฉริยะอาเซียน–ออสเตรเลีย",
+              "zh": "澳大利亚对东盟澳大利亚智慧城市信托基金的追加出资"
+            },
+            "note": {
+              "en": "No figure is public for how much of the June 2023 top-up was received.",
+              "th": "ไม่มีตัวเลขสาธารณะว่าได้รับเงินสมทบเดือนมิถุนายน 2023 ไปเท่าใด",
+              "zh": "2023年6月追加出资实际收到多少，没有公开数字。"
+            },
+            "limit": null
+          }
+        ]
+      },
+      {
+        "id": "korea",
+        "name": {
+          "en": "Korea",
+          "th": "เกาหลี",
+          "zh": "韩国"
+        },
+        "committed": {
+          "currency": "KRW",
+          "amount": 1500000000000,
+          "includesSelfReported": false,
+          "includesMedium": true,
+          "limit": {
+            "en": "Not specific to ASCN.",
+            "th": "ไม่ได้เจาะจงที่ ASCN",
+            "zh": "并不专属于 ASCN。"
+          }
+        },
+        "disbursed": null,
+        "rows": [
+          {
+            "id": "F09-committed",
+            "itemId": "F09",
+            "date": "2019-11-25",
+            "kind": "committed",
+            "amount": 1500000000000,
+            "currency": "KRW",
+            "over": false,
+            "counts": true,
+            "confidence": "medium",
+            "selfReported": false,
+            "source": "https://en.yna.co.kr/view/AEN20191125002551320",
+            "title": {
+              "en": "Korean overseas infrastructure and smart-city fund announced in Busan",
+              "th": "กองทุนโครงสร้างพื้นฐานและเมืองอัจฉริยะต่างประเทศของเกาหลีที่ประกาศในปูซาน",
+              "zh": "韩国在釜山宣布的海外基础设施与智慧城市基金"
+            },
+            "note": {
+              "en": "Fund announced in November 2019. Added to the committed total. It is not specific to ASCN, and confidence is medium.",
+              "th": "กองทุนที่ประกาศในเดือนพฤศจิกายน 2019 นำไปรวมในยอดให้คำมั่น ไม่ได้เจาะจงที่ ASCN และความเชื่อมั่นอยู่ที่ระดับกลาง",
+              "zh": "2019年11月宣布的基金。计入承诺合计。并不专属于 ASCN，可信度为中等。"
+            },
+            "limit": {
+              "en": "Not specific to ASCN.",
+              "th": "ไม่ได้เจาะจงที่ ASCN",
+              "zh": "并不专属于 ASCN。"
+            }
+          },
+          {
+            "id": "F09-earmark",
+            "itemId": "F09",
+            "date": "2019-11-25",
+            "kind": "committed",
+            "amount": 300000000000,
+            "currency": "KRW",
+            "over": false,
+            "counts": false,
+            "confidence": "medium",
+            "selfReported": false,
+            "source": "https://en.yna.co.kr/view/AEN20191125002551320",
+            "title": {
+              "en": "Korean overseas infrastructure and smart-city fund announced in Busan",
+              "th": "กองทุนโครงสร้างพื้นฐานและเมืองอัจฉริยะต่างประเทศของเกาหลีที่ประกาศในปูซาน",
+              "zh": "韩国在釜山宣布的海外基础设施与智慧城市基金"
+            },
+            "note": {
+              "en": "Not added. A news report described this portion as set aside inside the same fund. It is not a second commitment, and it is not specific to ASCN.",
+              "th": "ไม่นำไปรวม ข่าวบรรยายว่าส่วนนี้ถูกกันไว้ภายในกองทุนเดียวกัน ไม่ใช่คำมั่นก้อนที่สอง และไม่ได้เจาะจงที่ ASCN",
+              "zh": "不计入。新闻称这一部分留在同一基金之内。它不是第二笔承诺，也不专属于 ASCN。"
+            },
+            "limit": null
+          },
+          {
+            "id": "F09-disbursed",
+            "itemId": "F09",
+            "date": "2019-11-25",
+            "kind": "disbursed",
+            "amount": null,
+            "currency": null,
+            "over": false,
+            "counts": false,
+            "confidence": "medium",
+            "selfReported": false,
+            "source": "https://en.yna.co.kr/view/AEN20191125002551320",
+            "title": {
+              "en": "Korean overseas infrastructure and smart-city fund announced in Busan",
+              "th": "กองทุนโครงสร้างพื้นฐานและเมืองอัจฉริยะต่างประเทศของเกาหลีที่ประกาศในปูซาน",
+              "zh": "韩国在釜山宣布的海外基础设施与智慧城市基金"
+            },
+            "note": {
+              "en": "No disbursed figure is public.",
+              "th": "ไม่มีตัวเลขที่จ่ายแล้วต่อสาธารณะ",
+              "zh": "没有公开的已拨付数字。"
+            },
+            "limit": null
+          }
+        ]
+      },
+      {
+        "id": "japan",
+        "name": {
+          "en": "Japan",
+          "th": "ญี่ปุ่น",
+          "zh": "日本"
+        },
+        "committed": null,
+        "disbursed": null,
+        "rows": [
+          {
+            "id": "japan-hlm2",
+            "itemId": "hlm2-2020",
+            "date": "2020-12",
+            "kind": "unspecified",
+            "amount": null,
+            "currency": null,
+            "over": false,
+            "counts": false,
+            "confidence": "high",
+            "selfReported": false,
+            "source": "https://www.jasca2021.jp/cooperative/",
+            "title": {
+              "en": "2nd ASEAN-Japan Smart Cities Network High Level Meeting (Smart JAMP proposed)",
+              "th": "การประชุมระดับสูงเครือข่ายเมืองอัจฉริยะอาเซียน–ญี่ปุ่น ครั้งที่ 2 (มีการเสนอ Smart JAMP)",
+              "zh": "第2届东盟—日本智慧城市网络高层会议（提出 Smart JAMP）"
+            },
+            "note": {
+              "en": "Smart JAMP was proposed at this meeting. No programme total and no disbursed figure are public.",
+              "th": "มีการเสนอ Smart JAMP ในการประชุมนี้ ไม่มียอดของโปรแกรมและไม่มีตัวเลขที่จ่ายแล้วต่อสาธารณะ",
+              "zh": "Smart JAMP 在这次会议上提出。没有公开的项目总额，也没有已拨付数字。"
+            },
+            "limit": null
+          },
+          {
+            "id": "japan-f07",
+            "itemId": "F07",
+            "date": "2024-11",
+            "kind": "unspecified",
+            "amount": null,
+            "currency": null,
+            "over": false,
+            "counts": false,
+            "confidence": "high",
+            "selfReported": true,
+            "source": "https://www.jasca2021.jp/cms/wp-content/uploads/Smart-JAMP2024-Study-on-the-realization-of-smart-Cities-related-to-mobility-and-transport.pdf",
+            "title": {
+              "en": "Smart JAMP trial of AI illegal-parking detection in Bangkok",
+              "th": "การทดลอง Smart JAMP ตรวจจับการจอดรถผิดกฎหมายด้วยเอไอในกรุงเทพฯ",
+              "zh": "Smart JAMP 在曼谷试验用人工智能发现违停"
+            },
+            "note": {
+              "en": "The Bangkok trial states no budget.",
+              "th": "การทดลองในกรุงเทพฯ ไม่ระบุงบประมาณ",
+              "zh": "曼谷试验没有写出预算。"
+            },
+            "limit": null
+          },
+          {
+            "id": "japan-f08",
+            "itemId": "F08",
+            "date": "2024",
+            "kind": "unspecified",
+            "amount": null,
+            "currency": null,
+            "over": false,
+            "counts": false,
+            "confidence": "high",
+            "selfReported": false,
+            "source": "https://www.jasca2021.jp/cms/wp-content/uploads/Smart-JAMP2024-Survey-and-Study-for-Realization-of-Smart-City-in-Lao-Peoples-Democratic-Republic.pdf",
+            "title": {
+              "en": "Smart JAMP feasibility study for a tourism app in Vientiane",
+              "th": "การศึกษาความเป็นไปได้ Smart JAMP สำหรับแอปท่องเที่ยวในเวียงจันทน์",
+              "zh": "Smart JAMP 万象旅游应用可行性研究"
+            },
+            "note": {
+              "en": "The Vientiane study states no budget.",
+              "th": "การศึกษาที่เวียงจันทน์ไม่ระบุงบประมาณ",
+              "zh": "万象研究没有写出预算。"
+            },
+            "limit": null
+          }
+        ]
+      },
+      {
+        "id": "akcf",
+        "name": {
+          "en": "ASEAN-Korea Cooperation Fund",
+          "th": "กองทุนความร่วมมืออาเซียน–เกาหลี",
+          "zh": "东盟—韩国合作基金"
+        },
+        "committed": null,
+        "disbursed": null,
+        "rows": [
+          {
+            "id": "akcf-f10",
+            "itemId": "F10",
+            "date": "2023-01-01",
+            "kind": "unspecified",
+            "amount": null,
+            "currency": null,
+            "over": false,
+            "counts": false,
+            "confidence": "high",
+            "selfReported": false,
+            "source": "https://www.inter.chula.ac.th/wp-content/uploads/2023/06/ASEAN-Smart-City-Professional-Program-.pdf",
+            "title": {
+              "en": "ASEAN Smart City Professional Program, 2023–2027",
+              "th": "โครงการผู้เชี่ยวชาญเมืองอัจฉริยะอาเซียน ปี 2023–2027",
+              "zh": "东盟智慧城市专业人才项目，2023–2027"
+            },
+            "note": {
+              "en": "The programme call states no funding amount.",
+              "th": "เอกสารเปิดรับของโครงการไม่ระบุจำนวนเงินทุน",
+              "zh": "项目征集文件没有写出资助金额。"
+            },
+            "limit": null
+          }
+        ]
+      },
+      {
+        "id": "aus4asean",
+        "name": {
+          "en": "Aus4ASEAN Futures",
+          "th": "Aus4ASEAN Futures",
+          "zh": "Aus4ASEAN Futures"
+        },
+        "committed": null,
+        "disbursed": null,
+        "rows": [
+          {
+            "id": "aus4-toolkit",
+            "itemId": "financing-toolkit-2024",
+            "date": "2024-11-26",
+            "kind": "unspecified",
+            "amount": null,
+            "currency": null,
+            "over": false,
+            "counts": false,
+            "confidence": "high",
+            "selfReported": true,
+            "source": "https://asean.org/wp-content/uploads/2025/11/2025-ASCN-ME-Report-Final_30Sep2025-for-public.pdf",
+            "title": {
+              "en": "Workshop and launch of the ASEAN Smart City Financing Toolkit, Jakarta (26–27 Nov 2024)",
+              "th": "เวิร์กช็อปและพิธีเปิดชุดเครื่องมือการเงินเมืองอัจฉริยะอาเซียน ที่จาการ์ตา (26–27 พ.ย. 2024)",
+              "zh": "东盟智慧城市融资工具包研讨会暨发布会，雅加达（2024年11月26–27日）"
+            },
+            "note": {
+              "en": "The toolkit launch discloses no amount.",
+              "th": "การเปิดตัวชุดเครื่องมือไม่เปิดเผยจำนวนเงิน",
+              "zh": "工具包发布没有披露金额。"
+            },
+            "limit": null
+          },
+          {
+            "id": "aus4-f12",
+            "itemId": "F12",
+            "date": "2025",
+            "kind": "unspecified",
+            "amount": null,
+            "currency": null,
+            "over": false,
+            "counts": false,
+            "confidence": "high",
+            "selfReported": true,
+            "source": "https://asean.org/wp-content/uploads/2025/11/2025-ASCN-ME-Report-Final_30Sep2025-for-public.pdf",
+            "title": {
+              "en": "Second phase of support for the ASEAN Sustainable Urbanisation Strategy",
+              "th": "การสนับสนุนระยะที่สองของยุทธศาสตร์การพัฒนาเมืองอย่างยั่งยืนของอาเซียน",
+              "zh": "东盟可持续城镇化战略支持的第二阶段"
+            },
+            "note": {
+              "en": "The second-phase description discloses no amount.",
+              "th": "คำบรรยายระยะที่สองไม่เปิดเผยจำนวนเงิน",
+              "zh": "第二阶段的描述没有披露金额。"
+            },
+            "limit": null
+          }
+        ]
+      },
+      {
+        "id": "jaif",
+        "name": {
+          "en": "Japan-ASEAN Integration Fund",
+          "th": "กองทุนบูรณาการญี่ปุ่น–อาเซียน",
+          "zh": "日本—东盟一体化基金"
+        },
+        "committed": null,
+        "disbursed": null,
+        "rows": [
+          {
+            "id": "jaif-t04",
+            "itemId": "T04",
+            "date": "2019-10-08",
+            "kind": "unspecified",
+            "amount": null,
+            "currency": null,
+            "over": false,
+            "counts": false,
+            "confidence": "high",
+            "selfReported": false,
+            "source": "https://www.ur-net.go.jp/overseas/AseanSmartCityNetwork/HighLevelMeeting_en.html",
+            "title": {
+              "en": "1st ASEAN-Japan Smart Cities Network High Level Meeting, Yokohama",
+              "th": "การประชุมระดับสูงเครือข่ายเมืองอัจฉริยะอาเซียน–ญี่ปุ่น ครั้งที่ 1 ที่โยโกฮามา",
+              "zh": "第1届东盟—日本智慧城市网络高层会议，横滨"
+            },
+            "note": {
+              "en": "The meeting page names this fund as a supporter. No amount is public.",
+              "th": "หน้าของการประชุมระบุกองทุนนี้เป็นผู้สนับสนุน ไม่มีจำนวนเงินต่อสาธารณะ",
+              "zh": "会议页面把该基金列为支持方。没有公开金额。"
+            },
+            "limit": null
+          }
+        ]
+      }
+    ],
+    "unassigned": []
+  },
+  "account": {
+    "label": {
+      "en": "Non’s own account. Not a sourced fact.",
+      "th": "คำบอกของนนท์เอง ไม่ใช่ข้อเท็จจริงที่มีแหล่งอ้าง",
+      "zh": "Non 本人的说法。不是有来源的事实。"
+    },
+    "text": {
+      "en": "depa never received fund transfers.",
+      "th": "depa ไม่เคยได้รับเงินโอน",
+      "zh": "depa 从未收到过资金划转。"
+    }
+  }
 }

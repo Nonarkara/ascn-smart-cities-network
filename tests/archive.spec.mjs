@@ -8,6 +8,14 @@ test("archive sits after Library and keeps good and bad outcomes in one list", a
   await expect(page.locator("#view-archive")).toBeVisible();
   await expect(page).toHaveURL(/#archive$/);
   await expect(page.locator("#archive-table tbody tr")).toHaveCount(46);
+  await expect(page.locator("#archive-funding")).toContainText("10,000,000");
+  await expect(page.locator("#archive-funding")).toContainText("21,000,000");
+  await expect(page.locator("#archive-funding")).toContainText("13,180,000");
+  await expect(page.locator("#archive-funding")).toContainText("— not public");
+  await expect(page.locator("#archive-funding summary")).toHaveText("Full breakdown");
+  await expect(page.locator("#archive-money")).toContainText("Where the money went");
+  await expect(page.locator("#archive-money")).toContainText("depa never received fund transfers.");
+  await expect(page.locator("#archive-money")).toContainText("Not a sourced fact.");
   await expect(page.locator("#archive-counts")).toContainText("MOU");
   await expect(page.locator("#archive-counts")).toContainText("Medium confidence");
   await expect(page.locator("#archive-counts")).toContainText("Self-reported");

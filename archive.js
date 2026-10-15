@@ -13,6 +13,18 @@ const COPY = {
     medium: "Medium confidence",
     selfReported: "Self-reported",
     pending: "Pending review",
+    funding: "Funding",
+    fundingLede: "Totals add only cited amounts. A blank line is a figure the cited rows do not state.",
+    committed: "Committed",
+    disbursed: "Disbursed",
+    notPublic: "— not public",
+    breakdown: "Full breakdown",
+    notAdded: "Not added to the total.",
+    either: "Committed and disbursed",
+    moneyHeading: "Where the money went",
+    noFlow: "No cited source in this record describes tied aid or phantom aid.",
+    tiedAid: "Tied aid",
+    phantomAid: "Phantom aid",
     byType: "By type",
     byYear: "By year",
     types: { grant: "Grant", trip: "Trip", mou: "MOU", communication: "Communication", course: "Course" },
@@ -46,6 +58,18 @@ const COPY = {
     medium: "ความเชื่อมั่นระดับกลาง",
     selfReported: "รายงานเอง",
     pending: "รอการทบทวน",
+    funding: "เงินทุน",
+    fundingLede: "ยอดรวมบวกเฉพาะจำนวนที่มีแหล่งอ้าง ช่องว่างคือตัวเลขที่แถวที่อ้างไม่ได้ระบุ",
+    committed: "ให้คำมั่น",
+    disbursed: "จ่ายแล้ว",
+    notPublic: "— ไม่เปิดเผย",
+    breakdown: "รายการเต็ม",
+    notAdded: "ไม่นำไปรวมในยอด",
+    either: "ให้คำมั่นและจ่ายแล้ว",
+    moneyHeading: "เงินไปที่ใด",
+    noFlow: "ไม่มีแหล่งที่อ้างในบันทึกนี้ที่บรรยายความช่วยเหลือแบบผูกพันหรือความช่วยเหลือที่ไม่อยู่จริง",
+    tiedAid: "ความช่วยเหลือแบบผูกพัน",
+    phantomAid: "ความช่วยเหลือที่ไม่อยู่จริง",
     byType: "ตามประเภท",
     byYear: "ตามปี",
     types: { grant: "ทุน", trip: "การเดินทาง", mou: "บันทึกความเข้าใจ", communication: "การสื่อสาร", course: "การอบรม" },
@@ -79,6 +103,18 @@ const COPY = {
     medium: "中等可信度",
     selfReported: "自行报告",
     pending: "待审阅",
+    funding: "资金",
+    fundingLede: "合计只加有出处的金额。空着的一行是所引记录没有写出的数字。",
+    committed: "承诺",
+    disbursed: "已拨付",
+    notPublic: "— 未公开",
+    breakdown: "全部分项",
+    notAdded: "不计入合计。",
+    either: "承诺与拨付",
+    moneyHeading: "钱去了哪里",
+    noFlow: "这份记录里没有被引用的来源描述捆绑援助或幽灵援助。",
+    tiedAid: "捆绑援助",
+    phantomAid: "幽灵援助",
     byType: "按类型",
     byYear: "按年份",
     types: { grant: "资助", trip: "出行", mou: "谅解备忘录", communication: "往来", course: "培训" },
@@ -234,6 +270,77 @@ function renderOutcomes(items) {
   $("#archive-outcomes").innerHTML = `<h3 id="archive-outcomes-heading">${esc(text.outcomeHeading)}</h3><p>${esc(text.outcomeLede)}</p><ol>${rows}</ol>`;
 }
 
+function groupDigits(amount) {
+  return String(amount).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function citedFigure(row) {
+  const text = copy();
+  if (row.amount == null) return esc(text.notPublic);
+  return `${row.over ? "over " : ""}${esc(row.currency)} ${esc(groupDigits(row.amount))}`;
+}
+
+function totalFigure(kind, total) {
+  const text = copy();
+  const body = !total
+    ? `<strong class="archive-gap">${esc(text.notPublic)}</strong>`
+    : `<strong class="archive-figure">${esc(total.currency)} ${esc(groupDigits(total.amount))}</strong>`
+      + (total.includesMedium ? `<span class="archive-flag">${esc(text.medium)}</span>` : "")
+      + (total.includesSelfReported ? `<span class="archive-flag">${esc(text.selfReported)}</span>` : "")
+      + (total.limit ? `<span class="archive-flag">${esc(phrase(total.limit))}</span>` : "");
+  return `<div><span class="label">${esc(kind)}</span>${body}</div>`;
+}
+
+function kindLabel(kind) {
+  const text = copy();
+  if (kind === "disbursed") return text.disbursed;
+  if (kind === "unspecified") return text.either;
+  return text.committed;
+}
+
+function renderFunding() {
+  const host = $("#archive-funding");
+  const funding = state.doc?.funding;
+  if (!host || !funding) {
+    if (host) host.innerHTML = "";
+    return;
+  }
+  const text = copy();
+  const donors = funding.donors.map((donor) => `<article class="archive-donor">
+    <h3>${esc(phrase(donor.name))}</h3>
+    ${totalFigure(text.committed, donor.committed)}
+    ${totalFigure(text.disbursed, donor.disbursed)}
+  </article>`).join("");
+  const rows = funding.donors.flatMap((donor) => donor.rows.map((row) => `<li>
+    <span class="label">${esc(phrase(donor.name))}</span>
+    <span class="label">${esc(kindLabel(row.kind))}</span>
+    <strong>${citedFigure(row)}</strong>
+    ${row.confidence === "medium" ? `<span class="archive-flag">${esc(text.medium)}</span>` : ""}
+    ${row.selfReported ? `<span class="archive-flag">${esc(text.selfReported)}</span>` : ""}
+    ${row.amount != null && !row.counts ? `<span class="archive-flag">${esc(text.notAdded)}</span>` : ""}
+    <p>${esc(phrase(row.title))}</p>
+    <p>${esc(phrase(row.note))}</p>
+    <p>${sourceCell(row)}</p>
+  </li>`)).join("");
+  host.innerHTML = `<h2 class="archive-funding-title" id="archive-funding-title">${esc(text.funding)}</h2><p>${esc(text.fundingLede)}</p><div>${donors}</div><details><summary>${esc(text.breakdown)}</summary><ul>${rows}</ul></details>`;
+}
+
+function renderMoney() {
+  const host = $("#archive-money");
+  if (!host) return;
+  const text = copy();
+  const flows = (state.doc?.items || []).filter((item) => item.flow === "tied-aid" || item.flow === "phantom-aid");
+  const claims = flows.length ? `<ul>${flows.map((item) => `<li>
+    <span class="label">${esc(item.flow === "tied-aid" ? text.tiedAid : text.phantomAid)}</span>
+    <strong>${esc(phrase(item.title))}</strong>
+    <p>${esc(phrase(item.note))}</p>
+    <p>${sourceCell(item)}</p>
+  </li>`).join("")}</ul>` : `<p>${esc(text.noFlow)}</p>`;
+  const account = state.doc?.account;
+  const accountHtml = account ? `<div class="archive-account-block"><p class="label">${esc(phrase(account.label))}</p><p class="archive-account">${esc(phrase(account.text))}</p></div>` : "";
+  host.innerHTML = `<h2 class="archive-funding-title" id="archive-money-title">${esc(text.moneyHeading)}</h2>${claims}${accountHtml}`;
+}
+
 function renderPending() {
   const text = copy();
   const rows = state.doc?.pending || [];
@@ -285,6 +392,8 @@ function render() {
   }
   $("#archive-status").hidden = true;
   if (!state.doc) return;
+  renderFunding();
+  renderMoney();
   renderFilters();
   renderCounts(state.doc.items);
   renderTimeline(state.doc.items);
