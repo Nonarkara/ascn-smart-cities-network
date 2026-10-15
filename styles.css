@@ -2856,6 +2856,15 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 .archive-table td p { margin: 0.25rem 0 0; color: var(--ink-2); }
 .archive-kind,
 .archive-amount { display: block; margin-top: 0.2rem; color: var(--muted); font-size: 0.78rem; }
+.archive-flag {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--ink);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
 .archive-outcome { font-weight: 800; }
 .archive-table a { text-decoration: underline; text-underline-offset: 0.15em; }
 .archive-empty { color: var(--muted); }
@@ -2879,7 +2888,11 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 }
 .archive-outcomes ul { margin: 0; padding: 0; list-style: none; }
 .archive-outcomes ul li { display: block; border: 0; padding: 0.12rem 0; }
+.archive-pending,
 .archive-withheld { margin-top: 1.6rem; border-top: 1px solid var(--ink); padding-top: 0.9rem; }
+.archive-pending ul { margin: 0.4rem 0 0; padding: 0; list-style: none; }
+.archive-pending li { border-top: 1px solid var(--line); padding: 0.55rem 0; }
+.archive-pending p { margin: 0.25rem 0 0; color: var(--ink-2); }
 .archive-withheld ul { margin: 0.4rem 0 0; padding: 0; list-style: none; }
 .archive-withheld li { border-top: 1px solid var(--line); padding: 0.45rem 0; }
 .archive-limits { max-width: 38rem; }
@@ -2899,7 +2912,9 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 #view-archive[lang="th"] th,
 #view-archive[lang="zh"] th,
 #view-archive[lang="th"] .archive-subtitle,
-#view-archive[lang="zh"] .archive-subtitle {
+#view-archive[lang="zh"] .archive-subtitle,
+#view-archive[lang="th"] .archive-flag,
+#view-archive[lang="zh"] .archive-flag {
   letter-spacing: 0;
   text-transform: none;
 }

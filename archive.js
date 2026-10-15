@@ -9,7 +9,10 @@ const COPY = {
   en: {
     kicker: "Record",
     title: "ASCN, 2018–2026",
-    subtitle: "What the inbox shows",
+    subtitle: "Inbox and public pages",
+    medium: "Medium confidence",
+    selfReported: "Self-reported",
+    pending: "Pending review",
     byType: "By type",
     byYear: "By year",
     types: { grant: "Grant", trip: "Trip", mou: "MOU", communication: "Communication", course: "Course" },
@@ -33,13 +36,16 @@ const COPY = {
     loadError: "The archive data could not load.",
     searchLabel: "Search titles and notes",
     amount: "Amount",
-    footnote: "Phone numbers, personal addresses and internal correspondence stay out. Counts are not inflated. Where the trail ends, the outcome says so.",
+    footnote: "Phone numbers, personal addresses and internal correspondence stay out. Counts are not inflated. Where the trail ends, the outcome says so. Medium confidence is labelled on the row. Self-reported means the figure is the organisation’s own account, including ASEAN’s project totals.",
     countLabel: "Showing",
   },
   th: {
     kicker: "บันทึก",
     title: "ASCN, 2018–2026",
-    subtitle: "สิ่งที่กล่องจดหมายแสดง",
+    subtitle: "กล่องจดหมายและหน้าสาธารณะ",
+    medium: "ความเชื่อมั่นระดับกลาง",
+    selfReported: "รายงานเอง",
+    pending: "รอการทบทวน",
     byType: "ตามประเภท",
     byYear: "ตามปี",
     types: { grant: "ทุน", trip: "การเดินทาง", mou: "บันทึกความเข้าใจ", communication: "การสื่อสาร", course: "การอบรม" },
@@ -63,13 +69,16 @@ const COPY = {
     loadError: "โหลดข้อมูลคลังไม่ได้",
     searchLabel: "ค้นชื่อและบันทึก",
     amount: "จำนวนเงิน",
-    footnote: "ไม่ใส่หมายเลขโทรศัพท์ ที่อยู่ส่วนบุคคล และหนังสือภายใน จำนวนไม่ได้ถูกทำให้สูงขึ้น เส้นทางจบที่ใด ผลลัพธ์บอกตามนั้น",
+    footnote: "ไม่ใส่หมายเลขโทรศัพท์ ที่อยู่ส่วนบุคคล และหนังสือภายใน จำนวนไม่ได้ถูกทำให้สูงขึ้น เส้นทางจบที่ใด ผลลัพธ์บอกตามนั้น ความเชื่อมั่นระดับกลางถูกกำกับบนแถว รายงานเองหมายถึงตัวเลขจากองค์กรนั้นเอง รวมยอดโครงการของอาเซียน",
     countLabel: "กำลังแสดง",
   },
   zh: {
     kicker: "记录",
     title: "ASCN, 2018–2026",
-    subtitle: "收件箱里能看到的",
+    subtitle: "收件箱与公开网页",
+    medium: "中等可信度",
+    selfReported: "自行报告",
+    pending: "待审阅",
     byType: "按类型",
     byYear: "按年份",
     types: { grant: "资助", trip: "出行", mou: "谅解备忘录", communication: "往来", course: "培训" },
@@ -93,7 +102,7 @@ const COPY = {
     loadError: "档案数据未能加载",
     searchLabel: "检索标题和说明",
     amount: "金额",
-    footnote: "电话号码、私人地址和内部公函都不收录。数字没有被抬高。线索停在哪里，结果就写到哪里。",
+    footnote: "电话号码、私人地址和内部公函都不收录。数字没有被抬高。线索停在哪里，结果就写到哪里。中等可信度标在该行上。自行报告指数字来自该机构自己的说法，包括东盟的项目总数。",
     countLabel: "显示",
   },
 };
@@ -128,7 +137,8 @@ function matches(item) {
   if (state.outcome !== "all" && item.outcome !== state.outcome) return false;
   const query = state.query.trim().toLowerCase();
   if (!query) return true;
-  const haystack = [item.id, item.date, item.type, item.outcome, item.source,
+  const haystack = [item.id, item.date, item.type, item.outcome, item.source, item.confidence,
+    item.selfReported ? "self-reported" : "",
     ...LANGS.flatMap((lang) => [item.title?.[lang], item.note?.[lang], item.counterpart?.[lang]])].join("\n").toLowerCase();
   return haystack.includes(query);
 }
@@ -140,6 +150,14 @@ function sourceCell(item) {
   let host = item.source;
   try { host = new URL(href).host.replace(/^www\./, ""); } catch { /* Keep the safe URL text. */ }
   return `<a href="${esc(href)}" target="_blank" rel="noopener noreferrer">${esc(host)}</a>`;
+}
+
+function flagLine(item) {
+  const text = copy();
+  return [
+    item.confidence === "medium" ? `<span class="archive-flag">${esc(text.medium)}</span>` : "",
+    item.selfReported ? `<span class="archive-flag">${esc(text.selfReported)}</span>` : "",
+  ].join("");
 }
 
 function amountLine(item) {
@@ -172,7 +190,9 @@ function renderFilters() {
 
 function renderCounts(items) {
   const text = copy();
-  const typeRows = TYPES.map((type) => `<div><dt>${esc(text.types[type])}</dt><dd>${items.filter((item) => item.type === type).length}</dd></div>`).join("");
+  const typeRows = TYPES.map((type) => `<div><dt>${esc(text.types[type])}</dt><dd>${items.filter((item) => item.type === type).length}</dd></div>`).join("")
+    + `<div><dt>${esc(text.medium)}</dt><dd>${items.filter((item) => item.confidence === "medium").length}</dd></div>`
+    + `<div><dt>${esc(text.selfReported)}</dt><dd>${items.filter((item) => item.selfReported).length}</dd></div>`;
   const yearRows = yearsOf(items).map((year) => `<div><dt>${year}</dt><dd>${items.filter((item) => item.date.startsWith(String(year))).length}</dd></div>`).join("");
   $("#archive-counts").innerHTML = `<section aria-label="${esc(text.byType)}"><h3 class="label">${esc(text.byType)}</h3><dl>${typeRows}</dl></section><section aria-label="${esc(text.byYear)}"><h3 class="label">${esc(text.byYear)}</h3><dl>${yearRows}</dl></section>`;
 }
@@ -192,7 +212,7 @@ function renderTable(items) {
   const rows = items.filter(matches);
   const body = rows.map((item) => `<tr data-id="${esc(item.id)}">
     <td data-label="${esc(text.columns.date)}"><time datetime="${esc(item.date)}">${esc(item.date)}</time></td>
-    <td data-label="${esc(text.columns.item)}"><strong>${esc(phrase(item.title))}</strong><span class="archive-kind">${esc(text.types[item.type] || item.type)}</span></td>
+    <td data-label="${esc(text.columns.item)}"><strong>${esc(phrase(item.title))}</strong><span class="archive-kind">${esc(text.types[item.type] || item.type)}</span>${flagLine(item)}</td>
     <td data-label="${esc(text.columns.counterpart)}">${esc(phrase(item.counterpart) || text.noCounterpart)}${amountLine(item)}</td>
     <td data-label="${esc(text.columns.outcome)}"><span class="archive-outcome">${esc(text.outcomes[item.outcome] || item.outcome)}</span><p>${esc(phrase(item.note))}</p></td>
     <td data-label="${esc(text.columns.source)}">${sourceCell(item)}</td>
@@ -212,6 +232,24 @@ function renderOutcomes(items) {
     return `<li><span class="label">${esc(text.outcomes[outcome])}</span><strong>${matched.length}</strong><ul>${titles}</ul></li>`;
   }).join("");
   $("#archive-outcomes").innerHTML = `<h3 id="archive-outcomes-heading">${esc(text.outcomeHeading)}</h3><p>${esc(text.outcomeLede)}</p><ol>${rows}</ol>`;
+}
+
+function renderPending() {
+  const text = copy();
+  const rows = state.doc?.pending || [];
+  const host = $("#archive-pending");
+  if (!rows.length) {
+    host.innerHTML = "";
+    return;
+  }
+  const items = rows.map((row) => `<li>
+    <strong>${esc(phrase(row.title))}</strong>
+    ${flagLine(row)}
+    <span class="archive-flag">${esc(text.pending)}</span>
+    <p>${esc(phrase(row.note))}</p>
+    <p>${sourceCell(row)}</p>
+  </li>`).join("");
+  host.innerHTML = `<h3 class="label">${esc(text.pending)} ${rows.length}</h3><ul>${items}</ul>`;
 }
 
 function renderWithheld() {
@@ -252,6 +290,7 @@ function render() {
   renderTimeline(state.doc.items);
   renderTable(state.doc.items);
   renderOutcomes(state.doc.items);
+  renderPending();
   renderWithheld();
 }
 

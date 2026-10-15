@@ -1,33 +1,373 @@
 {
   "schema": 1,
   "coverage": {
-    "en": "Public items linked to the ASEAN Smart Cities Network. The first pass is Dr Non Arkaraprasertkul’s inbox: meetings, toolkits, calls and trips. Each item says whether that trail shows a result. This is one inbox, not the network’s full record. Almost nothing in it predates 2020, and the 2018 founding is absent.",
-    "th": "รายการสาธารณะที่เกี่ยวกับเครือข่ายเมืองอัจฉริยะอาเซียน รอบแรกมาจากกล่องจดหมายของ ดร. นนท์ อรรฆประเสริฐกุล ได้แก่ การประชุม ชุดเครื่องมือ การเปิดรับ และการเดินทาง แต่ละรายการบอกว่าเส้นทางนั้นมีผลหรือไม่ นี่คือกล่องจดหมายใบเดียว ไม่ใช่บันทึกทั้งหมดของเครือข่าย แทบไม่มีอะไรก่อนปี 2020 และการก่อตั้งในปี 2018 ไม่อยู่ในนี้",
-    "zh": "与东盟智慧城市网络有关的公开事项。第一批来自 Non Arkaraprasertkul 博士的收件箱：会议、工具包、征集和出行。每一条都写明这条线索有没有结果。这是一个收件箱，不是整个网络的全部记录。2020年之前几乎是空的，2018年的创立不在其中。"
+    "en": "Public items linked to the ASEAN Smart Cities Network, from one cleared inbox and from public pages. Each item says whether that trail shows a result. Figures taken from ASEAN’s own monitoring reports are labelled self-reported. A document that has not been read is listed as pending review and states no findings. This is not the network’s full record.",
+    "th": "รายการสาธารณะที่เกี่ยวกับเครือข่ายเมืองอัจฉริยะอาเซียน จากกล่องจดหมายที่ตรวจแล้วหนึ่งกล่องและจากหน้าสาธารณะ แต่ละรายการบอกว่าเส้นทางนั้นมีผลหรือไม่ ตัวเลขจากรายงานติดตามของอาเซียนเองถูกกำกับว่าเป็นรายงานเอง เอกสารที่ยังไม่ได้อ่านถูกใส่เป็นรอการทบทวนและไม่ระบุข้อค้นพบ นี่ไม่ใช่บันทึกทั้งหมดของเครือข่าย",
+    "zh": "与东盟智慧城市网络有关的公开事项，来自一个已核可的收件箱和公开网页。每一条都写明这条线索有没有结果。取自东盟自己监测报告的数字标为自行报告。尚未读过的文件列为待审阅，并且不陈述结论。这不是整个网络的全部记录。"
   },
   "items": [
     {
-      "id": "hlm2-2020",
+      "id": "M01",
+      "type": "communication",
+      "date": "2018-04-28",
+      "title": {
+        "en": "ASEAN Smart Cities Network established at the 32nd ASEAN Summit",
+        "th": "จัดตั้งเครือข่ายเมืองอัจฉริยะอาเซียนในการประชุมสุดยอดอาเซียนครั้งที่ 32",
+        "zh": "东盟智慧城市网络在第32届东盟峰会上设立"
+      },
+      "counterpart": {
+        "en": "ASEAN Secretariat",
+        "th": "สำนักเลขาธิการอาเซียน",
+        "zh": "东盟秘书处"
+      },
+      "outcome": "delivered",
+      "note": {
+        "en": "The April 2018 concept note sets up a network of 26 pilot cities. It is the founding document in this record, not a completed project list.",
+        "th": "เอกสารแนวคิดเดือนเมษายน 2018 จัดตั้งเครือข่ายเมืองนำร่อง 26 เมือง เป็นเอกสารก่อตั้งในบันทึกนี้ ไม่ใช่บัญชีโครงการที่ทำเสร็จแล้ว",
+        "zh": "2018年4月的概念说明设立了由26个试点城市组成的网络。它是这份记录里的创立文件，不是一份已完成项目清单。"
+      },
+      "source": "https://asean.org/wp-content/uploads/2018/04/Concept-Note-of-the-ASEAN-Smart-Cities-Network.pdf",
+      "public": true,
+      "confidence": "high"
+    },
+    {
+      "id": "T01",
+      "type": "course",
+      "date": "2018-05-22",
+      "title": {
+        "en": "ASEAN Smart Cities Governance Workshop, Singapore",
+        "th": "เวิร์กช็อปธรรมาภิบาลเมืองอัจฉริยะอาเซียน ที่สิงคโปร์",
+        "zh": "东盟智慧城市治理研讨会，新加坡"
+      },
+      "counterpart": {
+        "en": "Ministry of Foreign Affairs (Singapore)",
+        "th": "กระทรวงการต่างประเทศ (สิงคโปร์)",
+        "zh": "新加坡外交部"
+      },
+      "outcome": "delivered",
+      "note": {
+        "en": "Singapore’s foreign ministry records a workshop on 22–25 May 2018, before the inaugural network meeting.",
+        "th": "กระทรวงการต่างประเทศสิงคโปร์บันทึกเวิร์กช็อปวันที่ 22–25 พฤษภาคม 2018 ก่อนการประชุมแรกของเครือข่าย",
+        "zh": "新加坡外交部记录了2018年5月22–25日的研讨会，时间在网络首次会议之前。"
+      },
+      "source": "https://www.mfa.gov.sg/newsroom/press-statements-transcripts-and-photos/20180707-ascn-07-jul-2018/",
+      "public": true,
+      "confidence": "high"
+    },
+    {
+      "id": "M02",
+      "type": "communication",
+      "date": "2018-07-08",
+      "title": {
+        "en": "Inaugural ASCN meeting, Singapore",
+        "th": "การประชุม ASCN ครั้งแรก ที่สิงคโปร์",
+        "zh": "ASCN 首次会议，新加坡"
+      },
+      "counterpart": {
+        "en": "Ministry of Foreign Affairs (Singapore)",
+        "th": "กระทรวงการต่างประเทศ (สิงคโปร์)",
+        "zh": "新加坡外交部"
+      },
+      "outcome": "partial",
+      "note": {
+        "en": "Singapore’s foreign ministry said the 8 July 2018 meeting was expected to endorse the smart-city framework and 26 city action plans. The press note records that expectation. Adoption of the framework is a later summit document.",
+        "th": "กระทรวงการต่างประเทศสิงคโปร์ระบุว่าการประชุมวันที่ 8 กรกฎาคม 2018 คาดว่าจะให้การรับรองกรอบเมืองอัจฉริยะและแผนปฏิบัติการของ 26 เมือง ข่าวประชาสัมพันธ์บันทึกความคาดหมายนั้น การรับรองกรอบเป็นเอกสารของการประชุมสุดยอดถัดไป",
+        "zh": "新加坡外交部称，2018年7月8日的会议预期将通过智慧城市框架和26个城市行动计划。新闻稿记录的是这一预期。框架的正式通过见稍后的峰会文件。"
+      },
+      "source": "https://www.mfa.gov.sg/newsroom/press-statements-transcripts-and-photos/20180707-ascn-07-jul-2018/",
+      "public": true,
+      "confidence": "high"
+    },
+    {
+      "id": "M03",
+      "type": "communication",
+      "date": "2018-11-13",
+      "title": {
+        "en": "33rd ASEAN Summit adopts the ASEAN Smart Cities Framework",
+        "th": "การประชุมสุดยอดอาเซียนครั้งที่ 33 รับรองกรอบเมืองอัจฉริยะอาเซียน",
+        "zh": "第33届东盟峰会通过《东盟智慧城市框架》"
+      },
+      "counterpart": {
+        "en": "ASEAN Secretariat",
+        "th": "สำนักเลขาธิการอาเซียน",
+        "zh": "东盟秘书处"
+      },
+      "outcome": "delivered",
+      "note": {
+        "en": "The chairman’s statement of 13 November 2018 lists the ASEAN Smart Cities Framework among adopted documents. Confidence is medium.",
+        "th": "ถ้อยแถลงของประธานเมื่อ 13 พฤศจิกายน 2018 ระบุกรอบเมืองอัจฉริยะอาเซียนในเอกสารที่รับรอง ความเชื่อมั่นอยู่ที่ระดับกลาง",
+        "zh": "2018年11月13日的主席声明把《东盟智慧城市框架》列在通过的文件中。可信度为中等。"
+      },
+      "source": "https://asean.org/wp-content/uploads/2018/11/33rd_ASEAN_Summit_Chairman_s_Statement_Final.pdf",
+      "public": true,
+      "confidence": "medium"
+    },
+    {
+      "id": "F01",
+      "type": "grant",
+      "date": "2018-11-15",
+      "title": {
+        "en": "U.S.–ASEAN Smart Cities Partnership announced",
+        "th": "ประกาศความร่วมมือเมืองอัจฉริยะสหรัฐ–อาเซียน",
+        "zh": "美国—东盟智慧城市伙伴关系宣布成立"
+      },
+      "counterpart": {
+        "en": "U.S. Department of State",
+        "th": "กระทรวงการต่างประเทศสหรัฐฯ",
+        "zh": "美国国务院"
+      },
+      "outcome": "delivered",
+      "note": {
+        "en": "The partnership was announced on 15 November 2018 with an initial commitment of USD 10000000. This is the launch, not the later call for pilot cities.",
+        "th": "ความร่วมมือประกาศเมื่อ 15 พฤศจิกายน 2018 พร้อมเงินเริ่มต้น USD 10000000 นี่คือการเปิดตัว ไม่ใช่การเปิดรับเมืองนำร่องในภายหลัง",
+        "zh": "伙伴关系于2018年11月15日宣布，初始承诺为 USD 10000000。这是启动，不是后来的试点城市征集。"
+      },
+      "source": "https://www.usascp.org/vice-president-announces-usascp-at-6th-asean-u-s-summit/",
+      "public": true,
+      "confidence": "high",
+      "amount": "USD 10000000"
+    },
+    {
+      "id": "F03",
+      "type": "grant",
+      "date": "2019-04-02",
+      "title": {
+        "en": "ASEAN Australia Smart Cities Trust Fund established",
+        "th": "จัดตั้งกองทุนเมืองอัจฉริยะอาเซียน–ออสเตรเลีย",
+        "zh": "设立东盟澳大利亚智慧城市信托基金"
+      },
+      "counterpart": {
+        "en": "Asian Development Bank",
+        "th": "ธนาคารพัฒนาเอเชีย",
+        "zh": "亚洲开发银行"
+      },
+      "outcome": "delivered",
+      "note": {
+        "en": "Australia’s foreign ministry committed AUD 20000000 (about USD 13940000) on 2 April 2019, through the Asian Development Bank. AUD 13180000 had been received by the end of 2020. The fund was scheduled to close by 30 June 2024.",
+        "th": "กระทรวงการต่างประเทศออสเตรเลียให้คำมั่น AUD 20000000 (ราว USD 13940000) เมื่อ 2 เมษายน 2019 ผ่านธนาคารพัฒนาเอเชีย ภายในสิ้นปี 2020 ได้รับแล้ว AUD 13180000 กองทุนกำหนดปิดภายใน 30 มิถุนายน 2024",
+        "zh": "澳大利亚外交贸易部于2019年4月2日通过亚洲开发银行承诺 AUD 20000000（约 USD 13940000）。到2020年底已实际收到 AUD 13180000。基金原定于2024年6月30日前关闭。"
+      },
+      "source": "https://www.adb.org/sites/default/files/institutional-document/729721/aasctf-annual-progress-report-2020.pdf",
+      "public": true,
+      "confidence": "high",
+      "amount": "AUD 20000000"
+    },
+    {
+      "id": "T02",
+      "type": "trip",
+      "date": "2019-07-09",
+      "title": {
+        "en": "U.S.–ASEAN Smart Cities Partnership symposium, Washington",
+        "th": "การประชุมสมัชชาความร่วมมือเมืองอัจฉริยะสหรัฐ–อาเซียน ที่วอชิงตัน",
+        "zh": "美国—东盟智慧城市伙伴关系研讨会，华盛顿"
+      },
+      "counterpart": {
+        "en": "U.S. Department of State",
+        "th": "กระทรวงการต่างประเทศสหรัฐฯ",
+        "zh": "美国国务院"
+      },
+      "outcome": "delivered",
+      "note": {
+        "en": "The U.S. State Department hosted a symposium on 9 July 2019 for representatives of the pilot cities. The public page says the meeting was held. It does not show a project awarded there.",
+        "th": "กระทรวงการต่างประเทศสหรัฐเป็นเจ้าภาพการประชุมวันที่ 9 กรกฎาคม 2019 สำหรับผู้แทนเมืองนำร่อง หน้าสาธารณะบอกว่าการประชุมเกิดขึ้น ไม่ได้แสดงว่ามีโครงการได้รับคัดเลือกในที่นั้น",
+        "zh": "美国国务院于2019年7月9日为试点城市代表主办研讨会。公开页面表明会议已举行。看不出当场有项目获批。"
+      },
+      "source": "https://www.usascp.org/usascp-launches-with-smart-cities-symposium-for-ascn/",
+      "public": true,
+      "confidence": "high"
+    },
+    {
+      "id": "T04",
+      "type": "trip",
+      "date": "2019-10-08",
+      "title": {
+        "en": "1st ASEAN-Japan Smart Cities Network High Level Meeting, Yokohama",
+        "th": "การประชุมระดับสูงเครือข่ายเมืองอัจฉริยะอาเซียน–ญี่ปุ่น ครั้งที่ 1 ที่โยโกฮามา",
+        "zh": "第1届东盟—日本智慧城市网络高层会议，横滨"
+      },
+      "counterpart": {
+        "en": "Ministry of Land, Infrastructure, Transport and Tourism (Japan)",
+        "th": "กระทรวงที่ดิน โครงสร้างพื้นฐาน การขนส่ง และการท่องเที่ยว (ญี่ปุ่น)",
+        "zh": "日本国土交通省"
+      },
+      "outcome": "delivered",
+      "note": {
+        "en": "The meeting was held in Yokohama on 8–9 October 2019, with public-private matching. The Japan-ASEAN Integration Fund is named as a supporter. No programme budget for Smart JAMP appears here; that proposal came later.",
+        "th": "การประชุมจัดที่โยโกฮามาในวันที่ 8–9 ตุลาคม 2019 พร้อมการจับคู่ภาครัฐและเอกชน มีการระบุกองทุนบูรณาการญี่ปุ่น–อาเซียนเป็นผู้สนับสนุน ไม่มีงบ Smart JAMP ในแถวนี้ ข้อเสนอนั้นมาทีหลัง",
+        "zh": "会议于2019年10月8–9日在横滨举行，并有政企对接。日本—东盟一体化基金被列为支持方。这一行没有 Smart JAMP 的项目预算；该提议是后来才提出的。"
+      },
+      "source": "https://www.ur-net.go.jp/overseas/AseanSmartCityNetwork/HighLevelMeeting_en.html",
+      "public": true,
+      "confidence": "high"
+    },
+    {
+      "id": "F09",
+      "type": "grant",
+      "date": "2019-11-25",
+      "title": {
+        "en": "Korean overseas infrastructure and smart-city fund announced in Busan",
+        "th": "กองทุนโครงสร้างพื้นฐานและเมืองอัจฉริยะต่างประเทศของเกาหลีที่ประกาศในปูซาน",
+        "zh": "韩国在釜山宣布的海外基础设施与智慧城市基金"
+      },
+      "counterpart": {
+        "en": "Ministry of Land, Infrastructure and Transport (Korea)",
+        "th": "กระทรวงที่ดิน โครงสร้างพื้นฐาน และการขนส่ง (เกาหลี)",
+        "zh": "韩国国土交通部"
+      },
+      "outcome": "partial",
+      "note": {
+        "en": "A news report of the November 2019 Busan meeting says Korea announced a fund of KRW 1500000000000 for overseas plants, infrastructure and smart cities, with KRW 300000000000 described as set aside for overseas smart-city projects. The fund is not specific to ASCN. Confidence is medium.",
+        "th": "ข่าวการประชุมที่ปูซานในเดือนพฤศจิกายน 2019 ระบุว่าเกาหลีประกาศกองทุน KRW 1500000000000 สำหรับโรงงาน โครงสร้างพื้นฐาน และเมืองอัจฉริยะในต่างประเทศ และบรรยายว่ากัน KRW 300000000000 ไว้สำหรับโครงการเมืองอัจฉริยะต่างประเทศ กองทุนไม่ได้เจาะจงที่ ASCN ความเชื่อมั่นอยู่ที่ระดับกลาง",
+        "zh": "关于2019年11月釜山会议的新闻称，韩国宣布设立 KRW 1500000000000 的基金，用于海外工厂、基础设施和智慧城市，并称其中 KRW 300000000000 拨给海外智慧城市项目。该基金并不专属于 ASCN。可信度为中等。"
+      },
+      "source": "https://en.yna.co.kr/view/AEN20191125002551320",
+      "public": true,
+      "confidence": "medium",
+      "amount": "KRW 1500000000000"
+    },
+    {
+      "id": "M04",
+      "type": "mou",
+      "date": "2019-11-25",
+      "title": {
+        "en": "Korea–ASEAN smart-city pacts with Singapore and Brunei",
+        "th": "ข้อตกลงเมืองอัจฉริยะเกาหลี–อาเซียนกับสิงคโปร์และบรูไน",
+        "zh": "韩国与新加坡、文莱的智慧城市协议"
+      },
+      "counterpart": {
+        "en": "Ministry of Land, Infrastructure and Transport (Korea)",
+        "th": "กระทรวงที่ดิน โครงสร้างพื้นฐาน และการขนส่ง (เกาหลี)",
+        "zh": "韩国国土交通部"
+      },
+      "outcome": "delivered",
+      "note": {
+        "en": "A news report of the November 2019 Busan meeting says Korea agreed a ministerial consultative body with ASEAN and signed initial smart-city pacts with Singapore and Brunei. The pact texts are not in this record. This is not the infrastructure fund announced at the same meeting.",
+        "th": "ข่าวการประชุมที่ปูซานในเดือนพฤศจิกายน 2019 ระบุว่าเกาหลีตกลงตั้งคณะปรึกษาระดับรัฐมนตรีกับอาเซียน และลงนามข้อตกลงเมืองอัจฉริยะเบื้องต้นกับสิงคโปร์และบรูไน ตัวบทข้อตกลงไม่อยู่ในบันทึกนี้ ไม่ใช่กองทุนโครงสร้างพื้นฐานที่ประกาศในการประชุมเดียวกัน",
+        "zh": "关于2019年11月釜山会议的新闻称，韩国与东盟商定设立部长级协商机制，并与新加坡和文莱签署了初期智慧城市协议。协议文本不在这份记录里。这不是同一次会议上宣布的基础设施基金。"
+      },
+      "source": "https://en.yna.co.kr/view/AEN20191125002551320",
+      "public": true,
+      "confidence": "high"
+    },
+    {
+      "id": "T05",
+      "type": "trip",
+      "date": "2019-11-25",
+      "title": {
+        "en": "Briefing for ASEAN officials on Busan Eco Delta City",
+        "th": "การบรรยายสรุปให้เจ้าหน้าที่อาเซียนเรื่องเมืองอีโคเดลต้าปูซาน",
+        "zh": "向东盟官员介绍釜山生态三角洲城"
+      },
+      "counterpart": {
+        "en": "Ministry of Land, Infrastructure and Transport (Korea)",
+        "th": "กระทรวงที่ดิน โครงสร้างพื้นฐาน และการขนส่ง (เกาหลี)",
+        "zh": "韩国国土交通部"
+      },
+      "outcome": "delivered",
+      "note": {
+        "en": "During the November 2019 Busan meeting, officials from the ten ASEAN member states were briefed on Eco Delta City. This is the briefing, not the infrastructure fund and not the pacts signed at the same summit.",
+        "th": "ระหว่างการประชุมที่ปูซานในเดือนพฤศจิกายน 2019 เจ้าหน้าที่จากสิบประเทศสมาชิกอาเซียนได้รับฟังสรุปเรื่องเมืองอีโคเดลต้า นี่คือการบรรยายสรุป ไม่ใช่กองทุนโครงสร้างพื้นฐาน และไม่ใช่ข้อตกลงที่ลงนามในการประชุมเดียวกัน",
+        "zh": "2019年11月釜山会议期间，十个东盟成员国的官员听取了生态三角洲城的介绍。这是介绍会，不是基础设施基金，也不是同一次峰会上签署的协议。"
+      },
+      "source": "https://en.yna.co.kr/view/AEN20191125002551320",
+      "public": true,
+      "confidence": "high"
+    },
+    {
+      "id": "T03",
+      "type": "course",
+      "date": "2019-12-02",
+      "title": {
+        "en": "Singapore–United States smart cities workshop",
+        "th": "เวิร์กช็อปเมืองอัจฉริยะสิงคโปร์–สหรัฐฯ",
+        "zh": "新加坡—美国智慧城市研讨会"
+      },
+      "counterpart": {
+        "en": "Singapore–United States Third Country Training Program",
+        "th": "โครงการฝึกอบรมประเทศที่สามสิงคโปร์–สหรัฐฯ",
+        "zh": "新加坡—美国第三国培训项目"
+      },
+      "outcome": "delivered",
+      "note": {
+        "en": "A five-day course on 2–6 December 2019 covered planning, finance, procurement, standards and cybersecurity. The public page records the course. It does not record a city project that followed.",
+        "th": "หลักสูตรห้าวันในวันที่ 2–6 ธันวาคม 2019 ครอบคลุมการวางแผน การเงิน การจัดซื้อ มาตรฐาน และความมั่นคงไซเบอร์ หน้าสาธารณะบันทึกว่ามีหลักสูตร ไม่ได้บันทึกโครงการของเมืองที่ตามมา",
+        "zh": "2019年12月2–6日的五日课程涵盖规划、资金、采购、标准和网络安全。公开页面记录了课程。没有记录随后的城市项目。"
+      },
+      "source": "https://www.usascp.org/tctp-workshop-on-smart-cities/",
+      "public": true,
+      "confidence": "high"
+    },
+    {
+      "id": "E04",
       "type": "communication",
       "date": "2020",
       "title": {
-        "en": "2nd ASEAN-Japan Smart Cities Network High Level Meeting (referenced later)",
-        "th": "การประชุมระดับสูงเครือข่ายเมืองอัจฉริยะอาเซียน–ญี่ปุ่น ครั้งที่ 2 (อ้างถึงในภายหลัง)",
-        "zh": "第2届东盟—日本智慧城市网络高层会议（见于后来的函件）"
+        "en": "Journal article on participation in ASCN projects",
+        "th": "บทความวารสารเรื่องการมีส่วนร่วมในโครงการ ASCN",
+        "zh": "关于 ASCN 项目参与的期刊论文"
       },
       "counterpart": {
-        "en": "Ministry of Foreign Affairs (Japan)",
-        "th": "กระทรวงการต่างประเทศ (ญี่ปุ่น)",
-        "zh": "日本外务省"
+        "en": "International Journal of Urban Sustainable Development",
+        "th": "International Journal of Urban Sustainable Development",
+        "zh": "International Journal of Urban Sustainable Development"
       },
-      "outcome": "stalled",
+      "outcome": "partial",
       "note": {
-        "en": "A 2021 letter says depa’s southern office presented at this meeting. This inbox has no primary record of the meeting itself.",
-        "th": "จดหมายปี 2021 ระบุว่าสำนักงานภาคใต้ของดีป้านำเสนอในการประชุมนี้ กล่องจดหมายนี้ไม่มีบันทึกต้นทางของการประชุม",
-        "zh": "2021年的来函称 depa 南部办公室在这次会议上作了介绍。此收件箱没有会议本身的原始记录。"
+        "en": "A 2020 journal article argues that authoritarian practice in some member states undercuts participatory planning in ASCN projects. This is a published argument, not an ASEAN project result.",
+        "th": "บทความวารสารปี 2020 โต้แย้งว่าแนวปฏิบัติอำนาจนิยมในบางประเทศสมาชิกบั่นทอนการวางแผนแบบมีส่วนร่วมในโครงการ ASCN นี่เป็นข้อถกเถียงที่ตีพิมพ์แล้ว ไม่ใช่ผลของโครงการอาเซียน",
+        "zh": "2020年的一篇期刊论文认为，部分成员国的威权做法削弱了 ASCN 项目中的参与式规划。这是已发表的论点，不是东盟项目的结果。"
       },
-      "source": "cleared by Non",
-      "public": true
+      "source": "https://www.tandfonline.com/doi/full/10.1080/19463138.2020.1827411",
+      "public": true,
+      "confidence": "high"
+    },
+    {
+      "id": "hlm2-2020",
+      "type": "communication",
+      "date": "2020-12",
+      "title": {
+        "en": "2nd ASEAN-Japan Smart Cities Network High Level Meeting (Smart JAMP proposed)",
+        "th": "การประชุมระดับสูงเครือข่ายเมืองอัจฉริยะอาเซียน–ญี่ปุ่น ครั้งที่ 2 (มีการเสนอ Smart JAMP)",
+        "zh": "第2届东盟—日本智慧城市网络高层会议（提出 Smart JAMP）"
+      },
+      "counterpart": {
+        "en": "Ministry of Land, Infrastructure, Transport and Tourism (Japan)",
+        "th": "กระทรวงที่ดิน โครงสร้างพื้นฐาน การขนส่ง และการท่องเที่ยว (ญี่ปุ่น)",
+        "zh": "日本国土交通省"
+      },
+      "outcome": "partial",
+      "note": {
+        "en": "Japan’s land and transport ministry proposed Smart JAMP at the December 2020 high-level meeting: studies and help forming projects. No programme budget is public. A later letter in this inbox only adds that a presentation was given.",
+        "th": "กระทรวงที่ดินและขนส่งของญี่ปุ่นเสนอ Smart JAMP ในการประชุมระดับสูงเดือนธันวาคม 2020 เป็นการศึกษาและการช่วยจัดรูปโครงการ ไม่มีงบประมาณของโปรแกรมที่เปิดเผย จดหมายภายหลังในกล่องนี้บอกเพิ่มเพียงว่ามีการนำเสนอ",
+        "zh": "日本国土交通省在2020年12月的高层会议上提出 Smart JAMP：开展研究并协助形成项目。没有公开的项目总预算。此收件箱里后来的信只补充说做过一次介绍。"
+      },
+      "source": "https://www.jasca2021.jp/cooperative/",
+      "public": true,
+      "confidence": "high"
+    },
+    {
+      "id": "E05",
+      "type": "communication",
+      "date": "2021",
+      "title": {
+        "en": "Journal article on transboundary learning in ASCN",
+        "th": "บทความวารสารเรื่องการเรียนรู้ข้ามพรมแดนใน ASCN",
+        "zh": "关于 ASCN 跨境学习的期刊论文"
+      },
+      "counterpart": {
+        "en": "Sustainability (MDPI)",
+        "th": "Sustainability (MDPI)",
+        "zh": "Sustainability (MDPI)"
+      },
+      "outcome": "partial",
+      "note": {
+        "en": "A 2021 journal article describes ASCN as a branding and influence tool, and says complex governance, thin resources and missing operating mechanisms have kept most smart-city ideas from being fully carried out. This is a published argument, not an ASEAN project result.",
+        "th": "บทความวารสารปี 2021 บรรยาย ASCN ว่าเป็นเครื่องมือสร้างภาพลักษณ์และอิทธิพล และระบุว่าธรรมาภิบาลที่ซับซ้อน ทรัพยากรที่บาง และกลไกปฏิบัติที่ขาดไป ทำให้แนวคิดเมืองอัจฉริยะส่วนใหญ่ยังไม่ถูกทำให้ครบ นี่เป็นข้อถกเถียงที่ตีพิมพ์แล้ว ไม่ใช่ผลของโครงการอาเซียน",
+        "zh": "2021年的一篇期刊论文把 ASCN 描述为品牌与影响力工具，并认为治理复杂、资源不足和缺少运作机制，使大多数智慧城市设想未能完全落地。这是已发表的论点，不是东盟项目的结果。"
+      },
+      "source": "https://www.mdpi.com/2071-1050/13/11/6502",
+      "public": true,
+      "confidence": "high"
     },
     {
       "id": "yseali-2021",
@@ -50,7 +390,8 @@
         "zh": "已交付一场录像演讲和一次线上参访。曼谷的线下活动只是暂定。这是美国的平行项目，不是 ASCN 项目。"
       },
       "source": "cleared by Non",
-      "public": true
+      "public": true,
+      "confidence": "medium"
     },
     {
       "id": "asuf-2021",
@@ -73,7 +414,8 @@
         "zh": "2021年10月7日的专题发言已经完成。"
       },
       "source": "cleared by Non",
-      "public": true
+      "public": true,
+      "confidence": "medium"
     },
     {
       "id": "smartjamp-phuket-2021",
@@ -96,7 +438,8 @@
         "zh": "日本资助的研究（含顾问赴普吉实地走访）停在等待闭路电视数据。未见最终报告。未写明金额。归在出行类，因为这条记录里的公开活动是实地走访，不是一笔金额。"
       },
       "source": "cleared by Non",
-      "public": true
+      "public": true,
+      "confidence": "medium"
     },
     {
       "id": "usascp-ius-2021",
@@ -119,7 +462,8 @@
         "zh": "这是一次试点城市公开征集，截止2021年10月25日。没有泰国申请或入选的证据。未写明金额。"
       },
       "source": "https://www.nrel.gov/international/integrated-urban-services.html",
-      "public": true
+      "public": true,
+      "confidence": "high"
     },
     {
       "id": "hlm3-2021",
@@ -142,7 +486,8 @@
         "zh": "主办方在会前起草了纪要，并安排了商务对接。此后未见成交或项目。"
       },
       "source": "https://www.ascnjapan2021.jp/eng/index.html",
-      "public": true
+      "public": true,
+      "confidence": "high"
     },
     {
       "id": "guidebook-2021",
@@ -165,7 +510,8 @@
         "zh": "国别磋商已经进行，随后两次催要曼谷、春武里和普吉的问卷。本记录看不出指南是否出版。"
       },
       "source": "cleared by Non",
-      "public": true
+      "public": true,
+      "confidence": "medium"
     },
     {
       "id": "sustinv-2021",
@@ -188,7 +534,56 @@
         "zh": "2021年11月4–5日的邀请被转给 ASCN 成员。没有出席或结果的记录。"
       },
       "source": "cleared by Non",
-      "public": true
+      "public": true,
+      "confidence": "medium"
+    },
+    {
+      "id": "E06",
+      "type": "communication",
+      "date": "2022",
+      "title": {
+        "en": "Journal article on governance and rights in ASCN",
+        "th": "บทความวารสารเรื่องธรรมาภิบาลและสิทธิใน ASCN",
+        "zh": "关于 ASCN 治理与权利的期刊论文"
+      },
+      "counterpart": {
+        "en": "International Journal of Law in Context",
+        "th": "International Journal of Law in Context",
+        "zh": "International Journal of Law in Context"
+      },
+      "outcome": "partial",
+      "note": {
+        "en": "A 2022 journal article finds ASCN pilot governance top-down and organised around efficiency, and says that pattern can put rights at risk. This is a published argument, not an ASEAN project result.",
+        "th": "บทความวารสารปี 2022 พบว่าธรรมาภิบาลของเมืองนำร่อง ASCN เป็นแบบบนลงล่างและจัดรอบประสิทธิภาพ และระบุว่ารูปแบบนั้นอาจทำให้สิทธิมีความเสี่ยง นี่เป็นข้อถกเถียงที่ตีพิมพ์แล้ว ไม่ใช่ผลของโครงการอาเซียน",
+        "zh": "2022年的一篇期刊论文认为 ASCN 试点治理是自上而下并以效率为中心，并称这种模式可能使权利面临风险。这是已发表的论点，不是东盟项目的结果。"
+      },
+      "source": "https://doi.org/10.1017/s1744552322000441",
+      "public": true,
+      "confidence": "high"
+    },
+    {
+      "id": "F10",
+      "type": "course",
+      "date": "2023-01-01",
+      "title": {
+        "en": "ASEAN Smart City Professional Program, 2023–2027",
+        "th": "โครงการผู้เชี่ยวชาญเมืองอัจฉริยะอาเซียน ปี 2023–2027",
+        "zh": "东盟智慧城市专业人才项目，2023–2027"
+      },
+      "counterpart": {
+        "en": "ASEAN-Korea Cooperation Fund",
+        "th": "กองทุนความร่วมมืออาเซียน–เกาหลี",
+        "zh": "东盟—韩国合作基金"
+      },
+      "outcome": "partial",
+      "note": {
+        "en": "A call document describes a five-year course funded by the ASEAN-Korea Cooperation Fund and run by Seoul National University, aimed at 260 short-term trainees and 40 master’s students. No funding amount was found. A target is not a completed intake.",
+        "th": "เอกสารเปิดรับบรรยายหลักสูตรห้าปีที่กองทุนความร่วมมืออาเซียน–เกาหลีสนับสนุน และมหาวิทยาลัยแห่งชาติโซลเป็นผู้จัด ตั้งเป้าผู้เข้าอบรมระยะสั้น 260 คนและนักศึกษามหาบัณฑิต 40 คน ไม่พบจำนวนเงินทุน เป้าหมายไม่ใช่จำนวนที่รับเข้าแล้ว",
+        "zh": "一份征集文件描述了由东盟—韩国合作基金资助、首尔大学承办的五年课程，目标是260名短期学员和40名硕士生。没有找到资助金额。目标不是已经完成的招生。"
+      },
+      "source": "https://www.inter.chula.ac.th/wp-content/uploads/2023/06/ASEAN-Smart-City-Professional-Program-.pdf",
+      "public": true,
+      "confidence": "high"
     },
     {
       "id": "investment-toolkit-2023",
@@ -211,7 +606,83 @@
         "zh": "与泰国的磋商有录像，并进入了2024年的修订。工具包是否被使用，这里看不到。"
       },
       "source": "cleared by Non",
-      "public": true
+      "public": true,
+      "confidence": "medium"
+    },
+    {
+      "id": "F04",
+      "type": "grant",
+      "date": "2023-06",
+      "title": {
+        "en": "Additional Australian contribution to the ASEAN Australia Smart Cities Trust Fund",
+        "th": "เงินสมทบเพิ่มจากออสเตรเลียให้กองทุนเมืองอัจฉริยะอาเซียน–ออสเตรเลีย",
+        "zh": "澳大利亚对东盟澳大利亚智慧城市信托基金的追加出资"
+      },
+      "counterpart": {
+        "en": "Asian Development Bank",
+        "th": "ธนาคารพัฒนาเอเชีย",
+        "zh": "亚洲开发银行"
+      },
+      "outcome": "delivered",
+      "note": {
+        "en": "Australia committed an additional AUD 1000000 in June 2023. This row records that top-up only.",
+        "th": "ออสเตรเลียให้คำมั่นเพิ่ม AUD 1000000 ในเดือนมิถุนายน 2023 แถวนี้บันทึกเฉพาะเงินสมทบก้อนนั้น",
+        "zh": "澳大利亚于2023年6月追加承诺 AUD 1000000。这一行只记录这笔追加。"
+      },
+      "source": "https://www.adb.org/who-we-are/partners/australia/overview",
+      "public": true,
+      "confidence": "high",
+      "amount": "AUD 1000000"
+    },
+    {
+      "id": "F08",
+      "type": "grant",
+      "date": "2024",
+      "title": {
+        "en": "Smart JAMP feasibility study for a tourism app in Vientiane",
+        "th": "การศึกษาความเป็นไปได้ Smart JAMP สำหรับแอปท่องเที่ยวในเวียงจันทน์",
+        "zh": "Smart JAMP 万象旅游应用可行性研究"
+      },
+      "counterpart": {
+        "en": "Ministry of Land, Infrastructure, Transport and Tourism (Japan)",
+        "th": "กระทรวงที่ดิน โครงสร้างพื้นฐาน การขนส่ง และการท่องเที่ยว (ญี่ปุ่น)",
+        "zh": "日本国土交通省"
+      },
+      "outcome": "partial",
+      "note": {
+        "en": "A 2024 study describes a prototype tourism app for Vientiane, after earlier master-plan and feasibility work. No programme budget is stated, and a prototype is not a city service.",
+        "th": "รายงานปี 2024 บรรยายแอปท่องเที่ยวต้นแบบสำหรับเวียงจันทน์ หลังงานแผนหลักและการศึกษาความเป็นไปได้ก่อนหน้า ไม่มีงบประมาณของโปรแกรม และต้นแบบไม่ใช่บริการของเมือง",
+        "zh": "2024年的研究描述了万象的旅游应用原型，此前已有总体规划和可行性工作。没有写出项目预算，原型也不是城市服务。"
+      },
+      "source": "https://www.jasca2021.jp/cms/wp-content/uploads/Smart-JAMP2024-Survey-and-Study-for-Realization-of-Smart-City-in-Lao-Peoples-Democratic-Republic.pdf",
+      "public": true,
+      "confidence": "high"
+    },
+    {
+      "id": "F02",
+      "type": "grant",
+      "date": "2024-01",
+      "title": {
+        "en": "U.S.–ASEAN Smart Cities Partnership: later portfolio claim",
+        "th": "ความร่วมมือเมืองอัจฉริยะสหรัฐ–อาเซียน: ข้ออ้างขนาดพอร์ตในภายหลัง",
+        "zh": "美国—东盟智慧城市伙伴关系：后来的组合规模说法"
+      },
+      "counterpart": {
+        "en": "U.S. Department of State",
+        "th": "กระทรวงการต่างประเทศสหรัฐฯ",
+        "zh": "美国国务院"
+      },
+      "outcome": "partial",
+      "note": {
+        "en": "The partnership’s own 2024 flyer says that since 2018 it has committed over USD 10000000 to more than 20 projects. That figure is self-reported, not an independent audit.",
+        "th": "ใบปลิวปี 2024 ของความร่วมมือเองระบุว่าตั้งแต่ปี 2018 ได้ให้เงินกว่า USD 10000000 แก่โครงการมากกว่า 20 โครงการ ตัวเลขนี้เป็นรายงานเอง ไม่ใช่การตรวจสอบอิสระ",
+        "zh": "伙伴关系自己的2024年单页称，自2018年以来已向20多个项目承诺超过 USD 10000000。该数字是自行报告，不是独立审计。"
+      },
+      "source": "https://www.usascp.org/wp-content/uploads/2024/01/USASCP-Overview-Flyer-01.24.pdf",
+      "public": true,
+      "confidence": "high",
+      "amount": "over USD 10000000",
+      "selfReported": true
     },
     {
       "id": "investment-toolkit-2024",
@@ -234,7 +705,82 @@
         "zh": "部分建议被原则接受，包括聊天机器人和指向已有材料。使用分析被推迟。未见实际使用。"
       },
       "source": "cleared by Non",
-      "public": true
+      "public": true,
+      "confidence": "medium"
+    },
+    {
+      "id": "T06",
+      "type": "course",
+      "date": "2024-05-20",
+      "title": {
+        "en": "First master’s cohort of the ASEAN Smart City Professional Program",
+        "th": "นักศึกษามหาบัณฑิตรุ่นแรกของโครงการผู้เชี่ยวชาญเมืองอัจฉริยะอาเซียน",
+        "zh": "东盟智慧城市专业人才项目首届硕士班"
+      },
+      "counterpart": {
+        "en": "Seoul National University",
+        "th": "มหาวิทยาลัยแห่งชาติโซล",
+        "zh": "首尔大学"
+      },
+      "outcome": "delivered",
+      "note": {
+        "en": "Nine students from ASEAN member states began a two-year master’s course at Seoul National University in early 2024. The fund is the ASEAN-Korea Cooperation Fund. This row is the start of that cohort, not the later cumulative total.",
+        "th": "นักศึกษาเก้าคนจากประเทศสมาชิกอาเซียนเริ่มหลักสูตรมหาบัณฑิตสองปีที่มหาวิทยาลัยแห่งชาติโซลต้นปี 2024 ทุนมาจากกองทุนความร่วมมืออาเซียน–เกาหลี แถวนี้คือการเริ่มของรุ่นนั้น ไม่ใช่ยอดสะสมในภายหลัง",
+        "zh": "九名东盟成员国学生于2024年初在首尔大学开始两年制硕士课程。资助方是东盟—韩国合作基金。这一行是该届的开学，不是后来的累计总数。"
+      },
+      "source": "https://aseanrokfund.org/project-activity/asean-smart-city-professional-program/",
+      "public": true,
+      "confidence": "high"
+    },
+    {
+      "id": "M06",
+      "type": "communication",
+      "date": "2024-07-30",
+      "title": {
+        "en": "7th ASCN Annual Meeting",
+        "th": "การประชุมประจำปี ASCN ครั้งที่ 7",
+        "zh": "第7届 ASCN 年会"
+      },
+      "counterpart": {
+        "en": "ASEAN Secretariat",
+        "th": "สำนักเลขาธิการอาเซียน",
+        "zh": "东盟秘书处"
+      },
+      "outcome": "delivered",
+      "note": {
+        "en": "ASEAN’s own 2024 monitoring report says the annual meeting was held on 30 July 2024 with the ASCN conference, under the Lao PDR chair. The meeting date is self-reported in that monitoring report. This is not the 7th ASEAN-Japan high-level meeting.",
+        "th": "รายงานติดตามปี 2024 ของอาเซียนเองระบุว่าการประชุมประจำปีจัดเมื่อ 30 กรกฎาคม 2024 พร้อมการประชุม ASCN ภายใต้ประธานลาว วันที่ประชุมเป็นรายงานเองในรายงานติดตามนั้น ไม่ใช่การประชุมระดับสูงอาเซียน–ญี่ปุ่นครั้งที่ 7",
+        "zh": "东盟自己的2024年监测报告称，年会于2024年7月30日与 ASCN 会议一并举行，由老挝主持。会议日期是该监测报告中的自行报告。这不是第7届东盟—日本高层会议。"
+      },
+      "source": "https://asean.org/wp-content/uploads/2024/10/2024-ASCN-ME-Report-Final_25Sep2024-for-public.pdf",
+      "public": true,
+      "confidence": "high",
+      "selfReported": true
+    },
+    {
+      "id": "E02",
+      "type": "communication",
+      "date": "2024-09-25",
+      "title": {
+        "en": "ASCN monitoring report 2024",
+        "th": "รายงานติดตาม ASCN ปี 2024",
+        "zh": "2024年 ASCN 监测报告"
+      },
+      "counterpart": {
+        "en": "ASEAN Secretariat",
+        "th": "สำนักเลขาธิการอาเซียน",
+        "zh": "东盟秘书处"
+      },
+      "outcome": "partial",
+      "note": {
+        "en": "ASEAN’s own monitoring report counts 108 projects, of which 11 (10.2%) are marked completed, 81 ongoing and 16 in planning, across 31 cities. These figures are self-reported. They are not an independent evaluation.",
+        "th": "รายงานติดตามของอาเซียนเองนับได้ 108 โครงการ ในจำนวนนี้ถูกทำเครื่องหมายว่าเสร็จ 11 โครงการ (ร้อยละ 10.2) กำลังดำเนิน 81 โครงการ และอยู่ในแผน 16 โครงการ ใน 31 เมือง ตัวเลขเหล่านี้เป็นรายงานเอง ไม่ใช่การประเมินอิสระ",
+        "zh": "东盟自己的监测报告统计为108个项目，其中11个（10.2%）标为已完成，81个在进行，16个在规划，覆盖31个城市。这些数字是自行报告，不是独立评估。"
+      },
+      "source": "https://asean.org/wp-content/uploads/2024/10/2024-ASCN-ME-Report-Final_25Sep2024-for-public.pdf",
+      "public": true,
+      "confidence": "high",
+      "selfReported": true
     },
     {
       "id": "hlm6-2024",
@@ -250,14 +796,65 @@
         "th": "กระทรวงที่ดิน โครงสร้างพื้นฐาน การขนส่ง และการท่องเที่ยว (ญี่ปุ่น)",
         "zh": "日本国土交通省"
       },
-      "outcome": "failed",
+      "outcome": "partial",
       "note": {
-        "en": "Thailand was asked to field a panel and a short slide deck, and was asked who would pay for the delegation. No follow-on project is visible, and this record does not confirm the panel was delivered.",
-        "th": "ไทยถูกขอให้จัดคนขึ้นเวทีและสไลด์สั้น ๆ และถูกถามว่าใครออกค่าเดินทางของคณะ ไม่ปรากฏโครงการต่อเนื่อง และบันทึกนี้ไม่ได้ยืนยันว่าการขึ้นเวทีเกิดขึ้นจริง",
-        "zh": "泰方被要求安排发言和一份短幻灯片，并被问及代表团费用由谁承担。未见后续项目，本记录也不能确认发言已经完成。"
+        "en": "A public summary record of the October 2024 meeting says the high-level meetings would continue and that Japan would compile Smart JAMP case studies. The case studies are only promised here. This inbox does not confirm that a Thai panel was delivered.",
+        "th": "บันทึกสรุปสาธารณะของการประชุมเดือนตุลาคม 2024 ระบุว่าการประชุมระดับสูงจะดำเนินต่อ และญี่ปุ่นจะรวบรวมกรณีศึกษา Smart JAMP กรณีศึกษาเป็นเพียงคำมั่นในบันทึกนี้ กล่องจดหมายนี้ไม่ได้ยืนยันว่าไทยขึ้นเวทีแล้ว",
+        "zh": "2024年10月会议的公开纪要写明高层会议将继续，日本将汇编 Smart JAMP 案例。案例在这里只是一项承诺。此收件箱不能确认泰方发言已经完成。"
       },
-      "source": "cleared by Non",
-      "public": true
+      "source": "https://www.jasca2021.jp/ascnjapan2024/common/files/presentation/Summary_Record.pdf",
+      "public": true,
+      "confidence": "high"
+    },
+    {
+      "id": "F07",
+      "type": "grant",
+      "date": "2024-11",
+      "title": {
+        "en": "Smart JAMP trial of AI illegal-parking detection in Bangkok",
+        "th": "การทดลอง Smart JAMP ตรวจจับการจอดรถผิดกฎหมายด้วยเอไอในกรุงเทพฯ",
+        "zh": "Smart JAMP 在曼谷试验用人工智能发现违停"
+      },
+      "counterpart": {
+        "en": "Ministry of Land, Infrastructure, Transport and Tourism (Japan)",
+        "th": "กระทรวงที่ดิน โครงสร้างพื้นฐาน การขนส่ง และการท่องเที่ยว (ญี่ปุ่น)",
+        "zh": "日本国土交通省"
+      },
+      "outcome": "partial",
+      "note": {
+        "en": "Japan’s own study says a two-day trial in November 2024, about 15 hours in all, detected 524 illegally parked vehicles. It is a pilot, not a deployment, and the operating model is unresolved. The count is self-reported. This is not the Phuket traffic study.",
+        "th": "รายงานของญี่ปุ่นเองระบุว่าการทดลองสองวันในเดือนพฤศจิกายน 2024 รวมราว 15 ชั่วโมง ตรวจพบรถจอดผิดกฎหมาย 524 คัน เป็นการนำร่อง ไม่ใช่การติดตั้งถาวร และรูปแบบการเดินระบบยังไม่จบ ตัวเลขเป็นรายงานเอง ไม่ใช่การศึกษาจราจรที่ภูเก็ต",
+        "zh": "日本自己的研究报告称，2024年11月两天、合计约15小时的试验发现524辆违停车辆。这是试点，不是部署，运营方式也未解决。数字是自行报告。这不是普吉的交通研究。"
+      },
+      "source": "https://www.jasca2021.jp/cms/wp-content/uploads/Smart-JAMP2024-Study-on-the-realization-of-smart-Cities-related-to-mobility-and-transport.pdf",
+      "public": true,
+      "confidence": "high",
+      "selfReported": true
+    },
+    {
+      "id": "T08",
+      "type": "communication",
+      "date": "2024-11",
+      "title": {
+        "en": "Showcase of New Zealand initiatives for ASCN",
+        "th": "การนำเสนอโครงการของนิวซีแลนด์ต่อ ASCN",
+        "zh": "向 ASCN 展示新西兰项目"
+      },
+      "counterpart": {
+        "en": "Ministry of Foreign Affairs and Trade (New Zealand)",
+        "th": "กระทรวงการต่างประเทศและการค้า (นิวซีแลนด์)",
+        "zh": "新西兰外交贸易部"
+      },
+      "outcome": "partial",
+      "note": {
+        "en": "ASEAN’s own 2025 monitoring report says ASCN representatives joined a showcase at New Zealand’s invitation. No separate public agenda was found, so the row stays partial and self-reported.",
+        "th": "รายงานติดตามปี 2025 ของอาเซียนเองระบุว่าผู้แทน ASCN เข้าร่วมการนำเสนอตามคำเชิญของนิวซีแลนด์ ไม่พบวาระสาธารณะแยกต่างหาก จึงยังเป็นผลบางส่วนและเป็นรายงานเอง",
+        "zh": "东盟自己的2025年监测报告称，ASCN 代表应新西兰邀请参加了一次展示。没有找到另行公开的议程，所以这一行仍是部分完成并标为自行报告。"
+      },
+      "source": "https://asean.org/wp-content/uploads/2025/11/2025-ASCN-ME-Report-Final_30Sep2025-for-public.pdf",
+      "public": true,
+      "confidence": "high",
+      "selfReported": true
     },
     {
       "id": "financing-toolkit-2024",
@@ -269,18 +866,70 @@
         "zh": "东盟智慧城市融资工具包研讨会暨发布会，雅加达（2024年11月26–27日）"
       },
       "counterpart": {
-        "en": "Ministry of Public Works and Transport (Lao PDR)",
-        "th": "กระทรวงโยธาธิการและขนส่ง (ลาว)",
-        "zh": "老挝公共工程与运输部"
+        "en": "Aus4ASEAN Futures",
+        "th": "Aus4ASEAN Futures",
+        "zh": "Aus4ASEAN Futures"
       },
       "outcome": "partial",
       "note": {
-        "en": "The financing toolkit was launched in Jakarta. No financing deal after the launch is visible. The trip is filed here as a course because the public event was a workshop.",
-        "th": "ชุดเครื่องมือการเงินเปิดตัวที่จาการ์ตา ไม่ปรากฏข้อตกลงด้านการเงินหลังการเปิดตัว การเดินทางถูกจัดไว้ที่นี่ในประเภทการอบรม เพราะงานสาธารณะคือเวิร์กช็อป",
-        "zh": "融资工具包在雅加达发布。发布之后未见融资协议。这次出行归在培训类，因为公开活动是一场研讨会。"
+        "en": "The financing toolkit was launched in Jakarta. The public confirmation is ASEAN’s own 2025 monitoring report, so this row is self-reported. No financing deal after the launch is visible, and no amount is disclosed.",
+        "th": "ชุดเครื่องมือการเงินเปิดตัวที่จาการ์ตา แหล่งที่ยืนยันต่อสาธารณะคือรายงานติดตามของอาเซียนเองในปี 2025 จึงจัดแถวนี้เป็นรายงานเอง ไม่ปรากฏข้อตกลงด้านการเงินหลังการเปิดตัว และไม่มีการเปิดเผยจำนวนเงิน",
+        "zh": "融资工具包在雅加达发布。公开确认来自东盟自己的2025年监测报告，因此本行标为自行报告。发布之后未见融资协议，金额也未披露。"
       },
-      "source": "cleared by Non",
-      "public": true
+      "source": "https://asean.org/wp-content/uploads/2025/11/2025-ASCN-ME-Report-Final_30Sep2025-for-public.pdf",
+      "public": true,
+      "confidence": "high",
+      "selfReported": true
+    },
+    {
+      "id": "F12",
+      "type": "course",
+      "date": "2025",
+      "title": {
+        "en": "Second phase of support for the ASEAN Sustainable Urbanisation Strategy",
+        "th": "การสนับสนุนระยะที่สองของยุทธศาสตร์การพัฒนาเมืองอย่างยั่งยืนของอาเซียน",
+        "zh": "东盟可持续城镇化战略支持的第二阶段"
+      },
+      "counterpart": {
+        "en": "Aus4ASEAN Futures",
+        "th": "Aus4ASEAN Futures",
+        "zh": "Aus4ASEAN Futures"
+      },
+      "outcome": "partial",
+      "note": {
+        "en": "ASEAN’s own 2025 monitoring report describes city-leader training and wider capacity building under this second phase, with UN-Habitat named alongside Aus4ASEAN Futures. No amount is disclosed. This is not the infrastructure-pipeline workshop recorded separately. The description is self-reported.",
+        "th": "รายงานติดตามปี 2025 ของอาเซียนเองบรรยายการอบรมผู้นำเมืองและการเสริมศักยภาพในระยะที่สองนี้ โดยกล่าวถึง UN-Habitat คู่กับ Aus4ASEAN Futures ไม่มีการเปิดเผยจำนวนเงิน ไม่ใช่เวิร์กช็อปบัญชีโครงการโครงสร้างพื้นฐานที่บันทึกแยกไว้ คำบรรยายเป็นรายงานเอง",
+        "zh": "东盟自己的2025年监测报告描述了这一第二阶段中的城市领导人培训和更广泛的能力建设，并同时写到 UN-Habitat 与 Aus4ASEAN Futures。金额未披露。这不是另行记录的基础设施项目清单研讨会。描述是自行报告。"
+      },
+      "source": "https://asean.org/wp-content/uploads/2025/11/2025-ASCN-ME-Report-Final_30Sep2025-for-public.pdf",
+      "public": true,
+      "confidence": "high",
+      "selfReported": true
+    },
+    {
+      "id": "M08",
+      "type": "communication",
+      "date": "2025",
+      "title": {
+        "en": "ASEAN Smart City Action Plan 2026–2035 reported as adopted",
+        "th": "แผนปฏิบัติการเมืองอัจฉริยะอาเซียน ปี 2026–2035 ที่รายงานว่าได้รับการรับรอง",
+        "zh": "据报已通过的《东盟智慧城市行动计划（2026–2035）》"
+      },
+      "counterpart": {
+        "en": "ASEAN Secretariat",
+        "th": "สำนักเลขาธิการอาเซียน",
+        "zh": "东盟秘书处"
+      },
+      "outcome": "partial",
+      "note": {
+        "en": "ASEAN’s own 2025 monitoring report says the 2026–2035 action plan was developed and adopted under Malaysia’s chair. The plan text was not located, so this row does not quote it. Confidence is medium, and the adoption claim is self-reported.",
+        "th": "รายงานติดตามปี 2025 ของอาเซียนเองระบุว่าแผนปฏิบัติการปี 2026–2035 ถูกร่างและรับรองภายใต้ประธานมาเลเซีย ไม่พบตัวบทแผน จึงไม่มีการอ้างข้อความจากแผน ความเชื่อมั่นอยู่ที่ระดับกลาง และข้ออ้างว่าได้รับการรับรองเป็นรายงานเอง",
+        "zh": "东盟自己的2025年监测报告称，2026–2035年行动计划在马来西亚主持下制定并通过。没有找到计划文本，所以这一行不引用其内容。可信度为中等，通过这一说法是自行报告。"
+      },
+      "source": "https://asean.org/wp-content/uploads/2025/11/2025-ASCN-ME-Report-Final_30Sep2025-for-public.pdf",
+      "public": true,
+      "confidence": "medium",
+      "selfReported": true
     },
     {
       "id": "aus4asean-2025",
@@ -303,7 +952,83 @@
         "zh": "这是一场基础设施项目清单研讨会的反馈表。与 ASCN 的关联是间接的。没有项目结果。"
       },
       "source": "cleared by Non",
-      "public": true
+      "public": true,
+      "confidence": "medium"
+    },
+    {
+      "id": "M07",
+      "type": "communication",
+      "date": "2025-09-09",
+      "title": {
+        "en": "8th ASCN Annual Meeting",
+        "th": "การประชุมประจำปี ASCN ครั้งที่ 8",
+        "zh": "第8届 ASCN 年会"
+      },
+      "counterpart": {
+        "en": "ASEAN Secretariat",
+        "th": "สำนักเลขาธิการอาเซียน",
+        "zh": "东盟秘书处"
+      },
+      "outcome": "delivered",
+      "note": {
+        "en": "ASEAN’s own 2025 monitoring report says the annual meeting and an expert talk were held on 9–10 September 2025 under the Malaysia chair. The date is self-reported in that report. This is not the Kagawa high-level meeting and not an internal draft about Chonburi.",
+        "th": "รายงานติดตามปี 2025 ของอาเซียนเองระบุว่าการประชุมประจำปีและการเสวนาผู้เชี่ยวชาญจัดเมื่อ 9–10 กันยายน 2025 ภายใต้ประธานมาเลเซีย วันที่เป็นรายงานเองในรายงานนั้น ไม่ใช่การประชุมระดับสูงที่คากาวะ และไม่ใช่ฉบับร่างภายในเรื่องชลบุรี",
+        "zh": "东盟自己的2025年监测报告称，年会和专家座谈于2025年9月9–10日举行，由马来西亚主持。日期是该报告中的自行报告。这不是香川高层会议，也不是关于春武里的内部草稿。"
+      },
+      "source": "https://asean.org/wp-content/uploads/2025/11/2025-ASCN-ME-Report-Final_30Sep2025-for-public.pdf",
+      "public": true,
+      "confidence": "high",
+      "selfReported": true
+    },
+    {
+      "id": "E03",
+      "type": "communication",
+      "date": "2025-09-30",
+      "title": {
+        "en": "ASCN monitoring report 2025",
+        "th": "รายงานติดตาม ASCN ปี 2025",
+        "zh": "2025年 ASCN 监测报告"
+      },
+      "counterpart": {
+        "en": "ASEAN Secretariat",
+        "th": "สำนักเลขาธิการอาเซียน",
+        "zh": "东盟秘书处"
+      },
+      "outcome": "partial",
+      "note": {
+        "en": "ASEAN’s own monitoring report counts 134 projects, of which 18 (13%) are marked completed, 108 ongoing and 8 in planning, across 35 cities. These figures are self-reported. They are not an independent evaluation.",
+        "th": "รายงานติดตามของอาเซียนเองนับได้ 134 โครงการ ในจำนวนนี้ถูกทำเครื่องหมายว่าเสร็จ 18 โครงการ (ร้อยละ 13) กำลังดำเนิน 108 โครงการ และอยู่ในแผน 8 โครงการ ใน 35 เมือง ตัวเลขเหล่านี้เป็นรายงานเอง ไม่ใช่การประเมินอิสระ",
+        "zh": "东盟自己的监测报告统计为134个项目，其中18个（13%）标为已完成，108个在进行，8个在规划，覆盖35个城市。这些数字是自行报告，不是独立评估。"
+      },
+      "source": "https://asean.org/wp-content/uploads/2025/11/2025-ASCN-ME-Report-Final_30Sep2025-for-public.pdf",
+      "public": true,
+      "confidence": "high",
+      "selfReported": true
+    },
+    {
+      "id": "T07",
+      "type": "course",
+      "date": "2025-09-30",
+      "title": {
+        "en": "ASEAN Smart City Professional Program: cumulative participation",
+        "th": "โครงการผู้เชี่ยวชาญเมืองอัจฉริยะอาเซียน: จำนวนผู้เข้าร่วมสะสม",
+        "zh": "东盟智慧城市专业人才项目：累计参与人数"
+      },
+      "counterpart": {
+        "en": "ASEAN-Korea Cooperation Fund",
+        "th": "กองทุนความร่วมมืออาเซียน–เกาหลี",
+        "zh": "东盟—韩国合作基金"
+      },
+      "outcome": "partial",
+      "note": {
+        "en": "ASEAN’s own 2025 monitoring report says 144 people had taken short courses and 40 were in the master’s course at Seoul National University. Those counts are self-reported. They are not an independent enrolment audit.",
+        "th": "รายงานติดตามปี 2025 ของอาเซียนเองระบุว่ามีผู้เข้าหลักสูตรระยะสั้น 144 คน และมีผู้เรียนมหาบัณฑิตที่มหาวิทยาลัยแห่งชาติโซล 40 คน ตัวเลขเหล่านี้เป็นรายงานเอง ไม่ใช่การตรวจทะเบียนอิสระ",
+        "zh": "东盟自己的2025年监测报告称，144人参加了短期课程，40人在首尔大学攻读硕士。这些数字是自行报告，不是独立的学籍核对。"
+      },
+      "source": "https://asean.org/wp-content/uploads/2025/11/2025-ASCN-ME-Report-Final_30Sep2025-for-public.pdf",
+      "public": true,
+      "confidence": "high",
+      "selfReported": true
     },
     {
       "id": "hlm7-2025",
@@ -326,7 +1051,32 @@
         "zh": "作为2025年主席，马来西亚请求就2026–2035年行动计划举行双边会谈。记录停在这项请求。"
       },
       "source": "cleared by Non",
-      "public": true
+      "public": true,
+      "confidence": "medium"
+    },
+    {
+      "id": "F05",
+      "type": "grant",
+      "date": "2025-12",
+      "title": {
+        "en": "ASEAN Australia Smart Cities Trust Fund reported as closing",
+        "th": "กองทุนเมืองอัจฉริยะอาเซียน–ออสเตรเลียถูกรายงานว่ากำลังปิด",
+        "zh": "东盟澳大利亚智慧城市信托基金据报正在关闭"
+      },
+      "counterpart": {
+        "en": "Asian Development Bank",
+        "th": "ธนาคารพัฒนาเอเชีย",
+        "zh": "亚洲开发银行"
+      },
+      "outcome": "stalled",
+      "note": {
+        "en": "The Asian Development Bank’s 2025 urban financing report says the fund is closing, with money to be returned or reused. This row does not state a remaining balance. Confidence is medium.",
+        "th": "รายงานการเงินเมืองปี 2025 ของธนาคารพัฒนาเอเชียระบุว่ากองทุนกำลังปิด และเงินจะถูกคืนหรือนำไปใช้ใหม่ แถวนี้ไม่ระบุยอดคงเหลือ ความเชื่อมั่นอยู่ที่ระดับกลาง",
+        "zh": "亚洲开发银行2025年城市融资报告称该基金正在关闭，资金将退回或改作他用。这一行不写剩余余额。可信度为中等。"
+      },
+      "source": "https://www.adb.org/documents/urban-financing-partnership-facility-annual-report-2025",
+      "public": true,
+      "confidence": "medium"
     },
     {
       "id": "ascn-site-repo",
@@ -345,7 +1095,8 @@
         "zh": "这个公开网站已经上线。它是 Non 博士自己的成果，不是 ASCN 秘书处交付的结果。"
       },
       "source": "https://github.com/Nonarkara/ascn-smart-cities-network",
-      "public": true
+      "public": true,
+      "confidence": "high"
     },
     {
       "id": "jaki-ascn-forum-2026",
@@ -368,7 +1119,8 @@
         "zh": "通知称雅加达论坛的第二天将以 ASCN 论坛收尾。没有决定或交付的记录。"
       },
       "source": "cleared by Non",
-      "public": true
+      "public": true,
+      "confidence": "medium"
     }
   ],
   "withheld": [
@@ -395,6 +1147,30 @@
         "th": "ระบุบุคคลภายนอก และความเชื่อมกับ ASCN อ่อน",
         "zh": "点名了一名第三方，且与 ASCN 的关联很弱。"
       }
+    }
+  ],
+  "pending": [
+    {
+      "id": "E01",
+      "date": "2022",
+      "title": {
+        "en": "Mid-term review of the ASEAN Australia Smart Cities Trust Fund (2022)",
+        "th": "รายงานทบทวนกลางทางของกองทุนเมืองอัจฉริยะอาเซียน–ออสเตรเลีย (2022)",
+        "zh": "东盟澳大利亚智慧城市信托基金中期审查（2022）"
+      },
+      "counterpart": {
+        "en": "Australia Department of Foreign Affairs and Trade",
+        "th": "กระทรวงการต่างประเทศและการค้าออสเตรเลีย",
+        "zh": "澳大利亚外交贸易部"
+      },
+      "note": {
+        "en": "Pending review. The full text has not been read, so this row states no findings.",
+        "th": "รอการทบทวน ยังไม่ได้อ่านข้อความฉบับเต็ม จึงไม่ระบุข้อค้นพบในแถวนี้",
+        "zh": "待审阅。全文尚未读过，所以这一行不陈述任何结论。"
+      },
+      "source": "https://www.dfat.gov.au/sites/default/files/asean-australia-smart-cities-trust-fund-mid-term-review.pdf",
+      "confidence": "medium",
+      "status": "pending review"
     }
   ]
 }

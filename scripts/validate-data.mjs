@@ -145,5 +145,5 @@ if (errors.length) {
 
 console.log(`Data validation passed: ${citiesDoc.cities.length} cities, ${engine.projects.length} project rows, ${libraryEntries.length} library sources.`);
 console.log(`ASCN archive: ${archive.records.length} reviewed records; ${discovery.articles.length} unreviewed discovery leads.`);
-if (recordArchive) console.log(`Public record archive: ${recordArchive.items.length} items; ${recordArchive.withheld.length} withheld.`);
+if (recordArchive) console.log(`Public record archive: ${recordArchive.items.length} items; ${recordArchive.withheld.length} withheld; ${(recordArchive.pending || []).length} pending review.`);
 for (const message of warnings) console.warn(`Warning: ${message}`);
