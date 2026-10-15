@@ -34,7 +34,7 @@ for (const width of [375, 768, 1280]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/#cities");
     await expect(page.locator("#city-cards .city-card")).toHaveCount(38);
-    await expect(page.locator("#tab-nav [data-tab]")).toHaveCount(13);
+    await expect(page.locator("#tab-nav [data-tab]")).toHaveCount(14);
     await expect(page.locator('#tab-nav [data-tab="innovation"]')).toHaveAttribute("href", "#innovation");
     await expect(page.locator('#tab-nav [data-tab="news"]')).toHaveAttribute("href", "#news");
     await expectBasemap(page, "#sea-map");

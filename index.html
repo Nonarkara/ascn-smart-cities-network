@@ -34,6 +34,7 @@
       <nav aria-label="Primary" id="tab-nav">
         <a href="#overview" data-tab="overview">Overview</a>
         <a href="#innovation" data-tab="innovation">Innovation</a>
+        <a href="#record" data-tab="record">The Record</a>
         <a href="#news" data-tab="news">News</a>
         <a href="#history" data-tab="history">History</a>
         <a href="#cities" data-tab="cities">Cities</a>
@@ -237,65 +238,197 @@
           <div>
             <p class="label">ASEAN Smart Cities Network · Applied Technology</p>
             <h1>Innovation-as-a-Service</h1>
-            <p class="lede">Practical, operational tools deployed for ASEAN cities — bridging ground truth, field telemetry, computer vision, and simulation models so city officials and citizens can take decisive action.</p>
+            <p class="lede">Live systems, not a roadmap. Two national watches, three country dashboards, seven ASCN city dashboards — each one built inside a city, on data the city already had.</p>
           </div>
           <div class="innovation-status-badge">
             <span class="label">Active Innovation Sandbox</span>
-            <p class="muted">Live platforms, operational prototypes, and applied city tools.</p>
+            <p class="muted">All links below are live and public. No login, no request form.</p>
           </div>
         </header>
 
-        <!-- SPOTLIGHT: VISION (vision.nonarkara.org) -->
-        <section class="innovation-spotlight" aria-labelledby="vision-heading">
-          <div class="spotlight-card">
-            <div class="spotlight-media">
-              <a href="https://vision.nonarkara.org" target="_blank" rel="noopener">
-                <img src="media/showcase/vision.jpg" width="1600" height="1200" loading="lazy" alt="Vision control room interface showing urban CCTV feeds" class="spotlight-img" />
-              </a>
-              <div class="spotlight-media-caption">
-                <span class="spotlight-live-tag">● Live Public Platform</span>
-                <span>Municipal camera feeds &amp; in-browser edge perception</span>
-              </div>
+        <!-- ROW 00 — WHAT INNOVATION-AS-A-SERVICE IS -->
+        <section class="iaas-row iaas-row-hero" aria-labelledby="iaas-hero-heading">
+          <div class="iaas-hero-copy">
+            <p class="label">What this actually is</p>
+            <h2 id="iaas-hero-heading">Not a product. A method.</h2>
+            <p class="lede">Innovation-as-a-Service sits inside a city agency and builds the one screen that speeds up the one decision that actually gets made — on data the city already has, with no new hardware, in two weeks.</p>
+            <ol class="iaas-method">
+              <li><b>Purposeful</b><span>One problem that matters to real people.</span></li>
+              <li><b>Practical</b><span>Build on what the city already owns.</span></li>
+              <li><b>Prove it</b><span>Pilot and proof of concept before any large contract.</span></li>
+              <li><b>People</b><span>Incentives right, so the users want it.</span></li>
+            </ol>
+            <p class="iaas-hero-figure">One screen. One decision. Two weeks.</p>
+          </div>
+          <figure class="iaas-hero-media">
+            <video id="iaas-hero-video" muted loop playsinline preload="none" poster="media/showcase/iaas-hero.jpg" width="480" height="860" aria-label="Rain falling over a residential district, with rooftops and trees in view.">
+              <source src="media/showcase/iaas-hero.mp4" type="video/mp4" />
+              <p><a href="media/showcase/iaas-hero.mp4">Open the video</a></p>
+            </video>
+            <figcaption>The ground condition. Every tool on this page exists to answer a question a person asks while standing in it. <a href="media/showcase/iaas-hero.mp4" target="_blank" rel="noopener">Open video ↗</a></figcaption>
+          </figure>
+        </section>
+
+        <!-- ROW 01 — FEATURED: FLOODDASH + AIRDASH -->
+        <section class="iaas-row" aria-labelledby="iaas-featured-heading">
+          <header class="iaas-row-head">
+            <p class="iaas-row-num">01</p>
+            <div>
+              <p class="label">Featured · National watches</p>
+              <h2 id="iaas-featured-heading">FloodDash and Airdash</h2>
+              <p class="lede">The two systems the rest of the portfolio is built on. Both are live, free, and run on public data that already refreshes on its own.</p>
             </div>
+          </header>
 
-            <div class="spotlight-content">
-              <div class="spotlight-meta">
-                <span class="spotlight-tag">Featured Project</span>
-                <span class="spotlight-domain">vision.nonarkara.org</span>
+          <div class="iaas-pair">
+            <article class="iaas-feature-card">
+              <div class="iaas-feature-head">
+                <div>
+                  <p class="iaas-card-domain">flood.nonarkara.org</p>
+                  <h3>FloodDash — Thailand Flood Watch <span class="th-title">เฝ้าระวังน้ำท่วมประเทศไทย</span></h3>
+                </div>
+                <span class="iaas-live-tag">● Live</span>
               </div>
-              <h2 id="vision-heading"><a href="https://vision.nonarkara.org" target="_blank" rel="noopener">Vision — How a Computer Sees <span class="th-title">คอมพิวเตอร์มองเห็นอย่างไร</span></a></h2>
-              <p class="spotlight-intro">A public classroom and operational workbench for computer vision, built on Thailand’s open traffic and municipal CCTV cameras. Learn, train models, and detect real-world urban activity directly in the browser.</p>
+              <p>Every Thai province on one flood picture. Nine public sources — DDPM, Hydro-Informatics Institute, the Royal Irrigation Department, the Meteorological Department and the Pollution Control Department — streamed and refreshed every 3 to 60 minutes.</p>
+              <p class="iaas-feature-note">It is not more sensors. It is the data, cooked: ingest, normalise, persist, score, explain. A resident opens <b>My Area</b> and sees the latest evidence, why it matters, and shelters to confirm with the local authority. Roughly 70,000 pieces of customised information cover every village in Thailand.</p>
+              <ul class="iaas-facts">
+                <li><b>9</b> public sources, one picture</li>
+                <li><b>3–60 min</b> refresh window</li>
+                <li><b>70,000</b> village-level records</li>
+                <li><b>1784</b> official disaster hotline</li>
+              </ul>
+              <a class="text-button primary" href="https://flood.nonarkara.org" target="_blank" rel="noopener">Open FloodDash ↗</a>
+            </article>
 
-              <div class="spotlight-points">
-                <div class="spotlight-point">
-                  <strong>Cameras everywhere. Eyes nowhere.</strong>
-                  <p>Cities across ASEAN operate tens of thousands of CCTV feeds that sit idle or overwhelmed. Vision transforms passive feeds into automated edge awareness for traffic flows, pedestrian surges, and rising floodwaters.</p>
+            <article class="iaas-feature-card">
+              <div class="iaas-feature-head">
+                <div>
+                  <p class="iaas-card-domain">air.nonarkara.org</p>
+                  <h3>AirDash — Your lungs today <span class="th-title">ปอดของคุณวันนี้</span></h3>
                 </div>
-                <div class="spotlight-point">
-                  <strong>Five-step perception pipeline</strong>
-                  <p>Demystifies how machines interpret spatial imagery: moving from raw light and pixel matrices to edge detection, motion estimation, neural object recognition, and confidence metrics.</p>
-                </div>
-                <div class="spotlight-point">
-                  <strong>Local-first &amp; privacy preserving</strong>
-                  <p>Neural inference runs directly inside the client browser. No camera video streams or private citizen data are sent to foreign third-party cloud servers.</p>
-                </div>
+                <span class="iaas-live-tag">● Live</span>
               </div>
-
-              <div class="spotlight-actions">
-                <a class="text-button primary" href="https://vision.nonarkara.org" target="_blank" rel="noopener">Launch Vision Platform ↗</a>
-                <span class="spotlight-note">Open access · Bilingual Thai / English · Zero installation required</span>
-              </div>
-            </div>
+              <p>A 24/7 air-quality and PM2.5 watch that ranks every province in the country on the same public data, so a number in Udon Thani can be compared honestly with a number in Bangkok.</p>
+              <p class="iaas-feature-note">Same discipline as FloodDash: one metric, one method, every province, no exceptions. What you see is what the public sources say, with a three-day forecast so the trend is visible before the number turns.</p>
+              <ul class="iaas-facts">
+                <li><b>24/7</b> public-data watch</li>
+                <li><b>77</b> provinces, one ranking</li>
+                <li><b>3-day</b> forward forecast</li>
+                <li><b>PM2.5</b> as the headline metric</li>
+              </ul>
+              <a class="text-button primary" href="https://air.nonarkara.org" target="_blank" rel="noopener">Open Airdash ↗</a>
+            </article>
           </div>
         </section>
 
-        <!-- VIDEO FIELD DEMONSTRATIONS -->
-        <section class="innovation-demos" aria-labelledby="demos-heading">
-          <div class="section-head">
-            <p class="label">Operational Fieldwork &amp; Command Dashboards</p>
-            <h2 id="demos-heading">Demonstrations in action</h2>
-            <p class="lede">From floodwater on street level to multi-screen municipal operations rooms and predictive models.</p>
+        <!-- ROW 02 — COUNTRY DASHBOARDS -->
+        <section class="iaas-row" aria-labelledby="iaas-country-heading">
+          <header class="iaas-row-head">
+            <p class="iaas-row-num">02</p>
+            <div>
+              <p class="label">Country dashboards</p>
+              <h2 id="iaas-country-heading">Whole countries, read at a glance</h2>
+              <p class="lede">The same question asked of a nation instead of a ward: what is happening, how bad is it, and who is affected.</p>
+            </div>
+          </header>
+
+          <div class="iaas-grid iaas-grid-3">
+            <article class="iaas-card">
+              <p class="iaas-card-domain">malaysia.nonarkara.org</p>
+              <h3>Malaysia</h3>
+              <p>River gauges, MET warnings and city signals in one national view — the God Mode pattern applied to a whole country.</p>
+              <a class="iaas-card-link" href="https://malaysia.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
+            </article>
+
+            <article class="iaas-card">
+              <p class="iaas-card-domain">carbon.nonarkara.org</p>
+              <h3>Forest Carbon <span class="th-title">คาบอนนะ</span></h3>
+              <p>Satellite-based carbon stock, forest loss, fire and emissions for any province — or any area you draw on the map — with sources and stated uncertainty.</p>
+              <a class="iaas-card-link" href="https://carbon.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
+            </article>
+
+            <article class="iaas-card">
+              <p class="iaas-card-domain">globalmonitor.nonarkara.org</p>
+              <h3>GlobeWatch</h3>
+              <p>A planetary comparative and macro intelligence console — the comparative view, when a city decision is really a regional one.</p>
+              <a class="iaas-card-link" href="https://globalmonitor.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
+            </article>
           </div>
+        </section>
+
+        <!-- ROW 03 — ASCN CITY DASHBOARDS -->
+        <section class="iaas-row" aria-labelledby="iaas-city-heading">
+          <header class="iaas-row-head">
+            <p class="iaas-row-num">03</p>
+            <div>
+              <p class="label">ASCN member cities</p>
+              <h2 id="iaas-city-heading">City dashboards across the network</h2>
+              <p class="lede">The City Hub pattern: give it a city name and it maps the city and absorbs whatever data exists. Seven ASCN cities, each with its own operational surface.</p>
+            </div>
+          </header>
+
+          <div class="iaas-grid iaas-grid-4">
+            <article class="iaas-card">
+              <p class="iaas-card-domain">phuket.nonarkara.org</p>
+              <h3>Phuket</h3>
+              <p>Operations surface for the city that pairs with Las Vegas under the US–ASEAN Smart Cities Partnership.</p>
+              <a class="iaas-card-link" href="https://phuket.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
+            </article>
+
+            <article class="iaas-card">
+              <p class="iaas-card-domain">chonburi.nonarkara.org</p>
+              <h3>Chonburi <span class="th-title">CTM-01</span></h3>
+              <p>Chonburi Town Center — a town-centre operations console built as a first screen, not a finished product.</p>
+              <a class="iaas-card-link" href="https://chonburi.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
+            </article>
+
+            <article class="iaas-card">
+              <p class="iaas-card-domain">cnx.nonarkara.org</p>
+              <h3>Chiang Mai</h3>
+              <p>Operations war room for Chiang Mai, the northern city where the Axiom lab is co-founded with Chiang Mai University.</p>
+              <a class="iaas-card-link" href="https://cnx.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
+            </article>
+
+            <article class="iaas-card">
+              <p class="iaas-card-domain">atlas.nonarkara.org</p>
+              <h3>Bangkok <span class="th-title">BKKx 3D Atlas</span></h3>
+              <p>A browser model of Bangkok, block by block — 432,077 real OpenStreetMap buildings, terrain, air quality, rain radar, land prices, rail and canals.</p>
+              <a class="iaas-card-link" href="https://atlas.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
+            </article>
+
+            <article class="iaas-card">
+              <p class="iaas-card-domain">jakarta.nonarkara.org</p>
+              <h3>Jakarta</h3>
+              <p>City atlas for Indonesia’s capital, built on the same hub that generalises to any ASCN city.</p>
+              <a class="iaas-card-link" href="https://jakarta.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
+            </article>
+
+            <article class="iaas-card">
+              <p class="iaas-card-domain">hcmc.nonarkara.org</p>
+              <h3>Ho Chi Minh City</h3>
+              <p>City atlas for Vietnam’s largest metropolis — the Mekong delta’s decision surface.</p>
+              <a class="iaas-card-link" href="https://hcmc.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
+            </article>
+
+            <article class="iaas-card">
+              <p class="iaas-card-domain">kuching.nonarkara.org</p>
+              <h3>Kuching</h3>
+              <p>City atlas for Greater Kuching, Sarawak — the east Malaysia surface on the same stack.</p>
+              <a class="iaas-card-link" href="https://kuching.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
+            </article>
+          </div>
+        </section>
+
+        <!-- ROW 04 — VIDEO FIELD DEMONSTRATIONS -->
+        <section class="iaas-row" aria-labelledby="demos-heading">
+          <header class="iaas-row-head">
+            <p class="iaas-row-num">04</p>
+            <div>
+              <p class="label">Operational fieldwork &amp; command dashboards</p>
+              <h2 id="demos-heading">Demonstrations in action</h2>
+              <p class="lede">From floodwater on street level to multi-screen municipal operations rooms and predictive models.</p>
+            </div>
+          </header>
 
           <div class="demo-cards-grid">
             <article class="demo-card">
@@ -339,89 +472,411 @@
           </div>
         </section>
 
-        <!-- PORTFOLIO PIPELINE (Populated as more projects arrive) -->
-        <section class="innovation-pipeline" aria-labelledby="pipeline-heading">
-          <div class="section-head split">
+        <!-- ROW 05 — PUBLIC PLATFORMS -->
+        <section class="iaas-row" aria-labelledby="iaas-platforms-heading">
+          <header class="iaas-row-head">
+            <p class="iaas-row-num">05</p>
             <div>
-              <p class="label">Innovation-as-a-Service Portfolio</p>
-              <h2 id="pipeline-heading">Deployed tools &amp; pipeline</h2>
-              <p class="lede">Active tools deployed across ASEAN member cities and forthcoming capabilities under continuous development.</p>
+              <p class="label">Public platforms</p>
+              <h2 id="iaas-platforms-heading">Open to any city that asks</h2>
+              <p class="lede">The lab these dashboards are built in, the browser-based computer-vision workbench, and the regional liveability index.</p>
             </div>
-            <div class="pipeline-badge">
-              <span class="twins-badge-pill">Continuous Rollout</span>
+          </header>
+
+          <div class="iaas-grid iaas-grid-3">
+            <article class="iaas-card">
+              <p class="iaas-card-domain">axiom.nonarkara.org</p>
+              <h3>Axiom</h3>
+              <p>Smart-city dashboards and GovTech systems for governments. 66 systems across five countries, 41 of them in production, drawing on more than 247 public data sources.</p>
+              <a class="iaas-card-link" href="https://axiom.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
+            </article>
+
+            <article class="iaas-card">
+              <p class="iaas-card-domain">vision.nonarkara.org</p>
+              <h3>Vision — how a computer sees <span class="th-title">คอมพิวเตอร์มองเห็นอย่างไร</span></h3>
+              <p>A public classroom and operational workbench for computer vision on Thailand’s open traffic and municipal CCTV. Neural inference runs in the client browser — no camera video leaves the city.</p>
+              <a class="iaas-card-link" href="https://vision.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
+            </article>
+
+            <article class="iaas-card">
+              <p class="iaas-card-domain">slic.nonarkara.org</p>
+              <h3>SLIC Liveability Index</h3>
+              <p>Regional benchmarking across five liveability pillars — in which mayors decide what livability means, rather than receive it.</p>
+              <a class="iaas-card-link" href="https://slic.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
+            </article>
+          </div>
+        </section>
+
+        <!-- ROW 06 — WHERE THIS CAME FROM (deliberately quiet) -->
+        <section class="iaas-row iaas-row-origins" aria-labelledby="iaas-origins-heading">
+          <header class="iaas-row-head">
+            <p class="iaas-row-num">06</p>
+            <div>
+              <p class="label">Provenance</p>
+              <h2 id="iaas-origins-heading">Where this came from</h2>
+            </div>
+          </header>
+
+          <p class="iaas-origins-lede">None of the rows above began as a dashboard. The method behind them was not designed in a summit working group — it came out of two hackathons and one week standing in front of a wall of screens in Taipei.</p>
+
+          <ol class="iaas-origins">
+            <li>
+              <p class="iaas-origin-year">2020 · Expo 2020, Dubai</p>
+              <h3>Hydrogence</h3>
+              <p>A flood-warning platform built by Thai practitioners that won on the world stage at the Hackathon at Expo 2020. The first version of the argument this page makes: a city should not need to buy software in order to see a flood coming.</p>
+              <a class="iaas-origin-link" href="https://techsauce.co/news/hydrogence-win-hackathon" target="_blank" rel="noopener">Techsauce ↗</a>
+              <a class="iaas-origin-link" href="https://www.facebook.com/share/p/1JYvedfzwk/" target="_blank" rel="noopener">depa Thailand ↗</a>
+            </li>
+            <li>
+              <p class="iaas-origin-year">2023 · 24 September, Taipei</p>
+              <h3>Refill City</h3>
+              <p>A Team of Excellence in the Presidential Hackathon International Track, awarded by the President of Taiwan. Free clean drinking water run by municipalities under their own rules — Nakhon Si Thammarat, then Rangsit, then Sukhothai Thani — and the depa Smart Living Excellence award in 2026. This is where the 4Ps above come from: a prototype, a pilot, then the boring work of changing the rules.</p>
+              <a class="iaas-origin-link" href="https://www.thekommon.co/re-fill-city-innovation-smart-city-nakhonsithammarat/" target="_blank" rel="noopener">The Kommon ↗</a>
+            </li>
+            <li>
+              <p class="iaas-origin-year">2023 · 25 September, Taipei</p>
+              <h3>The Taipei IOC</h3>
+              <p>The same week: the Taipei Intelligent Operation Center, and a city dashboard released open-source under AGPL-3.0. A whole city on one screen, used by the people who decide to spend the money. That is where every dashboard on this page comes from.</p>
+              <a class="iaas-origin-link" href="https://github.com/taipei-doit/Taipei-City-Dashboard" target="_blank" rel="noopener">Taipei City Dashboard ↗</a>
+            </li>
+          </ol>
+
+          <p class="iaas-origins-close">Stolen, improved and credited: the ideas came from Taipei, the adaptation is ours, and the credit is in the source code. The network is ten years old. This method is three.</p>
+        </section>
+
+        <!-- CONTACT -->
+        <section class="iaas-row" aria-labelledby="iaas-contact-heading">
+          <div class="pipeline-card callout">
+            <div class="pipeline-content">
+              <p class="label">Partner With Us</p>
+              <h3 id="iaas-contact-heading">Have an urban dataset or challenge?</h3>
+              <p>ASCN Innovation-as-a-Service is an open testbed built by ASEAN city practitioners. We help member cities turn static datasets into live operational tools.</p>
+              <a href="#contacts" data-tab="contacts" class="text-button">Contact ASCN Team ↗</a>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="view" id="view-record" data-view="record" hidden>
+        <header class="section-head split">
+          <div>
+            <p class="label">The public record · 28 April 2018 → 2026</p>
+            <h1>Ten years, counted</h1>
+            <p class="lede">ASCN turns ten this year. This page counts what was committed to it, what it holds, and what can be shown to have reached a citizen — separating money announced from money moved, and activity held from outcome delivered.</p>
+          </div>
+          <div class="innovation-status-badge">
+            <span class="label">Method</span>
+            <p class="muted">Every figure below carries its source and its evidentiary status. Committed is not disbursed. An output is not an outcome.</p>
+          </div>
+        </header>
+
+        <!-- THE STRUCTURAL FINDING -->
+        <section class="rec-finding" aria-labelledby="rec-finding-heading">
+          <h2 id="rec-finding-heading">The first finding is the accounting</h2>
+          <p>Before you can ask whether ASCN worked, you have to ask what ASCN spent. After ten years, that question cannot be answered from the public record — not because the money did not move, but because nobody is obliged to say.</p>
+          <div class="rec-finding-grid">
+            <div class="rec-finding-card">
+              <p class="rec-finding-num">USD 0</p>
+              <h3>Held centrally by ASCN</h3>
+              <p>ASCN is a coordinating platform, not a funding pool. It coordinates, it does not finance. Every figure below is money that flows <em>around</em> the network, through bilateral programmes, trust funds and development banks.</p>
+            </div>
+            <div class="rec-finding-card">
+              <p class="rec-finding-num">0</p>
+              <h3>Systems tracking total flows</h3>
+              <p>The network has no systematic tracking of total investment flows. There is no published ASCN-wide figure for money committed, disbursed or absorbed in eight years of M&amp;E cycles — because the network does not collect one.</p>
+            </div>
+            <div class="rec-finding-card">
+              <p class="rec-finding-num">13%</p>
+              <h3>Of tracked projects completed</h3>
+              <p>134 projects tracked in the September 2025 M&amp;E cycle. 18 completed. 108 still ongoing. A project counted as "ongoing" in year five has not delivered, and the report does not say how long it has been ongoing.</p>
+            </div>
+          </div>
+          <p class="rec-finding-note">Membership and project counts are quoted here at their stated cut-offs, which differ by source: 35 cities at 30 September 2025 (M&amp;E 2025), 38 at January 2026 (official ASCN roster, after Dili joined with Timor-Leste's accession).</p>
+        </section>
+
+        <!-- THE FOUNDING INSTRUMENTS -->
+        <section class="iaas-row rec-row" aria-labelledby="rec-founding-heading">
+          <header class="iaas-row-head">
+            <p class="iaas-row-num">00</p>
+            <div>
+              <p class="label">The founding instruments · 2018–2019</p>
+              <h2 id="rec-founding-heading">The instrument that would have measured this never arrived on time</h2>
+              <p class="lede">Before the count of projects, the count that matters is the count of the machinery built to evaluate them. The founding documents tell a precise story about why seven years of this network went unmeasured.</p>
+            </div>
+          </header>
+
+          <div class="rec-timeline">
+            <div class="rec-timeline-item">
+              <p class="rec-timeline-when">Apr 2018</p>
+              <h3>Concept Note</h3>
+              <p>Establishes ASCN as a Singapore proposal. Scope capped at "up to three cities from each AMS". 26 pilot cities listed as of 23 March 2018. <b>No project target. No funding total. No deadline beyond the 2025 planning horizon.</b></p>
+            </div>
+            <div class="rec-timeline-item">
+              <p class="rec-timeline-when">Jul 2018</p>
+              <h3>26 Smart City Action Plans</h3>
+              <p>Each city submits a SCAP with four parts, including exactly two priority projects. That is the entire founding portfolio: <b>26 cities × 2 projects = 52 projects.</b> Cities were to report status annually to the Secretariat; no such consolidated report has been found.</p>
+            </div>
+            <div class="rec-timeline-item">
+              <p class="rec-timeline-when">Aug 2019</p>
+              <h3>Terms of Reference adopted</h3>
+              <p>One year in, ASCN has still 26 cities. The Terms of Reference mandate periodic project evaluation under an M&amp;E Framework — which is recorded in the same report as <b>not yet finished, and deferred to 2020.</b></p>
+            </div>
+            <div class="rec-timeline-item rec-timeline-break">
+              <p class="rec-timeline-when">2020 →</p>
+              <h3>The accountability gap</h3>
+              <p>The instrument that would have made the network measurable against its own goals slipped past the year it was needed. Every cycle since has counted projects instead — because that is what the framework was built to do.</p>
             </div>
           </div>
 
-          <div class="pipeline-grid">
-            <div class="pipeline-card active">
-              <div class="pipeline-num">01</div>
-              <div class="pipeline-content">
-                <div class="pipeline-cat">Spatial Intelligence</div>
-                <h3>5 ASEAN Urban Digital Twins</h3>
-                <p>Operational 3D digital twins integrating sensor networks and elevation models for Bangkok, Jakarta, Ho Chi Minh City, Kuching, and Chiang Mai.</p>
-                <div class="pipeline-links">
-                  <a href="https://atlas.nonarkara.org" target="_blank" rel="noopener">Bangkok</a> ·
-                  <a href="https://jakarta.nonarkara.org" target="_blank" rel="noopener">Jakarta</a> ·
-                  <a href="https://hcmc.nonarkara.org" target="_blank" rel="noopener">HCMC</a> ·
-                  <a href="https://kuching.nonarkara.org" target="_blank" rel="noopener">Kuching</a> ·
-                  <a href="https://cnx.nonarkara.org" target="_blank" rel="noopener">Chiang Mai</a>
-                </div>
+          <p class="rec-footnote">Sources: ASCN Concept Note (2018), Consolidated SCAPs (as of 8 July 2018), ASCN 2019 Annual Meeting Report. Note that three files in the source library — 09, 13 and 14 — are the same 2019 report in different revisions, not three independent sources. One further document in the library, a Thai Cabinet submission, is an image-only scan with no extractable text and could not be cited.</p>
+        </section>
+
+        <!-- THE ONE SERIES -->
+        <section class="iaas-row rec-row" aria-labelledby="rec-series-heading">
+          <header class="iaas-row-head">
+            <p class="iaas-row-num">0</p>
+            <div>
+              <p class="label">The only self-reported performance series</p>
+              <h2 id="rec-series-heading">Projects accumulate faster than they finish</h2>
+              <p class="lede">Strip out the frameworks and the toolkits and ASCN reports one thing about itself in every cycle: how many projects exist, and what share is finished. Five data points, four reports, one direction.</p>
+            </div>
+          </header>
+
+          <div class="rec-table-wrap">
+            <table class="rec-table rec-table-series">
+              <caption class="rec-caption">ASCN project portfolio by M&amp;E cycle. Source: ASEAN Secretariat M&amp;E Reports 2022–2025.</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Cycle</th>
+                  <th scope="col">Projects</th>
+                  <th scope="col">Ongoing</th>
+                  <th scope="col">Completed</th>
+                  <th scope="col">Completion rate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">2021 <span class="rec-note">baseline stated in 2022 report</span></th><td class="rec-figure">65</td><td>—</td><td>—</td><td>—</td></tr>
+                <tr><th scope="row">2022 <span class="rec-note">cut-off 21 Sep</span></th><td class="rec-figure">77</td><td>75.3%</td><td>2.9%</td><td><span class="rec-rate rec-rate-low">2.9%</span></td></tr>
+                <tr><th scope="row">2023 <span class="rec-note">cut-off 14 Aug</span></th><td class="rec-figure">86</td><td>77.9%</td><td>2.3%</td><td><span class="rec-rate rec-rate-low">2.3%</span></td></tr>
+                <tr><th scope="row">2024 <span class="rec-note">cut-off 25 Sep</span></th><td class="rec-figure">108</td><td>81</td><td>11</td><td><span class="rec-rate">10.2%</span></td></tr>
+                <tr class="rec-table-current"><th scope="row">2025 <span class="rec-note">cut-off 30 Sep</span></th><td class="rec-figure">134</td><td>108</td><td>18</td><td><span class="rec-rate rec-rate-high">13.0%</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="rec-read">
+            <p>The portfolio more than doubled in four years — 65 to 134 projects, a 106% increase. The completion rate improved from 2.9% to 13%, which is the strongest positive trend in the entire record, and it is still true that <b>eight in ten projects tracked in 2025 have not finished</b>.</p>
+            <p>Both facts are real. The second is the one that matters to a resident, and it is the one ASCN has never put on a slide.</p>
+          </div>
+
+          <p class="rec-footnote">The 2022 and 2023 reports state no reporting period at all; the 2024 and 2025 reports state one. Cut-offs drift from mid-August to late September, so the four cycles are not a perfectly uniform annual series. The 2025 figure of 134 is verifiable twice within a single document: stated in prose, and reconcilable from 116 appendix-A items plus 18 appendix-B items.</p>
+        </section>
+
+        <!-- LEDGER: FUNDING -->
+        <section class="iaas-row rec-row" aria-labelledby="rec-funding-heading">
+          <header class="iaas-row-head">
+            <p class="iaas-row-num">A</p>
+            <div>
+              <p class="label">Ledger · Funding</p>
+              <h2 id="rec-funding-heading">What was committed to the network's orbit</h2>
+              <p class="lede">Partner programmes, not ASCN grants. The status column is the point: these are envelope figures announced at partnership level, and the public record does not resolve how much reached an ASCN city.</p>
+            </div>
+          </header>
+
+          <div class="rec-table-wrap">
+            <table class="rec-table">
+              <caption class="rec-caption">Announced envelope figures by partner programme. Currency as stated by the source.</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Partner / programme</th>
+                  <th scope="col">Announced</th>
+                  <th scope="col">Coverage as stated</th>
+                  <th scope="col">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">Japan — SmartJAMP <span class="rec-note">JBIC loans + JOIN equity</span></th>
+                  <td class="rec-figure">JPY 250B<small>~USD 2.4B</small></td>
+                  <td>26 ASCN cities, 10 sectors</td>
+                  <td><span class="rec-tag rec-tag-amb">Announced</span></td>
+                </tr>
+                <tr>
+                  <th scope="row">Australia — AASCTF <span class="rec-note">ADB-managed, 2019–2024</span></th>
+                  <td class="rec-figure">AUD 20M<small>~USD 14M</small></td>
+                  <td>24 cities, 8 countries</td>
+                  <td><span class="rec-tag rec-tag-amb">Announced</span></td>
+                </tr>
+                <tr>
+                  <th scope="row">China — Smart City Cooperation <span class="rec-note">Leaders' Statement 2019</span></th>
+                  <td class="rec-figure">—</td>
+                  <td>8 Chinese cities paired with 26 ASCN cities</td>
+                  <td><span class="rec-tag rec-tag-un">Undisclosed</span></td>
+                </tr>
+                <tr>
+                  <th scope="row">Korea — ASPP <span class="rec-note">ASEAN-Korea Cooperation Fund</span></th>
+                  <td class="rec-figure">Not stated</td>
+                  <td>Regional · training and Master's scholarships</td>
+                  <td><span class="rec-tag rec-tag-un">Undisclosed</span></td>
+                </tr>
+                <tr>
+                  <th scope="row">United States — USASCP / USTDA</th>
+                  <td class="rec-figure">Multiple grants</td>
+                  <td>Davao, Da Nang, Ho Chi Minh City</td>
+                  <td><span class="rec-tag rec-tag-amb">Announced</span></td>
+                </tr>
+                <tr>
+                  <th scope="row">EU — Smart Green ASEAN Cities <span class="rec-note">UNCDF-implemented, 2014–2020</span></th>
+                  <td class="rec-figure">EUR 200M+</td>
+                  <td>Regional</td>
+                  <td><span class="rec-tag rec-tag-amb">Announced</span></td>
+                </tr>
+                <tr class="rec-table-total">
+                  <th scope="row">ADB — ASEAN Catalytic Green Finance Facility</th>
+                  <td class="rec-figure">USD 300M<small>+ USD 1.9B co-financing</small></td>
+                  <td>~30 projects in pipeline</td>
+                  <td><span class="rec-tag rec-tag-un">Pipeline, not disbursed</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="rec-footnote">Two things are worth being precise about. First, none of the four M&amp;E cycles attaches a single currency amount to anything: the reports name ADB, JICA, USTDA, AASCTF, SmartJAMP, Aus4ASEAN, KOICA and BMBF as funders, and never state what any of them paid. The envelope figures above come from partner programme documentation, not from ASCN's own monitoring. Second, no source itemises what any envelope paid for, per city, per project. Individual ASCN projects in the tracker range from USD 100K to USD 6.7B, and the gap between those two ends is where both the network's coordinating role and its accounting vacuum sit.</p>
+        </section>
+
+        <!-- LEDGER: TRAVEL AND EVENTS -->
+        <section class="iaas-row rec-row" aria-labelledby="rec-travel-heading">
+          <header class="iaas-row-head">
+            <p class="iaas-row-num">B</p>
+            <div>
+              <p class="label">Ledger · Travel &amp; events</p>
+              <h2 id="rec-travel-heading">Meetings are counted. Who paid for them is not.</h2>
+              <p class="lede">Annual meetings, working groups and high-level meetings are public. The cost, the delegation size and the funder for any of them are not — which is what makes sponsored travel by developed-country partners invisible rather than absent.</p>
+            </div>
+          </header>
+
+          <div class="rec-uncounted">
+            <div class="rec-uncounted-row">
+              <p class="rec-uncounted-num">Rule, 2019</p>
+              <div>
+                <h3>The host country pays</h3>
+                <p>The Terms of Reference adopted in 2019 are explicit: "the hosting of the Meetings and the cost of organising shall be borne by the host country." The network's entire convening cost is rotating, unbudgeted national expenditure, falling on whichever member holds the chair that year.</p>
               </div>
             </div>
-
-            <div class="pipeline-card active">
-              <div class="pipeline-num">02</div>
-              <div class="pipeline-content">
-                <div class="pipeline-cat">Edge Computer Vision</div>
-                <h3>Vision — Automated CCTV Perception</h3>
-                <p>In-browser neural inference turning municipal camera networks into automated vehicle count, flood, and congestion monitors without cloud dependencies.</p>
-                <div class="pipeline-links">
-                  <a href="https://vision.nonarkara.org" target="_blank" rel="noopener">vision.nonarkara.org ↗</a>
-                </div>
+            <div class="rec-uncounted-row">
+              <p class="rec-uncounted-num">USD 0</p>
+              <div>
+                <h3>Cost of the network itself</h3>
+                <p>No budget line, staff number or secondment figure appears in any founding, chairmanship or M&amp;E document. This is a structural blank, not a search failure. Ten years of ASEAN official time have been spent, and none of it is priced anywhere.</p>
               </div>
             </div>
-
-            <div class="pipeline-card active">
-              <div class="pipeline-num">03</div>
-              <div class="pipeline-content">
-                <div class="pipeline-cat">Regional Benchmarking</div>
-                <h3>SLIC Liveability &amp; Competitiveness Index</h3>
-                <p>Comprehensive benchmarking of 174 Southeast Asian cities across infrastructure, economy, governance, environment, and social liveability pillars.</p>
-                <div class="pipeline-links">
-                  <a href="https://slic.nonarkara.org" target="_blank" rel="noopener">slic.nonarkara.org ↗</a>
-                </div>
-              </div>
-            </div>
-
-            <div class="pipeline-card coming-soon">
-              <div class="pipeline-num">04</div>
-              <div class="pipeline-content">
-                <div class="pipeline-cat">Atmospheric Sentinel · In Progress</div>
-                <h3>Himawari &amp; CAMS Microclimate Fusion</h3>
-                <p>Satellite cloud tracking and aerosol particulate modelling integrated with hyper-local low-cost urban heat and PM2.5 air quality sensor arrays.</p>
-                <span class="pipeline-status-pill">Deploying across Northern Thailand &amp; Mekong</span>
-              </div>
-            </div>
-
-            <div class="pipeline-card coming-soon">
-              <div class="pipeline-num">05</div>
-              <div class="pipeline-content">
-                <div class="pipeline-cat">Civic Engagement · In Progress</div>
-                <h3>Citizen Sensor Feeds &amp; Micro-Auditing</h3>
-                <p>Lightweight citizen reporting web components for real-time localized road condition verification, drain clogs, and heat shelters.</p>
-                <span class="pipeline-status-pill">Pilot in preparation</span>
-              </div>
-            </div>
-
-            <div class="pipeline-card callout">
-              <div class="pipeline-content">
-                <p class="label">Partner With Us</p>
-                <h3>Have an urban dataset or challenge?</h3>
-                <p>ASCN Innovation-as-a-Service is an open testbed built by ASEAN city practitioners. We help member cities turn static datasets into live operational tools.</p>
-                <a href="#contacts" data-tab="contacts" class="text-button">Contact ASCN Team ↗</a>
+            <div class="rec-uncounted-row">
+              <p class="rec-uncounted-num">Not published</p>
+              <div>
+                <h3>Attendance at any event</h3>
+                <p>No M&amp;E cycle states a participant count for any meeting, workshop or annual meeting. The only externally funded mobility in the record is the 2024 ASEAN–New Zealand showcase, where delegations travelled on the host government's invitation, and donor-funded training under ASUS and ASPP.</p>
               </div>
             </div>
           </div>
+          <p class="rec-footnote">This answers a fair question with a better answer than suspicion. Officials are not being flown around by donor governments as a rule — the written rule is the opposite, that each host funds its own year. What the rule does produce is a network whose running cost is invisible precisely because it is distributed, rotating and never totalled.</p>
+        </section>
+
+        <!-- LEDGER: AGREEMENTS AND COMMUNICATIONS -->
+        <section class="iaas-row rec-row" aria-labelledby="rec-agreements-heading">
+          <header class="iaas-row-head">
+            <p class="iaas-row-num">C</p>
+            <div>
+              <p class="label">Ledger · Agreements &amp; communications</p>
+              <h2 id="rec-agreements-heading">The most productive output, by volume</h2>
+              <p class="lede">The reviewed archive is dominated by statements, reaffirmations and partnership announcements. These are real outputs. They are also the easiest output to produce, and the one least connected to a citizen's morning.</p>
+            </div>
+          </header>
+
+          <div class="rec-uncounted">
+            <div class="rec-uncounted-row">
+              <p class="rec-uncounted-num">3</p>
+              <div>
+                <h3>Memoranda of understanding, in four cycles</h3>
+                <p>Three MoUs are named across the 2022–2025 reports, all in 2023, and all at city level: Makassar Puskesmas with two Indonesian medical partners, and the Siem Reap Tourism Club with a Japanese firm. No network-level MoU, joint declaration or communiqué is named in any cycle.</p>
+              </div>
+            </div>
+            <div class="rec-uncounted-row">
+              <p class="rec-uncounted-num">0</p>
+              <div>
+                <h3>Peer-review exercises ever run</h3>
+                <p>The 2022 report recommends that peer review and expert guidance <em>could</em> give cities opportunities. The 2024 and 2025 reports record no such exercise being conducted. A network that reviews its cities' plans only in its own documents does not review them.</p>
+              </div>
+            </div>
+            <div class="rec-uncounted-row">
+              <p class="rec-uncounted-num">2 of 27</p>
+              <div>
+                <h3>Independent scrutiny in the reviewed archive</h3>
+                <p>Two of 27 curated records are independent critique: a commentary on Makatizen and smart-city governance, and the CIDOB analysis of Singapore's leadership role — the most important auditing document in the whole record, and not an ASCN publication.</p>
+              </div>
+            </div>
+          </div>
+          <p class="rec-footnote">Counts describe this archive, a growing research file and not a census of all ASCN activity. They are the ratio of documented scrutiny to documented output — not a verdict on the whole network.</p>
+        </section>
+
+        <!-- LEDGER: TRAINING -->
+        <section class="iaas-row rec-row" aria-labelledby="rec-training-heading">
+          <header class="iaas-row-head">
+            <p class="iaas-row-num">D</p>
+            <div>
+              <p class="label">Ledger · Training &amp; courses</p>
+              <h2 id="rec-training-heading">People were trained. The record stops there.</h2>
+              <p class="lede">Training is the network's most human output and the best documented — which is exactly why its blind spot is worth naming: the archive reports attendance, and almost never reports what a graduate then did.</p>
+            </div>
+          </header>
+
+          <div class="rec-split">
+            <div class="rec-split-col">
+              <p class="rec-split-num">144 + 40</p>
+              <h3>ASPP: trained and enrolled</h3>
+              <p>The ASEAN Smart City Professional Programme with Seoul National University, funded by the ASEAN-Korea Cooperation Fund, reports 144 local government representatives through short-term training and 40 more mid-degree. It is the network's most credible human output and its most precisely counted.</p>
+            </div>
+            <div class="rec-split-col">
+              <p class="rec-split-num">0</p>
+              <h3>Reported downstream outcomes</h3>
+              <p>Across the 2024 and 2025 cycles the programme reports attendance and enrolment only. No graduate is tracked to a system they commissioned, a policy they changed, or a budget they moved. The conversion from trained to deployed is the one metric the network does not publish.</p>
+            </div>
+          </div>
+          <p class="rec-footnote">This is the cheapest thing to fix and the most useful. A network that tracked where 184 trained officials went would have a performance story its own reports currently cannot tell — and it is a stronger answer to critics than any toolkit ever published.</p>
+        </section>
+
+        <!-- THE FOUNDING QUESTION -->
+        <section class="iaas-row rec-row rec-question" aria-labelledby="rec-question-heading">
+          <header class="iaas-row-head">
+            <p class="iaas-row-num">?</p>
+            <div>
+              <p class="label">The founding question</p>
+              <h2 id="rec-question-heading">Who was the network built for?</h2>
+            </div>
+          </header>
+
+          <p class="rec-question-lede">ASCN was established in Singapore in April 2018, as a priority deliverable of that year's ASEAN Chairmanship. Its founders stated the rationale in ASEAN-wide terms — 90 million more people expected to urbanise by 2030, and middleweight cities of 200,000 to 2 million expected to drive 40% of regional growth. On the documents, this was framed as a shared regional problem, not a Singaporean one. The instrument built to solve it, however, carries a different signature.</p>
+
+          <div class="rec-question-grid">
+            <div class="rec-question-col">
+              <h3>What the design does reveal</h3>
+              <p>Scope was capped at "up to three cities from each AMS". Decisions are by consensus. Meetings are funded by the host. There is no budget, no staff line, and no working group named in any founding document. Every one of those choices is cheap for a city-state with a permanent secretariat, a consolidated budget and a domestic mandate — and expensive, or impossible, for a country still building those things.</p>
+              <p>In year one the network added no cities at all: 26 at founding, still 26 at the end of 2019. A body created to scale cities did not scale in its first year.</p>
+            </div>
+            <div class="rec-question-col">
+              <h3>What the evidence does not establish</h3>
+              <p>It does not establish that Singapore's own density motivated the initiative — the founding documents name Singapore as a co-beneficiary, not the driver. Nor does it establish that no member state can benefit. Independent researchers do read the network critically: CIDOB examines Singapore's city diplomacy and commercial interests in its December 2025 analysis, and Kong &amp; Woods (2021) describe a technocratic regionalism in which Singapore's urban model circulates as neutral regional knowledge.</p>
+              <p>A widely repeated claim — that Singapore is the only highly-urbanised ASEAN state — is not supported by the network's own urbanisation data, which shows several member states above 60%. It should not be repeated here either.</p>
+              <a class="rec-source" href="https://www.cidob.org/en/publications/singapores-role-city-diplomacy-lessons-its-leadership-developing-asean-smart-cities" target="_blank" rel="noopener">CIDOB / Melinda Martinus, Dec 2025 ↗</a>
+            </div>
+          </div>
+
+          <p class="rec-question-close">The open question is narrower and more answerable: ten years of apparatus later, did the network move practice between cities, or only document it? That has never been tested with a shared dataset. This platform exists to build one.</p>
+        </section>
+
+        <!-- WHAT ACTUALLY WORKS -->
+        <section class="iaas-row rec-row rec-bridge" aria-labelledby="rec-bridge-heading">
+          <h2 id="rec-bridge-heading">Meanwhile, in the gap</h2>
+          <p>While the apparatus above ran its cycles, one practitioner inside the network kept shipping. Fifteen systems are live right now — two national watches, three country dashboards, seven ASCN city dashboards and three public platforms — built outside the network's own machinery, in about three years, on public data only.</p>
+          <a class="text-button primary" href="#innovation" data-tab="innovation">See what that produced ↗</a>
         </section>
       </section>
 

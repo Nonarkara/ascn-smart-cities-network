@@ -12,7 +12,7 @@ const tileLayers = {
   night: { url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", attr: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>', className: "ascn-night-tiles" },
 };
 
-const TABS = ["overview", "innovation", "news", "ascn9", "history", "cities", "projects", "framework", "partners", "contacts", "insights", "data", "research", "essay"];
+const TABS = ["overview", "innovation", "record", "news", "ascn9", "history", "cities", "projects", "framework", "partners", "contacts", "insights", "data", "research", "essay"];
 const DATA_VERSION = "36";
 
 const state = {
@@ -139,7 +139,7 @@ function renderTab(tab) {
   if (tab === "cities") ensureMap();
   if (state.rendered.has(tab)) return;
   ({
-    overview: renderOverview, innovation: renderInnovation, history: renderHistory, cities: renderCitiesView,
+    overview: renderOverview, innovation: renderInnovation, record: renderRecord, history: renderHistory, cities: renderCitiesView,
     projects: renderProjects, framework: renderFramework, partners: renderPartners,
     contacts: renderContacts, insights: renderInsights, data: renderOpenData, research: renderResearch, essay: renderEssay,
   }[tab] || (() => {}))();
@@ -149,6 +149,25 @@ function renderTab(tab) {
 /* ---------------- Innovation ---------------- */
 function renderInnovation() {
   // Static content in view-innovation is rendered from HTML and styled via CSS.
+  // The hero video is the one asset on this view that must not be fetched on
+  // arrival: it stays on preload="none" until the tab is actually opened.
+  const video = document.getElementById("iaas-hero-video");
+  if (!video) return;
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  if (reduced.matches) return; // poster alone; never force motion on request.
+  // preload="none" means nothing is fetched yet — play() is what pulls it in,
+  // so the request happens here, on tab open, and never on arrival.
+  video.play().catch(() => {});
+  // Stop the loop when the visitor leaves the tab, so nothing plays in the background.
+  window.addEventListener("hashchange", () => {
+    if (state.tab !== "innovation" && !video.paused) video.pause();
+  });
+}
+
+/* ---------------- The Record ---------------- */
+function renderRecord() {
+  // Static content in view-record is rendered from HTML and styled via CSS.
+  // Every figure is pre-sourced in the markup; nothing is computed here.
 }
 
 /* ---------------- Overview ---------------- */
