@@ -12,7 +12,7 @@ const tileLayers = {
   night: { url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", attr: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>', className: "ascn-night-tiles" },
 };
 
-const TABS = ["overview", "innovation", "news", "ascn9", "history", "cities", "projects", "framework", "partners", "contacts", "insights", "data", "research", "essay"];
+const TABS = ["overview", "innovation", "news", "ascn9", "history", "cities", "projects", "framework", "partners", "contacts", "insights", "data", "archive", "research", "essay"];
 const DATA_VERSION = "36";
 
 const state = {
@@ -2591,7 +2591,7 @@ async function init() {
         <section class="load-error" role="alert">
           <p class="label">Data load failed</p>
           <h2>The ASCN report datasets could not load.</h2>
-          <p>${esc(err.message)}. Regional news, the meeting record, and the video showcase remain available.</p>
+          <p>${esc(err.message)}. Regional news, the meeting record, the archive, and the video showcase remain available.</p>
         </section>`);
     }
   }

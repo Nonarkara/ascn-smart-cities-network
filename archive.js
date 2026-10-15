@@ -1,0 +1,288 @@
+import { escapeHtml as esc, safeUrl } from "./lib/security.mjs";
+
+const TYPES = ["grant", "trip", "mou", "communication", "course"];
+const OUTCOMES = ["delivered", "partial", "stalled", "failed"];
+const LANGS = ["en", "th", "zh"];
+const $ = (selector) => document.querySelector(selector);
+
+const COPY = {
+  en: {
+    kicker: "Record",
+    title: "ASCN, 2018–2026",
+    subtitle: "What the inbox shows",
+    byType: "By type",
+    byYear: "By year",
+    types: { grant: "Grant", trip: "Trip", mou: "MOU", communication: "Communication", course: "Course" },
+    outcomes: { delivered: "Delivered", partial: "Partial", stalled: "Stalled", failed: "Failed" },
+    outcomeHeading: "Outcomes",
+    outcomeLede: "Delivered work and work that stalled or failed are listed with the same weight. A partial result is not counted as a success.",
+    filterType: "Type",
+    filterYear: "Year",
+    filterOutcome: "Outcome",
+    filterSearch: "Search",
+    all: "All",
+    columns: { date: "Date", item: "Item", counterpart: "Counterpart", outcome: "Outcome", source: "Source" },
+    none: "No items match.",
+    noCounterpart: "No external organisation",
+    cleared: "Cleared by Non",
+    noMou: "No memorandum of understanding is in this record.",
+    noAmount: "No grant amount is public.",
+    withheld: "Withheld",
+    timeline: "Timeline",
+    empty: "The archive has no public items yet.",
+    loadError: "The archive data could not load.",
+    searchLabel: "Search titles and notes",
+    amount: "Amount",
+    footnote: "Phone numbers, personal addresses and internal correspondence stay out. Counts are not inflated. Where the trail ends, the outcome says so.",
+    countLabel: "Showing",
+  },
+  th: {
+    kicker: "บันทึก",
+    title: "ASCN, 2018–2026",
+    subtitle: "สิ่งที่กล่องจดหมายแสดง",
+    byType: "ตามประเภท",
+    byYear: "ตามปี",
+    types: { grant: "ทุน", trip: "การเดินทาง", mou: "บันทึกความเข้าใจ", communication: "การสื่อสาร", course: "การอบรม" },
+    outcomes: { delivered: "ส่งมอบแล้ว", partial: "ได้บางส่วน", stalled: "หยุดค้าง", failed: "ไม่เกิดผล" },
+    outcomeHeading: "ผลลัพธ์",
+    outcomeLede: "งานที่ส่งมอบแล้วกับงานที่หยุดค้างหรือไม่เกิดผลอยู่ในรายการเดียวกัน ผลบางส่วนไม่นับเป็นความสำเร็จ",
+    filterType: "ประเภท",
+    filterYear: "ปี",
+    filterOutcome: "ผลลัพธ์",
+    filterSearch: "ค้นหา",
+    all: "ทั้งหมด",
+    columns: { date: "วันที่", item: "รายการ", counterpart: "องค์กรคู่สัญญา", outcome: "ผลลัพธ์", source: "แหล่งที่มา" },
+    none: "ไม่มีรายการที่ตรงกัน",
+    noCounterpart: "ไม่มีองค์กรภายนอก",
+    cleared: "ผ่านการตรวจโดยนนท์",
+    noMou: "ไม่มีบันทึกความเข้าใจในชุดข้อมูลนี้",
+    noAmount: "ไม่มีจำนวนเงินทุนที่เปิดเผยต่อสาธารณะ",
+    withheld: "งดเผยแพร่",
+    timeline: "เส้นเวลา",
+    empty: "ยังไม่มีรายการสาธารณะ",
+    loadError: "โหลดข้อมูลคลังไม่ได้",
+    searchLabel: "ค้นชื่อและบันทึก",
+    amount: "จำนวนเงิน",
+    footnote: "ไม่ใส่หมายเลขโทรศัพท์ ที่อยู่ส่วนบุคคล และหนังสือภายใน จำนวนไม่ได้ถูกทำให้สูงขึ้น เส้นทางจบที่ใด ผลลัพธ์บอกตามนั้น",
+    countLabel: "กำลังแสดง",
+  },
+  zh: {
+    kicker: "记录",
+    title: "ASCN, 2018–2026",
+    subtitle: "收件箱里能看到的",
+    byType: "按类型",
+    byYear: "按年份",
+    types: { grant: "资助", trip: "出行", mou: "谅解备忘录", communication: "往来", course: "培训" },
+    outcomes: { delivered: "已交付", partial: "部分完成", stalled: "停滞", failed: "未实现" },
+    outcomeHeading: "结果",
+    outcomeLede: "已交付的和停滞或未实现的放在同一份清单里，分量相同。部分完成不算作成功。",
+    filterType: "类型",
+    filterYear: "年份",
+    filterOutcome: "结果",
+    filterSearch: "检索",
+    all: "全部",
+    columns: { date: "日期", item: "事项", counterpart: "对口机构", outcome: "结果", source: "来源" },
+    none: "没有相符的事项",
+    noCounterpart: "没有外部机构",
+    cleared: "经 Non 核可公开",
+    noMou: "这份记录里没有谅解备忘录。",
+    noAmount: "没有公开的资助金额。",
+    withheld: "未收录",
+    timeline: "时间线",
+    empty: "还没有可公开的事项",
+    loadError: "档案数据未能加载",
+    searchLabel: "检索标题和说明",
+    amount: "金额",
+    footnote: "电话号码、私人地址和内部公函都不收录。数字没有被抬高。线索停在哪里，结果就写到哪里。",
+    countLabel: "显示",
+  },
+};
+
+const state = { doc: null, lang: "en", type: "all", year: "all", outcome: "all", query: "", error: "" };
+
+function initialLang() {
+  try {
+    const saved = sessionStorage.getItem("ascn-archive-lang");
+    if (LANGS.includes(saved)) return saved;
+  } catch { /* Language stays English when storage is blocked. */ }
+  return "en";
+}
+
+function copy() { return COPY[state.lang]; }
+
+function phrase(value) {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  return value[state.lang] || value.en || "";
+}
+
+function yearsOf(items) {
+  const years = items.map((item) => Number(String(item.date).slice(0, 4))).filter((year) => Number.isInteger(year));
+  const last = Math.max(2026, 2018, ...years);
+  return Array.from({ length: last - 2018 + 1 }, (_, index) => 2018 + index);
+}
+
+function matches(item) {
+  if (state.type !== "all" && item.type !== state.type) return false;
+  if (state.year !== "all" && !item.date.startsWith(state.year)) return false;
+  if (state.outcome !== "all" && item.outcome !== state.outcome) return false;
+  const query = state.query.trim().toLowerCase();
+  if (!query) return true;
+  const haystack = [item.id, item.date, item.type, item.outcome, item.source,
+    ...LANGS.flatMap((lang) => [item.title?.[lang], item.note?.[lang], item.counterpart?.[lang]])].join("\n").toLowerCase();
+  return haystack.includes(query);
+}
+
+function sourceCell(item) {
+  if (item.source === "cleared by Non") return esc(copy().cleared);
+  const href = safeUrl(item.source);
+  if (href === "#") return esc(copy().cleared);
+  let host = item.source;
+  try { host = new URL(href).host.replace(/^www\./, ""); } catch { /* Keep the safe URL text. */ }
+  return `<a href="${esc(href)}" target="_blank" rel="noopener noreferrer">${esc(host)}</a>`;
+}
+
+function amountLine(item) {
+  if (item.amount == null) return "";
+  const shown = typeof item.amount === "number" ? new Intl.NumberFormat("en-US").format(item.amount) : String(item.amount);
+  return `<p class="archive-amount">${esc(copy().amount)} ${esc(shown)}</p>`;
+}
+
+function fillSelect(select, options, selected) {
+  const next = options.some((option) => option.value === selected) ? selected : options[0].value;
+  select.innerHTML = options.map((option) => `<option value="${esc(option.value)}">${esc(option.label)}</option>`).join("");
+  select.value = next;
+  return next;
+}
+
+function renderFilters() {
+  const text = copy();
+  $("#archive-filter-type").textContent = text.filterType;
+  $("#archive-filter-year").textContent = text.filterYear;
+  $("#archive-filter-outcome").textContent = text.filterOutcome;
+  $("#archive-filter-search").textContent = text.filterSearch;
+  const search = $("#archive-search");
+  search.setAttribute("aria-label", text.searchLabel);
+  search.placeholder = text.searchLabel;
+  const items = state.doc?.items || [];
+  state.type = fillSelect($("#archive-type"), [{ value: "all", label: text.all }, ...TYPES.map((type) => ({ value: type, label: text.types[type] }))], state.type);
+  state.year = fillSelect($("#archive-year"), [{ value: "all", label: text.all }, ...yearsOf(items).map((year) => ({ value: String(year), label: String(year) }))], state.year);
+  state.outcome = fillSelect($("#archive-outcome"), [{ value: "all", label: text.all }, ...OUTCOMES.map((outcome) => ({ value: outcome, label: text.outcomes[outcome] }))], state.outcome);
+}
+
+function renderCounts(items) {
+  const text = copy();
+  const typeRows = TYPES.map((type) => `<div><dt>${esc(text.types[type])}</dt><dd>${items.filter((item) => item.type === type).length}</dd></div>`).join("");
+  const yearRows = yearsOf(items).map((year) => `<div><dt>${year}</dt><dd>${items.filter((item) => item.date.startsWith(String(year))).length}</dd></div>`).join("");
+  $("#archive-counts").innerHTML = `<section aria-label="${esc(text.byType)}"><h3 class="label">${esc(text.byType)}</h3><dl>${typeRows}</dl></section><section aria-label="${esc(text.byYear)}"><h3 class="label">${esc(text.byYear)}</h3><dl>${yearRows}</dl></section>`;
+}
+
+function renderTimeline(items) {
+  const text = copy();
+  const years = yearsOf(items);
+  const marks = years.map((year) => {
+    const count = items.filter((item) => item.date.startsWith(String(year))).length;
+    return `<li><span>${year}</span><strong>${count}</strong></li>`;
+  }).join("");
+  $("#archive-timeline").innerHTML = `<h3 class="label">${esc(text.timeline)}</h3><div class="archive-rule" tabindex="0"><ol>${marks}</ol></div>`;
+}
+
+function renderTable(items) {
+  const text = copy();
+  const rows = items.filter(matches);
+  const body = rows.map((item) => `<tr data-id="${esc(item.id)}">
+    <td data-label="${esc(text.columns.date)}"><time datetime="${esc(item.date)}">${esc(item.date)}</time></td>
+    <td data-label="${esc(text.columns.item)}"><strong>${esc(phrase(item.title))}</strong><span class="archive-kind">${esc(text.types[item.type] || item.type)}</span></td>
+    <td data-label="${esc(text.columns.counterpart)}">${esc(phrase(item.counterpart) || text.noCounterpart)}${amountLine(item)}</td>
+    <td data-label="${esc(text.columns.outcome)}"><span class="archive-outcome">${esc(text.outcomes[item.outcome] || item.outcome)}</span><p>${esc(phrase(item.note))}</p></td>
+    <td data-label="${esc(text.columns.source)}">${sourceCell(item)}</td>
+  </tr>`).join("");
+  const empty = `<tr><td class="archive-empty" colspan="5">${esc(items.length ? text.none : text.empty)}</td></tr>`;
+  $("#archive-count").textContent = `${text.countLabel} ${rows.length} / ${items.length}`;
+  $("#archive-table").innerHTML = `<table class="archive-table"><thead><tr>
+    <th>${esc(text.columns.date)}</th><th>${esc(text.columns.item)}</th><th>${esc(text.columns.counterpart)}</th><th>${esc(text.columns.outcome)}</th><th>${esc(text.columns.source)}</th>
+  </tr></thead><tbody>${body || empty}</tbody></table>`;
+}
+
+function renderOutcomes(items) {
+  const text = copy();
+  const rows = OUTCOMES.map((outcome) => {
+    const matched = items.filter((item) => item.outcome === outcome);
+    const titles = matched.map((item) => `<li>${esc(phrase(item.title))}</li>`).join("");
+    return `<li><span class="label">${esc(text.outcomes[outcome])}</span><strong>${matched.length}</strong><ul>${titles}</ul></li>`;
+  }).join("");
+  $("#archive-outcomes").innerHTML = `<h3 id="archive-outcomes-heading">${esc(text.outcomeHeading)}</h3><p>${esc(text.outcomeLede)}</p><ol>${rows}</ol>`;
+}
+
+function renderWithheld() {
+  const text = copy();
+  const rows = state.doc?.withheld || [];
+  const reasons = rows.map((row) => `<li>${esc(phrase(row.reason))}</li>`).join("");
+  const limits = [
+    itemsHave(state.doc.items, "mou") ? "" : `<p>${esc(text.noMou)}</p>`,
+    (state.doc.items || []).some((item) => item.amount != null) ? "" : `<p>${esc(text.noAmount)}</p>`,
+  ].join("");
+  $("#archive-withheld").innerHTML = `${rows.length ? `<h3 class="label">${esc(text.withheld)} ${rows.length}</h3><ul>${reasons}</ul>` : ""}<div class="archive-limits">${limits}<p>${esc(text.footnote)}</p></div>`;
+}
+
+function itemsHave(items, type) {
+  return (items || []).some((item) => item.type === type);
+}
+
+function render() {
+  const view = $("#view-archive");
+  const text = copy();
+  view.lang = state.lang;
+  $("#archive-kicker").textContent = text.kicker;
+  $("#archive-title").textContent = text.title;
+  $("#archive-subtitle").textContent = text.subtitle;
+  $("#archive-lede").textContent = state.doc ? phrase(state.doc.coverage) : "";
+  document.querySelectorAll("[data-archive-lang]").forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.archiveLang === state.lang));
+  });
+  if (state.error) {
+    $("#archive-status").hidden = false;
+    $("#archive-status").textContent = state.error;
+    return;
+  }
+  $("#archive-status").hidden = true;
+  if (!state.doc) return;
+  renderFilters();
+  renderCounts(state.doc.items);
+  renderTimeline(state.doc.items);
+  renderTable(state.doc.items);
+  renderOutcomes(state.doc.items);
+  renderWithheld();
+}
+
+function setLang(lang) {
+  if (!LANGS.includes(lang)) return;
+  state.lang = lang;
+  try { sessionStorage.setItem("ascn-archive-lang", lang); } catch { /* The switch still applies for this view. */ }
+  render();
+}
+
+async function init() {
+  state.lang = initialLang();
+  const view = $("#view-archive");
+  view.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-archive-lang]");
+    if (button) setLang(button.dataset.archiveLang);
+  });
+  for (const [id, key] of [["#archive-type", "type"], ["#archive-year", "year"], ["#archive-outcome", "outcome"]]) {
+    $(id).addEventListener("change", (event) => { state[key] = event.target.value; renderTable(state.doc?.items || []); });
+  }
+  $("#archive-search").addEventListener("input", (event) => { state.query = event.target.value; renderTable(state.doc?.items || []); });
+  try {
+    const response = await fetch("data/ascn-archive.json");
+    if (!response.ok) throw new Error(copy().loadError);
+    const data = await response.json();
+    if (!Array.isArray(data.items) || !data.coverage) throw new Error(copy().loadError);
+    state.doc = data;
+  } catch (error) {
+    state.error = error.message || copy().loadError;
+  }
+  render();
+}
+
+init();

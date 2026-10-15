@@ -2725,3 +2725,214 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 .ascn-night-tiles {
   filter: invert(1) hue-rotate(180deg) saturate(0.5) brightness(0.85);
 }
+
+/* ---------- Archive: one rule, unequal fields, no cards ---------- */
+.archive-head {
+  display: grid;
+  grid-template-columns: 1.618fr 1fr;
+  gap: 1.25rem 2.4rem;
+  align-items: start;
+}
+.archive-subtitle {
+  margin: 0.35rem 0 0.55rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.archive-lang {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1.25rem;
+  border-top: 1px solid var(--ink);
+}
+.archive-lang button {
+  min-height: 44px;
+  padding: 0.55rem 0;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  text-align: left;
+}
+.archive-lang button[aria-pressed="true"] {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+  font-weight: 800;
+}
+.archive-status { margin: 1rem 0 0; color: var(--red); }
+.archive-counts {
+  display: grid;
+  grid-template-columns: 1.618fr 1fr;
+  column-gap: 2.4rem;
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+.archive-counts section { padding: 0.85rem 0 1rem; min-width: 0; }
+.archive-counts dl { margin: 0.35rem 0 0; }
+.archive-counts div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2.5rem;
+  gap: 0.75rem;
+  align-items: baseline;
+  border-top: 1px solid var(--line);
+  padding: 0.28rem 0;
+}
+.archive-counts dt { margin: 0; text-align: left; font-weight: 700; }
+.archive-counts dd {
+  margin: 0;
+  text-align: right;
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.archive-timeline { margin-top: 1.5rem; }
+.archive-rule { overflow-x: auto; }
+.archive-rule ol {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: max(100%, 40rem);
+  margin: 0;
+  padding: 0.8rem 0 0.15rem;
+  list-style: none;
+  border-top: 1px solid var(--ink);
+}
+.archive-rule li { position: relative; text-align: left; padding-top: 0.35rem; }
+.archive-rule li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -0.8rem;
+  width: 1px;
+  height: 0.8rem;
+  background: var(--ink);
+}
+.archive-rule span,
+.archive-rule strong { display: block; }
+.archive-rule span {
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+.archive-rule strong {
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.archive-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.4rem;
+  align-items: flex-end;
+  margin-top: 1.4rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--ink);
+}
+.archive-filters label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  min-width: 0;
+}
+.archive-filters label span {
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+.archive-search { flex: 1 1 16rem; }
+.archive-search input { width: 100%; }
+.archive-count { margin: 0 0 0.35rem; color: var(--muted); font-size: 0.78rem; }
+#view-archive table.archive-table { min-width: 0; width: 100%; }
+.archive-table th { border-bottom: 1px solid var(--ink); }
+.archive-table td p { margin: 0.25rem 0 0; color: var(--ink-2); }
+.archive-kind,
+.archive-amount { display: block; margin-top: 0.2rem; color: var(--muted); font-size: 0.78rem; }
+.archive-outcome { font-weight: 800; }
+.archive-table a { text-decoration: underline; text-underline-offset: 0.15em; }
+.archive-empty { color: var(--muted); }
+.archive-outcomes { margin-top: 2rem; border-top: 1px solid var(--ink); padding-top: 0.9rem; }
+.archive-outcomes > p { max-width: 38rem; color: var(--ink-2); }
+.archive-outcomes ol { list-style: none; margin: 0.8rem 0 0; padding: 0; }
+.archive-outcomes li {
+  display: grid;
+  grid-template-columns: 9rem 2.6rem minmax(0, 1fr);
+  gap: 0.75rem 1rem;
+  align-items: start;
+  border-top: 1px solid var(--line);
+  padding: 0.7rem 0;
+}
+.archive-outcomes li .label { margin: 0; text-align: left; }
+.archive-outcomes li strong {
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.archive-outcomes ul { margin: 0; padding: 0; list-style: none; }
+.archive-outcomes ul li { display: block; border: 0; padding: 0.12rem 0; }
+.archive-withheld { margin-top: 1.6rem; border-top: 1px solid var(--ink); padding-top: 0.9rem; }
+.archive-withheld ul { margin: 0.4rem 0 0; padding: 0; list-style: none; }
+.archive-withheld li { border-top: 1px solid var(--line); padding: 0.45rem 0; }
+.archive-limits { max-width: 38rem; }
+.archive-limits p { margin: 0.7rem 0 0; color: var(--ink-2); }
+#view-archive button:focus-visible,
+#view-archive select:focus-visible,
+#view-archive input:focus-visible,
+#view-archive a:focus-visible,
+.archive-rule:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+#view-archive[lang="th"] .label,
+#view-archive[lang="zh"] .label,
+#view-archive[lang="th"] .archive-filters label span,
+#view-archive[lang="zh"] .archive-filters label span,
+#view-archive[lang="th"] th,
+#view-archive[lang="zh"] th,
+#view-archive[lang="th"] .archive-subtitle,
+#view-archive[lang="zh"] .archive-subtitle {
+  letter-spacing: 0;
+  text-transform: none;
+}
+@media (max-width: 720px) {
+  .archive-head,
+  .archive-counts { grid-template-columns: 1fr; }
+  .archive-counts section + section { border-top: 1px solid var(--ink); }
+  .archive-outcomes li { grid-template-columns: 7.2rem 2rem minmax(0, 1fr); }
+  #view-archive table.archive-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  #view-archive table.archive-table,
+  #view-archive table.archive-table tbody,
+  #view-archive table.archive-table tr,
+  #view-archive table.archive-table td { display: block; width: 100%; }
+  #view-archive table.archive-table tr { border-top: 1px solid var(--ink); padding: 0.7rem 0; }
+  #view-archive table.archive-table td { border-bottom: 0; padding: 0.18rem 0; overflow-wrap: anywhere; }
+  #view-archive table.archive-table td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--navy);
+  }
+  #view-archive[lang="th"] table.archive-table td::before,
+  #view-archive[lang="zh"] table.archive-table td::before {
+    letter-spacing: 0;
+    text-transform: none;
+  }
+}

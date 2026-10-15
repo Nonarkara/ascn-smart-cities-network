@@ -23,7 +23,7 @@
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link href="fonts/source-sans-3.css" rel="stylesheet" />
     <link rel="stylesheet" href="vendor/leaflet/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" />
-    <link rel="stylesheet" href="styles.css?v=40" />
+    <link rel="stylesheet" href="styles.css?v=41" />
   </head>
   <body>
     <header class="site-nav">
@@ -43,6 +43,7 @@
         <a href="#contacts" data-tab="contacts">Contacts</a>
         <a href="#insights" data-tab="insights">Insights</a>
         <a href="#data" data-tab="data">Library</a>
+        <a href="#archive" data-tab="archive">Archive</a>
         <a href="#research" data-tab="research">Research</a>
         <a href="#essay" data-tab="essay">Essay</a>
       </nav>
@@ -900,6 +901,35 @@
           </article>
         </div>
       </section>
+
+      <section class="view" id="view-archive" data-view="archive" lang="en" hidden>
+        <header class="archive-head">
+          <div>
+            <p class="label" id="archive-kicker">Record</p>
+            <h2 id="archive-title">ASCN, 2018–2026</h2>
+            <p class="archive-subtitle" id="archive-subtitle">What the inbox shows</p>
+            <p class="lede" id="archive-lede">Public items linked to the ASEAN Smart Cities Network. The first pass is one inbox, not the network’s full record.</p>
+          </div>
+          <div class="archive-lang" role="group" aria-label="Archive language">
+            <button type="button" data-archive-lang="en" aria-pressed="true">EN</button>
+            <button type="button" data-archive-lang="th" aria-pressed="false">TH</button>
+            <button type="button" data-archive-lang="zh" aria-pressed="false">ZH</button>
+          </div>
+        </header>
+        <p id="archive-status" class="archive-status" role="status" hidden></p>
+        <div class="archive-counts" id="archive-counts"></div>
+        <div class="archive-timeline" id="archive-timeline"></div>
+        <div class="archive-filters">
+          <label><span id="archive-filter-type">Type</span><select id="archive-type"></select></label>
+          <label><span id="archive-filter-year">Year</span><select id="archive-year"></select></label>
+          <label><span id="archive-filter-outcome">Outcome</span><select id="archive-outcome"></select></label>
+          <label class="archive-search"><span id="archive-filter-search">Search</span><input id="archive-search" type="search" aria-label="Search titles and notes" /></label>
+        </div>
+        <p class="archive-count" id="archive-count"></p>
+        <div id="archive-table"></div>
+        <section class="archive-outcomes" id="archive-outcomes" aria-labelledby="archive-outcomes-heading"></section>
+        <section class="archive-withheld" id="archive-withheld"></section>
+      </section>
     </main>
 
       <!-- CONTACTS -->
@@ -932,8 +962,9 @@
 
     <script src="vendor/leaflet/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="></script>
     <script src="showcase.js?v=35"></script>
-    <script type="module" src="app.js?v=40"></script>
+    <script type="module" src="app.js?v=41"></script>
     <script type="module" src="news.js?v=1"></script>
     <script type="module" src="ascn-news.js?v=1"></script>
+    <script type="module" src="archive.js?v=1"></script>
   </body>
 </html>
