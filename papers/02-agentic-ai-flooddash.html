@@ -1,0 +1,114 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>One Builds, Another Checks: Using Agentic AI to Build a Real Public System — the FloodDash Case</title><meta name="description" content="ASCN Working Papers, No. 2 · Non Arkaraprasertkul, PhD"><style>@font-face{font-family:Plex;src:url(assets/fonts/IBMPlexSerif-Regular.ttf)}@font-face{font-family:Plex;font-style:italic;src:url(assets/fonts/IBMPlexSerif-Italic.ttf)}
+@font-face{font-family:PlexMono;src:url(assets/fonts/IBMPlexMono-Regular.ttf)}@font-face{font-family:Sarabun;src:url(assets/fonts/Sarabun-Regular.ttf)}@font-face{font-family:Sarabun;font-weight:700;src:url(assets/fonts/Sarabun-Bold.ttf)}
+:root{--paper:#f4efe4;--ink:#1d1d1b;--red:#d9472b;--ochre:#e0a526;--blue:#2c4f9e;--green:#3f7f5b}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:18px/1.65 Plex,Georgia,serif}
+.rail{position:sticky;top:0;background:var(--ink);color:var(--paper);display:flex;gap:1.2rem;align-items:center;padding:.6rem 1.25rem;font:13px PlexMono,monospace;letter-spacing:.04em;z-index:2}
+.rail a{color:var(--paper);text-decoration:none;border-bottom:2px solid transparent}.rail a:hover,.rail a:focus{border-color:var(--ochre)}.rail .sp{flex:1}
+.strip{display:grid;grid-template-columns:5fr 3fr 2fr 1fr;height:14px}.strip i:nth-child(1){background:var(--red)}.strip i:nth-child(2){background:var(--ochre)}.strip i:nth-child(3){background:var(--blue)}.strip i:nth-child(4){background:var(--green)}
+main{max-width:44rem;margin:0 auto;padding:2.5rem 1.25rem 5rem}section+section{border-top:3px solid var(--ink);margin-top:4rem;padding-top:2rem}
+h1{font-size:2.1rem;line-height:1.15;margin:.2rem 0 1rem}h2{font:600 1.05rem PlexMono,monospace;text-transform:uppercase;letter-spacing:.03em;margin-top:2.6rem;border-left:8px solid var(--red);padding-left:.6rem}
+section[lang=th]{font-family:Sarabun,sans-serif;font-size:19px;line-height:1.8}section[lang=th] h2{font-family:Sarabun;text-transform:none;font-size:1.2rem;font-weight:700}
+img{max-width:100%;height:auto;display:block;border:2px solid var(--ink);background:#fff}p em:only-child{display:block;font-size:.85rem;margin-top:-.4rem}
+a{color:var(--blue)}code{font-family:PlexMono}ol li,ul li{margin:.3rem 0}
+.hero{max-width:44rem;margin:1.5rem auto 0;padding:0 1.25rem}.hero figcaption{font:12px PlexMono,monospace;margin-top:.4rem}
+@media(max-width:600px){body{font-size:17px}h1{font-size:1.6rem}}
+@media print{.rail{display:none}}</style></head><body>
+<nav class="rail" aria-label="Paper"><span>ASCN WORKING PAPERS, NO. 2</span><span class="sp"></span><a href="#en">ENGLISH</a><a href="#th" lang="th">ไทย</a><a href="#references">REFERENCES</a></nav>
+<div class="strip" aria-hidden="true"><i></i><i></i><i></i><i></i></div><main>
+<section lang="en" id="en"><h1>One Builds, Another Checks: Using Agentic AI to Build a Real Public System — the FloodDash Case</h1>
+<p><strong>Non Arkaraprasertkul, PhD</strong> · Thailand's ASCN representative since 2019 · ASCN Working Papers, No. 2 · October 2026 · Draft</p>
+<p><strong>Abstract.</strong> Many people think "vibe coding" means talking to a computer while it does the rest. It does not. In this paper I describe how FloodDash, an independent flood-monitoring website for Thailand, reached a level of reliability that people can lean on during a storm. The short answer is that I treat AI agents like a team of people. One agent builds; a different agent checks. Every change passes a full test suite and a release gate before it goes live, and a third agent checks the live site the way a person would. I also explain the hardware split that keeps the service running. The paper is a single case written by its builder. It shows a working method, not a general proof.</p>
+<p><strong>Keywords:</strong> agentic AI; software quality; smart cities; flood information; human-in-the-loop; Thailand</p>
+<h2>1. Why this matters for cities</h2>
+<p>Cities wait years for systems. In a 2026 expert session I described how a funding request can take two years to arrive and another two to build, while "people would just keep leaving the city" (Arkaraprasertkul, 2026c). If a small team can build a reliable public tool in weeks, that changes what a city can try. But speed is useless if the tool is wrong. A flood site that gives the wrong advice for the wrong place is worse than no site.</p>
+<p>FloodDash (<a href="https://flood.nonarkara.org">https://flood.nonarkara.org</a>) is my test of that idea. It joins open and agency data on rain, radar and water levels into one view for a place. It is not an official warning system; in Thailand the emergency line is 1784.</p>
+<p><img alt="Figure 1. Satellite view of Bangkok flooding, 2011." src="assets/flood-aster.jpg" /></p>
+<p><em>Figure 1. ASTER images of the Chao Phraya flood moving towards Bangkok, 25 October and 1 November 2011. NASA/METI/AIST/Japan Space Systems, and U.S./Japan ASTER Science Team. Public domain. Wikimedia Commons.</em></p>
+<h2>2. Vibe coding is not dancing</h2>
+<p>In May 2026 I recorded a short lesson on how I code with AI. My first point: "If people think vibe coding is about dancing and coding, they're wrong." When I tried it that way, "what I got in return was shitty" (Arkaraprasertkul, 2026b). The work only becomes relaxed after the skill is mature.</p>
+<p>My method is to talk to AI the way I would brief a team of humans: break the job into steps, draw the flow, and say who the user is. Then, before shipping, I use what I called my trade secret: "Here's the system, walk through it as if you are human, go through every page, click every button … and report back to me what you like and what you hate." The AI comes back with the buttons that do nothing and the data that never saves. "Okay, thank you. Now fix that" (Arkaraprasertkul, 2026b).</p>
+<h2>3. One builds, another checks</h2>
+<p>The most important rule is that the agent that writes a change is not the agent that approves it.</p>
+<p>I first saw the value of this when two different AI systems reviewed the same plan. One accepted the other's best suggestions and rejected the rest, with reasons (Arkaraprasertkul, 2026a). On FloodDash this is now routine. A coding agent builds a release. A different agent then reads the full diff, reruns the whole test suite on its own and reports what it finds.</p>
+<p>One example from October 2026 shows why. An overnight fix by one agent kept retired cameras in the health map forever, because its merge started from the old list. A second agent caught it, replaced it with logic that only looks at current cameras, and also pointed out weak tests (one timed assertion that could flake, one test that copied the logic instead of running it). The first agent re-ran everything, agreed, and shipped the better version (FloodDash project log, 2026).</p>
+<p><img alt="Figure 2. The build–check loop." src="assets/fig-agent-loop.svg" /></p>
+<p><em>Figure 2. The FloodDash release loop. Original diagram by the author.</em></p>
+<h2>4. Tests, gates and the field check</h2>
+<p>Three layers stand between a change and the public:</p>
+<ol>
+<li><strong>The full test suite.</strong> In mid-October 2026 the suite had about 2,480 automated tests, and a release needed all of them to pass (FloodDash project log, 2026).</li>
+<li><strong>A release gate.</strong> The system checks its own health, data freshness and background workload. A release goes out only when the gate says "ready", and both public addresses are checked after deploy.</li>
+<li><strong>A field check.</strong> Another agent opens the live site on a phone and tries real cases, including bad ones, such as a link to a place that does not exist. The page must say it cannot find the place and give no advice for anywhere else.</li>
+</ol>
+<p>Audits also find problems that no single change caused. One audit traced three nights of silent server crashes at about 03:30 ICT to two night-time database jobs that collided; the fix was made at both ends and pinned with new tests (FloodDash project log, 2026).</p>
+<h2>5. Branches, not pushes to main</h2>
+<p>When an agent pushes straight to the main code line, every other piece of work in progress has to be rebased again, and safety fixes wait longer. The rule we settled on is simple: work on a branch, open a pull request, let another agent review it, and let a human approve the merge. The human still decides what goes live.</p>
+<h2>6. The machine split</h2>
+<p>Reliability is also about hardware. FloodDash runs on a 16 GB MacBook Air (M3) at home that is always on. The heavy work — coding agents, large models, builds — belongs on a 128 GB laptop (M5) that travels and is not always on. Anything that must stay up when the home machine is down goes to the cloud (Cloudflare and GitHub) (Machine roles, 2026). When too many coding sessions ran on the small machine, memory pressure spilled into disk swap and slowed the live service. The fix was not code. It was moving work to the right machine and running one coding session at a time.</p>
+<h2>7. Lessons for ASCN cities</h2>
+<ul>
+<li>Treat AI agents as a team with roles, not as a magic box.</li>
+<li>Never let the builder be the only checker.</li>
+<li>Write tests for the mistakes that hurt people most, such as advice shown for the wrong place.</li>
+<li>Keep a human at the merge button.</li>
+<li>Plan hardware and hosting as part of the system.</li>
+</ul>
+<h2>8. Methods and sources</h2>
+<p>Sources are my own recorded talks and conversations (Otter.ai transcripts, lightly cleaned; meaning unchanged) and FloodDash's internal project records from October 2026: release notes, audit reports from independent coding agents, and a machine-roles plan. Version numbers (4.162.2–4.162.4), test counts (about 2,480), the three nights of ~03:30 crashes, the M3/M5 machine split and the build-then-check rule are as reported in those records on 14–15 October 2026. The author has authorised publishing these project records in this paper.</p>
+<h2>9. Limitations</h2>
+<p>This is one case, described by the person who built it. The internal figures above are published here with the author's authorisation; a fuller redacted release log may follow later so readers can check more of the trail. I make no claim about how many people use FloodDash or how many losses it prevented. Results will differ with other teams, tools and budgets.</p>
+<h2 id="references">References</h2>
+<p>Arkaraprasertkul, N. (2026a, May 17). <em>Non and Plub on Daoism</em> [Recorded conversation; Otter.ai transcript]. Author's archive.</p>
+<p>Arkaraprasertkul, N. (2026b, May 18). <em>Vibe coding: three misunderstandings</em> [Recorded lesson; Otter.ai transcript]. Author's archive.</p>
+<p>Arkaraprasertkul, N. (2026c, August 6). <em>Expert session: Smart cities (TH)</em> [Recorded interview; Otter.ai transcript]. Author's archive.</p>
+<p>FloodDash project log. (2026). <em>Release and audit notes, versions 4.162.2–4.162.4, 14–15 October 2026</em> [Unpublished project records].</p>
+<p>Machine roles. (2026). <em>Machine roles: Division of labour, 12 October 2026</em> [Unpublished internal plan].</p>
+<h2>Credits</h2>
+<p>Figure 1: NASA/METI/AIST/Japan Space Systems, and U.S./Japan ASTER Science Team, "Flooding in Bangkok, Thailand (ASTER)", public domain, <a href="https://commons.wikimedia.org/wiki/File:Flooding_in_Bangkok">https://commons.wikimedia.org/wiki/File:Flooding_in_Bangkok</a>,<em>Thailand</em>(ASTER).jpg. Figure 2: original diagram by the author.</p></section>
+
+<section lang="th" id="th"><h1>คนหนึ่งสร้าง อีกคนตรวจ: ใช้ AI แบบเอเจนต์สร้างระบบสาธารณะที่ใช้งานได้จริง กรณีศึกษา FloodDash</h1>
+<p><strong>ดร.นน อัครประเสริฐกุล</strong> · ผู้แทนประเทศไทยใน ASCN ตั้งแต่ปี 2562 · ASCN Working Papers ฉบับที่ 2 · ตุลาคม 2569 · ฉบับร่าง</p>
+<p><strong>บทคัดย่อ</strong> หลายคนคิดว่า "vibe coding" คือการพูดกับคอมพิวเตอร์แล้วปล่อยให้มันทำที่เหลือเอง ซึ่งไม่ใช่ บทความนี้เล่าว่า FloodDash เว็บติดตามน้ำท่วมอิสระของไทย ไปถึงระดับที่คนพึ่งพาได้ในวันที่ฝนตกหนักได้อย่างไร คำตอบสั้น ๆ คือผมทำงานกับ AI เหมือนทำงานกับทีมคน เอเจนต์ตัวหนึ่งสร้าง อีกตัวหนึ่งตรวจ ทุกการแก้ไขต้องผ่านชุดทดสอบทั้งหมดและด่านตรวจก่อนปล่อย แล้วเอเจนต์ตัวที่สามเข้าไปลองใช้เว็บจริงแบบที่คนใช้ บทความยังอธิบายการแบ่งงานระหว่างเครื่องที่ทำให้บริการไม่ล่ม นี่คือกรณีเดียวที่เขียนโดยผู้สร้างเอง จึงแสดงวิธีทำงาน ไม่ใช่ข้อพิสูจน์ทั่วไป</p>
+<p><strong>คำสำคัญ:</strong> AI แบบเอเจนต์; คุณภาพซอฟต์แวร์; เมืองอัจฉริยะ; ข้อมูลน้ำท่วม; มนุษย์ในวงจรตัดสินใจ; ประเทศไทย</p>
+<h2>1. ทำไมเรื่องนี้สำคัญกับเมือง</h2>
+<p>เมืองต้องรอระบบเป็นปี ในเวทีผู้เชี่ยวชาญปี 2569 ผมเล่าว่าคำขอเงินอาจใช้เวลาสองปีกว่าจะได้ แล้วอีกสองปีกว่าจะสร้างเสร็จ ระหว่างนั้นคนก็ย้ายออกจากเมืองไปเรื่อย ๆ (Arkaraprasertkul, 2026c) ถ้าทีมเล็ก ๆ สร้างเครื่องมือสาธารณะที่เชื่อถือได้ภายในไม่กี่สัปดาห์ เมืองก็จะลองอะไรได้มากขึ้น แต่ความเร็วไม่มีความหมายถ้าเครื่องมือผิด เว็บน้ำท่วมที่ให้คำแนะนำผิดพื้นที่ แย่กว่าไม่มีเว็บเลย</p>
+<p>FloodDash (<a href="https://flood.nonarkara.org">https://flood.nonarkara.org</a>) คือการทดลองของผมในเรื่องนี้ เว็บรวมข้อมูลเปิดและข้อมูลจากหน่วยงานเรื่องฝน เรดาร์ และระดับน้ำไว้ในมุมมองเดียวของแต่ละพื้นที่ แต่ไม่ใช่ระบบเตือนภัยทางการ เหตุฉุกเฉินโทร 1784</p>
+<p><img alt="ภาพที่ 1 ภาพดาวเทียมน้ำท่วมกรุงเทพฯ ปี 2554" src="assets/flood-aster.jpg" /></p>
+<p><em>ภาพที่ 1 ภาพจาก ASTER แสดงน้ำจากแม่น้ำเจ้าพระยาเคลื่อนเข้าใกล้กรุงเทพฯ วันที่ 25 ตุลาคม และ 1 พฤศจิกายน 2554 โดย NASA/METI/AIST/Japan Space Systems และ U.S./Japan ASTER Science Team สาธารณสมบัติ จาก Wikimedia Commons</em></p>
+<h2>2. vibe coding ไม่ใช่การเต้นไปเขียนโค้ดไป</h2>
+<p>เดือนพฤษภาคม 2569 ผมอัดคลิปสอนสั้น ๆ ว่าผมเขียนโค้ดกับ AI อย่างไร ข้อแรกคือ ถ้าคิดว่า vibe coding คือเต้นไปเขียนโค้ดไป ก็คิดผิด ตอนผมลองแบบนั้น ผลที่ได้แย่มาก (Arkaraprasertkul, 2026b) จะทำงานสบาย ๆ ได้ก็ต่อเมื่อฝีมือถึงแล้ว</p>
+<p>วิธีของผมคือคุยกับ AI เหมือนสั่งงานทีมที่เป็นคน แบ่งงานเป็นขั้น วาดลำดับการทำงาน และบอกว่าผู้ใช้คือใคร ก่อนปล่อยระบบ ผมใช้สิ่งที่ผมเรียกว่าเคล็ดลับ คือบอก AI ว่า "นี่คือระบบ ลองใช้มันเหมือนเป็นคน เข้าทุกหน้า กดทุกปุ่ม แล้วรายงานกลับมาว่าชอบอะไร เกลียดอะไร" AI จะกลับมาพร้อมรายการปุ่มที่กดแล้วไม่มีอะไรเกิดขึ้น และข้อมูลที่ไม่ถูกบันทึก จากนั้นก็แค่บอกว่า "ขอบคุณ ทีนี้ไปแก้" (Arkaraprasertkul, 2026b)</p>
+<h2>3. คนหนึ่งสร้าง อีกคนตรวจ</h2>
+<p>กฎที่สำคัญที่สุดคือ เอเจนต์ที่เขียนการแก้ไข ต้องไม่ใช่เอเจนต์ที่อนุมัติการแก้ไขนั้น</p>
+<p>ผมเห็นคุณค่าของกฎนี้ครั้งแรกตอนให้ AI สองระบบรีวิวแผนเดียวกัน ระบบหนึ่งรับข้อเสนอดี ๆ ของอีกระบบ และปฏิเสธที่เหลือพร้อมเหตุผล (Arkaraprasertkul, 2026a) ใน FloodDash ตอนนี้ทำแบบนี้เป็นปกติ เอเจนต์เขียนโค้ดตัวหนึ่งสร้างรุ่นใหม่ อีกตัวหนึ่งอ่านการเปลี่ยนแปลงทั้งหมด รันชุดทดสอบทั้งชุดเอง แล้วรายงานสิ่งที่พบ</p>
+<p>ตัวอย่างเมื่อตุลาคม 2569 แสดงให้เห็นว่าทำไม การแก้ไขข้ามคืนของเอเจนต์ตัวหนึ่งทำให้กล้องที่เลิกใช้แล้วค้างอยู่ในแผนที่สถานะตลอดไป เพราะเริ่มรวมข้อมูลจากรายการเก่า เอเจนต์ตัวที่สองจับได้ เปลี่ยนให้ดูเฉพาะกล้องที่ยังใช้งาน และยังชี้ว่าการทดสอบบางตัวอ่อน (ตัวหนึ่งจับเวลาแล้วอาจผิดพลาดแบบสุ่ม อีกตัวคัดลอกโค้ดมาแทนที่จะเรียกใช้จริง) เอเจนต์ตัวแรกรันทุกอย่างใหม่ เห็นด้วย และปล่อยรุ่นที่ดีกว่า (FloodDash project log, 2026)</p>
+<p><img alt="ภาพที่ 2 วงจรสร้างและตรวจ" src="assets/fig-agent-loop.svg" /></p>
+<p><em>ภาพที่ 2 วงจรการปล่อยรุ่นของ FloodDash แผนภาพต้นฉบับโดยผู้เขียน</em></p>
+<h2>4. ชุดทดสอบ ด่านตรวจ และการลองใช้จริง</h2>
+<p>ระหว่างการแก้ไขกับประชาชน มีสามชั้น</p>
+<ol>
+<li><strong>ชุดทดสอบทั้งหมด</strong> กลางเดือนตุลาคม 2569 มีการทดสอบอัตโนมัติราว 2,480 รายการ และต้องผ่านทั้งหมดจึงปล่อยได้ (FloodDash project log, 2026)</li>
+<li><strong>ด่านตรวจก่อนปล่อย</strong> ระบบตรวจสุขภาพตัวเอง ความสดของข้อมูล และงานเบื้องหลัง จะปล่อยได้เมื่อด่านบอกว่า "พร้อม" และหลังปล่อยต้องตรวจทั้งสองที่อยู่สาธารณะ</li>
+<li><strong>การลองใช้จริง</strong> เอเจนต์อีกตัวเปิดเว็บจริงบนโทรศัพท์และลองกรณีจริง รวมถึงกรณีผิด ๆ เช่นลิงก์ไปยังสถานที่ที่ไม่มีอยู่ หน้าเว็บต้องบอกว่าหาสถานที่ไม่พบ และต้องไม่แสดงคำแนะนำของที่อื่น</li>
+</ol>
+<p>การตรวจสอบยังพบปัญหาที่ไม่ได้มาจากการแก้ไขครั้งใดครั้งหนึ่ง ครั้งหนึ่งพบว่าเซิร์ฟเวอร์ดับเงียบสามคืนติดกันราวเวลา 03:30 น. เพราะงานฐานข้อมูลสองงานตอนกลางคืนชนกัน จึงแก้ทั้งสองฝั่งและเพิ่มการทดสอบกันไว้ (FloodDash project log, 2026)</p>
+<h2>5. ทำงานบนกิ่ง ไม่ดันเข้าสายหลักตรง ๆ</h2>
+<p>เมื่อเอเจนต์ดันโค้ดเข้าสายหลัก (main) ตรง ๆ งานอื่นที่ค้างอยู่ต้องปรับฐานใหม่ทั้งหมด และการแก้เรื่องความปลอดภัยก็ต้องรอนานขึ้น กฎที่เราตกลงกันจึงง่ายมาก ทำงานบนกิ่ง (branch) เปิดคำขอรวมโค้ด (pull request) ให้เอเจนต์อีกตัวรีวิว แล้วให้คนกดอนุมัติ คนยังเป็นผู้ตัดสินว่าอะไรจะขึ้นจริง</p>
+<h2>6. การแบ่งงานระหว่างเครื่อง</h2>
+<p>ความเสถียรเป็นเรื่องฮาร์ดแวร์ด้วย FloodDash รันบน MacBook Air (M3) แรม 16 GB ที่บ้านซึ่งเปิดตลอดเวลา งานหนักอย่างเอเจนต์เขียนโค้ด โมเดลขนาดใหญ่ และการ build ควรอยู่บนแล็ปท็อปแรม 128 GB (M5) ที่พกไปไหนมาไหนและไม่ได้เปิดตลอด ส่วนอะไรที่ต้องออนไลน์แม้เครื่องที่บ้านดับ ให้ไปอยู่บนคลาวด์ (Cloudflare และ GitHub) (Machine roles, 2026) เมื่อมีงานเขียนโค้ดหลายงานบนเครื่องเล็กพร้อมกัน หน่วยความจำล้นไปใช้ดิสก์แทน และทำให้บริการจริงช้าลง ทางแก้ไม่ใช่โค้ด แต่คือย้ายงานไปเครื่องที่เหมาะ และเขียนโค้ดทีละงาน</p>
+<h2>7. บทเรียนสำหรับเมืองใน ASCN</h2>
+<ul>
+<li>มอง AI เป็นทีมที่มีบทบาท ไม่ใช่กล่องวิเศษ</li>
+<li>อย่าให้ผู้สร้างเป็นผู้ตรวจเพียงคนเดียว</li>
+<li>เขียนการทดสอบสำหรับความผิดพลาดที่ทำร้ายคนมากที่สุด เช่นแสดงคำแนะนำผิดพื้นที่</li>
+<li>ให้คนเป็นผู้กดปุ่มรวมโค้ดเสมอ</li>
+<li>วางแผนฮาร์ดแวร์และที่ตั้งระบบเป็นส่วนหนึ่งของระบบ</li>
+</ul>
+<h2>8. วิธีการและแหล่งข้อมูล</h2>
+<p>แหล่งข้อมูลคือการบรรยายและบทสนทนาของผมที่บันทึกไว้ (ถอดความด้วย Otter.ai ขัดเกลาเล็กน้อยโดยไม่เปลี่ยนความหมาย ข้อความอ้างในฉบับภาษาไทยแปลจากต้นฉบับ) และบันทึกภายในของโครงการ FloodDash เดือนตุลาคม 2569 ได้แก่ บันทึกการปล่อยรุ่น รายงานตรวจสอบจากเอเจนต์เขียนโค้ดอิสระ และแผนแบ่งบทบาทเครื่อง เลขรุ่น (4.162.2–4.162.4) จำนวนการทดสอบ (ราว 2,480) การดับราว 03:30 สามคืน การแบ่งเครื่อง M3/M5 และกฎสร้างแล้วตรวจ เป็นไปตามบันทึกวันที่ 14–15 ตุลาคม 2569 ผู้เขียนได้อนุญาตให้เผยแพร่บันทึกโครงการเหล่านี้ในบทความนี้</p>
+<h2>9. ข้อจำกัด</h2>
+<p>นี่เป็นกรณีเดียว เล่าโดยผู้สร้างเอง ตัวเลขภายในข้างต้นเผยแพร่ในที่นี้โดยได้รับอนุญาตจากผู้เขียน บันทึกการปล่อยรุ่นแบบตัดข้อมูลบางส่วนอาจตามมาในภายหลังเพื่อให้ผู้อ่านตรวจสอบเส้นทางได้มากขึ้น บทความนี้ไม่อ้างจำนวนผู้ใช้หรือความเสียหายที่ป้องกันได้ และผลลัพธ์อาจต่างไปตามทีม เครื่องมือ และงบประมาณ</p>
+<h2>เอกสารอ้างอิง</h2>
+<p>ดูรายการอ้างอิงในฉบับภาษาอังกฤษ (รูปแบบ APA 7)</p></section>
+</main></body></html>

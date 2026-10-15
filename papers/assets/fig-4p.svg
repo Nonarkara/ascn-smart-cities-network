@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" font-family="IBM Plex Mono, monospace">
+<rect width="960" height="420" fill="#f4efe4"/>
+<g font-size="15" fill="#1d1d1b">
+<rect x="40" y="70" width="200" height="250" fill="#d9472b"/><text x="56" y="110" font-size="40" fill="#f4efe4">P1</text><text x="56" y="150" font-size="22" fill="#f4efe4">PURPOSE</text><text x="56" y="290" fill="#f4efe4">Who is it for?</text><text x="56" y="312" fill="#f4efe4">ใครได้ประโยชน์</text>
+<rect x="260" y="70" width="200" height="250" fill="#e0a526"/><text x="276" y="110" font-size="40">P2</text><text x="276" y="150" font-size="22">PRACTICALITY</text><text x="276" y="290">What can we do now?</text><text x="276" y="312">ทำอะไรได้วันนี้</text>
+<rect x="480" y="70" width="200" height="250" fill="#2c4f9e"/><text x="496" y="110" font-size="40" fill="#f4efe4">P3</text><text x="496" y="150" font-size="22" fill="#f4efe4">PROOF</text><text x="496" y="290" fill="#f4efe4">Pilot small first</text><text x="496" y="312" fill="#f4efe4">ทดลองกลุ่มเล็กก่อน</text>
+<rect x="700" y="70" width="220" height="250" fill="#3f7f5b"/><text x="716" y="110" font-size="40" fill="#f4efe4">P4</text><text x="716" y="150" font-size="22" fill="#f4efe4">PEOPLE</text><text x="716" y="290" fill="#f4efe4">Incentives, not orders</text><text x="716" y="312" fill="#f4efe4">แรงจูงใจ ไม่ใช่คำสั่ง</text>
+<text x="40" y="45" font-size="16">THE 4P FILTER · Arkaraprasertkul</text>
+<line x1="40" y1="360" x2="920" y2="360" stroke="#1d1d1b" stroke-width="3"/><polygon points="920,352 936,360 920,368" fill="#1d1d1b"/>
+<text x="40" y="392">in order: purpose → start small → prove → scale through people</text>
+</g></svg>

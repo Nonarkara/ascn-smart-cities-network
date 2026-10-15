@@ -2155,7 +2155,75 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 }
 
 /* ---- Research tab ---- */
+@font-face {
+  font-family: "Sarabun";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("papers/assets/fonts/Sarabun-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Sarabun";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("papers/assets/fonts/Sarabun-Bold.ttf") format("truetype");
+}
+
 .research-section { margin-bottom: 3rem; }
+
+.wp-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  margin-bottom: 1px;
+}
+.wp-col { background: var(--bg); padding: 1.25rem 1.3rem; }
+.wp-col h3 { font-size: 0.95rem; font-weight: 700; margin: 0 0 0.55rem; color: var(--ink); }
+.wp-col p { font-size: 0.85rem; color: var(--ink-2); line-height: 1.6; margin: 0 0 0.7rem; }
+.wp-col p:last-child { margin-bottom: 0; }
+.wp-col[lang="th"] { font-family: "Sarabun", var(--font); line-height: 1.75; }
+.wp-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+.wp-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  background: var(--bg);
+  padding: 1.15rem 1.2rem 1.2rem;
+  color: inherit;
+  min-height: 100%;
+}
+.wp-card:hover { background: var(--surface); }
+.wp-card:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
+.wp-title { font-size: 0.95rem; font-weight: 700; line-height: 1.3; margin: 0; color: var(--ink); }
+.wp-en { font-size: 0.8rem; color: var(--ink-2); line-height: 1.55; margin: 0; }
+.wp-th {
+  font-family: "Sarabun", var(--font);
+  font-size: 0.92rem;
+  color: var(--ink-2);
+  line-height: 1.7;
+  margin: 0;
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--line-soft);
+}
+.wp-open {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
 .research-section-label { margin-bottom: 1rem; }
 
 .research-theme-grid {
@@ -2392,6 +2460,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 @media (max-width: 900px) {
   .research-theme-grid { grid-template-columns: 1fr 1fr; }
   .paper-grid { grid-template-columns: 1fr; }
+  .wp-intro, .wp-grid { grid-template-columns: 1fr; }
   .programme-cards { grid-template-columns: 1fr; }
   .workshop-gallery { grid-template-columns: repeat(2, 1fr); }
 }

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 460" font-family="IBM Plex Mono, monospace" font-size="13" fill="#1d1d1b">
+<rect width="960" height="460" fill="#f4efe4"/>
+<text x="40" y="44" font-size="16">BUILD ≠ CHECK · the FloodDash release loop</text>
+<rect x="40" y="90" width="190" height="90" fill="#e0a526"/><text x="56" y="125" font-size="18">1 HUMAN</text><text x="56" y="150">sets purpose,</text><text x="56" y="168">approves merges</text>
+<rect x="270" y="90" width="190" height="90" fill="#d9472b"/><text x="286" y="125" font-size="18" fill="#f4efe4">2 BUILDER</text><text x="286" y="150" fill="#f4efe4">agent writes code</text><text x="286" y="168" fill="#f4efe4">on a branch / PR</text>
+<rect x="500" y="90" width="190" height="90" fill="#2c4f9e"/><text x="516" y="125" font-size="18" fill="#f4efe4">3 CHECKER</text><text x="516" y="150" fill="#f4efe4">another agent</text><text x="516" y="168" fill="#f4efe4">audits + reruns tests</text>
+<rect x="730" y="90" width="190" height="90" fill="#3f7f5b"/><text x="746" y="125" font-size="18" fill="#f4efe4">4 GATE</text><text x="746" y="150" fill="#f4efe4">full test suite,</text><text x="746" y="168" fill="#f4efe4">release gate, health</text>
+<g stroke="#1d1d1b" stroke-width="3" fill="none"><path d="M230 135h40M460 135h40M690 135h40"/><path d="M825 180v90H135v-90"/></g>
+<rect x="270" y="300" width="420" height="110" fill="none" stroke="#1d1d1b" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="286" y="330">5 FIELD CHECK: a third agent opens the</text><text x="286" y="352">live site on a phone and reports back.</text><text x="286" y="384">Failures return to step 2.</text>
+<text x="40" y="440" font-size="13">Diagram: original, Palette tokens. Process described from FloodDash project logs, Oct 2026.</text>
+</svg>

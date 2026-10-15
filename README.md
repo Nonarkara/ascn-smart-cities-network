@@ -100,7 +100,7 @@ npm run build  →  dist/    (deployable snapshot)
 
 **What the UI reads.** `app.js` loads the committed JSON (reports, project rows, city profiles, knowledge layer, library). It renders KPIs, a Southeast Asia map, filters, CSV export, and source links. Wrapped appendix rows from PDF extraction are called out in `metadata.notes` and by `npm run validate`; they are data-quality signals, not silent corrections.
 
-**Build.** `scripts/build-static.mjs` copies only deployable assets into `dist/`. There is no bundler and no framework build.
+**Build.** `scripts/build-static.mjs` copies only deployable assets into `dist/`. There is no bundler and no framework build. Working papers are part of that allowlist: `papers/*.html` and `papers/assets/` are published at `/papers/…` and linked from the Research tab. Markdown sources, `papers/PUBLISH.md`, and `papers/build.py` stay in the repository for maintainers and are not copied into `dist/`. The site uses hash routes (`#research`); a request for an existing `/papers/*.html` file is served as that file.
 
 **Host.** Production is Cloudflare Pages from `dist/`, custom domain `ascn.nonarkara.org`. Wrangler project name: `ascn-smart-cities-network`.
 

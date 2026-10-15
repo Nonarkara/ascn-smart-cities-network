@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" font-family="IBM Plex Mono, monospace" font-size="14" fill="#1d1d1b">
+<rect width="960" height="520" fill="#f4efe4"/>
+<text x="40" y="44" font-size="16">SIX FAMILIES OF SMART-CITY FINANCE · after ASEAN Smart City Financing Toolkit</text>
+<line x1="40" y1="470" x2="920" y2="470" stroke="#1d1d1b" stroke-width="2"/>
+<text x="40" y="500">← public money, slower</text><text x="920" y="500" text-anchor="end">more private capital, more conditions →</text>
+<g>
+<rect x="40" y="80" width="140" height="360" fill="#e0a526"/><text x="50" y="108" font-size="15">GOVERNMENT</text><text x="50" y="126" font-size="15">FUNDING</text><text x="50" y="170">transfers</text><text x="50" y="190">tax incentives</text><text x="50" y="210">land pooling</text><text x="50" y="230">asset recycling</text><text x="50" y="250" font-size="12">loan-loss reserve</text>
+<rect x="187" y="130" width="140" height="310" fill="#3f7f5b"/><text x="197" y="158" font-size="15" fill="#f4efe4">DEVELOPMENT</text><text x="197" y="176" font-size="15" fill="#f4efe4">FUNDS</text><text x="197" y="220" fill="#f4efe4">TA grants</text><text x="197" y="240" fill="#f4efe4">climate funds</text><text x="197" y="260" fill="#f4efe4">green funds</text><text x="197" y="280" fill="#f4efe4">regional funds</text>
+<rect x="334" y="180" width="140" height="260" fill="#2c4f9e"/><text x="344" y="208" font-size="15" fill="#f4efe4">LOANS</text><text x="344" y="250" fill="#f4efe4">concessional</text><text x="344" y="270" fill="#f4efe4">term</text><text x="344" y="290" fill="#f4efe4">syndicated</text>
+<rect x="481" y="220" width="140" height="220" fill="#d9472b"/><text x="491" y="248" font-size="15" fill="#f4efe4">BONDS</text><text x="491" y="290" fill="#f4efe4">municipal</text><text x="491" y="310" fill="#f4efe4">GSSS</text><text x="491" y="330" fill="#f4efe4">sukuk</text><text x="491" y="350" fill="#f4efe4">project</text>
+<rect x="628" y="260" width="140" height="180" fill="#1d1d1b"/><text x="638" y="288" font-size="15" fill="#f4efe4">PPP</text><text x="638" y="330" fill="#f4efe4">BOT</text><text x="638" y="350" fill="#f4efe4">DBO</text><text x="638" y="370" fill="#f4efe4">concessions</text>
+<rect x="775" y="140" width="145" height="300" fill="none" stroke="#1d1d1b" stroke-width="2"/><text x="785" y="168" font-size="15">OTHER</text><text x="785" y="210">blended finance</text><text x="785" y="230">revolving funds</text><text x="785" y="250">on-bill repay</text><text x="785" y="270">securitisation</text><text x="785" y="290">crowdfunding</text><text x="785" y="310">guarantees</text>
+</g></svg>

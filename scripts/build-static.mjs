@@ -23,6 +23,7 @@ const entries = [
   "vendor",
   "fonts",
   "_headers",
+  "papers",
 ];
 
 if (entries.length !== siteEntries.length || entries.some((entry) => !siteEntries.includes(entry))) {
