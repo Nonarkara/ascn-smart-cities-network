@@ -127,7 +127,10 @@ Useful scripts:
 | `npm run validate` | Schema and consistency checks on `data/` |
 | `npm run build` | Copy deployable files to `dist/` |
 | `npm run extract:data` | Rebuild `data/ascn-v2-data.json` from local PDFs |
+| `npm run build:archive` | Rebuild `data/ascn-archive.json` from the inbox export when new public records land |
 | `npm run deploy` | Build and publish `dist/` to Cloudflare Pages |
+
+The Archive tab reads `data/ascn-archive.json` only. `npm run build:archive` expects `records.json` in `ASCN_ARCHIVE_DIR` (default `/cursor/stores/bot/ascn-archive`) and merges any JSON arrays later dropped under that folder’s `public/`. Borderline and non-public rows are left out. The build refuses to write the file if the result contains an email address, a phone number, raw email text, or a mailbox thread id. Do not commit the inbox export.
 
 **Re-extracting (optional).** Place the public source PDFs in `.tmp/ascn-sources/` using the filenames in `scripts/extract_ascn_data.py`, then:
 

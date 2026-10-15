@@ -13,6 +13,7 @@ const entries = [
   "showcase.js",
   "news.js",
   "ascn-news.js",
+  "archive.js",
   "favicon.svg",
   "data",
   "docs",
