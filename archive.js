@@ -19,9 +19,15 @@ const COPY = {
     disbursed: "Disbursed",
     notPublic: "— not public",
     breakdown: "Full breakdown",
+    conflict: "Conflict",
+    keptHeading: "Figures kept",
     notAdded: "Not added to the total.",
     either: "Committed and disbursed",
     moneyHeading: "Where the money went",
+    moneyLede: "Claims about ASCN are listed open. General aid statistics sit below them and are not ASCN results.",
+    generalStats: "General tied-aid statistics. Not specific to ASCN.",
+    generalScope: "General. Not specific to ASCN.",
+    ascnScope: "ASCN-specific.",
     noFlow: "No cited source in this record describes tied aid or phantom aid.",
     tiedAid: "Tied aid",
     phantomAid: "Phantom aid",
@@ -64,9 +70,15 @@ const COPY = {
     disbursed: "จ่ายแล้ว",
     notPublic: "— ไม่เปิดเผย",
     breakdown: "รายการเต็ม",
+    conflict: "ข้อขัดแย้ง",
+    keptHeading: "ตัวเลขที่คงไว้",
     notAdded: "ไม่นำไปรวมในยอด",
     either: "ให้คำมั่นและจ่ายแล้ว",
     moneyHeading: "เงินไปที่ใด",
+    moneyLede: "ข้อที่เกี่ยวกับ ASCN อยู่ในรายการเปิด สถิติความช่วยเหลือทั่วไปอยู่ด้านล่าง และไม่ใช่ผลของ ASCN",
+    generalStats: "สถิติความช่วยเหลือแบบผูกพันทั่วไป ไม่ได้เจาะจงที่ ASCN",
+    generalScope: "ทั่วไป ไม่ได้เจาะจงที่ ASCN",
+    ascnScope: "เฉพาะ ASCN",
     noFlow: "ไม่มีแหล่งที่อ้างในบันทึกนี้ที่บรรยายความช่วยเหลือแบบผูกพันหรือความช่วยเหลือที่ไม่อยู่จริง",
     tiedAid: "ความช่วยเหลือแบบผูกพัน",
     phantomAid: "ความช่วยเหลือที่ไม่อยู่จริง",
@@ -109,9 +121,15 @@ const COPY = {
     disbursed: "已拨付",
     notPublic: "— 未公开",
     breakdown: "全部分项",
+    conflict: "冲突",
+    keptHeading: "保留的数字",
     notAdded: "不计入合计。",
     either: "承诺与拨付",
     moneyHeading: "钱去了哪里",
+    moneyLede: "关于 ASCN 的说法列在明处。一般援助统计在其下，不是 ASCN 的结果。",
+    generalStats: "一般性捆绑援助统计。并不专属于 ASCN。",
+    generalScope: "一般情况。并不专属于 ASCN。",
+    ascnScope: "专属于 ASCN。",
     noFlow: "这份记录里没有被引用的来源描述捆绑援助或幽灵援助。",
     tiedAid: "捆绑援助",
     phantomAid: "幽灵援助",
@@ -322,20 +340,64 @@ function renderFunding() {
     <p>${esc(phrase(row.note))}</p>
     <p>${sourceCell(row)}</p>
   </li>`)).join("");
-  host.innerHTML = `<h2 class="archive-funding-title" id="archive-funding-title">${esc(text.funding)}</h2><p>${esc(text.fundingLede)}</p><div>${donors}</div><details><summary>${esc(text.breakdown)}</summary><ul>${rows}</ul></details>`;
+  host.innerHTML = `<h2 class="archive-funding-title" id="archive-funding-title">${esc(text.funding)}</h2><p>${esc(text.fundingLede)}</p><div>${donors}</div>${renderReconciliation()}${rows ? `<details><summary>${esc(text.breakdown)}</summary><ul>${rows}</ul></details>` : ""}`;
+}
+
+function renderReconciliation() {
+  const rec = state.doc?.reconciliation;
+  if (!rec || (!rec.conflicts?.length && !rec.kept?.length)) return "";
+  const text = copy();
+  const conflicts = (rec.conflicts || []).map((conflict) => `<div class="archive-conflict">
+    <p class="label">${esc(text.conflict)}</p>
+    <p>${esc(phrase(conflict.text))}</p>
+    <p>${(conflict.sources || []).map((source) => sourceCell({ source })).join(" ")}</p>
+  </div>`).join("");
+  const kept = rec.kept?.length
+    ? `<details><summary>${esc(text.keptHeading)}</summary><ul>${rec.kept.map((line) => `<li>${esc(phrase(line))}</li>`).join("")}</ul></details>`
+    : "";
+  return `${conflicts}${kept}`;
+}
+
+function claimItem(claim) {
+  const text = copy();
+  const scope = claim.scope === "ascn" ? text.ascnScope : text.generalScope;
+  const medium = claim.confidence === "medium" ? `<span class="archive-flag">${esc(text.medium)}</span>` : "";
+  const figure = [claim.year, claim.figure].filter(Boolean).join(". ");
+  const qualifier = claim.qualifier ? `<p>${esc(phrase(claim.qualifier))}</p>` : "";
+  return `<li>
+    <span class="label">${esc(scope)}</span>
+    <span class="label">${esc(claim.donor || "")}</span>
+    ${medium}
+    <strong>${esc(phrase(claim.claim))}</strong>
+    ${figure ? `<p>${esc(figure)}</p>` : ""}
+    ${qualifier}
+    <p>${sourceCell({ source: claim.source })}</p>
+  </li>`;
 }
 
 function renderMoney() {
   const host = $("#archive-money");
   if (!host) return;
   const text = copy();
+  const cited = state.doc?.money || [];
   const flows = (state.doc?.items || []).filter((item) => item.flow === "tied-aid" || item.flow === "phantom-aid");
-  const claims = flows.length ? `<ul>${flows.map((item) => `<li>
-    <span class="label">${esc(item.flow === "tied-aid" ? text.tiedAid : text.phantomAid)}</span>
-    <strong>${esc(phrase(item.title))}</strong>
-    <p>${esc(phrase(item.note))}</p>
-    <p>${sourceCell(item)}</p>
-  </li>`).join("")}</ul>` : `<p>${esc(text.noFlow)}</p>`;
+  let claims = "";
+  if (cited.length) {
+    const ascn = cited.filter((claim) => claim.scope === "ascn");
+    const general = cited.filter((claim) => claim.scope !== "ascn");
+    const open = ascn.length ? `<ul>${ascn.map(claimItem).join("")}</ul>` : "";
+    const closed = general.length
+      ? `<details><summary>${esc(text.generalStats)}</summary><ul>${general.map(claimItem).join("")}</ul></details>`
+      : "";
+    claims = `<p>${esc(text.moneyLede)}</p>${open}${closed}`;
+  } else if (flows.length) {
+    claims = `<ul>${flows.map((item) => `<li>
+      <span class="label">${esc(item.flow === "tied-aid" ? text.tiedAid : text.phantomAid)}</span>
+      <strong>${esc(phrase(item.title))}</strong>
+      <p>${esc(phrase(item.note))}</p>
+      <p>${sourceCell(item)}</p>
+    </li>`).join("")}</ul>`;
+  } else claims = `<p>${esc(text.noFlow)}</p>`;
   const account = state.doc?.account;
   const accountHtml = account ? `<div class="archive-account-block"><p class="label">${esc(phrase(account.label))}</p><p class="archive-account">${esc(phrase(account.text))}</p></div>` : "";
   host.innerHTML = `<h2 class="archive-funding-title" id="archive-money-title">${esc(text.moneyHeading)}</h2>${claims}${accountHtml}`;

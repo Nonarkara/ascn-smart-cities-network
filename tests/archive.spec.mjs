@@ -7,13 +7,21 @@ test("archive sits after Library and keeps good and bad outcomes in one list", a
   expect(tabs[tabs.indexOf("data") + 1]).toBe("archive");
   await expect(page.locator("#view-archive")).toBeVisible();
   await expect(page).toHaveURL(/#archive$/);
-  await expect(page.locator("#archive-table tbody tr")).toHaveCount(46);
+  await expect(page.locator("#archive-table tbody tr")).toHaveCount(55);
   await expect(page.locator("#archive-funding")).toContainText("10,000,000");
   await expect(page.locator("#archive-funding")).toContainText("21,000,000");
   await expect(page.locator("#archive-funding")).toContainText("13,180,000");
   await expect(page.locator("#archive-funding")).toContainText("— not public");
-  await expect(page.locator("#archive-funding summary")).toHaveText("Full breakdown");
+  await expect(page.locator("#archive-funding summary").filter({ hasText: "Full breakdown" })).toHaveCount(1);
+  await expect(page.locator("#archive-funding")).toContainText("Not specific to ASCN.");
+  await expect(page.locator("#archive-funding")).toContainText("250 billion yen");
+  await expect(page.locator("#archive-funding")).toContainText("not a grant");
   await expect(page.locator("#archive-money")).toContainText("Where the money went");
+  await expect(page.locator("#archive-money")).toContainText("ASCN-specific.");
+  await expect(page.locator("#archive-money")).toContainText("General. Not specific to ASCN.");
+  await expect(page.locator("#archive-money")).toContainText("attractive market");
+  await expect(page.locator("#archive-money")).toContainText("Japanese companies");
+  await expect(page.locator("#archive-money")).toContainText("U.S. export");
   await expect(page.locator("#archive-money")).toContainText("depa never received fund transfers.");
   await expect(page.locator("#archive-money")).toContainText("Not a sourced fact.");
   await expect(page.locator("#archive-counts")).toContainText("MOU");
@@ -34,7 +42,7 @@ test("archive sits after Library and keeps good and bad outcomes in one list", a
   await expect(page.locator("#view-archive")).not.toContainText("financial-management");
   await expect(page.locator("#view-archive")).not.toContainText("@");
   await page.locator("#archive-type").selectOption("trip");
-  await expect(page.locator("#archive-table tbody tr")).toHaveCount(6);
+  await expect(page.locator("#archive-table tbody tr")).toHaveCount(7);
   await expect(page.locator("#archive-outcomes")).toContainText("Failed");
   await page.locator("#archive-search").fill("Phuket");
   await expect(page.locator("#archive-table tbody tr")).toHaveCount(1);
@@ -52,6 +60,7 @@ test("the archive language switch does not translate the rest of the site", asyn
   await page.locator("[data-archive-lang='th']").click();
   await expect(page.locator("#view-archive")).toHaveAttribute("lang", "th");
   await expect(page.locator("#archive-subtitle")).toHaveText("กล่องจดหมายและหน้าสาธารณะ");
+  await expect(page.locator("#archive-money")).toContainText("ไม่ได้เจาะจงที่ ASCN");
   await expect(page.locator("#archive-table")).toContainText("การเดินทาง");
   await expect(page.locator("#tab-nav [data-tab='data']")).toHaveText("Library");
   await expect(page.locator("#tab-nav [data-tab='archive']")).toHaveText("Archive");
@@ -89,9 +98,10 @@ test("archive titles from data render as text", async ({ page }) => {
 });
 
 test("archive screenshots at desktop and phone widths in three languages", async ({ page }) => {
+  test.setTimeout(90_000);
   await mkdir("test-results/archive-shots", { recursive: true });
   await page.goto("/#archive");
-  await expect(page.locator("#archive-table tbody tr")).toHaveCount(46);
+  await expect(page.locator("#archive-table tbody tr")).toHaveCount(55);
   for (const lang of ["en", "th", "zh"]) {
     await page.locator(`[data-archive-lang="${lang}"]`).click();
     await expect(page.locator("#view-archive")).toHaveAttribute("lang", lang);

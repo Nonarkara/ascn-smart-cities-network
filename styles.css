@@ -2925,8 +2925,13 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 }
 .archive-figure { font-size: clamp(1.45rem, 2.8vw, 2.2rem); }
 .archive-gap { font-size: 1.2rem; }
-.archive-funding details { border-top: 1px solid var(--ink); padding-top: 0.75rem; }
-.archive-funding summary {
+.archive-funding details,
+.archive-money details,
+.archive-conflict { border-top: 1px solid var(--ink); padding-top: 0.75rem; }
+.archive-conflict { max-width: 40rem; }
+.archive-conflict p { margin: 0.35rem 0 0; }
+.archive-funding summary,
+.archive-money summary {
   font-weight: 700;
   letter-spacing: 0;
   text-transform: none;
@@ -2976,7 +2981,9 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 #view-archive[lang="th"] .archive-account,
 #view-archive[lang="zh"] .archive-account,
 #view-archive[lang="th"] .archive-funding summary,
-#view-archive[lang="zh"] .archive-funding summary {
+#view-archive[lang="zh"] .archive-funding summary,
+#view-archive[lang="th"] .archive-money summary,
+#view-archive[lang="zh"] .archive-money summary {
   letter-spacing: 0;
   text-transform: none;
 }

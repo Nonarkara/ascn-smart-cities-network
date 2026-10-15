@@ -160,6 +160,7 @@ test("round 2 csv files are merged when the folder exists and other files stay o
   ].join("\n"));
   await writeFile(join(dir, "public", "round2", "secret.txt"), "secret@example.com");
   await writeFile(join(dir, "public", "round2", "unread.pdf"), "Baguio financial-management Gold");
+  await writeFile(join(dir, "public", "round2", "findings.md"), "Baguio financial-management Gold and 250B yen");
   const { document, report } = await buildFromDirectory(dir);
   assert.deepEqual(document.items.map((item) => item.id), ["hlm2-2020", "E02"]);
   assert.equal(document.items.find((item) => item.id === "E02").selfReported, true);
@@ -175,17 +176,53 @@ test("round 2 csv files are merged when the folder exists and other files stay o
   assert.match(quiet.report, /Round 2 files 0/);
 });
 
+test("round 2 programmes fold, funding conflicts stay outside the totals, and an unknown csv fails", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "ascn-archive-round2-named-"));
+  await mkdir(join(dir, "public", "round2"), { recursive: true });
+  await writeFile(join(dir, "records.json"), JSON.stringify([inbox("hlm2-2020", { date: "2020" })]));
+  await writeFile(join(dir, "public", "round2", "programmes.csv"), [
+    "programme,funder,country,year,description,results,source_url",
+    "JASCA / Smart JAMP,Japan MLIT,Japan,2020–present,Site: 250B yen fund,NOTE,https://sciti.nonarkara.org/partners",
+    "JICA technical cooperation with depa,JICA,Japan,2019,Site timeline,None stated,https://sciti.nonarkara.org/partners",
+  ].join("\n"));
+  await writeFile(join(dir, "public", "round2", "funding-by-donor.csv"), [
+    "donor,programme,committed,disbursed,implementer,implementer_donor_national,source_url,notes",
+    "Japan (JOIN/JBIC),Smart JAMP finance windows,\"¥50bn JOIN + ¥200bn JBIC (windows, not grants)\",unknown,JOIN,yes,https://www.mlit.go.jp/kokusai/content/001621832.pdf,Likely source of sciti's 250B yen figure",
+  ].join("\n"));
+  const { document, report } = await buildFromDirectory(dir);
+  assert.deepEqual(document.items.map((item) => item.id), ["jica-depa-2019", "hlm2-2020"]);
+  assert.equal(document.items.find((item) => item.id === "jica-depa-2019").selfReported, true);
+  assert.equal(document.items.find((item) => item.id === "jica-depa-2019").confidence, "medium");
+  assert.equal(document.items.find((item) => item.id === "jica-depa-2019").amount, undefined);
+  assert.equal(document.mergedProgrammes.length, 1);
+  assert.equal(document.mergedProgrammes[0].into, "hlm2-2020");
+  assert.equal(document.funding.donors.find((donor) => donor.id === "japan").committed, null);
+  assert.equal(document.reconciliation.conflicts.length, 1);
+  assert.match(document.reconciliation.conflicts[0].text.en, /not a grant/);
+  assert.match(report, /Programmes added 1/);
+  assert.match(report, /Conflicts 1/);
+  const raw = JSON.stringify(document);
+  assert.equal(raw.includes("250B"), false);
+  assert.equal(raw.includes("¥50bn"), false);
+  const bad = await mkdtemp(join(tmpdir(), "ascn-archive-round2-bad-"));
+  await mkdir(join(bad, "public", "round2"), { recursive: true });
+  await writeFile(join(bad, "records.json"), JSON.stringify([inbox("hlm2-2020", { date: "2020" })]));
+  await writeFile(join(bad, "public", "round2", "notes.csv"), "foo,bar\n1,2\n");
+  await assert.rejects(() => buildFromDirectory(bad), /Unrecognised archive CSV/);
+});
+
 test("the committed public record excludes the three borderline inbox rows", async () => {
   const doc = validateRecordArchive(JSON.parse(await readFile(new URL("../data/ascn-archive.json", import.meta.url), "utf8")));
-  assert.equal(doc.items.length, 46);
+  assert.equal(doc.items.length, 55);
   assert.equal(doc.pending.length, 1);
   assert.equal(doc.pending[0].status, "pending review");
   assert.equal(doc.pending[0].id, "E01");
   assert.deepEqual(doc.withheld.map((row) => row.id), ["ascn-linkedin-page", "ascn8-chonburi-2025", "stgp-korea-2022"]);
   const counts = Object.fromEntries(["grant", "trip", "mou", "communication", "course"].map((type) => [type, doc.items.filter((item) => item.type === type).length]));
-  assert.deepEqual(counts, { grant: 9, trip: 6, mou: 1, communication: 21, course: 9 });
-  assert.equal(doc.items.filter((item) => item.confidence === "medium").length, 14);
-  assert.equal(doc.items.filter((item) => item.selfReported).length, 11);
+  assert.deepEqual(counts, { grant: 9, trip: 7, mou: 2, communication: 26, course: 11 });
+  assert.equal(doc.items.filter((item) => item.confidence === "medium").length, 23);
+  assert.equal(doc.items.filter((item) => item.selfReported).length, 20);
+  assert.equal(doc.items.filter((item) => item.outcome === "delivered").length, 17);
   assert.equal(doc.items.find((item) => item.id === "E03").selfReported, true);
   assert.match(doc.items.find((item) => item.id === "E03").note.en, /134 projects/);
   assert.match(doc.items.find((item) => item.id === "E03").note.en, /13%/);
@@ -227,6 +264,48 @@ test("the committed public record excludes the three borderline inbox rows", asy
   assert.equal(doc.account.text.en, "depa never received fund transfers.");
   assert.equal(Object.hasOwn(doc.account, "source"), false);
   assert.equal(doc.items.some((item) => item.flow), false);
+  assert.equal(doc.money.length, 23);
+  assert.equal(doc.money.filter((row) => row.scope === "general").length, 18);
+  assert.equal(doc.money.filter((row) => row.scope === "ascn").length, 5);
+  assert.deepEqual(doc.money.filter((row) => row.scope === "ascn").map((row) => row.id), [
+    "mlit-market", "smartjamp-firms", "usascp-export-visits", "ita-us-exports", "usascp-indo-pacific",
+  ]);
+  assert.equal(doc.money.find((row) => row.id === "kcity-asean-demos").scope, "general");
+  assert.match(doc.money.find((row) => row.id === "kcity-asean-demos").qualifier.en, /not ASCN-branded/);
+  assert.equal(doc.money.find((row) => row.id === "cabinet-strategy-2030").scope, "general");
+  assert.equal(doc.money.find((row) => row.id === "ustda-trade-mission").scope, "general");
+  assert.equal(doc.money.find((row) => row.id === "dfat-procurement-2025").source, "https://devpolicy.org/2025-australian-aid-procurement-update-20251121/");
+  assert.match(doc.money.find((row) => row.id === "mlit-market").claim.en, /attractive market/);
+  assert.match(doc.money.find((row) => row.id === "smartjamp-firms").claim.en, /Japanese companies/);
+  assert.match(doc.money.find((row) => row.id === "usascp-export-visits").claim.en, /U\.S\. export/);
+  for (const row of doc.money) assert.ok(row.source.startsWith("https://"));
+  assert.equal(doc.reconciliation.conflicts.length, 1);
+  assert.match(doc.reconciliation.conflicts[0].text.en, /250 billion yen/);
+  assert.match(doc.reconciliation.conflicts[0].text.en, /not a grant/);
+  assert.equal(doc.reconciliation.conflicts[0].sources.includes("https://www.mlit.go.jp/kokusai/content/001621832.pdf"), true);
+  assert.equal(doc.reconciliation.conflicts[0].sources.includes("https://sciti.nonarkara.org/partners"), true);
+  assert.match(doc.reconciliation.kept.map((line) => line.en).join("\n"), /AUD 21000000/);
+  assert.match(doc.reconciliation.kept.map((line) => line.en).join("\n"), /KRW 1500000000000/);
+  assert.match(doc.reconciliation.kept.map((line) => line.en).join("\n"), /27\.7 billion won/);
+  assert.equal(Object.hasOwn(doc.funding, "reconciliation"), false);
+  assert.equal(byDonor.korea.committed.limit.en, "Not specific to ASCN.");
+  assert.deepEqual(doc.mergedProgrammes.map((pair) => pair.into).sort(), ["F01", "F10", "F12", "T08", "hlm2-2020"]);
+  assert.equal(doc.items.find((item) => item.id === "F01").source.includes("sciti"), false);
+  assert.equal(doc.items.find((item) => item.id === "hlm2-2020").source, "https://www.jasca2021.jp/cooperative/");
+  assert.equal(doc.items.find((item) => item.id === "uk-handbook-2020").outcome, "partial");
+  assert.equal(doc.items.find((item) => item.id === "kcity-khonkaen-2019").outcome, "stalled");
+  assert.equal(doc.items.find((item) => item.id === "austria-mou-2022").date, "2022");
+  assert.match(doc.items.find((item) => item.id === "austria-mou-2022").note.en, /2020/);
+  assert.equal(doc.items.find((item) => item.id === "govmesh-2026").date, "2026-03");
+  assert.equal(doc.items.find((item) => item.id === "govmesh-2026").source, "https://sciti.nonarkara.org/knowledge");
+  assert.match(doc.items.find((item) => item.id === "sids-solomon-2025").note.en, /does not make it an ASCN project/);
+  assert.match(doc.items.find((item) => item.id === "brics-forum-2025").note.en, /does not make it an ASCN project/);
+  assert.equal(doc.items.find((item) => item.id === "acc-nanning-2019").type, "trip");
+  assert.equal(doc.items.find((item) => item.id === "acc-nanning-2019").note.en.includes("Phuket"), false);
+  assert.equal(raw.includes("$2.4B"), false);
+  assert.equal(raw.includes("$10M"), false);
+  assert.equal(raw.includes("250B"), false);
+  assert.equal(doc.items.some((item) => item.amount && /¥|yen/.test(String(item.amount))), false);
 });
 
 test("rebuilding the mailbox source matches the committed record when the source is present", async () => {
