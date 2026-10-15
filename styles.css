@@ -705,9 +705,16 @@ input[type="search"] { min-width: min(16rem, 100%); }
   position: absolute;
   bottom: 0.6rem;
   right: 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 0.75rem;
+  line-height: 1;
   background: rgba(16, 20, 24, 0.85);
   color: var(--palette-paper);
-  padding: 0.25rem 0.6rem;
   font-size: var(--fs-body);
   font-weight: 700;
   backdrop-filter: blur(4px);
@@ -3883,6 +3890,15 @@ input, select, textarea {
   max-height: 160px;
 }
 .growth-year { font-size: var(--fs-body) !important; }
+
+.demo-play-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 0.75rem;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .view { animation: none; }

@@ -22,7 +22,7 @@ async function measure(page) {
       sizes.add(getComputedStyle(el).fontSize);
     });
     const caps = [...document.querySelectorAll("body *")].filter((el) => visible(el) && getComputedStyle(el).textTransform === "uppercase").map((el) => el.className);
-    const short = [...document.querySelectorAll("button, .text-button, #tab-nav a, .review-tabs a, .lib-chip, .contact-card a, .cc-inst, .essay-sections button, .essay-sections summary, .essay-continue a, .section-next button, .nav-menu, .showcase-clip, .news-icon-button, .segmented button")].filter((el) => visible(el) && el.getBoundingClientRect().height < 44).map((el) => `${el.className || el.tagName} ${Math.round(el.getBoundingClientRect().height)} ${el.textContent.trim().slice(0, 32)}`);
+    const short = [...document.querySelectorAll("button, .text-button, #tab-nav a, .review-tabs a, .lib-chip, .contact-card a, .cc-inst, .essay-sections button, .essay-sections summary, .essay-continue a, .section-next button, .nav-menu, .showcase-clip, .news-icon-button, .segmented button, .demo-play-btn")].filter((el) => visible(el) && el.getBoundingClientRect().height < 44).map((el) => `${el.className || el.tagName} ${Math.round(el.getBoundingClientRect().height)} ${el.textContent.trim().slice(0, 32)}`);
     const header = document.querySelector(".site-nav").getBoundingClientRect().height;
     return {
       sizes: [...sizes],
@@ -150,6 +150,12 @@ test("named controls clear 44px and the growth chart stays short", async ({ page
   await expect(page.locator(".iaas-card-link").first()).toBeVisible();
   const open = await page.locator(".iaas-card-link").first().boundingBox();
   expect(open.height).toBeGreaterThanOrEqual(44);
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
+    const play = await page.locator(".demo-play-btn").first().boundingBox();
+    expect(play.height, `play ${width}`).toBeGreaterThanOrEqual(44);
+    expect(play.width, `play ${width}`).toBeGreaterThanOrEqual(44);
+  }
 
   await page.goto("/#data");
   await page.locator(".dc-dl").first().waitFor();
