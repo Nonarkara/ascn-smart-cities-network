@@ -13,6 +13,30 @@ const tileLayers = {
 };
 
 const TABS = ["overview", "innovation", "record", "news", "ascn9", "history", "cities", "projects", "framework", "partners", "contacts", "insights", "data", "research", "essay"];
+const DOORS = {
+  overview: "Field", innovation: "Field",
+  essay: "Read", research: "Read", history: "Read",
+  cities: "Network", contacts: "Network", partners: "Network", ascn9: "Network",
+  record: "Evidence", data: "Evidence", insights: "Evidence", projects: "Evidence", framework: "Evidence",
+  news: "News",
+};
+const PAGE_TITLES = {
+  overview: "134 projects, and nobody published the score",
+  innovation: "Fifteen live systems, built in the cities",
+  record: "Ten years, counted",
+  news: "The promises still waiting on evidence",
+  ascn9: "What they actually did on 20 July",
+  history: "The network grew by adding cities, not by proving them",
+  cities: "Thirty-eight cities, and the work is not evenly spread",
+  projects: "Most of the portfolio is still marked ongoing",
+  framework: "The framework names three outcomes. The reports count projects",
+  partners: "The network coordinates. Other people's money builds",
+  contacts: "Every city has a ministry and a person",
+  insights: "Health stayed at 6% through a pandemic",
+  data: "The PDFs were public. The rows were not",
+  research: "The papers describe the network. Few of them use the rows",
+  essay: "The network at seven",
+};
 const DATA_VERSION = "41";
 
 const state = {
@@ -29,12 +53,12 @@ const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
 const FOCUS_COLORS = {
-  "Civic & Social": "#b0c1cd",
-  "Built Infrastructure": "#dda692",
-  "Quality Environment": "#9ac4a9",
-  "Safety & Security": "#d6bd88",
-  "Industry & Innovation": "#b9acc8",
-  "Health & Well-Being": "#c3c4bd",
+  "Civic & Social": "var(--focus-civic)",
+  "Built Infrastructure": "var(--focus-built)",
+  "Quality Environment": "var(--focus-environment)",
+  "Safety & Security": "var(--focus-safety)",
+  "Industry & Innovation": "var(--focus-industry)",
+  "Health & Well-Being": "var(--focus-health)",
 };
 
 function latestReport() { return state.data.reports[state.data.reports.length - 1]; }
@@ -44,10 +68,10 @@ function usd(n) {
   return `$${fmt.format(n)}`;
 }
 function markerColor(year) {
-  if (year >= 2026) return "#101418";
-  if (year >= 2025) return "#b53a2e";
-  if (year >= 2023) return "#946012";
-  return "#183a5a";
+  if (year >= 2026) return "var(--palette-ink)";
+  if (year >= 2025) return "var(--palette-signal)";
+  if (year >= 2023) return "var(--palette-chord)";
+  return "var(--palette-deep)";
 }
 function bar(label, value, max, cls = "", suffix = "", wide = false) {
   const w = max ? Math.max(2, (value / max) * 100) : 0;
@@ -97,22 +121,52 @@ function svgLine(points, w = 280, h = 90) {
   if (points.length < 2) return "";
   const vals = points.map((p) => p.v);
   const minV = Math.min(...vals), maxV = Math.max(...vals);
-  const padT = 6, padB = 18, padL = 6, padR = 6;
+  const padT = 8, padB = 22, padL = 16, padR = 16;
   const scX = (i) => padL + (i / (points.length - 1)) * (w - padL - padR);
   const scY = (v) => padT + (1 - (v - minV) / (maxV - minV || 1)) * (h - padT - padB);
   const ptStr = points.map((p, i) => `${scX(i).toFixed(1)},${scY(p.v).toFixed(1)}`);
-  const area = `M${scX(0).toFixed(1)},${(h - padB).toFixed(1)} L${ptStr.join(" L")} L${scX(points.length - 1).toFixed(1)},${(h - padB).toFixed(1)} Z`;
-  const dots = points.map((p, i) => `<circle cx="${scX(i).toFixed(1)}" cy="${scY(p.v).toFixed(1)}" r="2.5" fill="var(--amber)" />`).join("");
-  const labels = points.map((p, i) => `<text x="${scX(i).toFixed(1)}" y="${h - 3}" text-anchor="middle" fill="var(--muted)" font-size="8" font-family="inherit">${esc(p.label)}</text>`).join("");
-  return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true"><path d="${area}" fill="var(--amber)" opacity="0.1" /><polyline points="${ptStr.join(" ")}" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linejoin="round" />${dots}${labels}</svg>`;
+  const dots = points.map((p, i) => `<circle cx="${scX(i).toFixed(1)}" cy="${scY(p.v).toFixed(1)}" r="3" fill="var(--palette-chord)" />`).join("");
+  const labels = points.map((p, i) => `<text x="${scX(i).toFixed(1)}" y="${h - 4}" text-anchor="middle" fill="currentColor">${esc(p.label)}</text>`).join("");
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" preserveAspectRatio="none" role="img" aria-label="${points.map((p) => `${p.label} ${p.v}`).join(", ")}"><polyline points="${ptStr.join(" ")}" fill="none" stroke="var(--palette-chord)" stroke-width="2" vector-effect="non-scaling-stroke" />${dots}${labels}</svg>`;
+}
+
+function sparkTile(name, vals, years) {
+  const n = vals.length;
+  const minV = Math.min(...vals);
+  const maxV = Math.max(...vals);
+  const scX = (i) => ((i + 0.5) / n) * 100;
+  const scY = (v) => 8 + (1 - (v - minV) / (maxV - minV)) * 78;
+  const pts = vals.map((v, i) => `${scX(i).toFixed(2)},${scY(v).toFixed(2)}`).join(" ");
+  const dots = vals.map((v, i) => `<span class="spark-dot" style="left:${scX(i)}%;bottom:${(100 - scY(v)).toFixed(2)}%" title="${esc(years[i])} ${v}%"></span>`).join("");
+  const labels = vals.map((v, i) => `<span><b>${v}%</b>${esc(years[i])}</span>`).join("");
+  const delta = vals[n - 1] - vals[0];
+  const word = delta >= 3 ? "Up" : delta <= -3 ? "Down" : "Flat";
+  return `<article class="spark"><div class="ig-spark-head"><span class="ig-spark-name">${esc(name)}</span><span class="mark ${delta >= 3 ? "mark-yes" : delta <= -3 ? "mark-no" : ""}">${word} ${delta > 0 ? "+" : ""}${delta} pp</span></div><div class="spark-stage"><svg class="spark-svg" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="${esc(name)}: ${years.map((y, i) => `${y} ${vals[i]} percent`).join(", ")}"><polyline points="${pts}" fill="none" stroke="currentColor" stroke-width="1.6" vector-effect="non-scaling-stroke" /></svg>${dots}</div><div class="spark-labels" style="grid-template-columns:repeat(${n},1fr)">${labels}</div></article>`;
 }
 
 /* ---------------- Routing ---------------- */
+function closeNav() {
+  const nav = document.getElementById("tab-nav");
+  const menu = document.getElementById("nav-menu");
+  nav?.classList.remove("is-open");
+  menu?.setAttribute("aria-expanded", "false");
+  $$(".nav-door.is-open").forEach((door) => {
+    door.classList.remove("is-open");
+    door.querySelector(".nav-door-btn")?.setAttribute("aria-expanded", "false");
+  });
+}
+
 function setTab(tab, push = true) {
   if (!TABS.includes(tab)) tab = "overview";
   state.tab = tab;
   $$(".view").forEach((v) => { v.hidden = v.dataset.view !== tab; });
   $$("#tab-nav a").forEach((a) => a.classList.toggle("active", a.dataset.tab === tab));
+  const doorName = DOORS[tab] || "Field";
+  const current = document.getElementById("nav-current");
+  if (current) current.textContent = doorName;
+  $$(".nav-door").forEach((door) => door.classList.toggle("is-current", door.dataset.door === doorName));
+  if (PAGE_TITLES[tab]) document.title = `${PAGE_TITLES[tab]} — ASCN`;
+  closeNav();
   renderTab(tab);
   // Compare only the first path segment so a #cities/{slug} sub-route survives a tab re-entry
   if (push && location.hash.split("/")[0] !== `#${tab}`) history.replaceState(null, "", `#${tab}`);
@@ -420,7 +474,7 @@ function projectsForCity(name) {
 function renderCitiesView() {
   const countries = [...new Set(state.C.map((c) => c.country))].sort();
   $("#city-country").insertAdjacentHTML("beforeend", countries.map((c) => `<option value="${esc(c)}">${esc(c)}</option>`).join(""));
-  $("#map-legend").innerHTML = [["#183a5a", "2018 founding"], ["#946012", "2023–24"], ["#b53a2e", "2025"], ["#101418", "2026"]]
+  $("#map-legend").innerHTML = [["var(--palette-deep)", "2018 founding"], ["var(--palette-chord)", "2023–24"], ["var(--palette-signal)", "2025"], ["var(--palette-ink)", "2026"]]
     .map(([col, lab]) => `<span><i style="background:${col}"></i>${lab}</span>`).join("");
   renderCityCards();
   const sub = (location.hash || "").split("/")[1];
@@ -511,7 +565,7 @@ function buildMarkers() {
   for (const c of state.C) {
     const m = L.circleMarker([c.lat, c.lon], {
       radius: c.year >= 2025 ? 7 : 5,
-      color: state.mapMode === "night" ? "rgba(255,255,255,0.8)" : "#fff",
+      color: state.mapMode === "night" ? "rgba(255,255,255,0.8)" : "var(--palette-paper)",
       weight: 1.5, fillColor: markerColor(c.year), fillOpacity: 0.92,
     });
     m.bindTooltip(`${esc(c.name)} — ${esc(c.country)} (${esc(c.year)})`, { direction: "top", offset: [0, -3] });
@@ -817,19 +871,16 @@ function renderInsights() {
   const linePoints = totals.map((t) => ({ v: t.total, label: `'${String(t.year).slice(2)}` }));
   $("#ig-momentum").innerHTML = `<div class="ig-momentum-row">${momentumStats.map((s) => `<div class="ig-stat-card"><strong>${esc(String(s.v))}</strong><span>${esc(s.label)}</span><em>${esc(s.note)}</em></div>`).join("")}</div><div class="ig-mini-line">${svgLine(linePoints, 380, 72)}</div>`;
 
-  // ── 2. Focus area trends (4-year sparklines) ─────────────────────────────
+  // Flat series are one sentence. Moving series get a full-width spark.
   const focusTrends = derived.focus_trends;
-  const arrow = (vals) => { const d = vals[vals.length - 1] - vals[0]; return d >= 3 ? { sym: "↑", cls: "trend-up" } : d <= -3 ? { sym: "↓", cls: "trend-dn" } : { sym: "→", cls: "trend-flat" }; };
-  const sparkItems = Object.entries(focusTrends).sort((a, b) => b[1]["2025"] - a[1]["2025"]).map(([name, byYear]) => {
+  const moving = [];
+  const flat = [];
+  Object.entries(focusTrends).sort((a, b) => b[1]["2025"] - a[1]["2025"]).forEach(([name, byYear]) => {
     const vals = YEARS.map((y) => byYear[y]);
-    const { sym, cls } = arrow(vals);
-    const delta = vals[3] - vals[0];
-    const deltaStr = delta > 0 ? `+${delta}pp` : delta < 0 ? `${delta}pp` : "flat";
-    const color = FOCUS_COLORS[name] || "#444";
-    const yLabels = vals.map((v, i) => `<span>${esc(String(v))}%</span>`).join("");
-    return `<div class="ig-spark-item"><div class="ig-spark-head"><span class="ig-spark-dot" style="background:${color}"></span><span class="ig-spark-name">${esc(name)}</span><span class="ig-spark-pct">${vals[3]}%</span><span class="ig-spark-delta ${cls}">${sym} ${esc(deltaStr)}</span></div>${svgSpark(vals, 152, 44, color)}<div class="ig-spark-vals">${yLabels}</div><div class="ig-spark-yrs"><span>'22</span><span>'23</span><span>'24</span><span>'25</span></div></div>`;
-  }).join("");
-  $("#ig-focus-trends").innerHTML = `<div class="ig-spark-grid">${sparkItems}</div>`;
+    if (Math.max(...vals) === Math.min(...vals)) flat.push(`${name} stayed at ${vals[0]}% in every cycle`);
+    else moving.push(sparkTile(name, vals, YEARS));
+  });
+  $("#ig-focus-trends").innerHTML = `<div class="ig-spark-grid">${moving.join("")}</div>${flat.length ? `<p class="spark-flat">${esc(flat.join(". "))}.</p>` : ""}`;
 
   // ── 3. Country trajectories 2022 → 2025 ──────────────────────────────────
   const appS = derived.appendix_summaries;
@@ -858,7 +909,7 @@ function renderInsights() {
   const SHORT = { "Industry & Innovation": "Ind. & Innov.", "Quality Environment": "Quality Env.", "Built Infrastructure": "Built Infra.", "Health & Well-Being": "Health & W-B", "Safety & Security": "Safety & Sec.", "Civic & Social": "Civic & Social" };
   const specRows = Object.entries(cFocus).sort((a, b) => Object.values(b[1]).reduce((s, v) => s + v, 0) - Object.values(a[1]).reduce((s, v) => s + v, 0)).map(([country, foci]) => {
     const total = Object.values(foci).reduce((s, v) => s + v, 0);
-    const segs = Object.entries(foci).sort((a, b) => b[1] - a[1]).map(([fa, n]) => `<div class="ig-spec-seg" style="width:${(n / total * 100).toFixed(1)}%;background:${FOCUS_COLORS[fa] || "#888"}" title="${fa}: ${n} (${Math.round(n / total * 100)}%)"></div>`).join("");
+    const segs = Object.entries(foci).sort((a, b) => b[1] - a[1]).map(([fa, n]) => `<div class="ig-spec-seg" style="width:${(n / total * 100).toFixed(1)}%;background:${FOCUS_COLORS[fa] || "var(--palette-deep)"}" title="${fa}: ${n} (${Math.round(n / total * 100)}%)"></div>`).join("");
     const top = Object.entries(foci).sort((a, b) => b[1] - a[1])[0][0];
     return `<div class="ig-spec-row"><span class="ig-spec-country">${esc(country)}</span><div class="ig-spec-bar">${segs}</div><span class="ig-spec-top">${esc(SHORT[top] || top)}</span></div>`;
   }).join("");
@@ -879,12 +930,11 @@ function renderInsights() {
 
   // ── 6. Signal flags ───────────────────────────────────────────────────────
   const signals = [
-    { icon: "⊘", cls: "sig-warn", flag: "Vietnam: silent in 2025", body: "Da Nang, Ha Noi, and Ho Chi Minh City — all founding members — appeared consistently through 2022–2024 (6 projects each year). The 2025 cycle shows zero Vietnam rows in the appendix. Whether this reflects delayed reporting or withdrawal from the M&E cycle is not stated in the report. It is the single largest gap in the 2025 record." },
-    { icon: "━", cls: "sig-flat", flag: "Health & Well-Being: 6% for four consecutive years", body: "Every other focus area moved. This one did not: 6%, 6%, 6%, 6%. The COVID-19 pandemic — which began one year after ASCN's founding and disrupted urban health systems across the region — produced zero measurable reorientation of the portfolio. That is a finding, not a data gap." },
-    { icon: "↑", cls: "sig-note", flag: "Myanmar: steady growth after the 2021 coup", body: "Myanmar's documented projects increased every single cycle: 11 (2022), 12 (2023), 13 (2024), 14 (2025). ASEAN's non-interference principle kept the network intact; the data shows Myanmar among the more active contributors during a period when most international engagement with Naypyidaw was suspended or constrained." },
-    { icon: "△", cls: "sig-gap", flag: "13 projects reported but not in the appendix", body: "The 2025 report declares 134 total projects. The appendix — the row-by-row evidence table from which this platform's data is drawn — contains 121 entries. Thirteen projects have no individual record. Without an appendix entry, a project cannot be cross-referenced against prior cycles or independently verified." },
+    { cls: "sig-warn", label: "Gap", flag: "Vietnam: silent in 2025", body: "Da Nang, Ha Noi, and Ho Chi Minh City — all founding members — appeared consistently through 2022–2024 (6 projects each year). The 2025 cycle shows zero Vietnam rows in the appendix. Whether this reflects delayed reporting or withdrawal from the M&E cycle is not stated in the report. It is the single largest gap in the 2025 record." },
+    { cls: "sig-note", label: "Up", flag: "Myanmar: steady growth after the 2021 coup", body: "Myanmar's documented projects increased every single cycle: 11 (2022), 12 (2023), 13 (2024), 14 (2025). ASEAN's non-interference principle kept the network intact; the data shows Myanmar among the more active contributors during a period when most international engagement with Naypyidaw was suspended or constrained." },
+    { cls: "sig-gap", label: "Missing", flag: "13 projects reported but not in the appendix", body: "The 2025 report declares 134 total projects. The appendix — the row-by-row evidence table from which this platform's data is drawn — contains 121 entries. Thirteen projects have no individual record. Without an appendix entry, a project cannot be cross-referenced against prior cycles or independently verified." },
   ];
-  $("#ig-signals").innerHTML = `<div class="ig-signals-grid">${signals.map((s) => `<div class="ig-signal-card ${s.cls}"><div class="ig-sig-icon">${s.icon}</div><strong>${esc(s.flag)}</strong><p>${esc(s.body)}</p></div>`).join("")}</div>`;
+  $("#ig-signals").innerHTML = `<div class="ig-signals-grid">${signals.map((s) => `<div class="ig-signal-card ${s.cls}"><p class="mark ${s.cls === "sig-warn" ? "mark-no" : s.cls === "sig-gap" ? "mark-part" : "mark-yes"}">${esc(s.label)}</p><strong>${esc(s.flag)}</strong><p>${esc(s.body)}</p></div>`).join("")}</div>`;
   renderDataQuality();
 
   // ── 7–9. Carry-forward panels ─────────────────────────────────────────────
@@ -943,10 +993,10 @@ function renderInsights() {
     { name: "Korea",   vals: [1, 1, 1, 1, 1, 1, 1] },
     { name: "EU",      vals: [1, 1, 1, 1, 1, 1, 1] },
   ];
-  const cellIcon = (v) => v === 1 ? `<span class="me-yes">✓</span>` : v === 0.5 ? `<span class="me-partial">~</span>` : `<span class="me-no">✗</span>`;
+  const cellIcon = (v) => v === 1 ? `<span class="mark mark-yes">Yes</span>` : v === 0.5 ? `<span class="mark mark-part">Partial</span>` : `<span class="mark mark-no">No</span>`;
   const meHead = ME_SYSTEMS.map((s) => `<th class="${s.name === "ASCN" ? "me-ascn-col" : ""}">${esc(s.name)}</th>`).join("");
   const meRows = ME_FEATURES.map((f) => `<tr><td class="me-feature">${esc(f)}</td>${ME_SYSTEMS.map((s, i) => `<td class="me-cell${s.name === "ASCN" ? " me-ascn-col" : ""}">${cellIcon(s.vals[ME_FEATURES.indexOf(f)])}</td>`).join("")}</tr>`).join("");
-  $("#ig-compare").innerHTML = `<table class="me-table"><thead><tr><th></th>${meHead}</tr></thead><tbody>${meRows}</tbody></table><p class="ig-note">Source: ascn_dim05.md §11.6. ✓ = yes · ~ = partial · ✗ = no</p>`;
+  $("#ig-compare").innerHTML = `<table class="me-table"><thead><tr><th></th>${meHead}</tr></thead><tbody>${meRows}</tbody></table><p class="ig-note">Source: ascn_dim05.md §11.6. Yes means the feature is present. Partial means it is incomplete. No means it is absent.</p>`;
 
   // ── IMD Smart City Index 2024 — ASEAN cities ────────────────────────────
   // Source: IMD World Competitiveness Center, ascn_dim05.md §7.1
@@ -964,7 +1014,7 @@ function renderInsights() {
   const imdMax = 142;
   const imdRows = IMD.map((c) => {
     const delta = c.prev - c.rank; // positive = improved
-    const dStr = delta > 0 ? `↑${delta}` : delta < 0 ? `↓${Math.abs(delta)}` : "—";
+    const dStr = delta > 0 ? `up ${delta}` : delta < 0 ? `down ${Math.abs(delta)}` : "same";
     const dCls = delta > 0 ? "traj-up" : delta < 0 ? "traj-dn" : "";
     const barW = Math.max(2, ((imdMax - c.rank) / (imdMax - 5)) * 100);
     return `<div class="imd-row"><span class="imd-rank">#${c.rank}</span><span class="imd-city">${esc(c.city)}</span><div class="imd-track"><div class="imd-fill${c.city === "Singapore" ? " imd-fill--sg" : ""}" style="width:${barW}%"></div></div><span class="imd-rating ${c.rating === "A" ? "imd-rating--a" : c.rating === "B" ? "imd-rating--b" : "imd-rating--c"}">${esc(c.rating)}</span><span class="ig-traj-delta ${dCls}">${dStr}</span></div>`;
@@ -1121,7 +1171,7 @@ function renderInsights() {
       acc += h;
       return `<div class="stack-seg" style="${style}" title="${esc(s.fa)}: ${h}% (${y})"></div>`;
     }).join("");
-    const labels = segs.filter((s) => s.pct >= 10).map((s) => `<span style="color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4)">${s.pct}%</span>`).join("");
+    const labels = segs.filter((s) => s.pct >= 10).map((s) => `<span style="color:var(--palette-paper);text-shadow:0 1px 2px rgba(0,0,0,.4)">${s.pct}%</span>`).join("");
     return `<div class="stack-col"><div class="stack-bars">${divs}</div><span class="stack-year">${y}</span></div>`;
   }).join("");
   const focusLegend = FOCUS_ORDER.map((fa) => `<span class="ig-spec-leg"><span style="background:${FOCUS_COLORS[fa]}"></span>${esc(fa)}</span>`).join("");
@@ -1210,8 +1260,8 @@ function renderInsights() {
   // ── What ASCN measures vs doesn't — the 4-vs-8 ledger ─────────────────────
   // Source: state.K.me_gap (ascn_dim05.md, ascn_insight.md Insight 1)
   const meGap = state.K.me_gap;
-  const trackedLi = meGap.tracked.map((t) => `<li class="mel-item"><span class="mel-mark mel-yes">✓</span>${esc(t)}</li>`).join("");
-  const missingLi = meGap.not_tracked.map((t) => `<li class="mel-item"><span class="mel-mark mel-no">✗</span>${esc(t)}</li>`).join("");
+  const trackedLi = meGap.tracked.map((t) => `<li class="mel-item"><span class="mark mark-yes">Yes</span> ${esc(t)}</li>`).join("");
+  const missingLi = meGap.not_tracked.map((t) => `<li class="mel-item"><span class="mark mark-no">No</span> ${esc(t)}</li>`).join("");
   $("#ig-me-ledger").innerHTML = `
     <div class="mel-split">
       <div class="mel-col mel-col--yes"><p class="mel-head"><strong>4</strong> things ASCN tracks</p><ul class="mel-list">${trackedLi}</ul></div>
@@ -1374,6 +1424,24 @@ function downloadBlob(name, content, type) {
 /* ---------------- Boot ---------------- */
 function wireNav() {
   document.addEventListener("click", (e) => {
+    const doorBtn = e.target.closest(".nav-door-btn");
+    if (doorBtn) {
+      const door = doorBtn.closest(".nav-door");
+      const open = !door.classList.contains("is-open");
+      $$(".nav-door").forEach((other) => {
+        other.classList.remove("is-open");
+        other.querySelector(".nav-door-btn")?.setAttribute("aria-expanded", "false");
+      });
+      door.classList.toggle("is-open", open);
+      doorBtn.setAttribute("aria-expanded", String(open));
+      return;
+    }
+    if (e.target.closest("#nav-menu")) {
+      const nav = document.getElementById("tab-nav");
+      const open = nav.classList.toggle("is-open");
+      e.target.closest("#nav-menu").setAttribute("aria-expanded", String(open));
+      return;
+    }
     const link = e.target.closest("[data-tab]");
     if (!link) return;
     e.preventDefault();
@@ -1519,8 +1587,8 @@ function renderContacts() {
     <div class="contacts-wrap">
       <div class="contacts-header">
         <p class="label">Network Contacts</p>
-        <h2>Click any city to see the NR and CSCO.</h2>
-        <p class="lede">38 cities, 11 countries. Each marker shows the National Representative at the top, followed by the Chief Smart City Officer for that city. Data: April 2026 ASCN contact list.</p>
+        <h1>Every city has a ministry and a person.</h1>
+        <p class="lede">38 cities, 11 countries. A marker names the National Representative, then the Chief Smart City Officer. April 2026 ASCN contact list.</p>
         <a class="text-button" href="docs/11_ASCN_Contact_List_2026.pdf" target="_blank">Official contact list (Jan 2026 PDF)</a>
       </div>
 
@@ -1575,8 +1643,8 @@ function ensureContactsMap(popupFn) {
       return nrs[c] || null;
     })(city.country);
     const m = L.circleMarker([city.lat, city.lon], {
-      radius: 7, color: "#fff", weight: 1.5,
-      fillColor: nr ? "#946012" : "#183a5a", fillOpacity: 0.9,
+      radius: 7, color: "var(--palette-paper)", weight: 1.5,
+      fillColor: nr ? "var(--palette-chord)" : "var(--palette-deep)", fillOpacity: 0.9,
     });
     m.bindTooltip(`<b>${esc(city.name)}</b> · ${esc(city.country)}`, { direction: "top", offset: [0, -4] });
     m.bindPopup(popupFn(city), { maxWidth: 280, maxHeight: 310, className: "cpop-wrap", autoPan: false });
@@ -1827,17 +1895,16 @@ function renderResearch() {
       themes: ["capacity", "measurement", "rights"] },
   ];
 
-  const typeLabel = { journal: "PEER REVIEWED", official: "OFFICIAL DOC" };
+  const typeLabel = { journal: "Peer reviewed", official: "Official document" };
 
   el.innerHTML = `
 <div class="section-head">
-  <p class="label">Research</p>
-  <h2>What the scholarship says — and what it misses</h2>
+  <h1>The papers describe the network. Few of them use the rows.</h1>
   <p class="lede">A synthesis of fourteen peer-reviewed papers and official documents on ASCN. Eight structural themes, an insider FAQ, and a full bibliography — written by a participant who has attended every annual meeting since 2018.</p>
 </div>
 
 <div class="research-section">
-  <p class="research-section-label label">SEVEN THEMES FROM THE LITERATURE</p>
+  <p class="research-section-label label">Seven themes from the literature</p>
   <div class="research-theme-grid">
     ${THEMES.map(t => `<article class="research-theme">
       <div class="research-theme-top">
@@ -1852,7 +1919,7 @@ function renderResearch() {
 </div>
 
 <div class="research-section">
-  <p class="research-section-label label">FREQUENTLY ASKED</p>
+  <p class="research-section-label label">Frequently asked</p>
   <div class="faq-list">
     ${FAQ.map(item => `<details class="faq-item">
       <summary class="faq-q">${item.q}</summary>
@@ -1880,7 +1947,7 @@ function renderResearch() {
 </div>
 
 <div class="research-section">
-  <p class="research-section-label label">ACADEMIC GEOGRAPHY</p>
+  <p class="research-section-label label">Academic geography</p>
   <div class="geo-grid">
     <div class="geo-col">
       <p class="geo-h">Languages of scholarship</p>
@@ -1901,28 +1968,28 @@ function renderResearch() {
 </div>
 
 <div class="research-section">
-  <p class="research-section-label label">INSIDER PERSPECTIVE</p>
+  <p class="research-section-label label">Insider perspective</p>
   <div class="insider-block">
     <p class="insider-lede">The scholarship on ASCN has grown since the network launched. Eight papers and documents now constitute a body of evidence. Most is written by people who study the network from outside. Four things the literature gets right, and one thing it consistently misses:</p>
     <div class="insider-grid">
       <div class="insider-item insider-item--yes">
-        <span class="insider-mark">✓</span>
+        <span class="mark mark-yes">Holds</span>
         <div><strong>The knowledge transfer problem is real.</strong> Tan et al. (2021) are correct that the network's information sharing is shallow. The annual meeting is where this is most visible: officials leave knowing what Phnom Penh is doing. They do not leave with a system to use it.</div>
       </div>
       <div class="insider-item insider-item--yes">
-        <span class="insider-mark">✓</span>
+        <span class="mark mark-yes">Holds</span>
         <div><strong>The capacity gap is structural.</strong> A framework that treats Singapore and Cambodia as starting from the same place has miscalibrated its baseline. Crumpton et al. (2021) are right to flag it. The framework's flexibility is not a flaw — it is how differentiation survives the non-interference principle.</div>
       </div>
       <div class="insider-item insider-item--yes">
-        <span class="insider-mark">✓</span>
+        <span class="mark mark-yes">Holds</span>
         <div><strong>The measurement gap matters.</strong> 134 projects documented. We do not know what percentage improved daily life for a resident. Hollands (2008) described this problem before ASCN existed. It persists.</div>
       </div>
       <div class="insider-item insider-item--yes">
-        <span class="insider-mark">✓</span>
+        <span class="mark mark-yes">Holds</span>
         <div><strong>Indonesia's pivot was deliberate.</strong> The shift from framework to bankable projects under Indonesia's shepherdship was a strategic decision, not natural evolution. Prayogo &amp; Juned (2025) document it correctly.</div>
       </div>
       <div class="insider-item insider-item--no">
-        <span class="insider-mark">✗</span>
+        <span class="mark mark-no">Misses</span>
         <div><strong>What the literature misses: it does not use the project data.</strong> Kong &amp; Woods (2021), the most cited critical paper on ASCN, does not engage the four M&E cycles of city-level project documentation. A critique of what the network builds that does not look at what the network builds is incomplete. That is what this platform exists to correct.</div>
       </div>
     </div>
@@ -1940,36 +2007,36 @@ function renderEssay() {
   /* ---- Governance diagram ---- */
   const govDiagram = `<figure class="essay-diagram" aria-label="ASCN governance structure">
   <svg viewBox="0 0 680 256" xmlns="http://www.w3.org/2000/svg">
-    <rect x="240" y="10" width="200" height="44" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
-    <text x="340" y="28" text-anchor="middle" font-size="11" font-family="'Source Sans 3',sans-serif" font-weight="700" fill="#1a1a1a">ASEAN SECRETARIAT</text>
-    <text x="340" y="43" text-anchor="middle" font-size="9.5" font-family="'Source Sans 3',sans-serif" fill="#666">Jakarta · Network coordinator</text>
-    <line x1="340" y1="54" x2="340" y2="80" stroke="#1a1a1a" stroke-width="1"/>
-    <line x1="340" y1="80" x2="170" y2="80" stroke="#1a1a1a" stroke-width="1"/>
-    <line x1="340" y1="80" x2="510" y2="80" stroke="#1a1a1a" stroke-width="1"/>
-    <line x1="170" y1="80" x2="170" y2="96" stroke="#1a1a1a" stroke-width="1"/>
-    <line x1="510" y1="80" x2="510" y2="96" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="80" y="96" width="180" height="52" fill="#fef9ed" stroke="#946012" stroke-width="1.5"/>
-    <text x="170" y="114" text-anchor="middle" font-size="9" font-family="'Source Sans 3',sans-serif" font-weight="700" letter-spacing="0.07em" fill="#92400e">SHEPHERD 2023–2027</text>
-    <text x="170" y="129" text-anchor="middle" font-size="11" font-family="'Source Sans 3',sans-serif" font-weight="700" fill="#1a1a1a">Indonesia</text>
-    <text x="170" y="142" text-anchor="middle" font-size="9.5" font-family="'Source Sans 3',sans-serif" fill="#666">Institutional continuity</text>
-    <rect x="420" y="96" width="180" height="52" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
-    <text x="510" y="114" text-anchor="middle" font-size="9" font-family="'Source Sans 3',sans-serif" font-weight="700" letter-spacing="0.07em" fill="#666">ANNUAL CHAIR</text>
-    <text x="510" y="129" text-anchor="middle" font-size="11" font-family="'Source Sans 3',sans-serif" font-weight="700" fill="#1a1a1a">Malaysia 2025</text>
-    <text x="510" y="142" text-anchor="middle" font-size="9.5" font-family="'Source Sans 3',sans-serif" fill="#666">Rotates annually</text>
-    <line x1="340" y1="148" x2="340" y2="172" stroke="#ccc" stroke-width="1" stroke-dasharray="4 3"/>
-    <text x="340" y="188" text-anchor="middle" font-size="9.5" font-family="'Source Sans 3',sans-serif" font-weight="700" letter-spacing="0.06em" fill="#1a1a1a">10 MEMBER STATES · 38 CITIES · 134 PROJECTS</text>
-    <line x1="30" y1="200" x2="650" y2="200" stroke="#e5e5e5" stroke-width="1"/>
-    <text x="50" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#666">Brunei</text>
-    <text x="104" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#666">Cambodia</text>
-    <text x="175" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#666">Indonesia</text>
-    <text x="248" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#666">Lao PDR</text>
-    <text x="305" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#666">Malaysia</text>
-    <text x="365" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#666">Myanmar</text>
-    <text x="418" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#666">Philippines</text>
-    <text x="492" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#666">Singapore</text>
-    <text x="554" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#666">Thailand</text>
-    <text x="610" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#666">Viet Nam</text>
-    <text x="340" y="244" text-anchor="middle" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#999">Plus Timor-Leste (newest member, city: Dili). Source: ASCN M&amp;E Reports 2022–2025.</text>
+    <rect x="240" y="10" width="200" height="44" fill="none" stroke="var(--palette-ink)" stroke-width="1.5"/>
+    <text x="340" y="28" text-anchor="middle" font-size="11" font-family="'Source Sans 3',sans-serif" font-weight="700" fill="var(--palette-ink)">ASEAN SECRETARIAT</text>
+    <text x="340" y="43" text-anchor="middle" font-size="9.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">Jakarta · Network coordinator</text>
+    <line x1="340" y1="54" x2="340" y2="80" stroke="var(--palette-ink)" stroke-width="1"/>
+    <line x1="340" y1="80" x2="170" y2="80" stroke="var(--palette-ink)" stroke-width="1"/>
+    <line x1="340" y1="80" x2="510" y2="80" stroke="var(--palette-ink)" stroke-width="1"/>
+    <line x1="170" y1="80" x2="170" y2="96" stroke="var(--palette-ink)" stroke-width="1"/>
+    <line x1="510" y1="80" x2="510" y2="96" stroke="var(--palette-ink)" stroke-width="1"/>
+    <rect x="80" y="96" width="180" height="52" fill="var(--palette-paper)" stroke="var(--palette-chord)" stroke-width="1.5"/>
+    <text x="170" y="114" text-anchor="middle" font-size="9" font-family="'Source Sans 3',sans-serif" font-weight="700" letter-spacing="0.07em" fill="var(--palette-chord)">SHEPHERD 2023–2027</text>
+    <text x="170" y="129" text-anchor="middle" font-size="11" font-family="'Source Sans 3',sans-serif" font-weight="700" fill="var(--palette-ink)">Indonesia</text>
+    <text x="170" y="142" text-anchor="middle" font-size="9.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">Institutional continuity</text>
+    <rect x="420" y="96" width="180" height="52" fill="none" stroke="var(--palette-ink)" stroke-width="1.5"/>
+    <text x="510" y="114" text-anchor="middle" font-size="9" font-family="'Source Sans 3',sans-serif" font-weight="700" letter-spacing="0.07em" fill="var(--palette-deep)">ANNUAL CHAIR</text>
+    <text x="510" y="129" text-anchor="middle" font-size="11" font-family="'Source Sans 3',sans-serif" font-weight="700" fill="var(--palette-ink)">Malaysia 2025</text>
+    <text x="510" y="142" text-anchor="middle" font-size="9.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">Rotates annually</text>
+    <line x1="340" y1="148" x2="340" y2="172" stroke="var(--palette-deep)" stroke-width="1" stroke-dasharray="4 3"/>
+    <text x="340" y="188" text-anchor="middle" font-size="9.5" font-family="'Source Sans 3',sans-serif" font-weight="700" letter-spacing="0.06em" fill="var(--palette-ink)">10 MEMBER STATES · 38 CITIES · 134 PROJECTS</text>
+    <line x1="30" y1="200" x2="650" y2="200" stroke="var(--palette-deep)" stroke-width="1"/>
+    <text x="50" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">Brunei</text>
+    <text x="104" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">Cambodia</text>
+    <text x="175" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">Indonesia</text>
+    <text x="248" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">Lao PDR</text>
+    <text x="305" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">Malaysia</text>
+    <text x="365" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">Myanmar</text>
+    <text x="418" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">Philippines</text>
+    <text x="492" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">Singapore</text>
+    <text x="554" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">Thailand</text>
+    <text x="610" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">Viet Nam</text>
+    <text x="340" y="244" text-anchor="middle" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">Plus Timor-Leste (newest member, city: Dili). Source: ASCN M&amp;E Reports 2022–2025.</text>
   </svg>
   <figcaption>ASCN governance: the Secretariat coordinates, the Shepherd holds institutional memory, the Chair rotates annually.</figcaption>
 </figure>`;
@@ -1977,16 +2044,16 @@ function renderEssay() {
   /* ---- Focus area bar chart ---- */
   const focusDiagram = `<figure class="essay-diagram" aria-label="ASCN project distribution by focus area">
   <svg viewBox="0 0 580 248" xmlns="http://www.w3.org/2000/svg">
-    <text x="0" y="16" font-size="9.5" font-family="'Source Sans 3',sans-serif" font-weight="700" letter-spacing="0.07em" fill="#1a1a1a">FOCUS AREA DISTRIBUTION — 134 PROJECTS · M&amp;E CYCLE 4 (2025)</text>
-    <text x="0" y="32" font-size="9" font-family="'Source Sans 3',sans-serif" fill="#888">Approximate shares derived from ASCN M&amp;E reporting.</text>
+    <text x="0" y="16" font-size="9.5" font-family="'Source Sans 3',sans-serif" font-weight="700" letter-spacing="0.07em" fill="var(--palette-ink)">FOCUS AREA DISTRIBUTION — 134 PROJECTS · M&amp;E CYCLE 4 (2025)</text>
+    <text x="0" y="32" font-size="9" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">Approximate shares derived from ASCN M&amp;E reporting.</text>
     ${[["Smart Mobility",28,0],["Smart Living",26,28],["Smart Environment",22,56],["Smart Governance",18,84],["Smart Economy",12,112],["Smart People",8,140]].map(([label,pct,y])=>{
       const barW = Math.round(pct*4.0);
       const hi = pct>=26;
-      return `<text x="0" y="${52+y+11}" font-size="9.5" font-family="'Source Sans 3',sans-serif" fill="#444">${label}</text>
-      <rect x="142" y="${52+y}" width="${barW}" height="17" fill="${hi?"#946012":"#1a1a1a"}" opacity="${hi?1:0.75}"/>
-      <text x="${142+barW+6}" y="${52+y+12}" font-size="9" font-family="'Source Sans 3',sans-serif" fill="#888">${pct}%</text>`;
+      return `<text x="0" y="${52+y+11}" font-size="9.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">${label}</text>
+      <rect x="142" y="${52+y}" width="${barW}" height="17" fill="${hi?"var(--palette-chord)":"var(--palette-ink)"}" opacity="${hi?1:0.75}"/>
+      <text x="${142+barW+6}" y="${52+y+12}" font-size="9" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">${pct}%</text>`;
     }).join("")}
-    <text x="0" y="226" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#999">Smart Mobility + Smart Living account for more than half of documented projects. Smart Governance and Smart People remain underrepresented relative to the framework's stated priorities.</text>
+    <text x="0" y="226" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">Smart Mobility + Smart Living account for more than half of documented projects. Smart Governance and Smart People remain underrepresented relative to the framework's stated priorities.</text>
   </svg>
   <figcaption>Project distribution reflects city demand, not network design. Mobility and living services are visible and fundable; governance-strengthening work — which underpins everything else — is harder to count and harder to fund.</figcaption>
 </figure>`;
@@ -1994,8 +2061,8 @@ function renderEssay() {
   /* ---- Timeline diagram ---- */
   const timelineDiagram = `<figure class="essay-diagram" aria-label="ASCN milestones 2018–2025">
   <svg viewBox="0 0 660 136" xmlns="http://www.w3.org/2000/svg">
-    <text x="0" y="16" font-size="9.5" font-family="'Source Sans 3',sans-serif" font-weight="700" letter-spacing="0.07em" fill="#1a1a1a">ASCN MILESTONES 2018–2025</text>
-    <line x1="20" y1="64" x2="640" y2="64" stroke="#1a1a1a" stroke-width="1.5"/>
+    <text x="0" y="16" font-size="9.5" font-family="'Source Sans 3',sans-serif" font-weight="700" letter-spacing="0.07em" fill="var(--palette-ink)">ASCN MILESTONES 2018–2025</text>
+    <line x1="20" y1="64" x2="640" y2="64" stroke="var(--palette-ink)" stroke-width="1.5"/>
     ${[
       [20,"2018","Founded\n26 cities"],
       [112,"2019","Thailand\nchairs"],
@@ -2006,14 +2073,14 @@ function renderEssay() {
       [572,"2024","38 cities\nLao chairs"],
     ].map(([x,yr,note])=>{
       const hi = yr==="2018"||yr==="2023";
-      return `<circle cx="${x}" cy="64" r="${hi?6:4}" fill="${hi?"#946012":"#1a1a1a"}"/>
-      <text x="${x}" y="80" text-anchor="middle" font-size="8.5" font-family="'Source Sans 3',sans-serif" font-weight="700" fill="#1a1a1a">${yr}</text>
-      ${note.split("\n").map((l,i)=>`<text x="${x}" y="${92+i*12}" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="#666">${l}</text>`).join("")}`;
+      return `<circle cx="${x}" cy="64" r="${hi?6:4}" fill="${hi?"var(--palette-chord)":"var(--palette-ink)"}"/>
+      <text x="${x}" y="80" text-anchor="middle" font-size="8.5" font-family="'Source Sans 3',sans-serif" font-weight="700" fill="var(--palette-ink)">${yr}</text>
+      ${note.split("\n").map((l,i)=>`<text x="${x}" y="${92+i*12}" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">${l}</text>`).join("")}`;
     }).join("")}
-    <text x="640" y="52" text-anchor="end" font-size="8" font-family="'Source Sans 3',sans-serif" fill="#946012" font-weight="700">2025 →</text>
-    <text x="640" y="80" text-anchor="end" font-size="8.5" font-family="'Source Sans 3',sans-serif" font-weight="700" fill="#1a1a1a">Malaysia</text>
-    <text x="640" y="92" text-anchor="end" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="#666">chairs</text>
-    <text x="0" y="124" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#999">Four M&amp;E cycles. Eight annual meetings. Two Shepherds. The measurement framework has not kept pace with the network's growth.</text>
+    <text x="640" y="52" text-anchor="end" font-size="8" font-family="'Source Sans 3',sans-serif" fill="var(--palette-chord)" font-weight="700">2025 →</text>
+    <text x="640" y="80" text-anchor="end" font-size="8.5" font-family="'Source Sans 3',sans-serif" font-weight="700" fill="var(--palette-ink)">Malaysia</text>
+    <text x="640" y="92" text-anchor="end" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">chairs</text>
+    <text x="0" y="124" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">Four M&amp;E cycles. Eight annual meetings. Two Shepherds. The measurement framework has not kept pace with the network's growth.</text>
   </svg>
   <figcaption>Seven years of meetings, partnerships, and reports. The network has grown steadily; the accountability architecture has not.</figcaption>
 </figure>`;
@@ -2022,44 +2089,44 @@ function renderEssay() {
   const illus1_REMOVED = `<figure class="essay-illus-UNUSED">
   <svg viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg">
     <!-- Buildings -->
-    <rect x="0" y="80" width="58" height="110" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
-    <rect x="8" y="92" width="12" height="12" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="26" y="92" width="12" height="12" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="8" y="112" width="12" height="12" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="26" y="112" width="12" height="12" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="66" y="100" width="48" height="90" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
-    <rect x="122" y="55" width="68" height="135" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
-    <rect x="132" y="68" width="14" height="14" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="152" y="68" width="14" height="14" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="132" y="90" width="14" height="14" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="152" y="90" width="14" height="14" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="132" y="112" width="14" height="14" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="152" y="112" width="14" height="14" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="330" y="65" width="60" height="125" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
-    <rect x="340" y="78" width="12" height="12" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="358" y="78" width="12" height="12" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="340" y="98" width="12" height="12" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="358" y="98" width="12" height="12" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <line x1="0" y1="190" x2="400" y2="190" stroke="#1a1a1a" stroke-width="1.5"/>
+    <rect x="0" y="80" width="58" height="110" fill="none" stroke="var(--palette-ink)" stroke-width="1.5"/>
+    <rect x="8" y="92" width="12" height="12" fill="none" stroke="var(--palette-ink)" stroke-width="1"/>
+    <rect x="26" y="92" width="12" height="12" fill="none" stroke="var(--palette-ink)" stroke-width="1"/>
+    <rect x="8" y="112" width="12" height="12" fill="none" stroke="var(--palette-ink)" stroke-width="1"/>
+    <rect x="26" y="112" width="12" height="12" fill="none" stroke="var(--palette-ink)" stroke-width="1"/>
+    <rect x="66" y="100" width="48" height="90" fill="none" stroke="var(--palette-ink)" stroke-width="1.5"/>
+    <rect x="122" y="55" width="68" height="135" fill="none" stroke="var(--palette-ink)" stroke-width="1.5"/>
+    <rect x="132" y="68" width="14" height="14" fill="none" stroke="var(--palette-ink)" stroke-width="1"/>
+    <rect x="152" y="68" width="14" height="14" fill="none" stroke="var(--palette-ink)" stroke-width="1"/>
+    <rect x="132" y="90" width="14" height="14" fill="none" stroke="var(--palette-ink)" stroke-width="1"/>
+    <rect x="152" y="90" width="14" height="14" fill="none" stroke="var(--palette-ink)" stroke-width="1"/>
+    <rect x="132" y="112" width="14" height="14" fill="none" stroke="var(--palette-ink)" stroke-width="1"/>
+    <rect x="152" y="112" width="14" height="14" fill="none" stroke="var(--palette-ink)" stroke-width="1"/>
+    <rect x="330" y="65" width="60" height="125" fill="none" stroke="var(--palette-ink)" stroke-width="1.5"/>
+    <rect x="340" y="78" width="12" height="12" fill="none" stroke="var(--palette-ink)" stroke-width="1"/>
+    <rect x="358" y="78" width="12" height="12" fill="none" stroke="var(--palette-ink)" stroke-width="1"/>
+    <rect x="340" y="98" width="12" height="12" fill="none" stroke="var(--palette-ink)" stroke-width="1"/>
+    <rect x="358" y="98" width="12" height="12" fill="none" stroke="var(--palette-ink)" stroke-width="1"/>
+    <line x1="0" y1="190" x2="400" y2="190" stroke="var(--palette-ink)" stroke-width="1.5"/>
     <!-- Figure -->
-    <circle cx="250" cy="112" r="13" fill="white" stroke="#1a1a1a" stroke-width="2"/>
-    <circle cx="246" cy="111" r="1.5" fill="#1a1a1a"/>
-    <circle cx="254" cy="111" r="1.5" fill="#1a1a1a"/>
-    <path d="M246 116 Q250 119 254 116" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="250" y1="125" x2="250" y2="158" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="250" y1="134" x2="270" y2="144" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <rect x="270" y="139" width="17" height="22" rx="2" fill="white" stroke="#1a1a1a" stroke-width="1.5"/>
-    <rect x="273" y="143" width="11" height="13" fill="#946012" opacity="0.85"/>
-    <line x1="250" y1="134" x2="232" y2="147" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <line x1="250" y1="158" x2="242" y2="186" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <line x1="250" y1="158" x2="258" y2="186" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="250" cy="112" r="13" fill="var(--palette-paper)" stroke="var(--palette-ink)" stroke-width="2"/>
+    <circle cx="246" cy="111" r="1.5" fill="var(--palette-ink)"/>
+    <circle cx="254" cy="111" r="1.5" fill="var(--palette-ink)"/>
+    <path d="M246 116 Q250 119 254 116" fill="none" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="250" y1="125" x2="250" y2="158" stroke="var(--palette-ink)" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="250" y1="134" x2="270" y2="144" stroke="var(--palette-ink)" stroke-width="2" stroke-linecap="round"/>
+    <rect x="270" y="139" width="17" height="22" rx="2" fill="var(--palette-paper)" stroke="var(--palette-ink)" stroke-width="1.5"/>
+    <rect x="273" y="143" width="11" height="13" fill="var(--palette-chord)" opacity="0.85"/>
+    <line x1="250" y1="134" x2="232" y2="147" stroke="var(--palette-ink)" stroke-width="2" stroke-linecap="round"/>
+    <line x1="250" y1="158" x2="242" y2="186" stroke="var(--palette-ink)" stroke-width="2" stroke-linecap="round"/>
+    <line x1="250" y1="158" x2="258" y2="186" stroke="var(--palette-ink)" stroke-width="2" stroke-linecap="round"/>
     <!-- Data lines -->
-    <line x1="195" y1="82" x2="272" y2="146" stroke="#946012" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
-    <circle cx="195" cy="82" r="3" fill="#946012" opacity="0.7"/>
-    <line x1="159" y1="96" x2="272" y2="148" stroke="#1a1a1a" stroke-width="0.8" stroke-dasharray="4 3" opacity="0.35"/>
-    <circle cx="159" cy="96" r="2.5" fill="#1a1a1a" opacity="0.35"/>
-    <line x1="334" y1="90" x2="288" y2="148" stroke="#1a1a1a" stroke-width="0.8" stroke-dasharray="4 3" opacity="0.35"/>
-    <circle cx="334" cy="90" r="2.5" fill="#1a1a1a" opacity="0.35"/>
+    <line x1="195" y1="82" x2="272" y2="146" stroke="var(--palette-chord)" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+    <circle cx="195" cy="82" r="3" fill="var(--palette-chord)" opacity="0.7"/>
+    <line x1="159" y1="96" x2="272" y2="148" stroke="var(--palette-ink)" stroke-width="0.8" stroke-dasharray="4 3" opacity="0.35"/>
+    <circle cx="159" cy="96" r="2.5" fill="var(--palette-ink)" opacity="0.35"/>
+    <line x1="334" y1="90" x2="288" y2="148" stroke="var(--palette-ink)" stroke-width="0.8" stroke-dasharray="4 3" opacity="0.35"/>
+    <circle cx="334" cy="90" r="2.5" fill="var(--palette-ink)" opacity="0.35"/>
   </svg>
   <figcaption>The city is already producing data. The question is whether the people inside it can read that data — and act on it.</figcaption>
 </figure>`;
@@ -2067,90 +2134,84 @@ function renderEssay() {
   const illus2_REMOVED = `<figure class="essay-illus-UNUSED">
   <svg viewBox="0 0 500 190" xmlns="http://www.w3.org/2000/svg">
     <!-- Connection lines -->
-    <line x1="75" y1="72" x2="178" y2="62" stroke="#e5e5e5" stroke-width="1"/>
-    <line x1="75" y1="72" x2="248" y2="84" stroke="#e5e5e5" stroke-width="1"/>
-    <line x1="178" y1="62" x2="248" y2="84" stroke="#e5e5e5" stroke-width="1"/>
-    <line x1="248" y1="84" x2="318" y2="62" stroke="#e5e5e5" stroke-width="1"/>
-    <line x1="248" y1="84" x2="418" y2="72" stroke="#e5e5e5" stroke-width="1"/>
-    <line x1="318" y1="62" x2="418" y2="72" stroke="#e5e5e5" stroke-width="1"/>
-    <line x1="128" y1="128" x2="248" y2="84" stroke="#e5e5e5" stroke-width="1"/>
-    <line x1="368" y1="128" x2="248" y2="84" stroke="#e5e5e5" stroke-width="1"/>
-    <line x1="128" y1="128" x2="75" y2="72" stroke="#e5e5e5" stroke-width="1"/>
-    <line x1="368" y1="128" x2="418" y2="72" stroke="#e5e5e5" stroke-width="1"/>
-    <line x1="248" y1="84" x2="75" y2="72" stroke="#946012" stroke-width="1.5" opacity="0.5"/>
-    <line x1="248" y1="84" x2="418" y2="72" stroke="#946012" stroke-width="1.5" opacity="0.5"/>
+    <line x1="75" y1="72" x2="178" y2="62" stroke="var(--palette-deep)" stroke-width="1"/>
+    <line x1="75" y1="72" x2="248" y2="84" stroke="var(--palette-deep)" stroke-width="1"/>
+    <line x1="178" y1="62" x2="248" y2="84" stroke="var(--palette-deep)" stroke-width="1"/>
+    <line x1="248" y1="84" x2="318" y2="62" stroke="var(--palette-deep)" stroke-width="1"/>
+    <line x1="248" y1="84" x2="418" y2="72" stroke="var(--palette-deep)" stroke-width="1"/>
+    <line x1="318" y1="62" x2="418" y2="72" stroke="var(--palette-deep)" stroke-width="1"/>
+    <line x1="128" y1="128" x2="248" y2="84" stroke="var(--palette-deep)" stroke-width="1"/>
+    <line x1="368" y1="128" x2="248" y2="84" stroke="var(--palette-deep)" stroke-width="1"/>
+    <line x1="128" y1="128" x2="75" y2="72" stroke="var(--palette-deep)" stroke-width="1"/>
+    <line x1="368" y1="128" x2="418" y2="72" stroke="var(--palette-deep)" stroke-width="1"/>
+    <line x1="248" y1="84" x2="75" y2="72" stroke="var(--palette-chord)" stroke-width="1.5" opacity="0.5"/>
+    <line x1="248" y1="84" x2="418" y2="72" stroke="var(--palette-chord)" stroke-width="1.5" opacity="0.5"/>
     <!-- Helper macro: figure(cx,cy,label) — defined inline per figure -->
     <!-- BN -->
-    <circle cx="75" cy="60" r="10" fill="white" stroke="#1a1a1a" stroke-width="1.5"/>
-    <line x1="75" y1="70" x2="75" y2="94" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <line x1="75" y1="78" x2="65" y2="88" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="75" y1="78" x2="85" y2="88" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="75" y1="94" x2="69" y2="110" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="75" y1="94" x2="81" y2="110" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <text x="75" y="126" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="#888">Brunei</text>
+    <circle cx="75" cy="60" r="10" fill="var(--palette-paper)" stroke="var(--palette-ink)" stroke-width="1.5"/>
+    <line x1="75" y1="70" x2="75" y2="94" stroke="var(--palette-ink)" stroke-width="2" stroke-linecap="round"/>
+    <line x1="75" y1="78" x2="65" y2="88" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="75" y1="78" x2="85" y2="88" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="75" y1="94" x2="69" y2="110" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="75" y1="94" x2="81" y2="110" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <text x="75" y="126" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">Brunei</text>
     <!-- KH -->
-    <circle cx="178" cy="50" r="10" fill="white" stroke="#1a1a1a" stroke-width="1.5"/>
-    <line x1="178" y1="60" x2="178" y2="84" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <line x1="178" y1="68" x2="168" y2="78" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="178" y1="68" x2="188" y2="78" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="178" y1="84" x2="172" y2="100" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="178" y1="84" x2="184" y2="100" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <text x="178" y="116" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="#888">Cambodia</text>
+    <circle cx="178" cy="50" r="10" fill="var(--palette-paper)" stroke="var(--palette-ink)" stroke-width="1.5"/>
+    <line x1="178" y1="60" x2="178" y2="84" stroke="var(--palette-ink)" stroke-width="2" stroke-linecap="round"/>
+    <line x1="178" y1="68" x2="168" y2="78" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="178" y1="68" x2="188" y2="78" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="178" y1="84" x2="172" y2="100" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="178" y1="84" x2="184" y2="100" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <text x="178" y="116" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">Cambodia</text>
     <!-- ID lower left -->
-    <circle cx="128" cy="116" r="10" fill="white" stroke="#1a1a1a" stroke-width="1.5"/>
-    <line x1="128" y1="126" x2="128" y2="150" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <line x1="128" y1="134" x2="118" y2="144" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="128" y1="134" x2="138" y2="144" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="128" y1="150" x2="122" y2="166" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="128" y1="150" x2="134" y2="166" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <text x="128" y="182" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="#888">Indonesia</text>
+    <circle cx="128" cy="116" r="10" fill="var(--palette-paper)" stroke="var(--palette-ink)" stroke-width="1.5"/>
+    <line x1="128" y1="126" x2="128" y2="150" stroke="var(--palette-ink)" stroke-width="2" stroke-linecap="round"/>
+    <line x1="128" y1="134" x2="118" y2="144" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="128" y1="134" x2="138" y2="144" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="128" y1="150" x2="122" y2="166" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="128" y1="150" x2="134" y2="166" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <text x="128" y="182" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">Indonesia</text>
     <!-- Center: ASEAN Secretariat -->
-    <circle cx="248" cy="68" r="13" fill="#fef9ed" stroke="#946012" stroke-width="2"/>
-    <line x1="248" y1="81" x2="248" y2="108" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="248" y1="90" x2="236" y2="100" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <line x1="248" y1="90" x2="260" y2="100" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <line x1="248" y1="108" x2="241" y2="124" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <line x1="248" y1="108" x2="255" y2="124" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <text x="248" y="142" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="#b45309" font-weight="700">Secretariat</text>
+    <circle cx="248" cy="68" r="13" fill="var(--palette-paper)" stroke="var(--palette-chord)" stroke-width="2"/>
+    <line x1="248" y1="81" x2="248" y2="108" stroke="var(--palette-ink)" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="248" y1="90" x2="236" y2="100" stroke="var(--palette-ink)" stroke-width="2" stroke-linecap="round"/>
+    <line x1="248" y1="90" x2="260" y2="100" stroke="var(--palette-ink)" stroke-width="2" stroke-linecap="round"/>
+    <line x1="248" y1="108" x2="241" y2="124" stroke="var(--palette-ink)" stroke-width="2" stroke-linecap="round"/>
+    <line x1="248" y1="108" x2="255" y2="124" stroke="var(--palette-ink)" stroke-width="2" stroke-linecap="round"/>
+    <text x="248" y="142" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-chord)" font-weight="700">Secretariat</text>
     <!-- MY -->
-    <circle cx="318" cy="50" r="10" fill="white" stroke="#1a1a1a" stroke-width="1.5"/>
-    <line x1="318" y1="60" x2="318" y2="84" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <line x1="318" y1="68" x2="308" y2="78" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="318" y1="68" x2="328" y2="78" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="318" y1="84" x2="312" y2="100" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="318" y1="84" x2="324" y2="100" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <text x="318" y="116" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="#888">Malaysia</text>
+    <circle cx="318" cy="50" r="10" fill="var(--palette-paper)" stroke="var(--palette-ink)" stroke-width="1.5"/>
+    <line x1="318" y1="60" x2="318" y2="84" stroke="var(--palette-ink)" stroke-width="2" stroke-linecap="round"/>
+    <line x1="318" y1="68" x2="308" y2="78" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="318" y1="68" x2="328" y2="78" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="318" y1="84" x2="312" y2="100" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="318" y1="84" x2="324" y2="100" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <text x="318" y="116" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">Malaysia</text>
     <!-- PH lower right -->
-    <circle cx="368" cy="116" r="10" fill="white" stroke="#1a1a1a" stroke-width="1.5"/>
-    <line x1="368" y1="126" x2="368" y2="150" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <line x1="368" y1="134" x2="358" y2="144" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="368" y1="134" x2="378" y2="144" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="368" y1="150" x2="362" y2="166" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="368" y1="150" x2="374" y2="166" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <text x="368" y="182" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="#888">Philippines</text>
+    <circle cx="368" cy="116" r="10" fill="var(--palette-paper)" stroke="var(--palette-ink)" stroke-width="1.5"/>
+    <line x1="368" y1="126" x2="368" y2="150" stroke="var(--palette-ink)" stroke-width="2" stroke-linecap="round"/>
+    <line x1="368" y1="134" x2="358" y2="144" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="368" y1="134" x2="378" y2="144" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="368" y1="150" x2="362" y2="166" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="368" y1="150" x2="374" y2="166" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <text x="368" y="182" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">Philippines</text>
     <!-- TH+SG -->
-    <circle cx="418" cy="60" r="10" fill="white" stroke="#1a1a1a" stroke-width="1.5"/>
-    <line x1="418" y1="70" x2="418" y2="94" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <line x1="418" y1="78" x2="408" y2="88" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="418" y1="78" x2="428" y2="88" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="418" y1="94" x2="412" y2="110" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="418" y1="94" x2="424" y2="110" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <text x="418" y="126" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="#888">Thailand · SG</text>
+    <circle cx="418" cy="60" r="10" fill="var(--palette-paper)" stroke="var(--palette-ink)" stroke-width="1.5"/>
+    <line x1="418" y1="70" x2="418" y2="94" stroke="var(--palette-ink)" stroke-width="2" stroke-linecap="round"/>
+    <line x1="418" y1="78" x2="408" y2="88" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="418" y1="78" x2="428" y2="88" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="418" y1="94" x2="412" y2="110" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="418" y1="94" x2="424" y2="110" stroke="var(--palette-ink)" stroke-width="1.5" stroke-linecap="round"/>
+    <text x="418" y="126" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="var(--palette-deep)">Thailand · SG</text>
   </svg>
   <figcaption>ASCN connects ten member states through the ASEAN Secretariat. The network's value depends on what flows through those connections — not the connections themselves.</figcaption>
 </figure>`;
 
   const essay = `
 <div class="essay-header">
-  <div class="essay-series-bar">
-    <span class="essay-series-label">ASCN Essays</span>
-    <span class="essay-series-sep">·</span>
-    <span class="essay-series-num">No. 1</span>
-    <span class="essay-series-date">June 2026</span>
-    <span class="essay-series-time">20 min read</span>
-  </div>
+  <p class="essay-byline">Essay no. 1, June 2026. About twenty minutes. Independent observatory, built by Non Arkaraprasertkul.</p>
 
-  <h2 class="essay-title">The Network at Seven</h2>
+  <h1 class="essay-title">The network at seven</h1>
   <p class="essay-subtitle">What four M&amp;E cycles and thirty-eight cities reveal about Southeast Asia's most ambitious governance experiment</p>
 
   <details class="essay-bio">
@@ -2494,10 +2555,31 @@ function enhanceEssay() {
     if (!section.classList.contains("essay-footnotes")) toc.push({ slug, txt });
   });
   if (toc.length) {
-    const tocHtml = `<nav class="essay-toc" aria-label="Essay contents"><p class="essay-toc-h">Contents</p><ol>${toc.map((t) => `<li><button type="button" class="essay-toc-link" data-essay-target="${t.slug}">${esc(t.txt)}</button></li>`).join("")}</ol></nav>`;
+    const items = toc.map((t) => `<li><button type="button" data-essay-target="${t.slug}">${esc(t.txt)}</button></li>`).join("");
+    const tocHtml = `<nav class="essay-sections" aria-label="Essay sections"><details class="essay-sections-phone"><summary>Sections</summary><ol>${items}</ol></details><div class="essay-sections-desk"><p>Sections</p><ol>${items}</ol></div></nav>`;
     const body = content.querySelector(".essay-body");
-    (body || content).insertAdjacentHTML("beforebegin", tocHtml);
+    const read = document.createElement("div");
+    read.className = "essay-read";
+    read.innerHTML = tocHtml;
+    body.parentNode.insertBefore(read, body);
+    read.append(body);
+    toc.forEach((item, index) => {
+      const next = toc[index + 1];
+      if (!next) return;
+      const section = document.getElementById(item.slug);
+      if (!section) return;
+      const jump = document.createElement("p");
+      jump.className = "section-next";
+      jump.innerHTML = `<button type="button" data-essay-target="${next.slug}">Next: ${esc(next.txt)}</button>`;
+      section.append(jump);
+    });
   }
+
+  const carryOn = document.createElement("nav");
+  carryOn.className = "essay-continue";
+  carryOn.setAttribute("aria-label", "Continue");
+  carryOn.innerHTML = `<a href="#research" data-tab="research">Next: what the papers miss</a>`;
+  content.append(carryOn);
 
   // TOC clicks scroll directly — never via location.hash (the hashchange listener would reset the tab)
   content.addEventListener("click", (e) => {
@@ -2516,7 +2598,7 @@ function enhanceEssay() {
   toTop.className = "essay-totop";
   toTop.type = "button";
   toTop.setAttribute("aria-label", "Back to top");
-  toTop.textContent = "↑";
+  toTop.textContent = "Top";
   toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
   document.body.append(bar, toTop);
 

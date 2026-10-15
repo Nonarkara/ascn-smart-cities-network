@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { readFile } from "node:fs/promises";
+import { openTab } from "./open-tab.mjs";
 
 async function data(name) {
   return JSON.parse(await readFile(new URL(`../data/${name}`, import.meta.url)));
@@ -32,7 +33,7 @@ test("data-supplied executable links are neutralized and project exports are spr
   await page.route("**/data/ascn-v2-data.json*", (route) => route.fulfill({ json: engine }));
   await page.goto("/#overview");
   await expect(page.locator(".persp-link")).toHaveAttribute("href", "#");
-  await page.locator('#tab-nav [data-tab="projects"]').click();
+  await openTab(page, "projects");
   await expect(page.locator("#project-table")).toContainText("=HYPERLINK");
   const downloaded = page.waitForEvent("download");
   await page.locator("#export-csv").click();
@@ -80,18 +81,18 @@ test("all existing routes render with working maps, charts, filters, and no CSP 
   await page.goto("/#overview");
   await expect(page.locator("#kpi-grid .kpi")).toHaveCount(5);
   for (const tab of ["innovation", "record", "news", "history", "cities", "projects", "framework", "partners", "contacts", "insights", "data", "research", "essay"]) {
-    await page.locator(`#tab-nav [data-tab="${tab}"]`).click();
+    await openTab(page, tab);
     await expect(page.locator(`#view-${tab}`)).toBeVisible();
     expect(await page.locator(`#view-${tab}`).innerText()).not.toBe("");
   }
-  await page.locator('#tab-nav [data-tab="cities"]').click();
+  await openTab(page, "cities");
   await expect(page.locator("#sea-map .leaflet-interactive")).toHaveCount(38);
   await expect.poll(() => page.locator("#sea-map .leaflet-tile").evaluateAll((images) =>
     images.some((image) => image.complete && image.naturalWidth > 0)), { timeout: 15_000 }).toBe(true);
   await page.locator("#city-search").fill("Bangkok");
   await page.getByRole("button", { name: /Bangkok Thailand Joined/ }).click();
   await expect(page.locator("#city-detail h2")).toHaveText("Bangkok");
-  await page.locator('#tab-nav [data-tab="insights"]').click();
+  await openTab(page, "insights");
   await expect(page.locator("#ig-data-quality .dq-grid")).toBeVisible();
   expect(await page.locator("#view-insights svg").count()).toBeGreaterThan(0);
   expect(errors).toEqual([]);

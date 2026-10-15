@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { readFile } from "node:fs/promises";
+import { openTab } from "./open-tab.mjs";
 const ledger = JSON.parse(await readFile(new URL("../data/ascn-correspondence.json", import.meta.url)));
 
 test("ledger loads through validation, exposes all threads and filters cost candidates", async ({ page }) => {
@@ -24,7 +25,7 @@ test("bad ledger data degrades only correspondence", async ({ page }) => {
   await page.route("**/data/ascn-correspondence.json*", (route) => route.fulfill({ json: { threads: [] } }));
   await page.goto("/#record");
   await expect(page.locator("#corr-summary")).toContainText("not available");
-  await page.locator('#tab-nav [data-tab="cities"]').click();
+  await openTab(page, "cities");
   await expect(page.locator("#sea-map .leaflet-interactive")).toHaveCount(38);
 });
 
@@ -36,7 +37,7 @@ for (const width of [375, 768, 1280]) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.locator("#corr-ledger").scrollIntoViewIfNeeded();
     await page.screenshot({ path: testInfo.outputPath("ledger.png") });
-    await page.locator('#tab-nav [data-tab="overview"]').click();
+    await openTab(page, "overview");
     await expect(page.locator("#kpi-grid .kpi")).toHaveCount(5);
     await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
     await page.screenshot({ path: testInfo.outputPath("overview.png"), animations: "disabled" });
