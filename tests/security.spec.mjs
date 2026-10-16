@@ -48,9 +48,28 @@ test("map tooltips render hostile city text as text instead of HTML", async ({ p
   cities.cities[0].name = '<img src=x onerror="window.__tooltipRan=true">';
   await page.route("**/data/ascn-cities.json*", (route) => route.fulfill({ json: cities }));
   await page.goto("/#cities");
-  await expect(page.locator("#sea-map .leaflet-interactive")).toHaveCount(38);
-  await page.locator("#sea-map .leaflet-interactive").first().hover({ force: true });
-  await expect(page.locator(".leaflet-tooltip")).toContainText("<img src=x");
+  const markers = page.locator("#sea-map .leaflet-interactive");
+  await expect(markers).toHaveCount(38);
+
+  // Leaflet attaches the tooltip on mouseover of the layer's own SVG node. One
+  // forced hover races the map's own re-render: the layer can be replaced
+  // between locating it and moving the pointer there, and the pointer then
+  // lands on nothing while the assertion below still runs. That is the flake —
+  // the assertion was checking that a hover was dispatched, not that a
+  // tooltip opened. Retry until a tooltip is actually visible.
+  //
+  // The retry is scoped to ANY tooltip on purpose. Scoping it to the hostile
+  // string conflates two failures: when the tooltip really is unescaped, the
+  // payload becomes an element, that text is gone, and the retry reports
+  // "Expected: visible" instead of naming the XSS. Keep the flakiness fix and
+  // the security assertion as separate concerns.
+  await expect(async () => {
+    await markers.first().hover({ force: true });
+    await expect(page.locator(".leaflet-tooltip").first()).toBeVisible({ timeout: 1_000 });
+  }).toPass({ timeout: 20_000 });
+
+  // The payload must be present as TEXT, and must not have become an element.
+  await expect(page.locator(".leaflet-tooltip", { hasText: "<img src=x" })).toHaveCount(1);
   await expect(page.locator(".leaflet-tooltip img")).toHaveCount(0);
   expect(await page.evaluate(() => window.__tooltipRan)).toBeUndefined();
 });

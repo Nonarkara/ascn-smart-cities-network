@@ -18,7 +18,8 @@
     "build": "npm run vendor:leaflet && node scripts/build-static.mjs",
     "dev": "npm run build && npx wrangler pages dev dist --compatibility-date=2026-06-20",
     "deploy": "npm run check && npx wrangler pages deploy dist --project-name ascn-smart-cities-network --branch main",
-    "extract:emails": "python3 scripts/extract_ascn_emails.py --help"
+    "extract:emails": "python3 scripts/extract_ascn_emails.py --help",
+    "predeploy": "node scripts/refresh-ascn-news.mjs || echo \"news refresh failed, shipping the existing snapshot\""
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",

@@ -10,7 +10,19 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   const page = await browser.newPage(isMobile ? { ...devices["iPhone 13"] } : { viewport });
   const failures = [];
   page.on("pageerror", (e) => failures.push(e.message.split("\n")[0]));
-  page.on("requestfailed", (r) => failures.push(`REQFAIL ${r.url().slice(0, 90)}`));
+  page.on("requestfailed", (r) => {
+    // /api/ascn-news is an OPTIONAL live-index check. Cloudflare's egress
+    // cannot reach Google News, so it always fails there, and the app handles
+    // it by design: it falls back to the snapshot that now ships from
+    // data/ascn-news-discovery.json and labels the result "saved".
+    //
+    // Counting it as a page error made four unrelated checks fail for one
+    // handled condition, which drowns out the errors a page-error check exists
+    // to catch. Its health is asserted directly instead — see the discovery
+    // freshness check.
+    if (r.url().includes("/api/ascn-news")) return;
+    failures.push(`REQFAIL ${r.url().slice(0, 90)}`);
+  });
   return { page, failures };
 }
 
@@ -397,6 +409,34 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   ok("the aside introduces no horizontal overflow", !overflow, overflow ? "overflowing" : "clean");
 
   ok("no page errors on the Overview aside", failures.length === 0, failures.slice(0, 2).join(" | "));
+  await page.close();
+}
+
+/* ── Discovery index freshness ───────────────────────────────────────────── */
+{
+  // The live endpoint cannot reach Google News from Cloudflare's egress, and
+  // that is not fixable from this side. It is also no longer load-bearing:
+  // `predeploy` refreshes the snapshot from a machine that can, and the page
+  // falls back to it. So the real risk is not "the fetch fails" — it is "the
+  // snapshot silently rots", which is what this asserts.
+  const res = await fetch(`${BASE}/data/ascn-news-discovery.json`);
+  const snap = await res.json();
+  const articles = snap.articles || [];
+  const ageDays = (Date.now() - Date.parse(snap.checkedAt)) / 86_400_000;
+
+  ok("the shipped discovery snapshot has leads to show", articles.length > 0,
+    `${articles.length} leads`);
+  ok("the discovery snapshot is recent enough to be useful", ageDays <= 45,
+    `${ageDays.toFixed(1)} days old (checkedAt ${snap.checkedAt})`);
+
+  // And the page must actually render them, whichever path it took.
+  const { page, failures } = await newPage();
+  await page.goto(`${BASE}/#news`, { waitUntil: "networkidle" });
+  await page.waitForTimeout(1800);
+  const shown = await page.locator("#discovery-results article").count();
+  ok("the reader sees discovery leads", shown > 0, `${shown} rendered`);
+  ok("no unhandled page errors on the News view", failures.length === 0,
+    failures.slice(0, 2).join(" | "));
   await page.close();
 }
 
