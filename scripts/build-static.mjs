@@ -29,7 +29,9 @@ if (entries.length !== siteEntries.length || entries.some((entry) => !siteEntrie
   throw new Error("Build entries do not match the reviewed site asset list.");
 }
 
-await rm(dist, { recursive: true, force: true });
+// maxRetries: a local preview server reading dist/ can make a bare rm fail
+// with ENOTEMPTY on APFS, which turns a transient race into a failed build.
+await rm(dist, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
 await mkdir(dist, { recursive: true });
 
 for (const entry of entries) {

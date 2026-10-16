@@ -144,7 +144,7 @@
             <!-- Bangkok -->
             <a class="twin-card" href="https://atlas.nonarkara.org" target="_blank" rel="noopener" role="listitem">
               <div class="twin-thumb-wrap">
-                <img src="media/twins/bangkok.png" width="1024" height="571" loading="lazy" alt="Bangkok digital twin interface" class="twin-thumb" />
+                <img src="media/twins/bangkok.jpg" width="1024" height="576" loading="lazy" alt="Bangkok digital twin interface" class="twin-thumb" />
                 <span class="twin-status-tag">Live · Flood Edition</span>
               </div>
               <div class="twin-body">
@@ -367,56 +367,64 @@
             </div>
           </header>
 
-          <div class="iaas-grid iaas-grid-4">
-            <article class="iaas-card">
+          <div class="iaas-grid iaas-grid-4" id="twin-grid">
+            <article class="iaas-card" data-twin="phuket">
               <p class="iaas-card-domain">phuket.nonarkara.org</p>
               <h3>Phuket</h3>
               <p>Operations surface for the city that pairs with Las Vegas under the US–ASEAN Smart Cities Partnership.</p>
               <a class="iaas-card-link" href="https://phuket.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
             </article>
 
-            <article class="iaas-card">
-              <p class="iaas-card-domain">chonburi.nonarkara.org</p>
-              <h3>Chonburi <span class="th-title">CTM-01</span></h3>
-              <p>Chonburi Town Center — a town-centre operations console built as a first screen, not a finished product.</p>
-              <a class="iaas-card-link" href="https://chonburi.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
-            </article>
-
-            <article class="iaas-card">
-              <p class="iaas-card-domain">cnx.nonarkara.org</p>
-              <h3>Chiang Mai</h3>
-              <p>Operations war room for Chiang Mai, the northern city where the Axiom lab is co-founded with Chiang Mai University.</p>
-              <a class="iaas-card-link" href="https://cnx.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
-            </article>
-
-            <article class="iaas-card">
+            <article class="iaas-card" data-twin="bangkok">
               <p class="iaas-card-domain">atlas.nonarkara.org</p>
               <h3>Bangkok <span class="th-title">BKKx 3D Atlas</span></h3>
               <p>A browser model of Bangkok, block by block — 432,077 real OpenStreetMap buildings, terrain, air quality, rain radar, land prices, rail and canals.</p>
               <a class="iaas-card-link" href="https://atlas.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
             </article>
 
-            <article class="iaas-card">
+            <article class="iaas-card" data-twin="chonburi">
+              <p class="iaas-card-domain">chonburi.nonarkara.org</p>
+              <h3>Chonburi <span class="th-title">CTM-01</span></h3>
+              <p>Chonburi Town Center — a town-centre operations console built as a first screen, not a finished product.</p>
+              <a class="iaas-card-link" href="https://chonburi.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
+            </article>
+
+            <article class="iaas-card" data-twin="cnx">
+              <p class="iaas-card-domain">cnx.nonarkara.org</p>
+              <h3>Chiang Mai</h3>
+              <p>Operations war room for Chiang Mai, the northern city where the Axiom lab is co-founded with Chiang Mai University.</p>
+              <a class="iaas-card-link" href="https://cnx.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
+            </article>
+
+            <article class="iaas-card" data-twin="jakarta">
               <p class="iaas-card-domain">jakarta.nonarkara.org</p>
               <h3>Jakarta</h3>
               <p>City atlas for Indonesia’s capital, built on the same hub that generalises to any ASCN city.</p>
               <a class="iaas-card-link" href="https://jakarta.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
             </article>
 
-            <article class="iaas-card">
+            <article class="iaas-card" data-twin="hcmc">
               <p class="iaas-card-domain">hcmc.nonarkara.org</p>
               <h3>Ho Chi Minh City</h3>
               <p>City atlas for Vietnam’s largest metropolis — the Mekong delta’s decision surface.</p>
               <a class="iaas-card-link" href="https://hcmc.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
             </article>
 
-            <article class="iaas-card">
+            <article class="iaas-card" data-twin="kuching">
               <p class="iaas-card-domain">kuching.nonarkara.org</p>
               <h3>Kuching</h3>
               <p>City atlas for Greater Kuching, Sarawak — the east Malaysia surface on the same stack.</p>
               <a class="iaas-card-link" href="https://kuching.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
             </article>
+
+            <article class="iaas-card" data-twin="kl">
+              <p class="iaas-card-domain">kl.nonarkara.org</p>
+              <h3>Kuala Lumpur</h3>
+              <p>The national capital surface — river gauges, air quality and city signals on the same hub as every other city here.</p>
+              <a class="iaas-card-link" href="https://kl.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
+            </article>
           </div>
+          <p class="rec-footnote">Hover or focus a city to see its live surface. Only cities with a working digital twin show a preview; the preview is a convenience, never the only way to reach the dashboard.</p>
         </section>
 
         <!-- ROW 04 — VIDEO FIELD DEMONSTRATIONS -->
@@ -586,7 +594,7 @@
               <p>The network has no systematic tracking of total investment flows. There is no published ASCN-wide figure for money committed, disbursed or absorbed in eight years of M&amp;E cycles — because the network does not collect one.</p>
             </div>
             <div class="rec-finding-card">
-              <p class="rec-finding-num">13%</p>
+              <p class="rec-finding-num">13.4%</p>
               <h3>Of tracked projects completed</h3>
               <p>134 projects tracked in the September 2025 M&amp;E cycle. 18 completed. 108 still ongoing. A project counted as "ongoing" in year five has not delivered, and the report does not say how long it has been ongoing.</p>
             </div>
@@ -644,7 +652,7 @@
 
           <div class="rec-table-wrap">
             <table class="rec-table rec-table-series">
-              <caption class="rec-caption">ASCN project portfolio by M&amp;E cycle. Source: ASEAN Secretariat M&amp;E Reports 2022–2025.</caption>
+              <caption class="rec-caption">ASCN project portfolio by M&amp;E cycle. Counts are the project rows in each cycle's register; every percentage here is computed from those counts, not quoted from the report's own prose.</caption>
               <thead>
                 <tr>
                   <th scope="col">Cycle</th>
@@ -655,17 +663,20 @@
                 </tr>
               </thead>
               <tbody>
-                <tr><th scope="row">2021 <span class="rec-note">baseline stated in 2022 report</span></th><td class="rec-figure">65</td><td>—</td><td>—</td><td>—</td></tr>
-                <tr><th scope="row">2022 <span class="rec-note">cut-off 21 Sep</span></th><td class="rec-figure">77</td><td>75.3%</td><td>2.9%</td><td><span class="rec-rate rec-rate-low">2.9%</span></td></tr>
-                <tr><th scope="row">2023 <span class="rec-note">cut-off 14 Aug</span></th><td class="rec-figure">86</td><td>77.9%</td><td>2.3%</td><td><span class="rec-rate rec-rate-low">2.3%</span></td></tr>
+                <tr><th scope="row">2021 <span class="rec-note">baseline quoted by the 2022 report</span></th><td class="rec-figure">65</td><td>—</td><td>—</td><td>—</td></tr>
+                <tr><th scope="row">2022 <span class="rec-note">cut-off 21 Sep</span></th><td class="rec-figure">77</td><td>58</td><td>2</td><td><span class="rec-rate rec-rate-low">2.6%</span></td></tr>
+                <tr><th scope="row">2023 <span class="rec-note">cut-off 14 Aug</span></th><td class="rec-figure">86</td><td>67</td><td>2</td><td><span class="rec-rate rec-rate-low">2.3%</span></td></tr>
                 <tr><th scope="row">2024 <span class="rec-note">cut-off 25 Sep</span></th><td class="rec-figure">108</td><td>81</td><td>11</td><td><span class="rec-rate">10.2%</span></td></tr>
-                <tr class="rec-table-current"><th scope="row">2025 <span class="rec-note">cut-off 30 Sep</span></th><td class="rec-figure">134</td><td>108</td><td>18</td><td><span class="rec-rate rec-rate-high">13.0%</span></td></tr>
+                <tr class="rec-table-current"><th scope="row">2025 <span class="rec-note">cut-off 30 Sep</span></th><td class="rec-figure">134</td><td>108</td><td>18</td><td><span class="rec-rate rec-rate-high">13.4%</span></td></tr>
               </tbody>
             </table>
           </div>
 
+          <div class="rec-chart" id="rec-stack-chart"></div>
+          <p class="rec-caption" id="rec-stack-caption"></p>
+
           <div class="rec-read">
-            <p>The portfolio more than doubled in four years — 65 to 134 projects, a 106% increase. The completion rate improved from 2.9% to 13%, which is the strongest positive trend in the entire record, and it is still true that <b>eight in ten projects tracked in 2025 have not finished</b>.</p>
+            <p>The portfolio more than doubled in four years — 65 to 134 projects, a 106% increase. The completion rate improved from 2.6% to 13.4% — more than fivefold, and the strongest positive trend in the entire record. It is still true that <b>eight in ten projects tracked in 2025 have not finished</b>.</p>
             <p>Both facts are real. The second is the one that matters to a resident, and it is the one ASCN has never put on a slide.</p>
           </div>
 
@@ -903,6 +914,7 @@
 
           <div class="rec-urban">
             <p class="rec-urban-lede">The one asymmetry the sources do support is urban density — and it needs to be stated precisely, because the usual version of the claim is wrong.</p>
+            <div class="rec-urban-bars" id="rec-urban-bars" aria-hidden="true"></div>
             <div class="rec-urban-table">
               <div class="rec-urban-row rec-urban-head"><span>Member state</span><span>Urban share of population</span></div>
               <div class="rec-urban-row rec-urban-lead"><span>Singapore</span><span>100.0%</span></div>

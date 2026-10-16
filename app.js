@@ -149,6 +149,7 @@ function renderTab(tab) {
 /* ---------------- Innovation ---------------- */
 function renderInnovation() {
   // Static content in view-innovation is rendered from HTML and styled via CSS.
+  mountTwinPeeks();
   // The hero video is the one asset on this view that must not be fetched on
   // arrival: it stays on preload="none" until the tab is actually opened.
   const video = document.getElementById("iaas-hero-video");
@@ -164,10 +165,123 @@ function renderInnovation() {
   });
 }
 
+/* ---------------- Twin previews ----------------
+ * The screenshot is attached on first intent rather than at render, so eight
+ * map captures never load on arrival. The dashboard link is always the primary
+ * route; the preview only shortens the path to recognising the city. */
+const TWIN_PEEKS = {
+  phuket: { file: "phuket", title: "Phuket" },
+  bangkok: { file: "bangkok", title: "Bangkok · BKKx 3D Atlas" },
+  chonburi: null, // dashboard not currently rendering; see scripts/capture-twins.mjs
+  cnx: { file: "cnx", title: "Chiang Mai operations war room" },
+  jakarta: { file: "jakarta", title: "Jakarta city atlas" },
+  hcmc: { file: "hcmc", title: "Ho Chi Minh City atlas" },
+  kuching: { file: "kuching", title: "Greater Kuching atlas" },
+  kl: { file: "kl", title: "Kuala Lumpur" },
+};
+
+function mountTwinPeeks() {
+  for (const card of document.querySelectorAll(".iaas-card[data-twin]")) {
+    const entry = TWIN_PEEKS[card.dataset.twin];
+    if (entry === null) {
+      // No usable capture: mark the card so the hover affordance is not implied.
+      card.removeAttribute("data-twin");
+      continue;
+    }
+    if (!entry) continue;
+    const attach = () => {
+      if (card.querySelector(".twin-peek")) return;
+      const fig = document.createElement("figure");
+      fig.className = "twin-peek";
+      fig.innerHTML =
+        `<img src="media/twins/${entry.file}.jpg" width="1024" height="720" ` +
+        `alt="Screenshot of the ${esc(entry.title)} live dashboard" loading="lazy" decoding="async" />` +
+        `<figcaption>${esc(entry.title)} — live surface</figcaption>`;
+      card.appendChild(fig);
+    };
+    card.addEventListener("pointerenter", attach, { once: true });
+    card.addEventListener("focusin", attach, { once: true });
+  }
+}
+
 /* ---------------- The Record ---------------- */
 function renderRecord() {
   // Static content in view-record is rendered from HTML and styled via CSS.
   renderCorrespondence();
+  renderRecordCharts();
+}
+
+/* ---------------- Record graphics ----------------
+ * Two ideas drive these. First, growth and completion are one fact, not two:
+ * a stacked column shows both at once, so the reader cannot see the rising
+ * total without also seeing how little of it has finished. Second, every
+ * segment carries a number in text, so the graphic degrades to a readable
+ * table for a screen reader or a failed stylesheet. */
+function renderRecordCharts() {
+  const host = document.getElementById("rec-stack-chart");
+  if (!host || !state.data) return;
+  const reports = [...state.data.reports].sort((a, b) => a.year - b.year);
+  const series = [
+    { year: 2021, total: 65, ongoing: null, completed: null, planning: null, note: "baseline quoted by the 2022 report" },
+    ...reports.map((r) => ({
+      year: r.year,
+      total: r.total_projects,
+      ongoing: r.status.ongoing,
+      completed: r.status.completed,
+      planning: r.status.planning,
+      note: "",
+    })),
+  ];
+  const max = Math.max(...series.map((s) => s.total));
+
+  host.innerHTML = series.map((s) => {
+    if (s.ongoing == null) {
+      return `<figure class="rec-col rec-col-base">
+        <div class="rec-col-bar" style="height:${Math.round((s.total / max) * 100)}%"></div>
+        <figcaption class="rec-col-cap"><b>${s.total}</b><span>${s.year}</span></figcaption>
+      </figure>`;
+    }
+    const pct = (v) => (v / s.total) * 100;
+    return `<figure class="rec-col">
+      <div class="rec-col-bar" style="height:${Math.round((s.total / max) * 100)}%">
+        <span class="rec-seg rec-seg-done" style="height:${pct(s.completed)}%"><b>${s.completed}</b></span>
+        <span class="rec-seg rec-seg-open" style="height:${pct(s.ongoing)}%"><b>${s.ongoing}</b></span>
+        <span class="rec-seg rec-seg-plan" style="height:${pct(s.planning)}%"><b>${s.planning}</b></span>
+      </div>
+      <figcaption class="rec-col-cap"><b>${s.total}</b><span>${s.year}</span></figcaption>
+    </figure>`;
+  }).join("");
+
+  const cap = document.getElementById("rec-stack-caption");
+  if (cap) {
+    cap.innerHTML = `Column height is the total project count; the column is split by status.
+      <span class="rec-legend"><span class="rec-key rec-seg-done"></span>completed
+      <span class="rec-key rec-seg-open"></span>ongoing
+      <span class="rec-key rec-seg-plan"></span>planning
+      <span class="rec-key rec-key-base"></span>2021 baseline</span>`;
+  }
+
+  // Urbanisation: a ranked bar reads faster than the table it sits above, and
+  // the two together make the one comparison the argument turns on.
+  const urban = document.getElementById("rec-urban-bars");
+  if (urban) {
+    const rows = Array.from(urban.closest(".rec-urban")?.querySelectorAll(".rec-urban-row") ?? [])
+      .filter((r) => !r.classList.contains("rec-urban-head") && !r.classList.contains("rec-urban-row-asean"))
+      .map((r) => {
+        const cells = r.querySelectorAll("span");
+        return { name: cells[0]?.textContent?.trim(), value: parseFloat(cells[1]?.textContent) || 0 };
+      })
+      .filter((r) => r.name && r.value);
+    if (rows.length) {
+      const hi = Math.max(...rows.map((r) => r.value));
+      urban.innerHTML = rows.map((r) => `
+        <div class="rec-ubar${r.value === hi ? " rec-ubar-top" : ""}">
+          <span class="rec-ubar-name">${esc(r.name)}</span>
+          <span class="rec-ubar-track"><span class="rec-ubar-fill" style="width:${(r.value / hi) * 100}%"></span></span>
+          <span class="rec-ubar-val">${r.value}%</span>
+        </div>`).join("");
+    }
+  }
 }
 
 /* ---------------- Correspondence ledger ---------------- */
