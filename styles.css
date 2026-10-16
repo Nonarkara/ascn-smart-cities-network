@@ -512,102 +512,107 @@ input[type="search"] { min-width: min(16rem, 100%); }
   font-size:var(--t-small);
   color: var(--muted);
 }
+/* ---------- Digital Twins: a ruled directory, not a card wall ----------
+   Was: five cards, each an illegible 23%-scale screenshot boxed on all four
+   sides over 12px copy in a 209px measure (≈33 characters a line). Five
+   identical boxes of identical mass give the eye no reason to land anywhere.
+   Now: five rows on one repeated grid. The screenshot cannot be READ at 200px
+   — it is an identity mark, so it stops pretending to be the subject. The
+   city is the subject, and five of them at heading size become a scannable
+   anchor column. Rules carry the grouping; there are no boxes.
+   "Live" lived in a chip stamped on all five; it is now stated once, in the
+   heading and the Level 2 badge. */
 .twins-grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 1rem;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
   min-width: 0;
 }
-.twin-card {
-  display: flex;
-  flex-direction: column;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-  overflow: hidden;
+.twin-row {
+  display: grid;
+  /* Fixed tracks packed to the left, Vignelli-style. Two earlier attempts
+     each produced a hole: `1fr auto` stranded every URL ~300px from its own
+     description, and a bare `1fr` left the URL orphaned under the copy. Tracks
+     sized to content and `justify-content: start` put the empty space at the
+     page edge where it reads as margin instead of as a gap in the middle. */
+  grid-template-columns: 240px minmax(0, 66ch) auto;
+  justify-content: start;
+  gap: 0 1.5rem;
+  align-items: start;
+  padding: 1.05rem 0;
+  border-bottom: 1px solid var(--line-soft);
   color: var(--ink);
   min-width: 0;
+  /* No background, no shadow, no lift. Feedback is the rule darkening and
+     the URL underlining — the two things that actually change. The old
+     translateY(-2px) + box-shadow was elevation the page has no other use
+     for, and hover recoloured the link with --red, which is the alarm token. */
 }
-.twin-card:hover {
-  border-color: var(--ink);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(16, 20, 24, 0.08);
-}
-.twin-card:focus-visible {
+.twin-row:last-child { border-bottom: 0; }
+.twin-row:hover { border-bottom-color: var(--line); }
+.twin-row:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 2px;
 }
-.twin-thumb-wrap {
-  position: relative;
-  width: 100%;
+.twin-row-thumb {
+  display: block;
+  width: 240px;
   aspect-ratio: 16 / 9;
   background: var(--surface-2);
   overflow: hidden;
 }
 .twin-thumb {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-.twin-status-tag {
-  /* Was a frosted pill: rgba glass, backdrop blur, and two raw Tailwind hexes
-     (#38bdf8 sky-400 on #0f172a slate-900) that belonged to no token. Blur is
-     not in this design language and the raw hexes let an outside palette in.
-     A sharp chip on an opaque ground states the same thing. */
-  position: absolute;
-  top: 0.4rem;
-  left: 0.4rem;
-  padding: 0.15rem 0.45rem;
-  font-size: var(--t-micro);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  background: var(--bg);
-  color: var(--muted);
-  border: 1px solid var(--line-soft);
-  font-weight: 600;
-}
-.twin-body {
-  padding: 0.85rem 0.8rem 1rem;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
+.twin-row-main {
+  display: block;
   min-width: 0;
 }
-.twin-city-tag {
-  font-size:var(--t-micro);
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--muted);
-  margin-bottom: 0.25rem;
-}
-.twin-title {
-  font-size:var(--t-body);
-  font-weight: 700;
-  line-height: 1.25;
-  margin-bottom: 0.45rem;
+.twin-city {
+  display: block;
+  font-size: var(--t-h2);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
   color: var(--ink);
-  overflow-wrap: break-word;
+  margin: 0 0 0.2rem;
+}
+.twin-meta {
+  display: block;
+  font-size: var(--t-micro);
+  color: var(--muted);
+  margin-bottom: 0.5rem;
 }
 .twin-desc {
-  font-size:var(--t-small);
-  line-height: 1.45;
+  display: block;
+  font-size: var(--t-body);
+  line-height: 1.5;
   color: var(--ink-2);
-  margin-bottom: 0.75rem;
-  flex-grow: 1;
-  overflow-wrap: break-word;
+  max-width: 64ch;
 }
 .twin-link-label {
-  display: inline-flex;
-  align-items: center;
-  font-size:var(--t-small);
-  font-weight: 700;
+  /* Auto-placed into track 3 of row 1, so it aligns with the city name. */
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  font-weight: 600;
   color: var(--navy);
-  margin-top: auto;
+  white-space: nowrap;
 }
-.twin-card:hover .twin-link-label {
+.twin-row:hover .twin-link-label {
   text-decoration: underline;
-  color: var(--red);
+}
+
+@media (max-width: 980px) {
+  .twin-row { grid-template-columns: 150px minmax(0, 1fr); }
+  .twin-row-thumb { width: 150px; }
+  .twin-link-label { grid-column: 2; margin-top: 0.5rem; }
+}
+@media (max-width: 520px) {
+  .twin-row { grid-template-columns: minmax(0, 1fr); gap: 0.65rem; }
+  .twin-row-thumb { width: 100%; }
+  .twin-link-label { grid-column: 1; margin-top: 0; }
 }
 
 @media (max-width: 1060px) {

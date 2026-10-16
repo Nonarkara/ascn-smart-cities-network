@@ -140,6 +140,77 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   await page.close();
 }
 
+/* ── Overview: the twins directory ───────────────────────────────────────── */
+{
+  const { page, failures } = await newPage();
+  await page.goto(`${BASE}/#overview`, { waitUntil: "networkidle" });
+  await page.waitForSelector(".twin-row", { timeout: 15_000 });
+
+  const rows = await page.locator(".twin-row").count();
+  ok("every operational twin is listed as a row", rows === 5, `${rows} rows`);
+
+  // The regression this guards: five equal-weight cards. Each carried a boxed
+  // screenshot over 12px copy in a 209px measure — about 33 characters a line.
+  // Assert the measure, because that is what actually failed, and a count of
+  // elements would have stayed green through the whole card-wall version.
+  const measure = await page.locator(".twin-desc").first().evaluate((el) => {
+    const cs = getComputedStyle(el);
+    const w = el.getBoundingClientRect().width;
+    const px = parseFloat(cs.fontSize);
+    return { chars: Math.round(w / (px * 0.5)), size: cs.fontSize };
+  });
+  ok("twin descriptions get a readable measure", measure.chars >= 60,
+    `${measure.chars} chars at ${measure.size}`);
+
+  // Five identical boxes have nothing to rank. Five city names sharing one left
+  // edge give the eye a column to scan — that IS the anchor.
+  const lefts = await page.locator(".twin-city").evaluateAll((els) =>
+    els.map((e) => Math.round(e.getBoundingClientRect().left)));
+  ok("the five city names share one anchor edge", new Set(lefts).size === 1, lefts.join(","));
+
+  const citySize = await page.locator(".twin-city").first()
+    .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+  const bodySize = await page.locator(".twin-desc").first()
+    .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+  ok("the city outranks its own description", citySize >= bodySize * 1.8,
+    `${citySize}px vs ${bodySize}px`);
+
+  // "Live" was stamped on all five cards while the heading already said
+  // "operational" and the badge already said "Level 2". Redundant ink.
+  //
+  // Match the stamp, not the word. Matching /\bLive\b/ fires on "BKKX Live
+  // Atlas", which is the product's real name — a guard that reports correct
+  // content as a defect is worse than no guard, because it trains you to
+  // ignore it. The redundancy was specifically the "Live ·" prefix.
+  const stamped = await page.locator(".twin-meta").evaluateAll((els) =>
+    els.filter((e) => /^\s*Live\b/.test(e.textContent || "")).length);
+  ok("liveness is stated once, not stamped per row", stamped === 0,
+    `${stamped} meta lines start with "Live"`);
+
+  // Control: the pattern must actually catch the pattern. If the regex is
+  // loosened to nothing, this assertion would pass forever and mean nothing.
+  ok("the liveness guard catches a stamped row (control)", /^\s*Live\b/.test("Live · Flood edition"),
+    "prefix match verified against the markup it replaced");
+
+  // No elevation, and no alarm token borrowed for a hover.
+  const twinCss = await page.evaluate(() => {
+    const row = document.querySelector(".twin-row");
+    const cs = getComputedStyle(row);
+    return { shadow: cs.boxShadow, transform: cs.transform, bg: cs.backgroundColor };
+  });
+  ok("twin rows carry no elevation", twinCss.shadow === "none" && twinCss.transform === "none",
+    `shadow=${twinCss.shadow} transform=${twinCss.transform}`);
+
+  const linkHover = await page.locator(".twin-row").first().evaluate((el) => {
+    const a = el.querySelector(".twin-link-label");
+    return a ? getComputedStyle(a).color : "";
+  });
+  ok("the twin URL keeps the wayfinding colour", linkHover !== "", linkHover);
+
+  ok("no page errors on the Overview twins directory", failures.length === 0, failures.slice(0, 2).join(" | "));
+  await page.close();
+}
+
 /* ── Type ramp and rules resolve, not collapse ───────────────────────────── */
 {
   const { page } = await newPage();
