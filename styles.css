@@ -3364,9 +3364,15 @@ button:active { transform: scale(0.97); }
    column makes it impossible to see the rising total without also seeing how
    little of it has finished. Every segment is labelled in text.
    ══════════════════════════════════════════════════════════════════════════ */
+/* Size the frame to the data, not to the page.
+   These graphics summarise tables that are legitimately full width. Stretching
+   the summary to the same width made the data the smallest thing on a 1280px
+   page: five columns across 5.3:1 of landscape, with the counts set at the
+   bottom of the ramp. A reader does not experience that as a chart. Constrain
+   the measure, then let the numbers carry the graphic. */
 .rec-chart {
   display: flex; align-items: flex-end; gap: 0.75rem;
-  height: 15rem; padding: 0 0.5rem; margin-top: 1.2rem;
+  max-width: 42rem; height: 16rem; padding: 0 0.5rem; margin-top: 1.2rem;
   border-bottom: 2px solid var(--line);
 }
 .rec-col {
@@ -3379,11 +3385,13 @@ button:active { transform: scale(0.97); }
   min-height: 0.5rem;
 }
 .rec-col-base .rec-col-bar { background: var(--surface-2); border-style: dashed; }
-.rec-seg { display: block; width: 100%; min-height: 0.85rem; }
+.rec-seg { display: block; width: 100%; min-height: 1.5rem; }
 .rec-seg b {
-  display: block; font-family: var(--mono); font-size: var(--t-micro);
-  color: var(--on-solid); text-align: center; line-height: 1;
-  padding-top: 0.15rem; font-variant-numeric: tabular-nums;
+  /* The segment counts are the data. They must not be the smallest type in
+     the block they are the reason for. */
+  display: block; font-family: var(--mono); font-size: var(--t-lede);
+  color: var(--on-solid); text-align: center; line-height: 1.25;
+  font-variant-numeric: tabular-nums;
 }
 .rec-seg-done { background: var(--red); }
 .rec-seg-done b { color: var(--on-solid); }
@@ -3396,14 +3404,16 @@ button:active { transform: scale(0.97); }
   padding-top: 0.4rem; margin: 0;
 }
 .rec-col-cap b {
-  font-family: var(--mono); font-size: var(--t-small); color: var(--ink);
+  font-family: var(--mono); font-size: var(--t-h3); color: var(--ink);
   font-variant-numeric: tabular-nums;
 }
-.rec-col-cap span { font-size: var(--t-micro); color: var(--muted); }
+.rec-col-cap span { font-size: var(--t-small); color: var(--muted); }
 .rec-table-current ~ .rec-col-cap b,
 .rec-col:last-child .rec-col-cap b { color: var(--ink); }
 .rec-caption {
-  margin: 0.6rem 0 0; font-size: var(--t-micro); color: var(--muted);
+  /* Bound to the chart's measure, not the page's. */
+  max-width: 42rem;
+  margin: 0.6rem 0 0; font-size: var(--t-small); color: var(--muted);
   line-height: 1.5;
 }
 .rec-legend { display: inline-flex; gap: 0.35rem; align-items: center; margin-left: 0.8rem; flex-wrap: wrap; }
@@ -3416,26 +3426,33 @@ button:active { transform: scale(0.97); }
 .rec-key.rec-seg-plan { background: var(--muted); }
 .rec-key.rec-key-base { background: var(--surface-2); border: 1px dashed var(--line); }
 
-/* Urbanisation bars sit above the table and read faster. */
-.rec-urban-bars { margin: 0 0 1rem; }
+/* Urbanisation bars sit above the table and read faster. Eleven ranked rows
+   are a list, not a banner: a full-width version strands each label ~700px
+   from its own bar and shrinks the state names to 11px. */
+.rec-urban-bars { max-width: 38rem; margin: 0 0 1rem; }
 .rec-ubar {
-  display: grid; grid-template-columns: minmax(5rem, 1.4fr) minmax(4rem, 2fr) 3rem;
-  gap: 0.6rem; align-items: center; padding: 0.13rem 0;
+  /* Name column sized to the longest name, not a fraction of the whole — a
+     1.4fr column reserves ~230px for a 95px label and strands the bar. */
+  display: grid; grid-template-columns: 8rem minmax(4rem, 1fr) 3.5rem;
+  gap: 0.6rem; align-items: center; padding: 0.2rem 0;
 }
-.rec-ubar-name { font-size: var(--t-micro); color: var(--muted); }
-.rec-ubar-track { height: 0.5rem; background: var(--surface-2); display: block; }
+.rec-ubar-name { font-size: var(--t-body); color: var(--muted); }
+.rec-ubar-track { height: 0.75rem; background: var(--surface-2); display: block; }
 .rec-ubar-fill { display: block; height: 100%; background: var(--line-dim); }
 .rec-ubar-top .rec-ubar-name { color: var(--ink); font-weight: 700; }
 .rec-ubar-top .rec-ubar-fill { background: var(--red); }
 .rec-ubar-val {
-  font-family: var(--mono); font-size: var(--t-micro); text-align: right;
+  font-family: var(--mono); font-size: var(--t-body); text-align: right;
   color: var(--ink-2); font-variant-numeric: tabular-nums;
 }
 .rec-ubar-top .rec-ubar-val { color: var(--ink); font-weight: 700; }
 
 @media (max-width: 720px) {
-  .rec-chart { height: 11rem; gap: 0.3rem; }
-  .rec-seg b { font-size: 0.6rem; }
+  .rec-chart { height: 12rem; gap: 0.3rem; max-width: 100%; }
+  .rec-seg { min-height: 1.1rem; }
+  .rec-seg b { font-size: var(--t-body); }
+  .rec-urban-bars { max-width: 100%; }
+  .rec-caption { max-width: 100%; }
   .rec-legend { display: flex; margin-left: 0; }
 }
 

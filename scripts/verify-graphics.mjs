@@ -35,6 +35,32 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   const colText = await page.locator("#rec-stack-chart .rec-col").nth(4).innerText();
   ok("the 2025 column states its own total and counts", /134/.test(colText) && /18/.test(colText), colText.replace(/\n/g, " "));
 
+  // Proportion is a correctness property, not taste. These graphics summarise
+  // full-width tables; stretching the summary to the page width made the data
+  // the smallest thing on screen. A five-column chart read at 5.3:1 with its
+  // counts at 11px is not a chart, so both are asserted, not eyeballed.
+  const scale = await page.evaluate(() => {
+    const rect = (sel) => document.querySelector(sel)?.getBoundingClientRect();
+    const chart = rect("#rec-stack-chart");
+    const urban = rect("#rec-urban-bars");
+    const px = (sel) => parseFloat(getComputedStyle(document.querySelector(sel)).fontSize);
+    return {
+      chartAspect: chart.width / chart.height,
+      urbanAspect: urban.width / urban.height,
+      segFont: px("#rec-stack-chart .rec-seg b"),
+      bodyFont: px("body"),
+      nameFont: px("#rec-urban-bars .rec-ubar-name"),
+    };
+  });
+  ok("the series chart is not stretched into a banner",
+    scale.chartAspect < 3.5, `${scale.chartAspect.toFixed(2)}:1`);
+  ok("the ranked list is not stretched into a banner",
+    scale.urbanAspect < 3.5, `${scale.urbanAspect.toFixed(2)}:1`);
+  ok("the counts are at least as large as body text",
+    scale.segFont >= scale.bodyFont, `${scale.segFont}px vs body ${scale.bodyFont}px`);
+  ok("state names are at least as large as body text",
+    scale.nameFont >= scale.bodyFont, `${scale.nameFont}px vs body ${scale.bodyFont}px`);
+
   ok("no page errors on the Record view", failures.length === 0, failures.slice(0, 2).join(" | "));
   await page.close();
 }
