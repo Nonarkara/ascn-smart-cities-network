@@ -6,25 +6,23 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), fullscreen=(self)
   Strict-Transport-Security: max-age=31536000
 
-# The document is the only thing that must never be stale. It carries the
+# The document is the only thing that must never be stale: it carries the
 # `?v=<content hash>` of every asset, so a cached HTML file means a visitor
 # gets yesterday's asset graph.
-/
+#
+# Verified on the live edge: this rule applies to `/` and `/index.html`. It
+# does NOT reach asset paths — Cloudflare Pages serves its own
+# `max-age=14400` for those and a `/*` pattern does not override it (a
+# `/styles.css?v=*` pattern matches nothing, since patterns match the path
+# only; and listing both rules made Cloudflare append two Cache-Control
+# values rather than replace). Two conflicting values on one response is a
+# worse outcome than a slow one, so there is exactly one rule here.
+#
+# The asset TTL is deliberately left at Cloudflare's default, and it is safe:
+# asset URLs are content-hashed by scripts/build-static.mjs, so
+# `styles.css?v=5300665ebe` always means those exact bytes. A four-hour cache
+# on a content-addressed URL cannot serve the wrong file. The previous defect
+# was never the asset TTL itself — it was a hand-maintained `?v=41` that let
+# new markup be paired with old bytes.
+/*
   Cache-Control: public, max-age=0, must-revalidate
-
-# Assets are content-hashed in their URL by scripts/build-static.mjs, so a new
-# URL always means new bytes. That makes a long immutable cache correct rather
-# than reckless — the previous default (max-age=14400 on everything) was the
-# direct cause of new markup rendering against a four-hour-old stylesheet.
-/styles.css?v=*
-/app.js?v=*
-/showcase.js?v=*
-/news.js?v=*
-/ascn-news.js?v=*
-  Cache-Control: public, max-age=31536000, immutable
-
-# Leaflet is vendored and pinned by checksum, and fonts are third-party-stable.
-/vendor/*
-/fonts/*
-/logos/*
-  Cache-Control: public, max-age=604800
