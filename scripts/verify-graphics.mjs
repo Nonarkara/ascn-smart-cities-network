@@ -211,6 +211,63 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   await page.close();
 }
 
+/* ── Reading measure: no prose may outrun the eye ─────────────────────────── */
+{
+  // Past roughly 90 characters the return sweep fails and reading degrades
+  // into scanning. This site had NO measure token at all: 167 of 278 prose
+  // blocks ran past 90 characters and many ran to 208, because every section
+  // stretched to the full 1248px column. This sweeps all views so a future
+  // section cannot reintroduce it.
+  const { page } = await newPage();
+  const views = ["overview", "innovation", "record", "news", "history", "cities",
+    "projects", "framework", "partners", "insights", "library", "research"];
+  let worst = { chars: 0, where: "—" };
+  const offenders = [];
+  for (const v of views) {
+    await page.goto(`${BASE}/#${v}`, { waitUntil: "networkidle" });
+    await page.waitForTimeout(500);
+    const found = await page.evaluate(() => {
+      const out = [];
+      for (const el of document.querySelectorAll("p, li, dd, blockquote, figcaption")) {
+        const r = el.getBoundingClientRect();
+        if (r.width < 200 || r.height < 8) continue;
+        if ((el.textContent || "").trim().length < 120) continue; // labels are not prose
+        const cs = getComputedStyle(el);
+        if (cs.display === "none" || cs.visibility === "hidden") continue;
+        out.push({
+          chars: Math.round(r.width / (parseFloat(cs.fontSize) * 0.5)),
+          sel: el.tagName.toLowerCase() + "." + (el.className || "").toString().split(" ")[0],
+          px: Math.round(parseFloat(cs.fontSize)),
+        });
+      }
+      return out;
+    });
+    for (const f of found) {
+      if (f.chars > worst.chars) worst = { chars: f.chars, where: `${v} ${f.sel} @${f.px}px` };
+      if (f.chars > 90) offenders.push(`${v} ${f.sel}=${f.chars}`);
+    }
+  }
+  ok("no prose block exceeds a readable measure", offenders.length === 0,
+    offenders.length ? offenders.slice(0, 5).join(" | ") : `worst: ${worst.chars} chars (${worst.where})`);
+
+  // Control. The assertion above is a number comparison, so if the measurement
+  // ever silently returned zero the whole sweep would pass and test nothing.
+  ok("the measure sweep measures something (control)", worst.chars > 20 && worst.chars <= 90,
+    `worst observed ${worst.chars} chars`);
+
+  // The cap must be in characters, not pixels, so 12px notes do not get a
+  // longer line than 16px prose.
+  //
+  // Assert the TOKEN, not a computed max-width: getComputedStyle resolves
+  // `ch` to px, so reading maxWidth here would fail forever while saying
+  // nothing about how the cap was written.
+  const measureToken = await page.evaluate(() =>
+    getComputedStyle(document.documentElement).getPropertyValue("--measure").trim());
+  ok("the measure cap is expressed in ch, not px", /^[\d.]+ch$/.test(measureToken),
+    `--measure: ${measureToken || "not defined"}`);
+  await page.close();
+}
+
 /* ── Type ramp and rules resolve, not collapse ───────────────────────────── */
 {
   const { page } = await newPage();

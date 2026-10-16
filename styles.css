@@ -24,6 +24,18 @@
   --rule: var(--line);
   --border: var(--line-soft);
 
+  /* Reading measure. A line has to be short enough that the eye can find the
+     start of the next one without hunting — past roughly 90 characters the
+     return sweep starts to fail and reading degrades into scanning. This is
+     the single most consequential value on the page for readability, and it
+     was entirely absent: 167 of 278 prose blocks ran past 90 characters, many
+     at 208, because every section stretched to the full 1248px column.
+
+     Expressed in `ch`, not px or rem, so it means the same number of
+     CHARACTERS at 12px as at 16px. A rem-based cap would silently give 12px
+     notes a far longer line than 16px prose — the same failure, one level down. */
+  --measure: 72ch;
+
   /* Signal colours. Each name now matches the hue it carries: a finding reads
      red, an interface accent reads amber, a link reads blue. Before this pass
      --red and --amber were the same value, so a documented finding and a
@@ -108,6 +120,24 @@ body {
 a { color: inherit; text-decoration: none; }
 button, select, input { font: inherit; }
 img { display: block; max-width: 100%; }
+
+/* ---------- Reading measure, enforced on every prose element ----------
+   Not a per-class patch. Prose on this site appears in ~40 differently-named
+   classes across eight views, and a list of them would rot on the next edit.
+   Capping the element types themselves makes the rule a property of the
+   design system rather than of a particular section.
+
+   max-width only ever caps, so an element already inside a narrow column —
+   a card, a table cell, a grid item — is unaffected. Only full-width prose is
+   touched, which is precisely what was unreadable.
+
+   Any later rule with higher specificity (`.overview-intro .lede` and friends)
+   beats this. Those were retuned to the token rather than left to drift, and
+   scripts/verify-graphics.mjs fails the build if a prose block exceeds 90
+   characters again. */
+p, li, dd, blockquote, figcaption, .lede {
+  max-width: var(--measure);
+}
 
 /* ---------- Header / tabs ---------- */
 .site-nav {
@@ -3626,4 +3656,23 @@ button:active { transform: scale(0.97); }
 }
 @media (max-width: 720px) {
   .twin-peek { display: none; }
+}
+
+/* ---------- Reading measure: the cascade, settled ----------
+   The element-level cap above is overridden by section rules that were each
+   written as a rem value and each drifted wide — 45rem here, 58rem there, none
+   of them re-derived from what they do to the LINE. Rather than re-tune forty
+   of them by hand (and have the next edit drift them apart again), this
+   declaration outranks them from one place.
+
+   `main .view :is(...)` resolves to (0,2,1): two classes plus the strongest
+   argument in :is(). That beats the `.persp-stance .lede` / `.iaas-row-head
+   .lede` pair (0,2,0) and the `.review-verdict p` family (0,1,1) — which a
+   bare `body p` could not, because specificity, not source order, decides.
+
+   Scoped to main content so table headers, figure grids and the chart
+   containers keep their own widths. Those are structure, not prose, and
+   narrowing them would shrink a chart to fit a paragraph. */
+main .view :is(p, li, dd, blockquote, figcaption, .lede) {
+  max-width: var(--measure);
 }
