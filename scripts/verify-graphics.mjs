@@ -356,6 +356,49 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   await page.close();
 }
 
+/* ── Editorial aside: prose must not stand beside a void ─────────────────── */
+{
+  // The measure fix capped prose at 72ch and left the right half of a 1248px
+  // column empty — roughly 900px of void beside the argument. Narrowing the
+  // text and stopping there moved the imbalance rather than resolving it.
+  const { page, failures } = await newPage();
+  await page.goto(`${BASE}/#overview`, { waitUntil: "networkidle" });
+  await page.waitForSelector(".persp-aside img", { timeout: 15_000 });
+
+  const figs = await page.locator(".persp-aside figure").count();
+  ok("the perspective carries an editorial aside", figs >= 1, `${figs} figures`);
+
+  // Every aside image must declare its intrinsic size. With `height: auto` and
+  // loading="lazy" the box collapses to 2px until the fetch lands, which is
+  // layout shift — and below the fold it never resolves during the check.
+  const intrinsic = await page.locator(".persp-aside img").evaluateAll((els) =>
+    els.map((i) => ({ w: i.getAttribute("width"), h: i.getAttribute("height") })));
+  ok("aside images reserve their space before they load",
+    intrinsic.length > 0 && intrinsic.every((i) => i.w && i.h),
+    JSON.stringify(intrinsic));
+
+  const boxes = await page.locator(".persp-aside img").evaluateAll((els) =>
+    els.map((i) => Math.round(i.getBoundingClientRect().height)));
+  ok("no aside image collapses to nothing", boxes.every((h) => h > 40), boxes.join(" x "));
+
+  // The aside must not be clipped by the text measure. `none` and `100%` are both
+  // correct here — `100%` is the global image reset and means "no wider than
+  // its container", which is what we want. Only a ch/rem/px measure would be a
+  // defect, because that is prose geometry applied to a picture.
+  const cap = await page.locator(".persp-aside img").first()
+    .evaluate((el) => getComputedStyle(el).maxWidth);
+  ok("aside images are not constrained to a text measure",
+    cap === "none" || cap.endsWith("%"), cap);
+
+  // ...and must not push the page sideways.
+  const overflow = await page.evaluate(() =>
+    document.documentElement.scrollWidth > window.innerWidth + 1);
+  ok("the aside introduces no horizontal overflow", !overflow, overflow ? "overflowing" : "clean");
+
+  ok("no page errors on the Overview aside", failures.length === 0, failures.slice(0, 2).join(" | "));
+  await page.close();
+}
+
 /* ── Type ramp and rules resolve, not collapse ───────────────────────────── */
 {
   const { page } = await newPage();

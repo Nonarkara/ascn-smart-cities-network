@@ -433,7 +433,17 @@ function renderPerspective() {
       <blockquote class="persp-quote">${esc(p.pull_quote)}</blockquote>
       <div class="persp-points">${p.points.map((pt) => `<div class="persp-point"><b>${esc(pt.h)}</b><span>${esc(pt.t)}</span></div>`).join("")}</div>
       <a class="persp-link" href="${esc(safeUrl(p.url))}" target="_blank" rel="noopener noreferrer">Read the full essay — ${esc(p.source)} ↗</a>
-    </div>`;
+    </div>
+    <aside class="persp-aside">
+      <figure class="persp-figure">
+        <img src="Photos/ASCN-8th-2025-KL-expert-talk.jpg" width="447" height="447" alt="Expert session at the 8th ASCN Annual Meeting, Kuala Lumpur, 2025" loading="lazy" />
+        <figcaption>Expert session, 8th ASCN Annual Meeting, Kuala Lumpur, September 2025. Ceremonies are easy. Building systems is hard.</figcaption>
+      </figure>
+      <figure class="persp-figure">
+        <img src="Photos/ASCN-1st-2018-Singapore.jpg" width="750" height="501" alt="Minister Vivian Balakrishnan at the Inaugural ASCN Meeting, Singapore, 8 July 2018" loading="lazy" />
+        <figcaption>Minister Vivian Balakrishnan, Singapore's Minister-in-charge of the Smart Nation Initiative, at the Inaugural ASEAN Smart Cities Network Meeting, Singapore, 8 July 2018. Singapore designed the network's architecture before handing the chair forward.</figcaption>
+      </figure>
+    </aside>`;
 }
 
 /* ---------------- History ---------------- */

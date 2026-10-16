@@ -1233,7 +1233,71 @@ td { color: var(--ink-2); font-size:var(--t-body); }
    under its own rule. The void is not restyled — it is removed. */
 .perspective {
   margin-top: 2.6rem; border-top: 2px solid var(--ink); padding-top: 1.5rem;
-  display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.2rem;
+  /* Two columns. The measure fix capped the prose at 72ch and left the right
+     half of a 1248px column empty — about 900px of vertical void beside the
+     argument. Narrowing the text and stopping there moved the imbalance
+     rather than resolving it: the page just stopped halfway across.
+
+     The second column carries photographs the site already publishes with
+     verified captions (the same two figures used in the full essay), so the
+     eye gets somewhere to land and the reader sees the network the essay is
+     about. Nothing here is invented — these are existing assets with existing
+     captions, reused verbatim.
+
+     Tracks are sized to content and packed left, matching the twins
+     directory, so the leftover space sits at the page edge where it reads as
+     margin instead of as a hole. */
+  display: grid;
+  grid-template-columns: minmax(0, var(--measure)) 360px;
+  justify-content: start;
+  gap: 2.2rem 2rem;
+}
+.persp-stance, .persp-article { grid-column: 1; }
+.persp-aside {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  min-width: 0;
+  padding-top: 0.2rem;
+  /* Travel with the reading. The text column runs about 1600px; two figures
+     cover roughly half that, so a static aside simply relocates the void from
+     beside the argument to below it. Sticky keeps the photographs in view for
+     the whole passage without inventing a third image to pad the column. */
+  align-self: start;
+  position: sticky;
+  top: 5rem;
+}
+.persp-figure { margin: 0; }
+.persp-figure img {
+  display: block;
+  width: 100%;
+  /* Natural ratios: these are 447x447, 750x501 and 686x386. Forcing a shared
+     aspect ratio cropped the square frame to a row of torsos and a banner. */
+  height: auto;
+  border: 1px solid var(--line);
+}
+.persp-figure figcaption {
+  font-size: var(--t-micro);
+  line-height: 1.45;
+  color: var(--muted);
+  padding-top: 0.45rem;
+}
+@media (max-width: 1080px) {
+  .perspective { grid-template-columns: minmax(0, 1fr); }
+  .persp-aside {
+    grid-column: 1;
+    grid-row: auto;
+    flex-direction: row;
+    gap: 1.4rem;
+    /* Sticky reads as a bug once the column is taller than the viewport. */
+    position: static;
+  }
+  .persp-aside > * { flex: 1 1 0; min-width: 0; }
+}
+@media (max-width: 620px) {
+  .persp-aside { flex-direction: column; }
 }
 .persp-stance h2 { margin: 0.3rem 0 0.7rem; }
 .persp-stance h2 { max-width: 34ch; }
