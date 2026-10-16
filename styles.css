@@ -24,20 +24,31 @@
   --rule: var(--line);
   --border: var(--line-soft);
 
-  /* Reading measure. A line has to be short enough that the eye can find the
-     start of the next one without hunting — past roughly 90 characters the
-     return sweep starts to fail and reading degrades into scanning. This is
-     the single most consequential value on the page for readability, and it
-     was entirely absent: 167 of 278 prose blocks ran past 90 characters, many
-     at 208, because every section stretched to the full 1248px column.
+  /* PAPER IS THE REFERENCE — the standing principle for this site.
 
-     Expressed in `ch`, not px or rem, so it means the same number of
-     CHARACTERS at 12px as at 16px. A rem-based cap would silently give 12px
-     notes a far longer line than 16px prose — the same failure, one level down. */
-  --measure: 72ch;
+   A reader's eye is calibrated to a printed page, not a monitor. A4 is 210mm
+   wide, US Letter 216mm; at 96dpi that is 794px and 816px. A well-set A4 page
+   sets its text inside roughly 25mm margins, giving a TEXT BLOCK of about
+   160mm = 605px. That block is the limit: past it the return sweep at the end
+   of a line starts to fail, and reading degrades into scanning.
+
+     --page-sheet   794px   full A4 sheet
+     --page-text    605px   the A4 text block — the binding constraint
+     --measure      66ch ≈ 594px   held UNDER --page-text
+
+   66ch is both the classical ideal measure and, at this font, the width of an
+   A4 text column. The two agree, so the number does not have to be defended
+   twice.
+
+   Expressed in `ch`, not px or rem, so the cap means the same number of
+   CHARACTERS at 12px as at 16px. A rem-based cap would silently give 12px
+   notes a far longer line than 16px prose — the same failure, one level down. */
+  --page-sheet: 794px;
+  --page-text: 605px;
+  --measure: 66ch;
 
   /* Headings want a shorter line than prose. About two thirds. */
-  --measure-heading: 46ch;
+  --measure-heading: 40ch;
 
   /* Signal colours. Each name now matches the hue it carries: a finding reads
      red, an interface accent reads amber, a link reads blue. Before this pass

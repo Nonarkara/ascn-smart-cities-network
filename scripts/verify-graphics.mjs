@@ -1,4 +1,5 @@
 import { chromium, devices } from "@playwright/test";
+import { createHash } from "node:crypto";
 
 const BASE = process.env.ASCN_TEST_URL || "http://127.0.0.1:4187";
 const browser = await chromium.launch();
@@ -396,6 +397,71 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   ok("the aside introduces no horizontal overflow", !overflow, overflow ? "overflowing" : "clean");
 
   ok("no page errors on the Overview aside", failures.length === 0, failures.slice(0, 2).join(" | "));
+  await page.close();
+}
+
+/* ── Cache busting: new markup must never meet an old stylesheet ─────────── */
+{
+  // The failure this exists to catch, observed in production: `?v=` was a
+  // hand-maintained counter that went unbumped across four deploys that all
+  // rewrote styles.css and app.js. Assets are served with max-age=14400, so a
+  // visitor got the NEW markup against a stylesheet up to four hours old. The
+  // twins directory rendered as five unstyled inline <a> elements in a
+  // five-column grid, overlapping the KPI row. Nothing in the build failed;
+  // the page was simply wrong on someone else's screen.
+  //
+  // Assert the contract directly: the version in the document must equal the
+  // hash of the bytes actually being served.
+  const indexRes = await fetch(`${BASE}/`);
+  const html = await indexRes.text();
+  const ref = html.match(/(?:href|src)="(styles\.css|app\.js)\?v=([a-f0-9]+)"/);
+  ok("assets are cache-busted from content, not a manual counter", !!ref,
+    ref ? `${ref[1]}?v=${ref[2]}` : "no hashed asset reference found in the document");
+
+  if (ref) {
+    // ref[0] is the whole match, ref[1] the filename, ref[2] the hash. Skipping
+    // index 0 here silently fetched "styles.css?v=styles.css" and compared the
+    // hash of the wrong thing.
+    const [, file, declared] = ref;
+    const res = await fetch(`${BASE}/${file}?v=${declared}`);
+    const body = Buffer.from(await res.arrayBuffer());
+    const actual = createHash("sha256").update(body).digest("hex").slice(0, 10);
+    ok("the served asset matches the version the document advertises", actual === declared,
+      `declared ${declared}, served bytes hash to ${actual}`);
+  }
+
+  // And the document itself must never be cacheable, or the asset graph above
+  // is stale for the same reason.
+  const docCache = indexRes.headers.get("cache-control") || "";
+  ok("the document is never served from a long cache",
+    /max-age=0|no-cache|no-store/i.test(docCache), docCache || "no cache-control header");
+}
+
+/* ── Paper is the reference ──────────────────────────────────────────────── */
+{
+  // A reader's eye is calibrated to a printed page. A4 is 210mm, Letter 216mm;
+  // a well-set A4 page sets text inside ~25mm margins for a ~160mm (605px at
+  // 96dpi) text block. That block is the limit — past it the return sweep at
+  // the end of a line fails and reading degrades into scanning.
+  const { page } = await newPage();
+  await page.goto(`${BASE}/#overview`, { waitUntil: "networkidle" });
+  await page.waitForTimeout(500);
+
+  const paper = await page.evaluate(() => {
+    const cs = getComputedStyle(document.documentElement);
+    const v = (n) => parseFloat(cs.getPropertyValue(n));
+    const lede = document.querySelector(".persp-stance .lede");
+    return {
+      sheet: v("--page-sheet"),
+      text: v("--page-text"),
+      measure: v("--measure"),
+      resolved: lede ? parseFloat(getComputedStyle(lede).maxWidth) : NaN,
+    };
+  });
+  ok("the page tokens record the A4/Letter standard", paper.sheet === 794 && paper.text === 605,
+    `sheet ${paper.sheet}px, text block ${paper.text}px`);
+  ok("no prose block is set wider than an A4 text block", paper.resolved <= paper.text,
+    `${Math.round(paper.resolved)}px vs ${paper.text}px`);
   await page.close();
 }
 
