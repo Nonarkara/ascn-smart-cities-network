@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtemp, mkdir, writeFile, readFile, access, symlink, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { escapeHtml, safeUrl, csvCell, validateDataset } from "../lib/security.mjs";
 import { copySiteEntry } from "../scripts/site-assets.mjs";
 import { SECURITY_HEADERS } from "../lib/response-policy.mjs";
@@ -89,4 +90,32 @@ test("publication only copies reviewed datasets even when raw mailbox JSON exist
     await access(join(output, "data", "ascn-correspondence.json"));
     for (const name of ["ascn-email-evidence.json", "unreviewed.json"]) await assert.rejects(access(join(output, "data", name)));
   } finally { await rm(root, { recursive: true, force: true }); }
+});
+
+test("working papers publish local HTML and assets, not maintainer sources", async () => {
+  const root = fileURLToPath(new URL("..", import.meta.url));
+  const output = await mkdtemp(join(tmpdir(), "ascn-papers-build-"));
+  const pages = ["01-4p-framework.html", "02-agentic-ai-flooddash.html", "03-smart-city-finance.html"];
+  try {
+    await copySiteEntry(root, output, "papers");
+    for (const name of pages) {
+      const html = await readFile(join(output, "papers", name), "utf8");
+      assert.doesNotMatch(html, /<script/i);
+      assert.doesNotMatch(html, /fonts\.googleapis|cdn\.|unpkg|jsdelivr/i);
+      const refs = [...html.matchAll(/(?:src=["']|url\()(assets\/[^"')\s]+)/g)].map((match) => match[1]);
+      assert.ok(refs.length > 0, `${name} should reference local assets`);
+      for (const ref of refs) await access(join(output, "papers", ref));
+    }
+    await access(join(output, "papers/assets/fonts/IBMPlexSerif-Regular.ttf"));
+    await access(join(output, "papers/assets/fonts/Sarabun-Regular.ttf"));
+    await access(join(output, "papers/assets/CREDITS.json"));
+    for (const name of ["build.py", "PUBLISH.md", "01-4p-framework.md", "02-agentic-ai-flooddash.md", "03-smart-city-finance.md"]) {
+      await assert.rejects(access(join(output, "papers", name)));
+    }
+    const app = await readFile(join(root, "app.js"), "utf8");
+    const themesAt = app.indexOf("SEVEN THEMES FROM THE LITERATURE");
+    const workingAt = app.indexOf('id="working-papers"');
+    assert.ok(workingAt > 0 && themesAt > workingAt, "working papers should render before the literature themes");
+    for (const href of pages.map((name) => `/papers/${name}`)) assert.ok(app.includes(href));
+  } finally { await rm(output, { recursive: true, force: true }); }
 });

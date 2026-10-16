@@ -2,7 +2,7 @@ import { cp, lstat, mkdir, readdir } from "node:fs/promises";
 import { extname, join } from "node:path";
 
 export const siteEntries = ["index.html", "styles.css", "app.js", "showcase.js", "news.js", "ascn-news.js", "favicon.svg", "_headers",
-  "lib", "vendor", "fonts", "data", "docs", "Photos", "logos", "media"];
+  "lib", "vendor", "fonts", "data", "docs", "Photos", "logos", "media", "papers"];
 
 export const publishedDatasets = new Set([
   "ascn-cities.json", "ascn-correspondence.json", "ascn-knowledge.json",
@@ -16,6 +16,8 @@ const extensions = {
   data: new Set([".json"]), docs: new Set([".pdf", ".png"]),
   Photos: new Set([".jpg", ".jpeg", ".png", ".webp"]),
   logos: new Set([".png", ".svg"]), media: new Set([".png", ".jpg", ".jpeg", ".webp", ".mp4", ".json"]),
+  // HTML pages and local figures/fonts only. Markdown sources, PUBLISH.md, and build.py stay in git for maintainers.
+  papers: new Set([".html", ".svg", ".jpg", ".jpeg", ".png", ".webp", ".ttf", ".otf", ".woff", ".woff2", ".json"]),
 };
 
 export async function copySiteEntry(root, output, entry, relative = entry) {

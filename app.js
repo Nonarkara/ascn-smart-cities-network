@@ -13,7 +13,7 @@ const tileLayers = {
 };
 
 const TABS = ["overview", "innovation", "record", "news", "ascn9", "history", "cities", "projects", "framework", "partners", "contacts", "insights", "data", "research", "essay"];
-const DATA_VERSION = "41";
+const DATA_VERSION = "42";
 
 const state = {
   data: null, K: null, C: [], L: null, LF: null,
@@ -1943,11 +1943,66 @@ function renderResearch() {
 
   const typeLabel = { journal: "PEER REVIEWED", official: "OFFICIAL DOC" };
 
+  const WORKING_PAPERS = [
+    {
+      n: "01",
+      href: "/papers/01-4p-framework.html",
+      title: "The 4P Filter",
+      en: "Purpose, Practicality, Proof and People: a checklist before you write a TOR, with city figures from recorded talks (including Nakhon Si Thammarat).",
+      thTitle: "ตัวกรอง 4P",
+      th: "เป้าหมาย ทำได้จริง พิสูจน์ก่อน และคน: รายการตรวจสอบก่อนเขียน TOR พร้อมตัวเลขเมืองจากการบรรยาย (รวมนครศรีธรรมราช)",
+    },
+    {
+      n: "02",
+      href: "/papers/02-agentic-ai-flooddash.html",
+      title: "One Builds, Another Checks",
+      en: "How FloodDash reached storm-ready reliability with agentic AI: build–check loops, tests, gates and a human at the merge button.",
+      thTitle: "คนหนึ่งสร้าง อีกคนตรวจ",
+      th: "FloodDash ไปถึงระดับที่พึ่งพาได้ในพายุด้วย AI แบบเอเจนต์อย่างไร: วงจรสร้าง–ตรวจ ชุดทดสอบ ด่านปล่อย และคนกดรวมโค้ด",
+    },
+    {
+      n: "03",
+      href: "/papers/03-smart-city-finance.html",
+      title: "Stop Waiting for the Budget",
+      en: "A plain guide to the six families of finance in the ASEAN Smart City Financing Toolkit, plus the cost of waiting.",
+      thTitle: "เลิกรองบประมาณ",
+      th: "คู่มือภาษาง่ายเรื่องแหล่งเงินหกกลุ่มใน ASEAN Smart City Financing Toolkit และต้นทุนของการรอ",
+    },
+  ];
+
   el.innerHTML = `
 <div class="section-head">
   <p class="label">Research</p>
   <h2>What the scholarship says — and what it misses</h2>
   <p class="lede">A synthesis of fourteen peer-reviewed papers and official documents on ASCN. Eight structural themes, an insider FAQ, and a full bibliography — written by a participant who has attended every annual meeting since 2018.</p>
+</div>
+
+<div class="research-section" id="working-papers">
+  <p class="research-section-label label">Working papers</p>
+  <div class="wp-intro">
+    <div class="wp-col" lang="en">
+      <h3>Working papers</h3>
+      <p>Three short bilingual papers from Dr Non Arkaraprasertkul, Thailand’s ASCN representative since 2019. Plain language, full citations, openly licensed figures.</p>
+      <p>Each page is English and Thai side by side. Drafts pending site PR.</p>
+    </div>
+    <div class="wp-col" lang="th">
+      <h3>เอกสารทำงาน (Working papers)</h3>
+      <p>บทความสองภาษาสั้น ๆ สามฉบับ โดย ดร.นน อัครประเสริฐกุล ผู้แทนประเทศไทยใน ASCN ตั้งแต่ปี 2562 ภาษาง่าย อ้างอิงครบ แผนภาพและภาพถ่ายเปิดสิทธิ์</p>
+      <p>แต่ละหน้ามีทั้งภาษาอังกฤษและไทย คู่กัน ฉบับร่างรอ PR ขึ้นเว็บ</p>
+    </div>
+  </div>
+  <div class="wp-grid">
+    ${WORKING_PAPERS.map((paper) => `<a class="wp-card" href="${paper.href}">
+      <div class="paper-meta-row">
+        <span class="paper-n">${paper.n}</span>
+        <span class="paper-type paper-type--o">Working paper</span>
+      </div>
+      <h3 class="wp-title">${paper.title}</h3>
+      <p class="wp-en">${paper.en}</p>
+      <p class="wp-th" lang="th"><strong>${paper.thTitle}</strong> — ${paper.th}</p>
+      <span class="wp-open">Open paper</span>
+    </a>`).join("")}
+  </div>
 </div>
 
 <div class="research-section">
