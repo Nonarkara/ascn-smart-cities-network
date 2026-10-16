@@ -265,6 +265,94 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
     getComputedStyle(document.documentElement).getPropertyValue("--measure").trim());
   ok("the measure cap is expressed in ch, not px", /^[\d.]+ch$/.test(measureToken),
     `--measure: ${measureToken || "not defined"}`);
+
+  const headToken = await page.evaluate(() =>
+    getComputedStyle(document.documentElement).getPropertyValue("--measure-heading").trim());
+  ok("headings carry a shorter measure than prose", /^[\d.]+ch$/.test(headToken) && headToken < measureToken,
+    `--measure-heading: ${headToken || "not defined"} vs --measure: ${measureToken}`);
+  await page.close();
+}
+
+/* ── Heading measure and ramp ────────────────────────────────────────────── */
+{
+  // Measure the ACTUAL longest rendered line, never the container. A heading
+  // like "Jakarta" sits in a 1248px column but fills seven characters of it;
+  // a container-width metric reports that as a 156-character heading and buries
+  // the real offender. Range client rects come back one per line box.
+  const { page } = await newPage();
+  const views = ["overview", "innovation", "record", "news", "history", "cities",
+    "projects", "framework", "partners", "insights", "library", "research", "essay"];
+  const long = [];
+  let smallHeadings = [];
+  let measured = 0;
+  for (const v of views) {
+    await page.goto(`${BASE}/#${v}`, { waitUntil: "networkidle" });
+    await page.waitForTimeout(450);
+    const f = await page.evaluate(() => {
+      const over = [], tiny = [];
+      let n = 0;
+      for (const el of document.querySelectorAll("h1,h2,h3,h4,h5")) {
+        const t = (el.textContent || "").trim();
+        if (!t) continue;
+        const px = parseFloat(getComputedStyle(el).fontSize);
+        n++;
+        if (px < 14) tiny.push(`${el.tagName}.${String(el.className).split(" ")[0]}@${px}px`);
+        const r = document.createRange();
+        r.selectNodeContents(el);
+        const rects = [...r.getClientRects()].filter((x) => x.width > 4);
+        if (!rects.length) continue;
+        // Budget in characters, scaled down as type grows: display steps want a
+        // shorter line than body copy.
+        const chars = Math.round(Math.max(...rects.map((x) => x.width)) / (px * 0.5));
+        if (chars / (px / 16) > 55) over.push(`${v} ${el.tagName}.${String(el.className).split(" ")[0]}=${chars}`);
+      }
+      return { over, tiny, n };
+    });
+    measured += f.n;
+    long.push(...f.over);
+    if (f.tiny.length) smallHeadings = smallHeadings.concat(f.tiny);
+  }
+  ok("no heading runs a line too long to scan back from", long.length === 0,
+    long.length ? long.slice(0, 4).join(" | ") : `${measured} headings swept`);
+
+  // The seven Roman-numeral section headings of the flagship essay were 12px —
+  // the only headings on the site on the micro step, and a different size from
+  // their own class sibling "Executive Summary".
+  ok("no heading is set below the body step", smallHeadings.length === 0,
+    smallHeadings.length ? [...new Set(smallHeadings)].slice(0, 4).join(" | ") : "none under 14px");
+
+  // Control for the sweep itself.
+  ok("the heading sweep visits real headings (control)", measured > 200, `${measured} headings`);
+
+  // The regression that nearly shipped: the measure rules were written as
+  // `main .view :is(...)`, but the SPA mounts several of its 15 view panels
+  // directly on <body> — Research among them — so the cap silently skipped
+  // them and those card titles still computed `max-width: none`.
+  //
+  // Assert over every prose element in every stray view, not the first match.
+  // Views that render lazily hold no prose at all when this runs, and a view
+  // with nothing in it is vacuously capped — sampling one element reported an
+  // empty panel as a failure and sent me looking for a defect that was not there.
+  const mounted = await page.evaluate(() => {
+    const stray = [...document.querySelectorAll("section.view")].filter((s) => !s.closest("main"));
+    let uncapped = [];
+    let viewsWithProse = 0;
+    for (const s of stray) {
+      const els = [...s.querySelectorAll("p, li, h1, h2, h3, h4, blockquote, figcaption")]
+        .filter((el) => (el.textContent || "").trim().length >= 60);
+      if (!els.length) continue;
+      viewsWithProse++;
+      for (const el of els) {
+        if (getComputedStyle(el).maxWidth === "none")
+          uncapped.push(`${s.id || "?"} ${el.tagName}.${String(el.className).split(" ")[0]}`);
+      }
+    }
+    return { stray: stray.length, viewsWithProse, uncapped: [...new Set(uncapped)] };
+  });
+  ok("views mounted outside <main> are still capped", mounted.uncapped.length === 0,
+    mounted.uncapped.length
+      ? mounted.uncapped.slice(0, 4).join(" | ")
+      : `${mounted.viewsWithProse} of ${mounted.stray} stray views hold prose, all capped`);
   await page.close();
 }
 

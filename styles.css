@@ -36,6 +36,9 @@
      notes a far longer line than 16px prose — the same failure, one level down. */
   --measure: 72ch;
 
+  /* Headings want a shorter line than prose. About two thirds. */
+  --measure-heading: 46ch;
+
   /* Signal colours. Each name now matches the hue it carries: a finding reads
      red, an interface accent reads amber, a link reads blue. Before this pass
      --red and --amber were the same value, so a documented finding and a
@@ -1310,7 +1313,13 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .essay-body { max-width: 720px; }
 .essay-section { padding: 2rem 0; border-top: 1px solid var(--line-soft); }
 .essay-section:first-child { border-top: 0; padding-top: 0; }
-.essay-h3 { font-size:var(--t-small); font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber); margin: 0 0 1.25rem; }
+/* Was var(--t-small), i.e. 12px — putting all seven Roman-numeral section
+   headings of the flagship essay on the micro step, the only headings on the
+   entire site to do so. `.essay-exec-summary h3` had already been overridden
+   up to --t-body, so "Executive Summary" and "I. The promise and the
+   performance gap" were the same element class at two sizes. Matching the
+   override rather than inventing a new step: the ramp stays four deep. */
+.essay-h3 { font-size:var(--t-body); font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber); margin: 0 0 1.25rem; }
 .essay-p { font-size:var(--t-body); line-height: 1.85; color: var(--ink-2); margin: 0 0 1.2em; }
 .essay-pull { border-left: 2px solid var(--amber); margin: 1.8rem 0; padding: 0.8rem 1.4rem; background: var(--surface); }
 .essay-pull p, .essay-pull { font-size:var(--t-body); line-height: 1.75; color: var(--ink); font-style: italic; margin: 0; }
@@ -3670,9 +3679,31 @@ button:active { transform: scale(0.97); }
    .lede` pair (0,2,0) and the `.review-verdict p` family (0,1,1) — which a
    bare `body p` could not, because specificity, not source order, decides.
 
-   Scoped to main content so table headers, figure grids and the chart
+   Scoped to `.view` so table headers, figure grids and the chart
    containers keep their own widths. Those are structure, not prose, and
-   narrowing them would shrink a chart to fit a paragraph. */
-main .view :is(p, li, dd, blockquote, figcaption, .lede) {
+   narrowing them would shrink a chart to fit a paragraph.
+
+   The ancestor is `body`, not `main`. This is a single-page app holding 15
+   `section.view` panels, and the SPA mounts some of them directly on `body`
+   rather than inside the one `<main>` in the document — research is one. A
+   `main .view` selector therefore matched only the views that happened to be
+   nested, and silently skipped the rest: the Research card titles still
+   measured `max-width: none`. Same specificity, matches all of them. */
+body .view :is(p, li, dd, blockquote, figcaption, .lede) {
   max-width: var(--measure);
+}
+
+/* Headings get a shorter measure than prose. The display steps are fluid, so
+   at 56px a 46ch cap is wider than the column and the container binds first —
+   the cap only bites on the small heading steps, which are exactly the ones
+   that were running long: a News section heading reached 130 characters on a
+   single 1248px line. `ch` means the same character count at every size, which
+   is the property that matters: a heading line should stay short whether it
+   renders at 12px or 56px.
+
+   Measured against the ACTUAL longest rendered line, not the container —
+   a heading like "Jakarta" sits in a wide column but fills seven characters
+   of it, and a container-width metric reports that as a 156-character line. */
+body .view :is(h1, h2, h3, h4) {
+  max-width: var(--measure-heading);
 }
