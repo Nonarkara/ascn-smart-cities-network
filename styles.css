@@ -12,6 +12,16 @@
   --line: #7c8681;
   --line-soft: #6b7772;
   --line-dim: #98a49e;
+
+  /* --rule was used in 23 rules across the FAQ list, programme cards, toolkit
+     cards and workshop gallery, and was never defined. An undefined custom
+     property makes its declaration invalid, and the two properties fail
+     differently: border-color falls back to currentColor, so those rules were
+     drawing in the inherited ivory text colour — too bright to read as a rule
+     — while background and gap usages resolved to transparent and rendered as
+     nothing at all. Rules are exactly what carries hierarchy here. Aliased to
+     --line rather than given a new value, so the names cannot drift apart. */
+  --rule: var(--line);
   --border: var(--line-soft);
 
   /* Signal colours. Each name now matches the hue it carries: a finding reads
@@ -23,6 +33,12 @@
   --navy: #7fb3d5;
   --green: #9ac4a9;
 
+  /* Data marks get their own token. --navy is a link colour: using it to fill
+     bars made reading links and reading values the same colour, and put blue
+     next to red in the same comparison. Monochrome carries the series; --red
+     stays reserved for the one row the argument turns on. */
+  --data: #8b978f;
+
   --surface: #222925;
   --surface-2: #303a34;
   --companion: #283d37;
@@ -31,17 +47,28 @@
   --font: "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
 
-  /* Type ramp. Sixteen declared steps, not the forty-six the stylesheet had:
-     the micro band previously held ~30 values inside 0.60–0.86rem, where a
-     0.01rem difference is not perceivable and only makes the scale unlearnable. */
-  --t-micro: 0.70rem;
-  --t-small: 0.80rem;
-  --t-body: 0.90rem;
-  --t-lede: 1.00rem;
-  --t-h3: 1.15rem;
-  --t-h2: 1.55rem;
+  /* Type ramp. Three named roles, not a ladder: Display carries a statement,
+     Body carries prose, Micro carries labels. Everything a ladder would have
+     expressed — emphasis, sub-headings, tiered figures — is carried by weight,
+     rule and space instead, which is the only way a scale stays learnable.
+
+     This stylesheet previously rendered thirteen distinct sizes. Four of them
+     (27.2 / 28.8 / 29.6 / 34.56px) were six separate clamp() expressions for
+     headings that should have been identical, differing only in the fourth
+     decimal of somebody's guess. That drift reads as random, not as
+     hierarchy. Prose and labels are also up one step each: 11–14px was below
+     what the reader can comfortably resolve, and micro-type was the most
+     common size on the page. */
+  --t-micro: 0.80rem;   /* labels, captions, footnotes, table meta */
+  --t-body: 1.00rem;    /* all prose */
+  --t-figure: 2.40rem;  /* the one page-level statement */
+
+  /* Emphasis sits between Body and Display and is separated by weight. */
+  --t-lede: 1.15rem;
+  --t-h3: 1.55rem;
+  --t-h2: 2.10rem;
   --t-h1: 2.10rem;
-  --t-figure: 2.40rem;
+  --t-small: var(--t-micro);
   --text-body: var(--t-body);
   --text-micro: var(--t-micro);
 }
@@ -57,7 +84,7 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font);
-  font-size: 14px;
+  font-size: var(--t-body);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
 }
@@ -94,7 +121,7 @@ img { display: block; max-width: 100%; }
 .brand i { font-style: normal; font-weight: 700; font-size:var(--t-micro); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-left: 0.1rem; }
 .brand-mark { width: 1.6rem; height: 1.6rem; }
 
-.site-nav nav { display: flex; gap: 0.95rem; }
+.site-nav nav { display: flex; gap: 0.7rem; flex-wrap: wrap; }
 
 .site-nav nav a,
 .label,
@@ -110,6 +137,12 @@ th { font-size:var(--t-micro); font-weight: 800; letter-spacing: 0.1em; text-tra
   display: inline-flex;
   align-items: center;
   white-space: nowrap;
+  /* 0.1em tracking across fourteen uppercase links needs ~1370px, so the nav
+     pushed the whole page sideways instead of the page complaining. Nav items
+     are short words; the wide tracking belongs to labels and table heads, not
+     to a fourteen-item menu. The flex-wrap above is the safety net if the
+     item list ever grows again. */
+  letter-spacing: 0.05em;
 }
 .site-nav nav a:hover { color: var(--ink); }
 .site-nav nav a.active { color: var(--ink); border-bottom-color: var(--red); }
@@ -123,8 +156,8 @@ main { width: var(--content); margin: 0 auto; min-width: 0; }
 /* ---------- Typography ---------- */
 .label { margin: 0 0 0.42rem; color: var(--navy); }
 h1, h2, h3, p { margin-top: 0; }
-h1 { margin-bottom: 0.85rem; font-size: clamp(2.05rem, 4.4vw, 3.7rem); line-height: 0.97; letter-spacing: -0.01em; overflow-wrap: anywhere; }
-h2 { margin-bottom: 0; font-size: clamp(1.35rem, 2.4vw, 2.2rem); line-height: 1.05; }
+h1 { margin-bottom: 0.85rem; font-size: var(--t-figure); line-height: 0.97; letter-spacing: -0.01em; overflow-wrap: anywhere; }
+h2 { margin-bottom: 0; font-size: var(--t-h2); line-height: 1.05; }
 h3 { margin-bottom: 0; font-size:var(--t-body); line-height: 1.25; }
 .lede { max-width: 38rem; margin-bottom: 0; color: var(--ink-2); font-size:var(--t-body); }
 .muted { color: var(--muted); }
@@ -159,7 +192,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .kpi-grid--four { grid-template-columns: repeat(4, 1fr); }
 .kpi { min-height: 5.2rem; padding: 0.75rem 0.8rem 0 0; border-top: 1px solid var(--line); }
 .kpi + .kpi { border-left: 1px solid var(--line-soft); padding-left: 0.8rem; }
-.kpi strong { display: block; margin-bottom: 0.15rem; font-size: clamp(1.45rem, 2.4vw, 2.35rem); line-height: 1; font-weight: 800; }
+.kpi strong { display: block; margin-bottom: 0.15rem; font-size: var(--t-h2); line-height: 1; font-weight: 800; }
 .kpi span { display: block; color: var(--muted); font-size:var(--t-micro); font-weight: 700; }
 
 /* ---------- Hero (editorial) ---------- */
@@ -201,7 +234,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .news-icon-button:disabled { opacity: 0.45; cursor: default; }
 .news-topics { display: flex; gap: 0.3rem 1rem; flex-wrap: wrap; border-bottom: 1px solid var(--line); }
 .news-topics button { padding: 0.6rem 0; min-height: 44px; border: 0; border-bottom: 3px solid transparent; background: transparent; cursor: pointer; color: var(--muted); font-size:var(--t-body); }
-.news-topics button[aria-pressed="true"] { color: var(--ink); border-bottom-color: #f59e0b; font-weight: 700; }
+.news-topics button[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--amber); font-weight: 700; }
 .news-feed-status { display: flex; justify-content: space-between; gap: 1rem; padding: 0.75rem 0; font-size:var(--t-small); color: var(--muted); }
 .news-feed-status p { margin: 0; }
 .news-feed-status span { flex-shrink: 0; font-variant-numeric: tabular-nums; }
@@ -219,7 +252,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .news-country-row { display: grid; grid-template-columns: 6rem minmax(0, 1fr) 1.4rem; gap: 0.6rem; align-items: center; width: 100%; padding: 0.5rem 0; min-height: 44px; font-size:var(--t-small); color: var(--ink-2); border: 0; background: transparent; text-align: left; cursor: pointer; }
 .news-country-row strong { text-align: right; font-variant-numeric: tabular-nums; }
 .news-country-bar { height: 4px; background: var(--surface-2); }
-.news-country-bar > span { display: block; height: 100%; background: #f59e0b; }
+.news-country-bar > span { display: block; height: 100%; background: var(--amber); }
 .news-muted { font-size:var(--t-small); color: var(--muted); margin: 0.7rem 0 0; }
 .news-source { display: grid; gap: 0.2rem; padding: 0.6rem 0; border-bottom: 1px solid var(--line); }
 .news-source a { font-size:var(--t-body); font-weight: 700; }
@@ -233,7 +266,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .review-head .label, .review-note, .review-record .review-note, .review-followup .review-note, .review-baseline .review-note { font-size:var(--t-small); color: var(--muted); }
 .review-tabs { display: flex; flex-wrap: wrap; gap: 0 1.4rem; border-bottom: 2px solid var(--ink); margin-bottom: 1rem; }
 .review-tabs a { min-height: 44px; padding: 0.6rem 0; font-size:var(--t-body); border-bottom: 3px solid transparent; }
-.review-tabs a[aria-current] { border-bottom-color: #f59e0b; font-weight: 700; }
+.review-tabs a[aria-current] { border-bottom-color: var(--amber); font-weight: 700; }
 .review-controls { display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: end; }
 .review-controls[hidden] { display: none; }
 .review-controls label, .discovery-search { display: grid; gap: 0.3rem; min-width: 0; font-size:var(--t-small); color: var(--muted); }
@@ -277,7 +310,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .review-record .news-story-meta > span { max-width: 100%; overflow-wrap: anywhere; }
 .review-record h2 a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .review-record p { margin: 0.7rem 0; }
-.review-record-detail { border-left: 3px solid #f59e0b; padding-left: 1rem; }
+.review-record-detail { border-left: 3px solid var(--amber); padding-left: 1rem; }
 .review-record-detail a { text-decoration: underline; text-underline-offset: 3px; }
 .review-project-links { padding-left: 1.2rem; }
 .review-project-links li { margin: 0.5rem 0; }
@@ -289,6 +322,23 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .review-method p { max-width: 55rem; }
 .review-empty { padding: 2rem 0; font-size:var(--t-body); }
 .review-tabs a:focus-visible, .review-city-table button:focus-visible, .review-pagination button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+/* Phone: two introductions stack here — the view's review-head and the
+   section's news-head — so the first story sat below the fold once type moved
+   up a step. The view-level heading repeats what the header brand and the
+   section heading already say, so on a phone it becomes a compact strip and
+   the vertical rhythm gives the space back to the reader. */
+@media (max-width: 760px) {
+  .view { padding-top: 1rem; }
+  .review-head { margin-bottom: 0.7rem; }
+  .review-head h1 { font-size: var(--t-h3); line-height: 1.2; }
+  .review-tabs { margin-bottom: 0.7rem; }
+  .review-tabs a { padding: 0.4rem 0; }
+  .news-head { margin-bottom: 0.8rem; }
+  .news-controls { gap: 0.5rem; }
+  .news-feed-status { padding: 0.5rem 0; }
+  .news-story { padding: 0.85rem 0; }
+}
 @media (max-width: 600px) {
   .review-tabs { gap: 0 1rem; }
   .review-controls > label, .review-controls .review-search { flex: 1 1 calc(50% - 1rem); }
@@ -351,7 +401,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .showcase-selector[hidden] { display: none; }
 .showcase-clip { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); gap: 0.7rem; align-items: start; text-align: left; width: 100%; border: 0; border-top: 1px solid var(--line); border-left: 3px solid transparent; background: transparent; padding: 0.8rem 0.6rem; color: var(--ink); cursor: pointer; }
 .showcase-clip:first-child { border-top: 0; }
-.showcase-clip[aria-pressed="true"] { border-left-color: #f59e0b; background: var(--surface); }
+.showcase-clip[aria-pressed="true"] { border-left-color: var(--amber); background: var(--surface); }
 .showcase-clip:hover { background: var(--surface); }
 .showcase-clip:focus-visible, .showcase-open:focus-visible, .meeting-summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .showcase-clip:active { transform: scale(0.97); }
@@ -384,7 +434,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
   gap: 0.75rem;
 }
 .twins-header-main h2 {
-  font-size: clamp(1.25rem, 2.2vw, 1.85rem);
+  font-size: var(--t-h2);
   line-height: 1.15;
   margin-bottom: 0.4rem;
   letter-spacing: -0.01em;
@@ -449,30 +499,29 @@ input[type="search"] { min-width: min(16rem, 100%); }
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
-  background: #0f172a;
+  background: var(--surface-2);
   overflow: hidden;
 }
 .twin-thumb {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.25s ease;
-}
-.twin-card:hover .twin-thumb {
-  transform: scale(1.04);
 }
 .twin-status-tag {
+  /* Was a frosted pill: rgba glass, backdrop blur, and two raw Tailwind hexes
+     (#38bdf8 sky-400 on #0f172a slate-900) that belonged to no token. Blur is
+     not in this design language and the raw hexes let an outside palette in.
+     A sharp chip on an opaque ground states the same thing. */
   position: absolute;
   top: 0.4rem;
-  right: 0.4rem;
+  left: 0.4rem;
   padding: 0.15rem 0.45rem;
-  font-size:var(--t-micro);
+  font-size: var(--t-micro);
   font-weight: 700;
   letter-spacing: 0.04em;
-  background: rgba(16, 20, 24, 0.88);
-  color: #38bdf8;
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(56, 189, 248, 0.35);
+  background: var(--bg);
+  color: var(--ink);
+  border: 1px solid var(--line);
 }
 .twin-body {
   padding: 0.85rem 0.8rem 1rem;
@@ -550,7 +599,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
 }
 .spotlight-media {
   position: relative;
-  background: #0b0f14;
+  background: var(--surface-2);
   overflow: hidden;
   border: 1px solid var(--line);
   min-width: 0;
@@ -560,20 +609,21 @@ input[type="search"] { min-width: min(16rem, 100%); }
   height: auto;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  transition: transform 0.2s ease;
 }
-.spotlight-media:hover .spotlight-img {
-  transform: scale(1.02);
-}
+/* Was a bottom-up gradient scrim fading to transparent. Gradients are not in
+   this design language, and a caption that dissolves into the photo is a
+   caption you cannot read. A solid ground with a rule above it states the
+   same information and stays legible over any image. */
 .spotlight-media-caption {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 0.6rem 0.9rem;
-  background: linear-gradient(to top, rgba(11, 15, 20, 0.92) 0%, rgba(11, 15, 20, 0.5) 70%, transparent 100%);
-  color: #f1f5f9;
-  font-size:var(--t-small);
+  padding: 0.5rem 0.9rem;
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+  color: var(--ink);
+  font-size: var(--t-small);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -581,11 +631,11 @@ input[type="search"] { min-width: min(16rem, 100%); }
   gap: 0.4rem;
 }
 .spotlight-live-tag {
-  color: #4ade80;
+  color: var(--green);
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  font-size:var(--t-micro);
+  font-size: var(--t-micro);
 }
 .spotlight-content {
   display: flex;
@@ -600,12 +650,14 @@ input[type="search"] { min-width: min(16rem, 100%); }
 }
 .spotlight-tag {
   padding: 0.15rem 0.45rem;
-  font-size:var(--t-micro);
+  font-size: var(--t-micro);
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   background: var(--navy);
-  color: #ffffff;
+  /* Was #ffffff on #7fb3d5 — about 2.3:1. The palette's own solid-ink token
+     is the accessible pairing and is what the rest of the sheet uses. */
+  color: var(--on-solid);
 }
 .spotlight-domain {
   font-family: var(--mono);
@@ -613,7 +665,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
   color: var(--muted);
 }
 .spotlight-content h2 {
-  font-size: clamp(1.35rem, 2.4vw, 1.95rem);
+  font-size: var(--t-h2);
   line-height: 1.15;
   margin-bottom: 0.8rem;
 }
@@ -691,23 +743,25 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .demo-card-media {
   position: relative;
   aspect-ratio: 16 / 9;
-  background: #0f172a;
+  background: var(--surface-2);
 }
 .demo-card-media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
+/* Was rgba glass + blur(4px) + #ffffff. Same correction as the twin tag:
+   an opaque ground, a rule, and the palette's own ink token. */
 .demo-play-btn {
   position: absolute;
   bottom: 0.6rem;
   right: 0.6rem;
-  background: rgba(16, 20, 24, 0.85);
-  color: #ffffff;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  color: var(--ink);
   padding: 0.25rem 0.6rem;
-  font-size:var(--t-small);
+  font-size: var(--t-small);
   font-weight: 700;
-  backdrop-filter: blur(4px);
 }
 .demo-card-body {
   padding: 1rem;
@@ -875,12 +929,15 @@ input[type="search"] { min-width: min(16rem, 100%); }
 
 /* ---------- Bars (shared) ---------- */
 .focus-bars, .stack-bars, .city-load, .growth-bars, .ig-bars, .focus-mini { display: grid; gap: 0.5rem; }
-.bar-row { display: grid; align-items: center; gap: 0.65rem; grid-template-columns: minmax(7rem, 11rem) 1fr 3.2rem; }
-.bar-row.wide-label { grid-template-columns: minmax(9rem, 13rem) 1fr 3.5rem; }
+/* The value column held two runs — "90.9/M" plus "5 proj · 55K". At 3.2rem
+   that wrapped to three lines once body type moved to 16px, which tripled the
+   row height and read as a layout bug rather than a width. */
+.bar-row { display: grid; align-items: center; gap: 0.65rem; grid-template-columns: minmax(7rem, 11rem) 1fr 6.5rem; }
+.bar-row.wide-label { grid-template-columns: minmax(9rem, 13rem) 1fr 7rem; }
 .bar-row span { color: var(--ink-2); }
 .bar-row strong { text-align: right; }
 .bar-track { position: relative; height: 0.45rem; overflow: hidden; background: var(--surface); border: 1px solid var(--line-soft); }
-.bar-fill { height: 100%; background: var(--navy); }
+.bar-fill { height: 100%; background: var(--data); }
 .bar-fill.red { background: var(--red); }
 .bar-fill.green { background: var(--green); }
 .bar-fill.amber { background: var(--amber); }
@@ -1300,7 +1357,7 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 /* ---------- Responsive ---------- */
 @media (max-width: 1100px) {
   .site-nav { align-items: flex-start; flex-direction: column; gap: 0.5rem; }
-  .site-nav nav { width: 100%; overflow-x: auto; scrollbar-width: none; }
+  .site-nav nav { width: 100%; overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
   .site-nav nav::-webkit-scrollbar { display: none; }
   .hero, .overview-grid, .history-grid, .cities-layout, .partners-split,
   .analytics-grid, .framework-grid, .gov-grid, .focus-detail, .info-grid,
@@ -1323,7 +1380,7 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 @media (max-width: 760px) {
   :root { --content: calc(100vw - 1rem); }
   .site-nav { align-items: flex-start; flex-direction: column; gap: 0.5rem; }
-  .site-nav nav { width: 100%; overflow-x: auto; padding-bottom: 0.2rem; scrollbar-width: none; }
+  .site-nav nav { width: 100%; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 0.2rem; scrollbar-width: none; }
   .site-nav nav::-webkit-scrollbar { display: none; }
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
   .sea-map { height: 22rem; }
@@ -1808,8 +1865,11 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 .ig-spark-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; font-size:var(--t-small); font-weight: 600; color: var(--ink-2); }
 .ig-spark-pct { font-size:var(--t-body); font-weight: 800; color: var(--ink); }
 .ig-spark-delta { font-size:var(--t-small); font-weight: 700; padding: 0.1rem 0.3rem; }
-.trend-up { color: #2a7a4f; background: rgba(42,122,79,0.08); }
-.trend-dn { color: #b53a2e; background: rgba(181,58,46,0.08); }
+/* Dark-mode signal colours. These were #2a7a4f / #b53a2e — a second, darker
+   green/red pair that belonged to no token and barely cleared the surface it
+   actually sits on. Status colours now come from the palette itself. */
+.trend-up { color: var(--green); background: color-mix(in srgb, var(--green) 12%, transparent); }
+.trend-dn { color: var(--red); background: color-mix(in srgb, var(--red) 12%, transparent); }
 .trend-flat { color: var(--muted); }
 .ig-spark-vals { display: flex; justify-content: space-between; margin-top: 0.2rem; }
 .ig-spark-vals span { font-size:var(--t-micro); color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -1832,9 +1892,9 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 .ig-traj-fg.silent { background: var(--muted); opacity: 0.3; }
 .ig-traj-n { font-size:var(--t-body); font-weight: 700; color: var(--ink); min-width: 1.4rem; text-align: right; }
 .ig-traj-delta { font-size:var(--t-small); font-weight: 700; min-width: 4.5rem; }
-.traj-up { color: #2a7a4f; }
-.traj-dn { color: #b53a2e; }
-.traj-silent { color: #b53a2e; font-weight: 800; }
+.traj-up { color: var(--green); }
+.traj-dn { color: var(--red); }
+.traj-silent { color: var(--red); font-weight: 800; }
 
 /* Country specialisation */
 .ig-spec-legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; margin-bottom: 0.9rem; }
@@ -1849,7 +1909,7 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 .ig-spec-top { font-size:var(--t-micro); color: var(--muted); font-weight: 600; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* Density bars — reuse .bar-row; add sub-label */
-.bar-sub { font-style: normal; font-size:var(--t-micro); color: var(--muted); margin-left: 0.3rem; }
+.bar-sub { font-style: normal; font-size: var(--t-micro); color: var(--muted); margin-left: 0.35rem; white-space: nowrap; }
 .bar-row strong .bar-sub { margin-left: 0.3rem; }
 .ig-note { font-size:var(--t-small); color: var(--muted); margin: 0.9rem 0 0.4rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
 
@@ -1859,12 +1919,12 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 .ig-signal-card strong { display: block; font-size:var(--t-body); font-weight: 700; color: var(--ink); margin-bottom: 0.4rem; margin-top: 0.2rem; }
 .ig-signal-card p { font-size:var(--t-body); color: var(--ink-2); line-height: 1.55; margin: 0; }
 .ig-sig-icon { font-size:var(--t-h3); font-weight: 800; line-height: 1; margin-bottom: 0.15rem; }
-.sig-warn { border-color: #b53a2e; }
-.sig-warn .ig-sig-icon { color: #b53a2e; }
+.sig-warn { border-color: var(--red); }
+.sig-warn .ig-sig-icon { color: var(--red); }
 .sig-flat { border-color: var(--muted); }
 .sig-flat .ig-sig-icon { color: var(--muted); }
-.sig-note { border-color: #2a7a4f; }
-.sig-note .ig-sig-icon { color: #2a7a4f; }
+.sig-note { border-color: var(--green); }
+.sig-note .ig-sig-icon { color: var(--green); }
 .sig-gap { border-color: var(--amber); }
 .sig-gap .ig-sig-icon { color: var(--amber); }
 
@@ -2779,7 +2839,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
   padding-top: 0.15rem;
 }
 .iaas-row-head h2 {
-  font-size: clamp(1.25rem, 2.2vw, 1.7rem);
+  font-size: var(--t-h2);
   line-height: 1.2;
   margin: 0.15rem 0 0.5rem;
 }
@@ -2797,7 +2857,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
   padding-top: 0;
 }
 .iaas-hero-copy h2 {
-  font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+  font-size: var(--t-h2);
   line-height: 1.1;
   margin: 0.2rem 0 0.7rem;
 }
@@ -3014,7 +3074,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
    Every figure carries a status. Committed ≠ disbursed. Output ≠ outcome.
    ══════════════════════════════════════════════════════════════════════════ */
 .rec-finding { margin-top: 2.5rem; }
-.rec-finding h2 { font-size: clamp(1.3rem, 2.4vw, 1.8rem); line-height: 1.2; margin: 0 0 0.6rem; }
+.rec-finding h2 { font-size: var(--t-h2); line-height: 1.2; margin: 0 0 0.6rem; }
 .rec-finding > p { max-width: 52rem; margin: 0 0 1.5rem; color: var(--ink-2); }
 .rec-finding-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
 .rec-finding-card {
@@ -3128,7 +3188,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 
 /* ── The bridge to Innovation ─────────────────────────────────────────────── */
 .rec-bridge { border-top: 2px solid var(--red); }
-.rec-bridge h2 { font-size: clamp(1.3rem, 2.4vw, 1.8rem); margin: 0 0 0.6rem; }
+.rec-bridge h2 { font-size: var(--t-h2); margin: 0 0 0.6rem; }
 .rec-bridge p { max-width: 52rem; margin: 0 0 1.1rem; color: var(--ink-2); }
 
 @media (max-width: 900px) {
@@ -3247,7 +3307,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 }
 .corr-bar-name { font-size:var(--t-small); color: var(--ink-2); }
 .corr-bar-track { height: 0.6rem; background: var(--surface-2); display: block; }
-.corr-bar-fill { display: block; height: 100%; background: var(--navy); }
+.corr-bar-fill { display: block; height: 100%; background: var(--data); }
 .corr-bar-self { background: var(--red); }
 .corr-bar-num {
   font-family: var(--mono); font-size:var(--t-body); text-align: right;

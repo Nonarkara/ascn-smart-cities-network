@@ -183,6 +183,75 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   await page.close();
 }
 
+/* ── Design core: the constraints as machine checks ────────────────────────
+ * These are not preferences. A drifting heading scale, a gradient scrim or an
+ * outside palette each look like a small local decision and read as generated
+ * in aggregate. Asserted here so they cannot come back one edit at a time. */
+{
+  const { page, failures } = await newPage();
+  for (const tab of ["record", "innovation", "history", "cities"]) {
+    await page.goto(`${BASE}/#${tab}`, { waitUntil: "networkidle" });
+    await page.waitForTimeout(700);
+    const style = await page.evaluate(() => {
+      const sizes = new Set();
+      let gradients = 0, blurred = 0, rounded = 0;
+      for (const el of document.querySelectorAll("body *")) {
+        const s = getComputedStyle(el);
+        // Some elements expose no resolved font-size; "" is not a size.
+        if (el.children.length === 0 && (el.textContent || "").trim() && s.fontSize) sizes.add(s.fontSize);
+        if (/gradient/.test(s.backgroundImage)) gradients++;
+        if (/blur\(/.test(s.backdropFilter)) blurred++;
+        // Sharp edges means no rounded *corners*. A border-radius:50% on a
+        // square element is a circle (map dots), and Leaflet's zoom control is
+        // vendored chrome — neither is a corner this design system owns.
+        const r = parseFloat(s.borderTopLeftRadius) || 0;
+        const square = el.getBoundingClientRect();
+        const isCircle = s.borderTopLeftRadius.includes("50%") && square.width < 40 && square.height < 40;
+        if (r > 0 && !isCircle && !el.closest(".leaflet-container")) rounded++;
+      }
+      return { sizes: sizes.size, gradients, blurred, rounded };
+    });
+    if (tab === "record") {
+      ok("the type ramp stays collapsed (≤6 rendered sizes)", style.sizes <= 6, `${style.sizes} sizes`);
+    }
+    ok(`no gradients on ${tab}`, style.gradients === 0, `${style.gradients} found`);
+    ok(`no backdrop blur on ${tab}`, style.blurred === 0, `${style.blurred} found`);
+    ok(`edges stay square on ${tab}`, style.rounded === 0, `${style.rounded} rounded`);
+  }
+  await page.close();
+}
+
+/* ── No outside palette ───────────────────────────────────────────────────
+ * Raw Tailwind defaults (slate-900 #0f172a, sky-400 #38bdf8, slate-950
+ * #0b0f14) are the fingerprint of an agent's default palette bleeding in. */
+{
+  const css = await (await fetch(`${BASE}/styles.css`)).text();
+  const outside = [...css.matchAll(/#[0-9a-fA-F]{6}/g)]
+    .map((m) => m[0].toLowerCase())
+    .filter((h) => ["/0f172a", "/38bdf8", "/0b0f14", "/0a0e14", "/e6edf3", "/f1f5f9"].includes(h));
+  ok("no Tailwind default hexes in the stylesheet", outside.length === 0, [...new Set(outside)].join(" "));
+  const amberLiteral = (css.replace(/--amber:[^;]+;/, "").match(/#f59e0b/gi) || []).length;
+  ok("amber is referenced by token, not as a literal", amberLiteral === 0, `${amberLiteral} literals`);
+  const clamped = (css.match(/font-size:[^;]*clamp\(/g) || []).length;
+  ok("no per-heading clamp() scales", clamped === 0, `${clamped} clamps`);
+  ok("the link token is not used as a data fill",
+    !/\.(bar-fill|corr-bar-fill)\s*\{[^}]*var\(--navy\)/.test(css));
+
+  // Every custom property must resolve. A token defined as var(--itself), or
+  // referenced but never defined, is silently invalid: the declaration drops
+  // and the element renders transparent. This shipped once — a bulk rename
+  // folded the amber literal into its own definition, and every amber bar
+  // vanished with no error and no failing structural check.
+  const defined = new Set([...css.matchAll(/(--[a-z0-9-]+)\s*:/gi)].map((m) => m[1]));
+  const selfRef = [...css.matchAll(/(--[a-z0-9-]+)\s*:\s*var\(\s*\1\s*\)/gi)].map((m) => m[1]);
+  ok("no token is defined in terms of itself", selfRef.length === 0, selfRef.join(" "));
+  const referenced = new Set([...css.matchAll(/var\(\s*(--[a-z0-9-]+)/gi)].map((m) => m[1]));
+  const unresolved = [...referenced].filter((t) => !defined.has(t)
+    // Fallbacks are legal: var(--x, value) resolves even if --x is undefined.
+    && !new RegExp(`var\\(\\s*${t}\\s*,`).test(css));
+  ok("every referenced token is defined", unresolved.length === 0, unresolved.join(" "));
+}
+
 await browser.close();
 
 let failed = 0;
