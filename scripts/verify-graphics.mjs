@@ -85,12 +85,28 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   const chonburi = await page.locator('[data-twin="chonburi"]').count();
   ok("a dashboard that does not render is not marked as twinned", chonburi === 0);
 
-  // Every marked city must have a distinct, correct file.
+  // Every marked city must have a distinct, correct file. Status alone is not
+  // proof: this host rewrites unknown paths to index.html with HTTP 200, so a
+  // missing JPEG passes a status check while serving HTML. Require the image.
   const marked = await page.locator(".iaas-card[data-twin]").evaluateAll((els) => els.map((e) => e.dataset.twin));
   for (const slug of marked) {
     const res = await page.request.get(`${BASE}/media/twins/${slug}.jpg`);
-    ok(`preview file exists for ${slug}`, res.status() === 200, String(res.status()));
+    const type = res.headers()["content-type"] || "";
+    const bytes = (await res.body()).byteLength;
+    const isJpeg = type.startsWith("image/jpeg") && bytes > 10_000;
+    ok(`preview file is a real JPEG for ${slug}`, res.status() === 200 && isJpeg,
+      `status=${res.status()} type=${type} bytes=${bytes}`);
   }
+
+  // Negative control. If the host ever stops rewriting missing paths to HTML,
+  // this assertion silently stops testing anything — so assert the sentinel
+  // explicitly: a file that cannot exist must NOT read as a valid JPEG.
+  const ghost = await page.request.get(`${BASE}/media/twins/__no-such-city__.jpg`);
+  const ghostType = ghost.headers()["content-type"] || "";
+  const ghostBytes = (await ghost.body()).byteLength;
+  ok("the JPEG check rejects a missing file (control)",
+    !(ghost.status() === 200 && ghostType.startsWith("image/jpeg") && ghostBytes > 10_000),
+    `status=${ghost.status()} type=${ghostType} bytes=${ghostBytes}`);
 
   // Hover must actually pull the image, or the lazy path is just "never load".
   ok("hover is what triggers the peek fetch", early.some((u) => /phuket/.test(u)), early.join(" | ") || "no twin request seen");
