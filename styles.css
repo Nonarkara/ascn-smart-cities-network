@@ -44,7 +44,14 @@
   --companion: #283d37;
   --on-solid: #191d1c;
   --content: min(1280px, calc(100vw - 2rem));
-  --font: "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
+  /* "Source Sans 3" led this stack for years but was never loaded — no
+   @font-face, no stylesheet link — so it declared an intent the site never
+   kept, and quietly resolved to Helvetica Neue on a Mac and Arial elsewhere.
+   A humanist webfont that is not present is worse than no webfont: it is a
+   lie in the contract and it downloads nothing. The lineage this site follows
+   is Braun and Vignelli, whose answer is a grotesque set tight at display
+   sizes. Naming it directly is both honest and free. */
+  --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
 
   /* Type ramp. Three named roles, not a ladder: Display carries a statement,
@@ -55,19 +62,28 @@
      This stylesheet previously rendered thirteen distinct sizes. Four of them
      (27.2 / 28.8 / 29.6 / 34.56px) were six separate clamp() expressions for
      headings that should have been identical, differing only in the fourth
-     decimal of somebody's guess. That drift reads as random, not as
-     hierarchy. Prose and labels are also up one step each: 11–14px was below
-     what the reader can comfortably resolve, and micro-type was the most
-     common size on the page. */
-  --t-micro: 0.80rem;   /* labels, captions, footnotes, table meta */
-  --t-body: 1.00rem;    /* all prose */
-  --t-figure: 2.40rem;  /* the one page-level statement */
+     decimal of somebody's guess. Six sizes was still one too many: at
+     16 / 18.4 / 24.8 / 33.6 the steps between neighbouring sizes were under
+     1.3x, so no two of them could be ranked and the eye had nothing to land
+     on. A scale earns its keep through the gap between steps, not the count.
 
-  /* Emphasis sits between Body and Display and is separated by weight. */
-  --t-lede: 1.15rem;
-  --t-h3: 1.55rem;
-  --t-h2: 2.10rem;
-  --t-h1: 2.10rem;
+     Four sizes, and the gaps do the work: 56 → 32 is 1.75x, 32 → 16 is a clean
+     2:1, and 16 → 12 marks the shift from prose to apparatus. Four anchors the
+     eye can rank, instead of six it has to compare.
+
+     The two display steps are fluid so a phone is not handed a 56px headline.
+     One clamp on the token is a single decision; the six clamps this replaces
+     were six headings each inventing its own scale, which is the drift. */
+  --t-figure: clamp(2.25rem, 5vw, 3.50rem); /* the one page-level statement */
+  --t-h2: clamp(1.5rem, 2.4vw, 2rem);       /* every section and row heading */
+  --t-body: 1.00rem;                        /* all prose, and every inline figure carries weight */
+  --t-micro: 0.75rem;                       /* labels, captions, footnotes, table meta */
+
+  /* No intermediate steps exist. A sub-heading is a heading at a smaller
+     weight, not a new size; a figure inside prose is body type set bold. */
+  --t-lede: var(--t-h2);
+  --t-h3: var(--t-h2);
+  --t-h1: var(--t-figure);
   --t-small: var(--t-micro);
   --text-body: var(--t-body);
   --text-micro: var(--t-micro);
@@ -121,7 +137,15 @@ img { display: block; max-width: 100%; }
 .brand i { font-style: normal; font-weight: 700; font-size:var(--t-micro); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-left: 0.1rem; }
 .brand-mark { width: 1.6rem; height: 1.6rem; }
 
-.site-nav nav { display: flex; gap: 0.7rem; flex-wrap: wrap; }
+/* Fourteen uppercase items need 991px at this tracking. They were allowed to
+   wrap, which dropped "Essay" onto a second line under a flex header and read
+   as a layout accident rather than a decision. One row always; below the width
+   where all fourteen fit, the row scrolls instead of reflowing. */
+.site-nav nav {
+  display: flex; gap: 0.45rem; flex-wrap: nowrap;
+  overflow-x: auto; scrollbar-width: none;
+}
+.site-nav nav::-webkit-scrollbar { display: none; }
 
 .site-nav nav a,
 .label,
@@ -156,8 +180,12 @@ main { width: var(--content); margin: 0 auto; min-width: 0; }
 /* ---------- Typography ---------- */
 .label { margin: 0 0 0.42rem; color: var(--navy); }
 h1, h2, h3, p { margin-top: 0; }
-h1 { margin-bottom: 0.85rem; font-size: var(--t-figure); line-height: 0.97; letter-spacing: -0.01em; overflow-wrap: anywhere; }
-h2 { margin-bottom: 0; font-size: var(--t-h2); line-height: 1.05; }
+/* Display sizes are optically loose at tracking 0 — the same face reads
+   tighter large because the counters occupy less relative space. The headline
+   was set with no correction at all, which is a large part of why it read as
+   a generic template rather than a poster. */
+h1 { margin-bottom: 0.85rem; font-size: var(--t-figure); line-height: 0.95; letter-spacing: -0.025em; overflow-wrap: anywhere; }
+h2 { margin-bottom: 0; font-size: var(--t-h2); line-height: 1.08; letter-spacing: -0.015em; }
 h3 { margin-bottom: 0; font-size:var(--t-body); line-height: 1.25; }
 .lede { max-width: 38rem; margin-bottom: 0; color: var(--ink-2); font-size:var(--t-body); }
 .muted { color: var(--muted); }
@@ -384,16 +412,30 @@ input[type="search"] { min-width: min(16rem, 100%); }
 }
 
 #view-overview { padding-top: 1.4rem; }
-.showcase-heading { max-width: 54rem; margin-bottom: 1.1rem; }
-.showcase-heading h1 { font-size:var(--t-figure); line-height: 1.1; letter-spacing: 0; }
+/* One grid, not two. The heading was capped at 54rem while the media below ran
+   the full 1280 column, so the page opened with two unrelated widths and a
+   wedge of dead space beside the title. The head now uses the same 3fr / 1fr
+   track and the same 1.25rem gutter as .showcase-layout, so the lede's left
+   edge is the video's left edge and the composition has an axis to read. */
+.showcase-heading { max-width: none; margin-bottom: 1.1rem; }
+.showcase-heading h1 { font-size: var(--t-figure); line-height: 0.98; letter-spacing: -0.028em; }
 .showcase-heading .label { color: var(--muted); letter-spacing: 0; }
 .showcase-heading .lede { max-width: 48rem; }
+@media (min-width: 1024px) {
+  .showcase-heading {
+    display: grid; grid-template-columns: minmax(0, 3fr) minmax(16rem, 1fr);
+    gap: 0.4rem 1.25rem; align-items: end;
+  }
+  .showcase-heading .label { grid-column: 1 / -1; }
+  .showcase-heading h1 { grid-column: 1; }
+  .showcase-heading .lede { grid-column: 2; margin: 0; max-width: none; align-self: end; }
+}
 .showcase-layout { display: grid; grid-template-columns: minmax(0, 3fr) minmax(16rem, 1fr); gap: 1.25rem; align-items: start; }
 .showcase-feature { margin: 0; min-width: 0; }
 .showcase-feature video { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: contain; background: #101418; }
 .showcase-feature figcaption { margin-top: 0.7rem; }
 .showcase-caption-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
-.showcase-caption-head h2, .meeting-summary h2 { font-size:var(--t-lede); line-height: 1.35; letter-spacing: 0; }
+.showcase-caption-head h2, .meeting-summary h2 { font-size: var(--t-body); line-height: 1.3; font-weight: 700; letter-spacing: 0; }
 .showcase-feature figcaption p { margin: 0.3rem 0 0; color: var(--ink-2); font-size:var(--t-body); max-width: 48rem; }
 .showcase-open, .meeting-summary-link { display: inline-flex; align-items: center; min-height: 44px; flex-shrink: 0; font-size:var(--t-body); font-weight: 700; }
 .showcase-open:hover { text-decoration: underline; }
@@ -520,8 +562,9 @@ input[type="search"] { min-width: min(16rem, 100%); }
   font-weight: 700;
   letter-spacing: 0.04em;
   background: var(--bg);
-  color: var(--ink);
-  border: 1px solid var(--line);
+  color: var(--muted);
+  border: 1px solid var(--line-soft);
+  font-weight: 600;
 }
 .twin-body {
   padding: 0.85rem 0.8rem 1rem;
@@ -1145,14 +1188,27 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .method-row span { color: var(--ink-2); font-size:var(--t-body); }
 
 /* ---------- Perspective (featured article) ---------- */
-.perspective { margin-top: 2.6rem; border-top: 2px solid var(--ink); padding-top: 1.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+/* Stacked, not two columns. The stance is a short declaration and the essay
+   is four times its length; side by side, every column ratio still left the
+   stance column half empty and the block read as unfinished. A thesis gets
+   the full measure and reads as a statement, and the essay sits beneath it
+   under its own rule. The void is not restyled — it is removed. */
+.perspective {
+  margin-top: 2.6rem; border-top: 2px solid var(--ink); padding-top: 1.5rem;
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.2rem;
+}
 .persp-stance h2 { margin: 0.3rem 0 0.7rem; }
-.persp-stance .lede { max-width: none; }
-.persp-article { border-left: 1px solid var(--line-soft); padding-left: 2rem; }
-.persp-article h3 { font-size:var(--t-lede); margin-bottom: 0.2rem; }
+.persp-stance h2 { max-width: 34ch; }
+.persp-stance .lede { max-width: 54rem; }
+.persp-article { border-top: 1px solid var(--line); padding-top: 1.6rem; max-width: 54rem; }
+.persp-article h3 { font-size: var(--t-h2); margin-bottom: 0.2rem; }
 .persp-role { color: var(--muted); font-size:var(--t-small); margin: 0 0 0.7rem; }
 .persp-framing { color: var(--ink-2); margin: 0 0 0.9rem; }
-.persp-quote { margin: 0 0 1rem; padding: 0.2rem 0 0.2rem 1rem; border-left: 2px solid var(--red); font-size:var(--t-lede); line-height: 1.42; color: var(--ink); font-style: normal; }
+.persp-quote {
+  margin: 0 0 1rem; padding: 0.15rem 0 0.15rem 1.1rem;
+  border-left: 2px solid var(--red);
+  font-size: var(--t-body); line-height: 1.5; color: var(--ink); font-weight: 500;
+}
 .persp-points { display: grid; gap: 0; margin-bottom: 1.1rem; }
 .persp-point { padding: 0.55rem 0; border-top: 1px solid var(--line-soft); }
 .persp-point b { display: block; color: var(--ink); font-size:var(--t-body); }
