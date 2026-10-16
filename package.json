@@ -22,8 +22,8 @@
     "predeploy": "node scripts/refresh-ascn-news.mjs || echo \"news refresh failed, shipping the existing snapshot\""
   },
   "devDependencies": {
-    "@playwright/test": "^1.63.0",
-    "wrangler": "^4.147.0"
+    "@playwright/test": "^1.64.0",
+    "wrangler": "^4.150.0"
   },
   "dependencies": {
     "leaflet": "1.9.4"
