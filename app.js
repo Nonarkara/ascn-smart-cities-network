@@ -12,8 +12,7 @@ const tileLayers = {
   night: { url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", attr: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>', className: "ascn-night-tiles" },
 };
 
-const TABS = ["overview", "innovation", "record", "news", "ascn9", "history", "cities", "projects", "framework", "partners", "contacts", "insights", "data", "research", "essay"];
-const DATA_VERSION = "41";
+const TABS = ["overview", "innovation", "record", "news", "ascn9", "history", "cities", "projects", "framework", "partners", "contacts", "insights", "data", "archive", "research", "essay"];
 
 const state = {
   data: null, K: null, C: [], L: null, LF: null,
@@ -1507,7 +1506,15 @@ function wireNav() {
 }
 
 async function loadJson(path) {
-  const res = await fetch(`${path}?v=${DATA_VERSION}`);
+  // `cache: "no-cache"` revalidates with the server instead of trusting a local
+  // copy, which is what the hand-maintained `?v=${DATA_VERSION}` was trying and
+  // failing to do. That constant was 41 on main and 36 on the branch being
+  // merged — two people editing the same literal, and a data file that changed
+  // without it would be served stale forever with nothing in the build to say
+  // so. This is the same failure that made new markup meet old CSS and stack
+  // text on top of itself; assets are content-hashed at build time, and this is
+  // the runtime equivalent.
+  const res = await fetch(path, { cache: "no-cache" });
   if (!res.ok) throw new Error(`Failed to load ${path}: ${res.status}`);
   if (!res.headers.get("content-type")?.includes("application/json")) throw new Error(`Expected JSON from ${path}`);
   return validateDataset(path, await res.json());
@@ -2850,7 +2857,7 @@ async function init() {
         <section class="load-error" role="alert">
           <p class="label">Data load failed</p>
           <h2>The ASCN report datasets could not load.</h2>
-          <p>${esc(err.message)}. Regional news, the meeting record, and the video showcase remain available.</p>
+          <p>${esc(err.message)}. Regional news, the meeting record, the archive, and the video showcase remain available.</p>
         </section>`);
     }
   }

@@ -127,7 +127,10 @@ Useful scripts:
 | `npm run validate` | Schema and consistency checks on `data/` |
 | `npm run build` | Copy deployable files to `dist/` |
 | `npm run extract:data` | Rebuild `data/ascn-v2-data.json` from local PDFs |
+| `npm run build:archive` | Rebuild `data/ascn-archive.json` from the inbox export and `public/records.csv` |
 | `npm run deploy` | Build and publish `dist/` to Cloudflare Pages |
+
+The Archive tab reads `data/ascn-archive.json` only. `npm run build:archive` requires `ASCN_ARCHIVE_DIR` to be set to the folder holding `records.json` (there is no default — the source lives outside this repository), merges `public/records.csv` when that file is present, and reads `public/round2/` when that folder exists. A scrape-schema CSV joins the record list. `tied-aid.csv`, `programmes.csv` and `funding-by-donor.csv` are read by their own columns: general aid statistics stay labelled general, overlapping programmes fold into the existing row, and a conflicting donor figure is reported instead of replacing a headline total. Matching public rows fold into the inbox record instead of appearing twice. Funding totals add only cited amounts. Borderline and non-public rows are left out. The build refuses to write the file if the result contains an email address, a phone number, raw email text, or a mailbox thread id. Do not commit the inbox export, and do not copy source PDFs into the repo.
 
 **Re-extracting (optional).** Place the public source PDFs in `.tmp/ascn-sources/` using the filenames in `scripts/extract_ascn_data.py`, then:
 

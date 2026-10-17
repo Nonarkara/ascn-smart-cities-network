@@ -14,6 +14,9 @@ Photos/
 papers/
 Kimi_Agent_ASCN Research/
 
+# Raw mailbox exports. The public record is data/ascn-archive.json.
+/sources/ascn-archive/
+
 # env files
 .env
 .env.*

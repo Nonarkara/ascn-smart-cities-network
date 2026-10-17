@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { validateCorrespondence } from "../lib/correspondence.mjs";
 import { validateDataset, safeUrl } from "../lib/security.mjs";
 import { validateArchive, linkProjects } from "../lib/ascn-review.mjs";
+import { validateRecordArchive } from "../lib/ascn-record.mjs";
 import { validateDiscovery } from "../lib/ascn-discovery.mjs";
 
 const files = {
@@ -55,6 +56,12 @@ const [engine, knowledge, citiesDoc, library, cityStats] = await Promise.all(Obj
 const errors = [];
 const warnings = [];
 const archive = validateArchive(JSON.parse(await readFile(new URL("../data/ascn-news-archive.json", import.meta.url), "utf8")), citiesDoc.cities);
+let recordArchive;
+try {
+  recordArchive = validateRecordArchive(JSON.parse(await readFile(new URL("../data/ascn-archive.json", import.meta.url), "utf8")));
+} catch (error) {
+  fail(errors, error.message);
+}
 const discovery = JSON.parse(await readFile(new URL("../data/ascn-news-discovery.json", import.meta.url), "utf8"));
 
 // The correspondence ledger is built from a personal mailbox, so its invariants
@@ -151,4 +158,5 @@ if (errors.length) {
 
 console.log(`Data validation passed: ${citiesDoc.cities.length} cities, ${engine.projects.length} project rows, ${libraryEntries.length} library sources.`);
 console.log(`ASCN archive: ${archive.records.length} reviewed records; ${discovery.articles.length} unreviewed discovery leads.`);
+if (recordArchive) console.log(`Public record archive: ${recordArchive.items.length} items; ${recordArchive.withheld.length} withheld; ${(recordArchive.pending || []).length} pending review.`);
 for (const message of warnings) console.warn(`Warning: ${message}`);

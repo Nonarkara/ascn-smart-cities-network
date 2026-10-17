@@ -454,27 +454,61 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   // hash of the bytes actually being served.
   const indexRes = await fetch(`${BASE}/`);
   const html = await indexRes.text();
-  const ref = html.match(/(?:href|src)="(styles\.css|app\.js)\?v=([a-f0-9]+)"/);
-  ok("assets are cache-busted from content, not a manual counter", !!ref,
-    ref ? `${ref[1]}?v=${ref[2]}` : "no hashed asset reference found in the document");
+  // EVERY hashed reference, not the first one. Checking only the match at the
+  // top of the document meant styles.css was verified and app.js and archive.js
+  // were not — so the moment a new script was added with a hand-typed counter,
+  // this check would still have reported green.
+  const refs = [...html.matchAll(/(?:href|src)="([^"?#:]+\.(?:css|js))(?:\?v=([^"]*))?"/g)]
+    .map((m) => ({ file: m[1], declared: m[2] }));
+  ok("assets are cache-busted from content, not a manual counter",
+    refs.length > 0 && refs.every((r) => /^[a-f0-9]{10}$/.test(r.declared || "")),
+    refs.length ? `${refs.length} references: ${refs.map((r) => `${r.file}${/[a-f0-9]{10}$/.test(r.declared || "") ? "" : `?v=${r.declared}`}`).join(", ")}`
+      : "no asset references found in the document");
 
-  if (ref) {
-    // ref[0] is the whole match, ref[1] the filename, ref[2] the hash. Skipping
-    // index 0 here silently fetched "styles.css?v=styles.css" and compared the
-    // hash of the wrong thing.
-    const [, file, declared] = ref;
+  const mismatched = [];
+  for (const { file, declared } of refs) {
+    if (!/^[a-f0-9]{10}$/.test(declared || "")) continue;
+    // Skip index 0 of the match: doing so silently fetched
+    // "styles.css?v=styles.css" and compared the hash of the wrong thing.
     const res = await fetch(`${BASE}/${file}?v=${declared}`);
     const body = Buffer.from(await res.arrayBuffer());
     const actual = createHash("sha256").update(body).digest("hex").slice(0, 10);
-    ok("the served asset matches the version the document advertises", actual === declared,
-      `declared ${declared}, served bytes hash to ${actual}`);
+    if (actual !== declared) mismatched.push(`${file}: declared ${declared}, bytes hash to ${actual}`);
   }
+  ok("every served asset matches the version the document advertises",
+    mismatched.length === 0,
+    mismatched.slice(0, 3).join(" | ") || `${refs.length} assets, all self-consistent`);
 
   // And the document itself must never be cacheable, or the asset graph above
   // is stale for the same reason.
   const docCache = indexRes.headers.get("cache-control") || "";
   ok("the document is never served from a long cache",
     /max-age=0|no-cache|no-store/i.test(docCache), docCache || "no cache-control header");
+
+  // Every dataset the code fetches must actually be served. `publishedDatasets`
+  // in scripts/site-assets.mjs is an allow-list, and a file missing from it is
+  // dropped without a word — the Archive tab was added with its dataset never
+  // registered, the build succeeded, every check stayed green, and the page
+  // shipped saying "The archive data could not load." Read the references out
+  // of the served bytes and ask the server for each one.
+  {
+    const jsNames = ["app.js", "news.js", "ascn-news.js", "archive.js"];
+    const referenced = new Set();
+    for (const name of jsNames) {
+      const res = await fetch(`${BASE}/${name}`);
+      if (!res.ok) continue;
+      const src = await res.text();
+      for (const m of src.matchAll(/data\/([A-Za-z0-9._-]+\.json)/g)) referenced.add(m[1]);
+    }
+    for (const m of html.matchAll(/data\/([A-Za-z0-9._-]+\.json)/g)) referenced.add(m[1]);
+    const missing = [];
+    for (const name of referenced) {
+      const res = await fetch(`${BASE}/data/${name}`, { method: "GET" });
+      if (!res.ok) missing.push(`data/${name} → ${res.status}`);
+    }
+    ok("every dataset the page fetches is published", missing.length === 0 && referenced.size > 0,
+      missing.slice(0, 4).join(" | ") || `${referenced.size} datasets referenced, all served`);
+  }
 }
 
 /* ── Paper is the reference ──────────────────────────────────────────────── */

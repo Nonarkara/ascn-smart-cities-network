@@ -98,7 +98,7 @@ test("all existing routes render with working maps, charts, filters, and no CSP 
   });
   await page.goto("/#overview");
   await expect(page.locator("#kpi-grid .kpi")).toHaveCount(5);
-  for (const tab of ["innovation", "record", "news", "history", "cities", "projects", "framework", "partners", "contacts", "insights", "data", "research", "essay"]) {
+  for (const tab of ["innovation", "record", "news", "history", "cities", "projects", "framework", "partners", "contacts", "insights", "data", "archive", "research", "essay"]) {
     await page.locator(`#tab-nav [data-tab="${tab}"]`).click();
     await expect(page.locator(`#view-${tab}`)).toBeVisible();
     expect(await page.locator(`#view-${tab}`).innerText()).not.toBe("");

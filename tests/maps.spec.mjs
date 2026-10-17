@@ -34,9 +34,14 @@ for (const width of [375, 768, 1280]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/#cities");
     await expect(page.locator("#city-cards .city-card")).toHaveCount(38);
-    await expect(page.locator("#tab-nav [data-tab]")).toHaveCount(14);
+    // 15 since Archive joined Library. The count stays as a literal on purpose —
+    // it is a tripwire for a tab appearing or vanishing without anyone deciding
+    // it — so it is paired with the new tab named explicitly, rather than
+    // derived from the DOM it is meant to police.
+    await expect(page.locator("#tab-nav [data-tab]")).toHaveCount(15);
     await expect(page.locator('#tab-nav [data-tab="innovation"]')).toHaveAttribute("href", "#innovation");
     await expect(page.locator('#tab-nav [data-tab="news"]')).toHaveAttribute("href", "#news");
+    await expect(page.locator('#tab-nav [data-tab="archive"]')).toHaveAttribute("href", "#archive");
     await expectBasemap(page, "#sea-map");
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await page.screenshot({ path: testInfo.outputPath("cities.png"), fullPage: true });

@@ -1,10 +1,11 @@
 import { cp, lstat, mkdir, readdir } from "node:fs/promises";
 import { extname, join } from "node:path";
 
-export const siteEntries = ["index.html", "styles.css", "app.js", "showcase.js", "news.js", "ascn-news.js", "favicon.svg", "_headers",
+export const siteEntries = ["index.html", "styles.css", "app.js", "showcase.js", "news.js", "ascn-news.js", "archive.js", "favicon.svg", "_headers",
   "lib", "vendor", "fonts", "data", "docs", "Photos", "logos", "media"];
 
 export const publishedDatasets = new Set([
+  "ascn-archive.json",
   "ascn-cities.json", "ascn-correspondence.json", "ascn-knowledge.json",
   "ascn-library.json", "ascn-library-full.json", "ascn-news-archive.json",
   "ascn-news-discovery.json", "ascn-v2-data.json", "city-stats-merged.json", "news-snapshot.json",
