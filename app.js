@@ -310,7 +310,7 @@ function renderCorrespondence() {
   if (!host) return;
   const corr = state.CORR;
   if (!corr) {
-    host.innerHTML = '<p class="corr-missing">The correspondence ledger is not available in this build.</p>';
+    host.innerHTML = '<p class="corr-missing" data-i18n="a.the.correspondence.ledger.is.not">The correspondence ledger is not available in this build.</p>';
     return;
   }
   const t = corr.totals;
@@ -320,9 +320,9 @@ function renderCorrespondence() {
 
   host.innerHTML = `
     <div class="corr-stat"><p class="corr-stat-num">${t.emails}</p><p class="corr-stat-label">messages held</p></div>
-    <div class="corr-stat"><p class="corr-stat-num">${t.threads}</p><p class="corr-stat-label">threads after collapsing replies</p></div>
-    <div class="corr-stat corr-stat-key"><p class="corr-stat-num">${t.fundedTravelThreads}</p><p class="corr-stat-label">threads with cost-related keywords · unreviewed candidates</p></div>
-    <div class="corr-stat"><p class="corr-stat-num">${caps.length}</p><p class="corr-stat-label">of those, with a detected amount · context requires review</p></div>`;
+    <div class="corr-stat"><p class="corr-stat-num">${t.threads}</p><p class="corr-stat-label" data-i18n="a.threads.after.collapsing.replies">threads after collapsing replies</p></div>
+    <div class="corr-stat corr-stat-key"><p class="corr-stat-num">${t.fundedTravelThreads}</p><p class="corr-stat-label" data-i18n="a.threads.with.cost.related.keywor">threads with cost-related keywords · unreviewed candidates</p></div>
+    <div class="corr-stat"><p class="corr-stat-num">${caps.length}</p><p class="corr-stat-label" data-i18n="a.of.those.with.a.detected.amount">of those, with a detected amount · context requires review</p></div>`;
 
   const maxOrigin = Math.max(...travelByOrigin.map(([, v]) => v), 1);
 
@@ -335,15 +335,15 @@ function renderCorrespondence() {
 
   document.getElementById("corr-origin").innerHTML = `
     <h3 class="corr-h3">Sending organisations in cost-related threads</h3>
-    <p class="corr-lede">Counted by sending organisation, not by who is mentioned inside the text — a single newsletter names every partner, so in-text mentions cannot carry a count.</p>
+    <p class="corr-lede" data-i18n="a.counted.by.sending.organisation">Counted by sending organisation, not by who is mentioned inside the text — a single newsletter names every partner, so in-text mentions cannot carry a count.</p>
     <div class="corr-bars">${originHtml}</div>
     <p class="corr-note">Marked bar: the network's own Secretariat. The ASEAN Secretariat originated
       ${(t.fundedTravelByOrigin || {})["ASEAN Secretariat"] ?? 0} of the cost-related threads in this mailbox. Sender attribution does not identify the payer.</p>
-    <p class="corr-note corr-note-dim">Threads attributed to a mail relay or a notification bot carry no institutional sender in their headers, so they cannot be tied to a funder from the metadata alone. They are counted, not hidden, and left unattributed rather than guessed.</p>`;
+    <p class="corr-note corr-note-dim" data-i18n="a.threads.attributed.to.a.mail.rel">Threads attributed to a mail relay or a notification bot carry no institutional sender in their headers, so they cannot be tied to a funder from the metadata alone. They are counted, not hidden, and left unattributed rather than guessed.</p>`;
 
   document.getElementById("corr-caps").innerHTML = caps.length ? `
     <h3 class="corr-h3">Detected amounts in context</h3>
-    <p class="corr-lede">Extracted snippets and detected amounts from unreviewed keyword matches. A matched amount may refer to another part of the message; it is not a verified cap, payment or network total.</p>
+    <p class="corr-lede" data-i18n="a.extracted.snippets.and.detected">Extracted snippets and detected amounts from unreviewed keyword matches. A matched amount may refer to another part of the message; it is not a verified cap, payment or network total.</p>
     <ul class="corr-quotes">${caps.map((c) => `
       <li class="corr-quote">
         <p class="corr-quote-head"><span class="corr-quote-origin">${esc(c.origin)}</span>
@@ -352,7 +352,7 @@ function renderCorrespondence() {
         <blockquote>${esc(c.fundingQuote || "")}</blockquote>
         <p class="corr-quote-meta">${c.fundingAmounts.map((a) => `<span class="corr-amount">${esc(a)}</span>`).join("")}
           ${c.costHeads.map((h) => `<span class="corr-head-tag">${esc(COST_LABELS[h] || h)}</span>`).join("")}</p>
-      </li>`).join("")}</ul>` : '<p class="corr-missing">No candidate thread contains a detected amount.</p>';
+      </li>`).join("")}</ul>` : '<p class="corr-missing" data-i18n="a.no.candidate.thread.contains.a.d">No candidate thread contains a detected amount.</p>';
 
   // Filters
   const kindSel = document.getElementById("corr-kind");
@@ -382,7 +382,7 @@ function renderCorrespondence() {
         </p>
         <p class="corr-item-subject">${esc(x.subjectClean || x.subject || "")}</p>
         <p class="corr-item-tags">${x.kinds.map((k) => `<span class="corr-tag corr-tag-${k}">${esc(KIND_LABELS[k] || k)}</span>`).join("")}</p>
-      </li>`).join("") || '<li class="corr-item-more">No threads match these filters.</li>';
+      </li>`).join("") || '<li class="corr-item-more" data-i18n="a.no.threads.match.these.filters">No threads match these filters.</li>';
     more.hidden = list.length <= limit;
   };
   const reset = () => { limit = 60; apply(); };
@@ -437,11 +437,11 @@ function renderPerspective() {
     <aside class="persp-aside">
       <figure class="persp-figure">
         <img src="Photos/ASCN-8th-2025-KL-expert-talk.jpg" width="447" height="447" alt="Expert session at the 8th ASCN Annual Meeting, Kuala Lumpur, 2025" loading="lazy" />
-        <figcaption>Expert session, 8th ASCN Annual Meeting, Kuala Lumpur, September 2025. Ceremonies are easy. Building systems is hard.</figcaption>
+        <figcaption data-i18n="a.expert.session.8th.ascn.annual.m">Expert session, 8th ASCN Annual Meeting, Kuala Lumpur, September 2025. Ceremonies are easy. Building systems is hard.</figcaption>
       </figure>
       <figure class="persp-figure">
         <img src="Photos/ASCN-1st-2018-Singapore.jpg" width="750" height="501" alt="Minister Vivian Balakrishnan at the Inaugural ASCN Meeting, Singapore, 8 July 2018" loading="lazy" />
-        <figcaption>Minister Vivian Balakrishnan, Singapore's Minister-in-charge of the Smart Nation Initiative, at the Inaugural ASEAN Smart Cities Network Meeting, Singapore, 8 July 2018. Singapore designed the network's architecture before handing the chair forward.</figcaption>
+        <figcaption data-i18n="a.minister.vivian.balakrishnan.sin">Minister Vivian Balakrishnan, Singapore's Minister-in-charge of the Smart Nation Initiative, at the Inaugural ASEAN Smart Cities Network Meeting, Singapore, 8 July 2018. Singapore designed the network's architecture before handing the chair forward.</figcaption>
       </figure>
     </aside>`;
 }
@@ -471,7 +471,7 @@ function renderHistory() {
       <div class="cr-shep cr-shep--1"><span>Singapore — Shepherd 2019–2023</span></div>
       <div class="cr-shep cr-shep--2"><span>Indonesia — Shepherd 2023–2027</span></div>
     </div>
-    <p class="ig-note">The chair rotates alphabetically every year, so no single country owns the agenda — but rotation also breaks continuity. The Shepherd role, held multi-year by Singapore then Indonesia, is the fix the network invented: a persistent steward spanning many chairs, overlapping at the 2023 hand-off. Source: ASCN governance records; ascn_insight.md Insight 8.</p>`;
+    <p class="ig-note" data-i18n="a.the.chair.rotates.alphabetically">The chair rotates alphabetically every year, so no single country owns the agenda — but rotation also breaks continuity. The Shepherd role, held multi-year by Singapore then Indonesia, is the fix the network invented: a persistent steward spanning many chairs, overlapping at the 2023 hand-off. Source: ASCN governance records; ascn_insight.md Insight 8.</p>`;
 
   if (h.clc_quote) {
     const q = h.clc_quote;
@@ -525,7 +525,7 @@ function ascapHtml() {
   }
 
   return `<p class="label">Forward agenda</p><h3>${esc(a.name)}</h3><p class="lede" style="margin:0.5rem 0 0">${esc(a.note)} Adopted ${esc(a.adopted)}.</p>
-    <p class="ig-note" style="margin:0.75rem 0 0.25rem">Each pillar shows which current focus area feeds into it and its 2025 project count.</p>
+    <p class="ig-note" style="margin:0.75rem 0 0.25rem" data-i18n="a.each.pillar.shows.which.current">Each pillar shows which current focus area feeds into it and its 2025 project count.</p>
     <div class="pillars">${pillarsHtml}</div>${alignNote}`;
 }
 
@@ -597,7 +597,7 @@ function selectCity(city) {
     ${chipsHtml}
     <p style="color:var(--ink-2);margin:0 0 0.4rem">${esc(city.summary)}</p>
     ${flagHtml ? `<div class="cd-section-label">Flagship work</div><div class="cd-projects">${flagHtml}</div>` : ""}
-    ${extraHtml ? `<div class="cd-section-label">From the M&E appendix</div><div class="cd-projects">${extraHtml}</div>` : (projects.length ? "" : `<p class="cd-empty">Detailed project rows pending in the public appendix.</p>`)}
+    ${extraHtml ? `<div class="cd-section-label">From the M&E appendix</div><div class="cd-projects">${extraHtml}</div>` : (projects.length ? "" : `<p class="cd-empty" data-i18n="a.detailed.project.rows.pending.in">Detailed project rows pending in the public appendix.</p>`)}
     ${city.portal ? `<a class="cd-portal" href="${esc(safeUrl(city.portal))}" target="_blank" rel="noopener noreferrer">Open city data portal ↗</a>` : ""}
     <a class="cd-portal" href="#news/archive?city=${encodeURIComponent(city.name)}">Review public evidence for ${esc(city.name)} ↗</a>`;
   $$("#city-cards .city-card").forEach((b) => b.classList.toggle("active", b.dataset.city === city.name));
@@ -737,7 +737,7 @@ function renderDataQuality() {
   $("#ig-data-quality").innerHTML = `
     <div class="dq-grid">
       <div class="dq-panel">
-        <p class="ig-subhead">Official totals vs extracted appendix rows</p>
+        <p class="ig-subhead" data-i18n="a.official.totals.vs.extracted.app">Official totals vs extracted appendix rows</p>
         <div class="dq-legend"><span class="dq-leg-official">Report total</span><span class="dq-leg-appendix">Row evidence</span></div>
         <div class="dq-cycles">${cyclesHtml}</div>
       </div>
@@ -746,7 +746,7 @@ function renderDataQuality() {
         <div class="dq-stats">${stats.map(([value, label, note]) => `<div class="dq-stat"><strong>${esc(String(value))}</strong><span>${esc(label)}</span><em>${esc(note)}</em></div>`).join("")}</div>
       </div>
     </div>
-    <p class="ig-note">The official M&amp;E headline count is the authoritative portfolio total. Appendix rows are the auditable project-level evidence this platform can search, filter, and compare across cycles. Missing or wrapped rows are treated as data-quality signals, not silently corrected.</p>`;
+    <p class="ig-note" data-i18n="a.the.official.m.e.headline.count">The official M&amp;E headline count is the authoritative portfolio total. Appendix rows are the auditable project-level evidence this platform can search, filter, and compare across cycles. Missing or wrapped rows are treated as data-quality signals, not silently corrected.</p>`;
 }
 
 function renderProjects() {
@@ -841,7 +841,7 @@ function renderFramework() {
       <p class="cap-desc">${c.desc}</p>
       <span class="cap-stat">${c.stat}</span>
     </article>`).join("")}</div>
-    <p class="ig-note">Capacity building is where ASCN's softer value sits: not projects delivered, but officials trained to deliver them. These programmes run through dialogue partners rather than a central ASCN budget. Source: ASCN partnership &amp; M&amp;E documents.</p>`;
+    <p class="ig-note" data-i18n="a.capacity.building.is.where.ascn">Capacity building is where ASCN's softer value sits: not projects delivered, but officials trained to deliver them. These programmes run through dialogue partners rather than a central ASCN budget. Source: ASCN partnership &amp; M&amp;E documents.</p>`;
 }
 
 /* ---------------- Partners ---------------- */
@@ -906,7 +906,7 @@ function renderPartners() {
         <span class="label">ADB · Aus4ASEAN Futures Initiative</span>
         <a href="https://smartcitytoolkit.asean.org/" target="_blank" rel="noopener" class="toolkit-link">smartcitytoolkit.asean.org ↗</a>
       </div>
-      <p>A web platform helping ASEAN city officials navigate financing options for smart city projects. Core feature: <b>FIRST</b> — a Financial Instrument Recommendation and Selection Tool that maps financing instruments to project characteristics, risk profile, and city capacity. Includes case study library, discussion board, and AI chatbot. Available in all 9 ASEAN languages.</p>
+      <p data-i18n="a.a.web.platform.helping.asean.cit">A web platform helping ASEAN city officials navigate financing options for smart city projects. Core feature: <b>FIRST</b> — a Financial Instrument Recommendation and Selection Tool that maps financing instruments to project characteristics, risk profile, and city capacity. Includes case study library, discussion board, and AI chatbot. Available in all 9 ASEAN languages.</p>
       <div class="toolkit-tags">${LANGS.map((l) => `<span class="toolkit-tag">${esc(l)}</span>`).join("")}</div>
     </div>`;
 
@@ -914,8 +914,8 @@ function renderPartners() {
   const PHOTOS = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => `https://asean.org/wp-content/uploads/2024/12/${n}.jpeg`);
   $("#workshop-section").innerHTML = `
     <div class="workshop-lede">
-      <p>The ASEAN Smart City Financing Toolkit was formally launched on 26–27 November 2024 in Jakarta, Indonesia. National and city-level officials from all ASEAN Member States and Timor-Leste participated in hands-on demonstrations and discussed country outreach plans. ASEAN Dialogue Partners joined the launch ceremony on 26 November.</p>
-      <p>Supported by the Australian Government through the Aus4ASEAN Futures Initiative. Managed by the ASEAN Secretariat in partnership with ADB.</p>
+      <p data-i18n="a.the.asean.smart.city.financing.t">The ASEAN Smart City Financing Toolkit was formally launched on 26–27 November 2024 in Jakarta, Indonesia. National and city-level officials from all ASEAN Member States and Timor-Leste participated in hands-on demonstrations and discussed country outreach plans. ASEAN Dialogue Partners joined the launch ceremony on 26 November.</p>
+      <p data-i18n="a.supported.by.the.australian.gove">Supported by the Australian Government through the Aus4ASEAN Futures Initiative. Managed by the ASEAN Secretariat in partnership with ADB.</p>
     </div>
     <div class="workshop-gallery">${PHOTOS.map((src) => `<figure class="workshop-photo"><img src="${esc(src)}" alt="ASEAN Smart City Financing Toolkit workshop, Jakarta, November 2024" loading="lazy" /></figure>`).join("")}</div>`;
 }
@@ -998,7 +998,7 @@ function renderInsights() {
   const dMax = density[0]?.ratio || 1;
   const fmtPop = (p) => p >= 1e6 ? `${(p / 1e6).toFixed(1)}M` : `${Math.round(p / 1e3)}K`;
   const densityHtml = density.slice(0, 14).map((d) => `<div class="bar-row"><span>${esc(d.city)} <em class="bar-sub">${esc(d.country)}</em></span><div class="bar-track"><div class="bar-fill amber" style="width:${Math.max(2, d.ratio / dMax * 100)}%"></div></div><strong>${d.ratio}/M <em class="bar-sub">${d.n} proj · ${fmtPop(d.pop)}</em></strong></div>`).join("");
-  const tailHtml = density.length > 14 ? `<p class="ig-note">Large cities for comparison:</p>` + density.slice(-5).reverse().map((d) => `<div class="bar-row"><span>${esc(d.city)} <em class="bar-sub">${esc(d.country)}</em></span><div class="bar-track"><div class="bar-fill" style="width:${Math.max(1, d.ratio / dMax * 100)}%;background:var(--muted)"></div></div><strong class="muted">${d.ratio}/M <em class="bar-sub">${d.n} proj · ${fmtPop(d.pop)}</em></strong></div>`).join("") : "";
+  const tailHtml = density.length > 14 ? `<p class="ig-note" data-i18n="a.large.cities.for.comparison">Large cities for comparison:</p>` + density.slice(-5).reverse().map((d) => `<div class="bar-row"><span>${esc(d.city)} <em class="bar-sub">${esc(d.country)}</em></span><div class="bar-track"><div class="bar-fill" style="width:${Math.max(1, d.ratio / dMax * 100)}%;background:var(--muted)"></div></div><strong class="muted">${d.ratio}/M <em class="bar-sub">${d.n} proj · ${fmtPop(d.pop)}</em></strong></div>`).join("") : "";
   $("#ig-density").innerHTML = `<div class="ig-bars">${densityHtml}</div>${tailHtml}`;
 
   // ── 6. Signal flags ───────────────────────────────────────────────────────
@@ -1054,7 +1054,7 @@ function renderInsights() {
       <span class="comp-sum-n" style="color:var(--muted)">${planningCount}/18</span><span class="comp-sum-label">are planning or strategy documents — no physical delivery, no resident outcomes verifiable</span>
       <span class="comp-sum-n" style="color:var(--amber)">3/18</span><span class="comp-sum-label">are physical infrastructure — a road, a river, a water pipe</span>
     </div>
-    <p class="ig-note">Completion criterion: "successfully concluded." No standardized thresholds, no external verification, no post-completion check. Source: ASCN M&E Report 2025, Appendix + ascn_dim05.md §4.2.</p>
+    <p class="ig-note" data-i18n="a.completion.criterion.successfull">Completion criterion: "successfully concluded." No standardized thresholds, no external verification, no post-completion check. Source: ASCN M&E Report 2025, Appendix + ascn_dim05.md §4.2.</p>
     <div class="comp-list">${compRows}</div>`;
 
   // ── M&E maturity vs peers (7-feature matrix) ──────────────────────────────
@@ -1070,7 +1070,7 @@ function renderInsights() {
   const cellIcon = (v) => v === 1 ? `<span class="me-yes">✓</span>` : v === 0.5 ? `<span class="me-partial">~</span>` : `<span class="me-no">✗</span>`;
   const meHead = ME_SYSTEMS.map((s) => `<th class="${s.name === "ASCN" ? "me-ascn-col" : ""}">${esc(s.name)}</th>`).join("");
   const meRows = ME_FEATURES.map((f) => `<tr><td class="me-feature">${esc(f)}</td>${ME_SYSTEMS.map((s, i) => `<td class="me-cell${s.name === "ASCN" ? " me-ascn-col" : ""}">${cellIcon(s.vals[ME_FEATURES.indexOf(f)])}</td>`).join("")}</tr>`).join("");
-  $("#ig-compare").innerHTML = `<table class="me-table"><thead><tr><th></th>${meHead}</tr></thead><tbody>${meRows}</tbody></table><p class="ig-note">Source: ascn_dim05.md §11.6. ✓ = yes · ~ = partial · ✗ = no</p>`;
+  $("#ig-compare").innerHTML = `<table class="me-table"><thead><tr><th></th>${meHead}</tr></thead><tbody>${meRows}</tbody></table><p class="ig-note" data-i18n="a.source.ascn.dim05.md.11.6.yes.pa">Source: ascn_dim05.md §11.6. ✓ = yes · ~ = partial · ✗ = no</p>`;
 
   // ── IMD Smart City Index 2024 — ASEAN cities ────────────────────────────
   // Source: IMD World Competitiveness Center, ascn_dim05.md §7.1
@@ -1093,7 +1093,7 @@ function renderInsights() {
     const barW = Math.max(2, ((imdMax - c.rank) / (imdMax - 5)) * 100);
     return `<div class="imd-row"><span class="imd-rank">#${c.rank}</span><span class="imd-city">${esc(c.city)}</span><div class="imd-track"><div class="imd-fill${c.city === "Singapore" ? " imd-fill--sg" : ""}" style="width:${barW}%"></div></div><span class="imd-rating ${c.rating === "A" ? "imd-rating--a" : c.rating === "B" ? "imd-rating--b" : "imd-rating--c"}">${esc(c.rating)}</span><span class="ig-traj-delta ${dCls}">${dStr}</span></div>`;
   }).join("");
-  $("#ig-imd").innerHTML = `<div class="imd-wrap">${imdRows}</div><p class="ig-note">142 cities ranked by resident perception of structures &amp; technology. ASCN produces no internal ranking of its cities. Source: IMD World Competitiveness Center 2024.</p>`;
+  $("#ig-imd").innerHTML = `<div class="imd-wrap">${imdRows}</div><p class="ig-note" data-i18n="a.142.cities.ranked.by.resident.pe">142 cities ranked by resident perception of structures &amp; technology. ASCN produces no internal ranking of its cities. Source: IMD World Competitiveness Center 2024.</p>`;
 
   // ── ASCAP 2026–2035 portfolio alignment ──────────────────────────────────
   const ascapAlign = (state.K.ascap && state.K.ascap.alignment) || [];
@@ -1131,7 +1131,7 @@ function renderInsights() {
     </div>`;
   }).join("");
   $("#ig-ascap-coverage").innerHTML = `<div class="ascap-cov-wrap">${ascapRows}</div>
-    <p class="ig-note">Project counts reflect overlap: projects serving multiple pillars are counted in each. P8 (Rural-Village Collaboration) has no current portfolio coverage — the single largest gap between today's work and ASEAN's 2026–2035 strategy. Source: ASCAP framework (Sept 2025); portfolio mapping derived from ASCN M&amp;E Report 2025.</p>`;
+    <p class="ig-note" data-i18n="a.project.counts.reflect.overlap.p">Project counts reflect overlap: projects serving multiple pillars are counted in each. P8 (Rural-Village Collaboration) has no current portfolio coverage — the single largest gap between today's work and ASEAN's 2026–2035 strategy. Source: ASCAP framework (Sept 2025); portfolio mapping derived from ASCN M&amp;E Report 2025.</p>`;
 
   // ── Delivery gap — completed vs ongoing by focus area, 2025 ──────────────
   const projects2025 = state.data.projects.filter((p) => p.report_year == 2025);
@@ -1162,7 +1162,7 @@ function renderInsights() {
   $("#ig-delivery-gap").innerHTML = `
     <div class="dg-legend"><span class="dg-leg-solid">Completed</span><span class="dg-leg-ghost">Active / planning</span></div>
     <div class="dg-wrap">${deliveryRows}</div>
-    <p class="ig-note">Civic &amp; Social leads completions — mostly app deployments and digital registries. Built Infrastructure has 31 active projects but only 1 completed. Industry &amp; Innovation, Safety &amp; Security, and Health &amp; Well-Being have zero completions after four M&amp;E cycles. Source: ASCN M&amp;E Report 2025 appendix.</p>`;
+    <p class="ig-note" data-i18n="a.civic.social.leads.completions.m">Civic &amp; Social leads completions — mostly app deployments and digital registries. Built Infrastructure has 31 active projects but only 1 completed. Industry &amp; Innovation, Safety &amp; Security, and Health &amp; Well-Being have zero completions after four M&amp;E cycles. Source: ASCN M&amp;E Report 2025 appendix.</p>`;
 
   // ── Digital maturity vs ASCN activity ────────────────────────────────────
   const connTierOrder = { advanced: 0, expanding: 1, limited: 2 };
@@ -1194,7 +1194,7 @@ function renderInsights() {
   $("#ig-maturity").innerHTML = `
     <div class="mat-head"><span>Country</span><span>5G tier</span><span>IMD rank</span><span>Projects 2025</span><span>ASCN cities</span></div>
     <div class="mat-wrap">${matRows}</div>
-    <p class="ig-note">Malaysia leads ASCN membership (7 cities) yet ranks #73 on IMD — advanced 5G infrastructure does not translate directly into project completions. Singapore dominates on IMD (#5) with full 5G but only 1 ASCN city. Timor-Leste and Lao PDR have limited connectivity and minimal project volume. Source: IMD World Competitiveness Center 2024; GSMA Intelligence 2024; ASCN M&amp;E Report 2025.</p>`;
+    <p class="ig-note" data-i18n="a.malaysia.leads.ascn.membership.7">Malaysia leads ASCN membership (7 cities) yet ranks #73 on IMD — advanced 5G infrastructure does not translate directly into project completions. Singapore dominates on IMD (#5) with full 5G but only 1 ASCN city. Timor-Leste and Lao PDR have limited connectivity and minimal project volume. Source: IMD World Competitiveness Center 2024; GSMA Intelligence 2024; ASCN M&amp;E Report 2025.</p>`;
 
   // ── 10. Academic research map — languages & countries of origin ───────────
   // Source: Kimi_Agent_ASCN Research/ASCN_Academic_Perspectives_Report.md
@@ -1223,15 +1223,15 @@ function renderInsights() {
   $("#ig-language-map").innerHTML = `
     <div class="lang-split">
       <div class="lang-col">
-        <p class="ig-subhead">Languages of ASCN scholarship (229+ works)</p>
+        <p class="ig-subhead" data-i18n="a.languages.of.ascn.scholarship.22">Languages of ASCN scholarship (229+ works)</p>
         <div class="ig-bars">${langRows}</div>
       </div>
       <div class="lang-col">
-        <p class="ig-subhead">Research production by country/institution</p>
+        <p class="ig-subhead" data-i18n="a.research.production.by.country.i">Research production by country/institution</p>
         <div class="lang-country-list">${csRows}</div>
       </div>
     </div>
-    <p class="ig-note">Source: ASCN Academic Perspectives Report (July 2025). English-language scholarship dominates; local-language work is growing but remains underrepresented in the critical canon.</p>`;
+    <p class="ig-note" data-i18n="a.source.ascn.academic.perspective">Source: ASCN Academic Perspectives Report (July 2025). English-language scholarship dominates; local-language work is growing but remains underrepresented in the critical canon.</p>`;
 
   // ── 11. Stacked area — portfolio composition by focus area, 2022–2025 ─────
   const FOCUS_ORDER = ["Civic & Social", "Built Infrastructure", "Quality Environment", "Safety & Security", "Industry & Innovation", "Health & Well-Being"];
@@ -1252,7 +1252,7 @@ function renderInsights() {
   $("#ig-focus-stack").innerHTML = `
     <div class="stack-wrap">${focusStack}</div>
     <div class="stack-legend">${focusLegend}</div>
-    <p class="ig-note">Built Infrastructure overtook Civic &amp; Social by 2024. Health &amp; Well-Being has stayed at 6% for four consecutive years. Source: ASCN M&amp;E Reports 2022–2025.</p>`;
+    <p class="ig-note" data-i18n="a.built.infrastructure.overtook.ci">Built Infrastructure overtook Civic &amp; Social by 2024. Health &amp; Well-Being has stayed at 6% for four consecutive years. Source: ASCN M&amp;E Reports 2022–2025.</p>`;
 
   // ── 12. Country slope graph — 2022 baseline vs 2025 ───────────────────────
   const countrySlopeData = Object.entries(state.data.derived.appendix_summaries).reduce((acc, [year, sum]) => {
@@ -1290,7 +1290,7 @@ function renderInsights() {
   $("#ig-country-slope").innerHTML = `
     <div class="slope-header"><span class="slope-h-country">Country</span><span class="slope-h-val">2022</span><span class="slope-h-track">→</span><span class="slope-h-val">2025</span><span class="slope-h-delta">Δ</span></div>
     <div class="slope-wrap">${slopeHtml}</div>
-    <p class="ig-note">Thailand and Malaysia drove the 2024–25 surge. Vietnam is the only country with zero growth across all four cycles. Myanmar kept adding projects despite the 2021 crisis. Source: ASCN M&amp;E Reports 2022–2025.</p>`;
+    <p class="ig-note" data-i18n="a.thailand.and.malaysia.drove.the">Thailand and Malaysia drove the 2024–25 surge. Vietnam is the only country with zero growth across all four cycles. Myanmar kept adding projects despite the 2021 crisis. Source: ASCN M&amp;E Reports 2022–2025.</p>`;
 
   // ── 13. Project churn funnel ──────────────────────────────────────────────
   // Track unique city+project combinations across the four cycles
@@ -1306,7 +1306,7 @@ function renderInsights() {
         <div class="churn-seg churn-seg--int" style="width:${(churn.intermittent / churn.total) * 100}%"><span class="churn-seg-n">${churn.intermittent}</span><span class="churn-seg-label">Intermittent</span></div>
       </div>
     </div>
-    <p class="ig-note">A project that disappears from the appendix is not necessarily cancelled — but it cannot be verified or compared across cycles. Source: ASCN M&amp;E appendix rows 2022–2025.</p>`;
+    <p class="ig-note" data-i18n="a.a.project.that.disappears.from.t">A project that disappears from the appendix is not necessarily cancelled — but it cannot be verified or compared across cycles. Source: ASCN M&amp;E appendix rows 2022–2025.</p>`;
 
   // ── 14. Completion rate by country ────────────────────────────────────────
   // Source: ASCN M&E Report 2025 Appendix + ascn_dim05.md §4.2
@@ -1329,7 +1329,7 @@ function renderInsights() {
   }).join("");
   $("#ig-completion-rate").innerHTML = `
     <div class="ig-bars">${compRows2}</div>
-    <p class="ig-note">Completion is self-defined by cities with no standardized criteria. 39% of the 18 "completed" projects are planning or strategy documents. Source: ASCN M&amp;E Report 2025 + ascn_dim05.md §4.2.</p>`;
+    <p class="ig-note" data-i18n="a.completion.is.self.defined.by.ci">Completion is self-defined by cities with no standardized criteria. 39% of the 18 "completed" projects are planning or strategy documents. Source: ASCN M&amp;E Report 2025 + ascn_dim05.md §4.2.</p>`;
 
   // ── What ASCN measures vs doesn't — the 4-vs-8 ledger ─────────────────────
   // Source: state.K.me_gap (ascn_dim05.md, ascn_insight.md Insight 1)
@@ -1338,8 +1338,8 @@ function renderInsights() {
   const missingLi = meGap.not_tracked.map((t) => `<li class="mel-item"><span class="mel-mark mel-no">✗</span>${esc(t)}</li>`).join("");
   $("#ig-me-ledger").innerHTML = `
     <div class="mel-split">
-      <div class="mel-col mel-col--yes"><p class="mel-head"><strong>4</strong> things ASCN tracks</p><ul class="mel-list">${trackedLi}</ul></div>
-      <div class="mel-col mel-col--no"><p class="mel-head"><strong>8</strong> things it doesn't</p><ul class="mel-list">${missingLi}</ul></div>
+      <div class="mel-col mel-col--yes"><p class="mel-head" data-i18n="a.4.things.ascn.tracks"><strong>4</strong> things ASCN tracks</p><ul class="mel-list">${trackedLi}</ul></div>
+      <div class="mel-col mel-col--no"><p class="mel-head" data-i18n="a.8.things.it.doesn.t"><strong>8</strong> things it doesn't</p><ul class="mel-list">${missingLi}</ul></div>
     </div>
     <p class="ig-note">${esc(meGap.method)} Source: ASCN M&amp;E Reports 2022–2025; ascn_dim05.md.</p>`;
 
@@ -1349,7 +1349,7 @@ function renderInsights() {
   const gcHead = `<tr><th>Dimension</th><th class="me-ascn-col">ASCN</th><th>India</th><th>EU</th><th>China</th></tr>`;
   const gcRows = comp.map((d) => `<tr><td class="me-feature">${esc(d.dimension)}</td><td class="me-cell me-ascn-col">${esc(d.ascn)}</td><td class="me-cell">${esc(d.india)}</td><td class="me-cell">${esc(d.eu)}</td><td class="me-cell">${esc(d.china)}</td></tr>`).join("");
   $("#ig-global-context").innerHTML = `<table class="me-table gc-table"><thead>${gcHead}</thead><tbody>${gcRows}</tbody></table>
-    <p class="ig-note">ASCN coordinates 38 cities with no central funding pool; China's smart-city market alone is ~USD 1.1 trillion. The gap is not a failing but a different model — voluntary, people-centric, non-binding — yet it sets the scale of what the network can and can't do. Source: ascn_dim10.md; ascn_insight.md Insight 3.</p>`;
+    <p class="ig-note" data-i18n="a.ascn.coordinates.38.cities.with">ASCN coordinates 38 cities with no central funding pool; China's smart-city market alone is ~USD 1.1 trillion. The gap is not a failing but a different model — voluntary, people-centric, non-binding — yet it sets the scale of what the network can and can't do. Source: ascn_dim10.md; ascn_insight.md Insight 3.</p>`;
 
   // ── 5G readiness 2024 → 2030 + vendor geopolitics ────────────────────────
   // Source: ascn_dim06.md (LKYSPP/NUS 5G-in-ASEAN 2025)
@@ -1374,7 +1374,7 @@ function renderInsights() {
   }).join("");
   $("#ig-5g").innerHTML = `<div class="g5-head"><span>Country</span><span>5G mode</span><span>Dominant vendors</span><span>Projected 2030 penetration</span></div>
     <div class="g5-wrap">${g5Rows}</div>
-    <p class="ig-note">Standalone (SA) vs non-standalone (NSA) marks true 5G maturity — only Singapore runs full SA. The vendor split is geopolitical: Chinese vendors dominate Indonesia, Cambodia, Laos, Myanmar and Thailand; Western vendors lead Singapore and Malaysia — an interoperability and cybersecurity divide most ASCN cities have no formal framework for. 2030 projections: LKYSPP/NUS. Source: ascn_dim06.md.</p>`;
+    <p class="ig-note" data-i18n="a.standalone.sa.vs.non.standalone">Standalone (SA) vs non-standalone (NSA) marks true 5G maturity — only Singapore runs full SA. The vendor split is geopolitical: Chinese vendors dominate Indonesia, Cambodia, Laos, Myanmar and Thailand; Western vendors lead Singapore and Malaysia — an interoperability and cybersecurity divide most ASCN cities have no formal framework for. 2030 projections: LKYSPP/NUS. Source: ascn_dim06.md.</p>`;
 
   // ── The inclusivity test — Timor-Leste / Dili ────────────────────────────
   // Source: ascn_dim13.md (ascn_insight.md Insight 5)
@@ -1384,7 +1384,7 @@ function renderInsights() {
       <div class="dili-stat"><strong>0.45</strong><span>Human Capital Index — lowest in ASEAN, below Laos 0.46, Myanmar 0.48, Cambodia 0.49</span></div>
       <div class="dili-stat"><strong>~40%</strong><span>of Timorese live below the poverty line; submarine fibre only from late 2025</span></div>
     </div>
-    <p class="ig-note">Timor-Leste's 2026 accession is the network's inclusivity stress-test: extending "smart city" to the member with the region's highest data costs and lowest human-capital base forces a definition of smart that cannot rest on technology alone. Source: ascn_dim13.md.</p>`;
+    <p class="ig-note" data-i18n="a.timor.leste.s.2026.accession.is">Timor-Leste's 2026 accession is the network's inclusivity stress-test: extending "smart city" to the member with the region's highest data costs and lowest human-capital base forces a definition of smart that cannot rest on technology alone. Source: ascn_dim13.md.</p>`;
 
   // ── Bilateral & multilateral commitments at scale ────────────────────────
   // Source: ascn_cross_verification.md HC-5 + partnership programme reports
@@ -1402,7 +1402,7 @@ function renderInsights() {
     return `<div class="fs-row"><span class="fs-name">${esc(f.name)}</span><div class="bar-track fs-track"><div class="bar-fill${f.usd ? "" : " fs-fill--none"}" style="width:${w}%"></div></div><strong class="fs-val${f.usd ? "" : " fs-val--none"}">${esc(f.disp)}</strong><em class="fs-note">${esc(f.note)}</em></div>`;
   }).join("");
   $("#ig-funding-scale").innerHTML = `<div class="fs-wrap">${fundRows}</div>
-    <p class="ig-note">Japan's SmartJAMP (~USD 2.4B) is roughly <strong>170×</strong> Australia's AASCTF (~USD 14M) — the largest bilateral commitment dwarfs every other donor. Separately, the ADB-managed ACGF carries ~USD 3.7B in total project value across ~30 projects. USD-normalised; China's commitment is undisclosed. Source: ascn_cross_verification.md HC-5; programme reports.</p>`;
+    <p class="ig-note" data-i18n="a.japan.s.smartjamp.usd.2.4b.is.ro">Japan's SmartJAMP (~USD 2.4B) is roughly <strong>170×</strong> Australia's AASCTF (~USD 14M) — the largest bilateral commitment dwarfs every other donor. Separately, the ADB-managed ACGF carries ~USD 3.7B in total project value across ~30 projects. USD-normalised; China's commitment is undisclosed. Source: ascn_cross_verification.md HC-5; programme reports.</p>`;
 }
 
 /* ---------------- Open Data / Library ---------------- */
@@ -1702,17 +1702,17 @@ function renderContacts() {
       <div class="contacts-header">
         <p class="label">Network Contacts</p>
         <h2>Click any city to see the NR and CSCO.</h2>
-        <p class="lede">38 cities, 11 countries. Each marker shows the National Representative at the top, followed by the Chief Smart City Officer for that city. Data: April 2026 ASCN contact list.</p>
+        <p class="lede" data-i18n="a.38.cities.11.countries.each.mark">38 cities, 11 countries. Each marker shows the National Representative at the top, followed by the Chief Smart City Officer for that city. Data: April 2026 ASCN contact list.</p>
         <a class="text-button" href="docs/11_ASCN_Contact_List_2026.pdf" target="_blank">Official contact list (Jan 2026 PDF)</a>
       </div>
 
       <div class="contacts-map-wrap">
         <div id="contacts-map" class="contacts-map"></div>
-        <p class="contacts-map-hint">Click a city marker to view contacts · Scroll to zoom</p>
+        <p class="contacts-map-hint" data-i18n="a.click.a.city.marker.to.view.cont">Click a city marker to view contacts · Scroll to zoom</p>
       </div>
 
       <div class="contacts-grid-wrap">
-        <p class="label">National Representatives by country</p>
+        <p class="label" data-i18n="a.national.representatives.by.coun">National Representatives by country</p>
         <div class="contacts-grid">${memberCards}</div>
       </div>
 
@@ -2015,11 +2015,11 @@ function renderResearch() {
 <div class="section-head">
   <p class="label">Research</p>
   <h2>What the scholarship says — and what it misses</h2>
-  <p class="lede">A synthesis of fourteen peer-reviewed papers and official documents on ASCN. Eight structural themes, an insider FAQ, and a full bibliography — written by a participant who has attended every annual meeting since 2018.</p>
+  <p class="lede" data-i18n="a.a.synthesis.of.fourteen.peer.rev">A synthesis of fourteen peer-reviewed papers and official documents on ASCN. Eight structural themes, an insider FAQ, and a full bibliography — written by a participant who has attended every annual meeting since 2018.</p>
 </div>
 
 <div class="research-section">
-  <p class="research-section-label label">SEVEN THEMES FROM THE LITERATURE</p>
+  <p class="research-section-label label" data-i18n="a.seven.themes.from.the.literature">SEVEN THEMES FROM THE LITERATURE</p>
   <div class="research-theme-grid">
     ${THEMES.map(t => `<article class="research-theme">
       <div class="research-theme-top">
@@ -2066,17 +2066,17 @@ function renderResearch() {
   <div class="geo-grid">
     <div class="geo-col">
       <p class="geo-h">Languages of scholarship</p>
-      <p class="geo-body">Of 229+ works catalogued, 218 (95%) are in English. Indonesian/Malay contributes 4, Thai 3, Chinese 2, Korean 1, Vietnamese 1, Japanese-linked English 3. Local-language scholarship is growing — especially in Indonesia and Thailand — but the critical canon is still written largely in English from Singapore, UK, and Australian institutions.</p>
+      <p class="geo-body" data-i18n="a.of.229.works.catalogued.218.95.a">Of 229+ works catalogued, 218 (95%) are in English. Indonesian/Malay contributes 4, Thai 3, Chinese 2, Korean 1, Vietnamese 1, Japanese-linked English 3. Local-language scholarship is growing — especially in Indonesia and Thailand — but the critical canon is still written largely in English from Singapore, UK, and Australian institutions.</p>
     </div>
     <div class="geo-col">
       <p class="geo-h">Country narratives</p>
       <ul class="geo-list">
-        <li><b>Indonesia</b> — Shepherd as smart-city diplomacy; pivot to bankable projects.</li>
-        <li><b>Singapore</b> — Architect, knowledge broker, and object of technocratic-regionalism critique.</li>
-        <li><b>Thailand</b> — National smart-city programme as regional showcase.</li>
-        <li><b>Vietnam</b> — State-led, quiet in ASCN deliberations; strong domestic tech vendors.</li>
-        <li><b>Cambodia / Lao PDR</b> — External-partner dependent; capacity and rights concerns.</li>
-        <li><b>Myanmar</b> — Participation persists through crisis; civil-society opposition.</li>
+        <li data-i18n="a.indonesia.shepherd.as.smart.cit"><b>Indonesia</b> — Shepherd as smart-city diplomacy; pivot to bankable projects.</li>
+        <li data-i18n="a.singapore.architect.knowledge.b"><b>Singapore</b> — Architect, knowledge broker, and object of technocratic-regionalism critique.</li>
+        <li data-i18n="a.thailand.national.smart.city.pr"><b>Thailand</b> — National smart-city programme as regional showcase.</li>
+        <li data-i18n="a.vietnam.state.led.quiet.in.ascn"><b>Vietnam</b> — State-led, quiet in ASCN deliberations; strong domestic tech vendors.</li>
+        <li data-i18n="a.cambodia.lao.pdr.external.partn"><b>Cambodia / Lao PDR</b> — External-partner dependent; capacity and rights concerns.</li>
+        <li data-i18n="a.myanmar.participation.persists"><b>Myanmar</b> — Participation persists through crisis; civil-society opposition.</li>
       </ul>
     </div>
   </div>
@@ -2085,7 +2085,7 @@ function renderResearch() {
 <div class="research-section">
   <p class="research-section-label label">INSIDER PERSPECTIVE</p>
   <div class="insider-block">
-    <p class="insider-lede">The scholarship on ASCN has grown since the network launched. Eight papers and documents now constitute a body of evidence. Most is written by people who study the network from outside. Four things the literature gets right, and one thing it consistently misses:</p>
+    <p class="insider-lede" data-i18n="a.the.scholarship.on.ascn.has.grow">The scholarship on ASCN has grown since the network launched. Eight papers and documents now constitute a body of evidence. Most is written by people who study the network from outside. Four things the literature gets right, and one thing it consistently misses:</p>
     <div class="insider-grid">
       <div class="insider-item insider-item--yes">
         <span class="insider-mark">✓</span>
@@ -2153,7 +2153,7 @@ function renderEssay() {
     <text x="610" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#666">Viet Nam</text>
     <text x="340" y="244" text-anchor="middle" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#999">Plus Timor-Leste (newest member, city: Dili). Source: ASCN M&amp;E Reports 2022–2025.</text>
   </svg>
-  <figcaption>ASCN governance: the Secretariat coordinates, the Shepherd holds institutional memory, the Chair rotates annually.</figcaption>
+  <figcaption data-i18n="a.ascn.governance.the.secretariat">ASCN governance: the Secretariat coordinates, the Shepherd holds institutional memory, the Chair rotates annually.</figcaption>
 </figure>`;
 
   /* ---- Focus area bar chart ---- */
@@ -2170,7 +2170,7 @@ function renderEssay() {
     }).join("")}
     <text x="0" y="226" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#999">Smart Mobility + Smart Living account for more than half of documented projects. Smart Governance and Smart People remain underrepresented relative to the framework's stated priorities.</text>
   </svg>
-  <figcaption>Project distribution reflects city demand, not network design. Mobility and living services are visible and fundable; governance-strengthening work — which underpins everything else — is harder to count and harder to fund.</figcaption>
+  <figcaption data-i18n="a.project.distribution.reflects.ci">Project distribution reflects city demand, not network design. Mobility and living services are visible and fundable; governance-strengthening work — which underpins everything else — is harder to count and harder to fund.</figcaption>
 </figure>`;
 
   /* ---- Timeline diagram ---- */
@@ -2197,7 +2197,7 @@ function renderEssay() {
     <text x="640" y="92" text-anchor="end" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="#666">chairs</text>
     <text x="0" y="124" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#999">Four M&amp;E cycles. Eight annual meetings. Two Shepherds. The measurement framework has not kept pace with the network's growth.</text>
   </svg>
-  <figcaption>Seven years of meetings, partnerships, and reports. The network has grown steadily; the accountability architecture has not.</figcaption>
+  <figcaption data-i18n="a.seven.years.of.meetings.partners">Seven years of meetings, partnerships, and reports. The network has grown steadily; the accountability architecture has not.</figcaption>
 </figure>`;
 
   /* ---- Illustrations removed 2026-06-21 ---- */
@@ -2243,7 +2243,7 @@ function renderEssay() {
     <line x1="334" y1="90" x2="288" y2="148" stroke="#1a1a1a" stroke-width="0.8" stroke-dasharray="4 3" opacity="0.35"/>
     <circle cx="334" cy="90" r="2.5" fill="#1a1a1a" opacity="0.35"/>
   </svg>
-  <figcaption>The city is already producing data. The question is whether the people inside it can read that data — and act on it.</figcaption>
+  <figcaption data-i18n="a.the.city.is.already.producing.da">The city is already producing data. The question is whether the people inside it can read that data — and act on it.</figcaption>
 </figure>`;
 
   const illus2_REMOVED = `<figure class="essay-illus-UNUSED">
@@ -2319,7 +2319,7 @@ function renderEssay() {
     <line x1="418" y1="94" x2="424" y2="110" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
     <text x="418" y="126" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="#888">Thailand · SG</text>
   </svg>
-  <figcaption>ASCN connects ten member states through the ASEAN Secretariat. The network's value depends on what flows through those connections — not the connections themselves.</figcaption>
+  <figcaption data-i18n="a.ascn.connects.ten.member.states">ASCN connects ten member states through the ASEAN Secretariat. The network's value depends on what flows through those connections — not the connections themselves.</figcaption>
 </figure>`;
 
   const essay = `
@@ -2333,7 +2333,7 @@ function renderEssay() {
   </div>
 
   <h2 class="essay-title">The Network at Seven</h2>
-  <p class="essay-subtitle">What four M&amp;E cycles and thirty-eight cities reveal about Southeast Asia's most ambitious governance experiment</p>
+  <p class="essay-subtitle" data-i18n="a.what.four.m.e.cycles.and.thirty">What four M&amp;E cycles and thirty-eight cities reveal about Southeast Asia's most ambitious governance experiment</p>
 
   <details class="essay-bio">
     <summary class="essay-bio-summary">
@@ -2347,23 +2347,23 @@ function renderEssay() {
     <div class="essay-bio-body">
       <figure class="bio-photo-wrap">
         <img src="Photos/author-bio.jpg" alt="Non Arkaraprasertkul speaking at GITEX Ai Asia Singapore 2026" class="bio-photo" />
-        <figcaption>GITEX Ai Asia — Main Stage, Singapore, 2026</figcaption>
+        <figcaption data-i18n="a.gitex.ai.asia.main.stage.singapo">GITEX Ai Asia — Main Stage, Singapore, 2026</figcaption>
       </figure>
       <div class="bio-text">
-        <p>Non Arkaraprasertkul holds a doctorate in anthropology from Harvard University. His doctoral research examined urban informality and neighbourhood transformation in Bangkok and Shanghai. From 2013 to 2014 he conducted doctoral fieldwork in Shanghai — supported by the Harvard-Yenching Institute, the Fairbank Center for Chinese Studies, and the Cora Du Bois Anthropology Fellowship — where his work produced the concept of <em>gentrification from within</em> — the process by which original residents leverage rising property markets from inside a neighbourhood rather than being displaced by them — subsequently applied by researchers in twelve countries.</p>
-        <p>He has worked within the ASEAN Smart Cities Network as Senior Expert in Smart City Promotion at Thailand's Digital Economy Promotion Agency (DEPA), under the Ministry of Digital Economy and Society, since 2019 — across seven annual meetings and four M&amp;E cycles. He has spoken on smart city governance at Tomorrow.City Shanghai, GITEX Ai Asia Singapore, and the Smart City Summit Taipei. This essay draws on seven years of direct participation in the network's meetings, data, and debates.</p>
+        <p data-i18n="a.non.arkaraprasertkul.holds.a.doc">Non Arkaraprasertkul holds a doctorate in anthropology from Harvard University. His doctoral research examined urban informality and neighbourhood transformation in Bangkok and Shanghai. From 2013 to 2014 he conducted doctoral fieldwork in Shanghai — supported by the Harvard-Yenching Institute, the Fairbank Center for Chinese Studies, and the Cora Du Bois Anthropology Fellowship — where his work produced the concept of <em>gentrification from within</em> — the process by which original residents leverage rising property markets from inside a neighbourhood rather than being displaced by them — subsequently applied by researchers in twelve countries.</p>
+        <p data-i18n="a.he.has.worked.within.the.asean.s">He has worked within the ASEAN Smart Cities Network as Senior Expert in Smart City Promotion at Thailand's Digital Economy Promotion Agency (DEPA), under the Ministry of Digital Economy and Society, since 2019 — across seven annual meetings and four M&amp;E cycles. He has spoken on smart city governance at Tomorrow.City Shanghai, GITEX Ai Asia Singapore, and the Smart City Summit Taipei. This essay draws on seven years of direct participation in the network's meetings, data, and debates.</p>
         <ul class="bio-credentials">
-          <li>PhD, Anthropology, Harvard University</li>
-          <li>Shanghai fieldwork fellowships — Harvard-Yenching Institute · Fairbank Center for Chinese Studies · Cora Du Bois Anthropology Fellowship</li>
-          <li>Senior Expert in Smart City Promotion, Digital Economy Promotion Agency (DEPA), Thailand</li>
-          <li>ASEAN Smart Cities Network — DEPA Senior Expert / Thailand staff contact since 2019</li>
-          <li>Seven ASCN Annual Meetings · Four M&amp;E cycles</li>
+          <li data-i18n="a.phd.anthropology.harvard.univers">PhD, Anthropology, Harvard University</li>
+          <li data-i18n="a.shanghai.fieldwork.fellowships.h">Shanghai fieldwork fellowships — Harvard-Yenching Institute · Fairbank Center for Chinese Studies · Cora Du Bois Anthropology Fellowship</li>
+          <li data-i18n="a.senior.expert.in.smart.city.prom">Senior Expert in Smart City Promotion, Digital Economy Promotion Agency (DEPA), Thailand</li>
+          <li data-i18n="a.asean.smart.cities.network.depa">ASEAN Smart Cities Network — DEPA Senior Expert / Thailand staff contact since 2019</li>
+          <li data-i18n="a.seven.ascn.annual.meetings.four">Seven ASCN Annual Meetings · Four M&amp;E cycles</li>
         </ul>
       </div>
     </div>
   </details>
 
-  <p class="essay-pilot-note">Essay No. 1 on the ASCN Open Platform. Future perspectives from officials, researchers, and city practitioners across the region will follow. If you represent an ASCN member city or institution and would like to contribute, write to the platform team.</p>
+  <p class="essay-pilot-note" data-i18n="a.essay.no.1.on.the.ascn.open.plat">Essay No. 1 on the ASCN Open Platform. Future perspectives from officials, researchers, and city practitioners across the region will follow. If you represent an ASCN member city or institution and would like to contribute, write to the platform team.</p>
 </div>
 
 <div class="essay-body">
@@ -2400,7 +2400,7 @@ function renderEssay() {
     ${h(3, "III. The Singapore question")}
     <figure class="essay-photo">
       <img src="Photos/ASCN-1st-2018-Singapore.jpg" alt="Minister Vivian Balakrishnan at the Inaugural ASCN Meeting, Singapore, 8 July 2018" loading="lazy" />
-      <figcaption>Minister Vivian Balakrishnan, Singapore's Minister-in-charge of the Smart Nation Initiative, at the Inaugural ASEAN Smart Cities Network Meeting, Singapore, 8 July 2018. Singapore designed the network's architecture before handing the chair forward.</figcaption>
+      <figcaption data-i18n="a.minister.vivian.balakrishnan.sin">Minister Vivian Balakrishnan, Singapore's Minister-in-charge of the Smart Nation Initiative, at the Inaugural ASEAN Smart Cities Network Meeting, Singapore, 8 July 2018. Singapore designed the network's architecture before handing the chair forward.</figcaption>
     </figure>
     ${p("Let me say the obvious thing first. Singapore founded ASCN. Singapore provided the first chair, the first shepherd, and the primary knowledge institution. Without Singapore, there is no ASCN. That is a fact. It is also a problem.")}
     ${p("The problem is not that Singapore helped. The problem is that Singapore cannot stop being Singapore. It is a city-state. The government owns the land. The Housing Development Board houses 80% of the population under a unified planning authority with no federal system, no competing local governments, and no electorate that votes against development plans. This model produced remarkable results. It produced them under conditions that do not exist in Bangkok, Manila, Phnom Penh, or any other ASEAN city except Singapore.")}
@@ -2426,7 +2426,7 @@ function renderEssay() {
     ${h(3, "V. Less meetings. More building.")}
     <figure class="essay-photo">
       <img src="Photos/ASCN-8th-2025-KL-expert-talk.jpg" alt="Expert session at the 8th ASCN Annual Meeting, Kuala Lumpur, 2025" loading="lazy" />
-      <figcaption>Expert session, 8th ASCN Annual Meeting, Kuala Lumpur, September 2025. Ceremonies are easy. Building systems is hard.</figcaption>
+      <figcaption data-i18n="a.expert.session.8th.ascn.annual.m">Expert session, 8th ASCN Annual Meeting, Kuala Lumpur, September 2025. Ceremonies are easy. Building systems is hard.</figcaption>
     </figure>
     ${p("I have been part of ASCN since 2019. Seven annual meetings. Four M&amp;E cycles. Two changes of chair. One change of shepherd. I leave every annual meeting with the same thought: the people in the room understand the problems. The chief smart city officers from Nakhon Si Thammarat and Phnom Penh and Bandar Seri Begawan and Ha Noi have spent years navigating flood drainage and informal settlement formalisation under conditions that no Singapore planning document has had to account for. They know things no knowledge institution could have produced without being there.")}
     ${p("The problem is that the network does not yet have a systematic way to make that knowledge visible, portable, and actionable across the thirty-eight cities. We meet. We exchange business cards. We take photos in batik shirts. Then we go home and the knowledge stays in the room.")}
@@ -2459,15 +2459,15 @@ function renderEssay() {
 
   <div class="essay-section essay-footnotes">
     <p class="essay-fn-label">Note on Shanghai</p>
-    <p class="essay-fn">The Shanghai fieldwork (2013–2015) — supported by the Harvard-Yenching Institute, the Fairbank Center for Chinese Studies at Harvard University, the Cora Du Bois Anthropology Fellowship, a New York University Postdoctoral Global Fellowship, a Fudan Fellowship, and the China Scholarship Council (CSC) Research Fund — was a study of neighbourhood change in the lilong alleyway-house districts of central Shanghai. The concept of gentrification from within emerged from that study and provides the analytical frame for sections I–IV above. The Shanghai case itself is not the subject of this essay; it is a set of methods applied to a different set of cities. Readers interested in the original fieldwork should start with Arkaraprasertkul (2016) in Asian Anthropology or the 2018 Urban Studies paper listed below.</p>
+    <p class="essay-fn" data-i18n="a.the.shanghai.fieldwork.2013.2015">The Shanghai fieldwork (2013–2015) — supported by the Harvard-Yenching Institute, the Fairbank Center for Chinese Studies at Harvard University, the Cora Du Bois Anthropology Fellowship, a New York University Postdoctoral Global Fellowship, a Fudan Fellowship, and the China Scholarship Council (CSC) Research Fund — was a study of neighbourhood change in the lilong alleyway-house districts of central Shanghai. The concept of gentrification from within emerged from that study and provides the analytical frame for sections I–IV above. The Shanghai case itself is not the subject of this essay; it is a set of methods applied to a different set of cities. Readers interested in the original fieldwork should start with Arkaraprasertkul (2016) in Asian Anthropology or the 2018 Urban Studies paper listed below.</p>
     <p class="essay-fn-label">Note on interviews</p>
-    <p class="essay-fn">The characterisations of officials, delegations, and institutions in this essay draw on the author's own conversations and interviews with leaders both inside and outside the ASEAN Smart Cities Network, gathered across seven years of direct participation. Specific quotes and observations are kept anonymous by design — to protect candour and working relationships — but each reflects real statements made by real people in real meetings and interviews. None are composite or invented.</p>
+    <p class="essay-fn" data-i18n="a.the.characterisations.of.officia">The characterisations of officials, delegations, and institutions in this essay draw on the author's own conversations and interviews with leaders both inside and outside the ASEAN Smart Cities Network, gathered across seven years of direct participation. Specific quotes and observations are kept anonymous by design — to protect candour and working relationships — but each reflects real statements made by real people in real meetings and interviews. None are composite or invented.</p>
   </div>
 
 </div>
 
 <div class="essay-refs">
-  <p class="label">Sources &amp; further reading</p>
+  <p class="label" data-i18n="a.sources.further.reading">Sources &amp; further reading</p>
   <div class="essay-ref-grid">
     <div class="essay-ref-item">
       <span class="essay-ref-n">[1]</span>
@@ -2585,40 +2585,40 @@ function renderEssay() {
   </summary>
 
   <div class="author-body">
-    <p class="author-intro">Unlike most smart city practitioners who lead with technology procurement, Dr. Non approaches urban development through governance frameworks, human-centric urbanism, and regional standardization — grounded in two years of immersive ethnographic fieldwork in Shanghai and a decade of policy practice in Thailand and ASEAN.</p>
+    <p class="author-intro" data-i18n="a.unlike.most.smart.city.practitio">Unlike most smart city practitioners who lead with technology procurement, Dr. Non approaches urban development through governance frameworks, human-centric urbanism, and regional standardization — grounded in two years of immersive ethnographic fieldwork in Shanghai and a decade of policy practice in Thailand and ASEAN.</p>
 
     <div class="author-section">
       <p class="author-section-label">ASCN — Regional Work</p>
       <ul class="author-list">
-        <li><b>Architect of the ASEAN CSCO Handbook</b> — Strategic Advisor and Handbook Architect for <i>The Citizen-First City</i>, the standardized manual for Chief Smart City Officers across all ASEAN member states.</li>
-        <li><b>Thailand's National Representative</b> — Primary liaison between Thailand's domestic smart city programme and the ASEAN Secretariat, named in official ASCN contact lists from 2024 through 2026.</li>
-        <li><b>Regional Capacity Building</b> — Delivers country presentations at the UNCRD (United Nations Centre for Regional Development) International Training Workshop on Smart Cities; helps standardize training across Asia.</li>
-        <li><b>Soft Power Research</b> — Authored papers framing ASCN as a tool for effective soft power, arguing that the network allows ASEAN cities to export models of sustainable urbanism beyond the region.</li>
+        <li data-i18n="a.architect.of.the.asean.csco.han"><b>Architect of the ASEAN CSCO Handbook</b> — Strategic Advisor and Handbook Architect for <i>The Citizen-First City</i>, the standardized manual for Chief Smart City Officers across all ASEAN member states.</li>
+        <li data-i18n="a.thailand.s.national.representat"><b>Thailand's National Representative</b> — Primary liaison between Thailand's domestic smart city programme and the ASEAN Secretariat, named in official ASCN contact lists from 2024 through 2026.</li>
+        <li data-i18n="a.regional.capacity.building.deli"><b>Regional Capacity Building</b> — Delivers country presentations at the UNCRD (United Nations Centre for Regional Development) International Training Workshop on Smart Cities; helps standardize training across Asia.</li>
+        <li data-i18n="a.soft.power.research.authored.pa"><b>Soft Power Research</b> — Authored papers framing ASCN as a tool for effective soft power, arguing that the network allows ASEAN cities to export models of sustainable urbanism beyond the region.</li>
       </ul>
     </div>
 
     <div class="author-section">
-      <p class="author-section-label">DEPA Thailand — Domestic Work</p>
+      <p class="author-section-label" data-i18n="a.depa.thailand.domestic.work">DEPA Thailand — Domestic Work</p>
       <ul class="author-list">
-        <li><b>Provincial Frameworks</b> — Lead consultant for smart city master plans in Nonthaburi ("Next Nont"), Nakhon Si Thammarat (disaster-resilience interaction framework), and Rayong (Ban Chang municipality).</li>
-        <li><b>Chief Smart City Officer Program</b> — Designed and leads DEPA's CSCO training course, building the dedicated "CTOs" of Thai cities from mid- and senior-level officials.</li>
-        <li><b>Smart City Leadership Curriculum</b> — Primary instructor for DEPA's leadership programme using Design Thinking for urban environments; trained 5,000+ officials across Thailand.</li>
-        <li><b>Four-Pillar Framework</b> — Author of DEPA's foundational evaluation rubric for assessing and supporting smart city projects nationwide.</li>
+        <li data-i18n="a.provincial.frameworks.lead.cons"><b>Provincial Frameworks</b> — Lead consultant for smart city master plans in Nonthaburi ("Next Nont"), Nakhon Si Thammarat (disaster-resilience interaction framework), and Rayong (Ban Chang municipality).</li>
+        <li data-i18n="a.chief.smart.city.officer.progra"><b>Chief Smart City Officer Program</b> — Designed and leads DEPA's CSCO training course, building the dedicated "CTOs" of Thai cities from mid- and senior-level officials.</li>
+        <li data-i18n="a.smart.city.leadership.curriculu"><b>Smart City Leadership Curriculum</b> — Primary instructor for DEPA's leadership programme using Design Thinking for urban environments; trained 5,000+ officials across Thailand.</li>
+        <li data-i18n="a.four.pillar.framework.author.of"><b>Four-Pillar Framework</b> — Author of DEPA's foundational evaluation rubric for assessing and supporting smart city projects nationwide.</li>
       </ul>
     </div>
 
     <div class="author-section">
       <p class="author-section-label">Publications</p>
       <ul class="author-list">
-        <li><b>The Smart City Primer (2022)</b> — Co-authored with Reilly Paul Rabitaille; released with C-ASEAN and the U.S. Embassy Bangkok; educational baseline from the YSEALI programme for young leaders across Southeast Asia.</li>
-        <li><b>Guide to Building Smart Cities for People in a Hurry (2023)</b> — Practical guide for rapid, citizen-centric smart city implementation.</li>
-        <li><b>Academic portfolio</b> — 469 Google Scholar citations. h-index 12 (above architecture full-professor mean of 9). 48.8% of lifetime citations accrued since 2021 — citation velocity doubled after the practitioner pivot, not despite it. 'Gentrification from within' adopted in 12+ countries across 4 continents, cited in the SAGE Handbook of Cultural Anthropology and Routledge Handbook of Planning Theory. The practitioner work — 5,000+ officials trained, 27→100+ cities scaled — generates zero Google Scholar citations and 100% of the policy impact.</li>
+        <li data-i18n="a.the.smart.city.primer.2022.co.a"><b>The Smart City Primer (2022)</b> — Co-authored with Reilly Paul Rabitaille; released with C-ASEAN and the U.S. Embassy Bangkok; educational baseline from the YSEALI programme for young leaders across Southeast Asia.</li>
+        <li data-i18n="a.guide.to.building.smart.cities"><b>Guide to Building Smart Cities for People in a Hurry (2023)</b> — Practical guide for rapid, citizen-centric smart city implementation.</li>
+        <li data-i18n="a.academic.portfolio.469.google.s"><b>Academic portfolio</b> — 469 Google Scholar citations. h-index 12 (above architecture full-professor mean of 9). 48.8% of lifetime citations accrued since 2021 — citation velocity doubled after the practitioner pivot, not despite it. 'Gentrification from within' adopted in 12+ countries across 4 continents, cited in the SAGE Handbook of Cultural Anthropology and Routledge Handbook of Planning Theory. The practitioner work — 5,000+ officials trained, 27→100+ cities scaled — generates zero Google Scholar citations and 100% of the policy impact.</li>
       </ul>
     </div>
 
     <div class="author-section">
       <p class="author-section-label">Axiom SLIC</p>
-      <p class="author-note">Co-founder of Axiom SLIC, a private-sector initiative building what governments plan but cannot execute. Frameworks developed there — including flood-resilience work in Nakhon Si Thammarat — are grounded in actual climate crises rather than theoretical models.</p>
+      <p class="author-note" data-i18n="a.co.founder.of.axiom.slic.a.priva">Co-founder of Axiom SLIC, a private-sector initiative building what governments plan but cannot execute. Frameworks developed there — including flood-resilience work in Nakhon Si Thammarat — are grounded in actual climate crises rather than theoretical models.</p>
     </div>
   </div>
 </details>
@@ -2626,7 +2626,7 @@ function renderEssay() {
 <div class="essay-next-section">
   <p class="label">Contributing Essays</p>
   <h3 class="essay-next-h">More perspectives from across the network</h3>
-  <p class="essay-next-lede">This platform invites essays from city officials, researchers, planners, and practitioners working within or alongside the ASEAN Smart Cities Network. The goal is a record of what people actually think about how cities in this region are changing — not a curated institutional narrative, but a collection of real perspectives from people doing the work.</p>
+  <p class="essay-next-lede" data-i18n="a.this.platform.invites.essays.fro">This platform invites essays from city officials, researchers, planners, and practitioners working within or alongside the ASEAN Smart Cities Network. The goal is a record of what people actually think about how cities in this region are changing — not a curated institutional narrative, but a collection of real perspectives from people doing the work.</p>
   <div class="essay-next-grid">
     <div class="essay-next-card essay-next-card--featured">
       <p class="essay-next-tag">Research · June 2026</p>
@@ -2638,19 +2638,19 @@ function renderEssay() {
         <p>The data, however, does exist — in scattered form. Manila's Go! app has 1.2 million registrants and 1.4 million transactions totalling PHP 15.9 billion. Jakarta's JakPreneur has formalized 405,052 small businesses. Makassar's Dottoro'ta telemedicine has served 9,773 patients across two years with 48 homecare ambulances. Vientiane's wastewater plant reaches 8,000 households at 52,000 cubic metres per day. These numbers appear as footnotes, project descriptions, city narratives — never as network-level indicators, never aggregated, never trended.<sup>4</sup></p>
         <p>The structural reason is well known and rarely stated plainly: ASCN operates under the ASEAN Way. Consensus-based, voluntary, non-binding. Standardizing KPIs would require every member state to agree on what counts — which means agreeing on what doesn't count, and agreeing that some cities are performing better than others. That is politically difficult in a network explicitly designed to avoid peer-review and ranking mechanisms.<sup>5</sup></p>
         <p>ASCAP 2026–2035 advances a potential resolution. The new strategic plan introduces eight pillars aligned to ASEAN Community Vision 2045, each broad enough to serve as a KPI category rather than a target. Pillar 8 — Rural-Village Collaboration — has zero current portfolio coverage: not a single project among 134 touches rural-urban linkage. That is visible now precisely because the pillars give us something to map against. If the network adopted even a minimal reporting template — project, pillar, one measurable indicator, one defined beneficiary group — the entire landscape of what is and isn't being built would become legible.<sup>6</sup></p>
-        <p>The question is not whether the data can be collected. It clearly can — cities are already generating it. The question is whether the network can agree on a common language for what it is trying to accomplish. That is a governance question, not a technical one. And it is the question ASCAP 2026–2035 has the best chance of resolving — if the member states choose to use it that way.</p>
+        <p data-i18n="a.the.question.is.not.whether.the">The question is not whether the data can be collected. It clearly can — cities are already generating it. The question is whether the network can agree on a common language for what it is trying to accomplish. That is a governance question, not a technical one. And it is the question ASCAP 2026–2035 has the best chance of resolving — if the member states choose to use it that way.</p>
         <p class="essay-footnotes"><sup>1</sup> ASCN M&amp;E Report 2025, Appendix. <sup>2</sup> ASEAN Smart Cities Framework, 2018, p. 4. <sup>3</sup> Comparative analysis from ascn_dim05.md §11.6; U4SSC indicator framework (ITU/UN-Habitat, 2021); EU Cities Mission monitoring (European Commission, 2022). <sup>4</sup> City outcome data compiled from ASCN M&amp;E reports 2022–2025 and bilateral programme reports. <sup>5</sup> Costoya, M. (2022). "Institutional Design and Policy Diffusion in ASEAN Smart Cities," <em>Politics &amp; Governance</em> 10(3). <sup>6</sup> ASCAP 2026–2035 pillar framework; gap analysis derived from ASCN project portfolio mapping.</p>
       </div>
     </div>
     <div class="essay-next-card essay-next-placeholder">
       <p class="essay-next-tag">Perspective · Forthcoming</p>
       <p class="essay-next-title">The view from a CSCO</p>
-      <p class="essay-next-body">What does it actually feel like to be a Chief Smart City Officer in a mid-sized ASEAN city? What do the M&amp;E reports miss that you see every day?</p>
+      <p class="essay-next-body" data-i18n="a.what.does.it.actually.feel.like">What does it actually feel like to be a Chief Smart City Officer in a mid-sized ASEAN city? What do the M&amp;E reports miss that you see every day?</p>
     </div>
     <div class="essay-next-card essay-next-placeholder">
       <p class="essay-next-tag">Analysis · Forthcoming</p>
-      <p class="essay-next-title">Smart Mobility in Southeast Asia</p>
-      <p class="essay-next-body">Mobility accounts for more than a quarter of all ASCN projects. What is actually being built, and for whom?</p>
+      <p class="essay-next-title" data-i18n="a.smart.mobility.in.southeast.asia">Smart Mobility in Southeast Asia</p>
+      <p class="essay-next-body" data-i18n="a.mobility.accounts.for.more.than">Mobility accounts for more than a quarter of all ASCN projects. What is actually being built, and for whom?</p>
     </div>
   </div>
   <p class="essay-next-cta">To propose an essay, contact <a href="mailto:nonsmartcity@gmail.com">the platform team</a>.</p>
@@ -2834,7 +2834,7 @@ function renderIntegrity_UNUSED() {
     <div class="section-head">
       <p class="label">Integrity log</p>
       <h2>Organizations and individuals making unverified ASCN affiliation claims</h2>
-      <p class="lede">An evidence-based record of verified misrepresentations by organizations using ASCN-adjacent names or claiming affiliation with this network. Sourced from corporate filings, government records, securities disclosures, and primary-source journalism. Last updated June 2026.</p>
+      <p class="lede" data-i18n="a.an.evidence.based.record.of.veri">An evidence-based record of verified misrepresentations by organizations using ASCN-adjacent names or claiming affiliation with this network. Sourced from corporate filings, government records, securities disclosures, and primary-source journalism. Last updated June 2026.</p>
     </div>
     <div class="int-controls">
       <input class="int-search" id="int-search" type="search" placeholder="Search organizations, people, claims…" aria-label="Search integrity log" />
@@ -2860,8 +2860,8 @@ function renderIntegrity_UNUSED() {
     </div>
     <div class="int-source-note">
       <p class="label">Sources &amp; methodology</p>
-      <p>Smart Cities Council investigation: 250+ searches across IRS filings (EIN 38-3981098), ASX disclosures, ASIC records, ABN Lookup, corporate directories, and investigative journalism (OCCRP). Smart Cities Network investigation: Singapore ACRA records (UEN 201827719R), Philippine DOST and PNA official publications, JICA reports, NUM Cambodia faculty pages, Google Scholar, IEEE Xplore, and event archives. Multi-agent parallel investigation across 12 dimensions, June 2026.</p>
-      <p class="int-disclaimer">This record is based on publicly available information as of June 2026. Entities listed are invited to provide corrections with supporting documentation to the ASCN Open Platform maintainers. The presence of an entry reflects documented misrepresentation, not a finding of criminal conduct.</p>
+      <p data-i18n="a.smart.cities.council.investigati">Smart Cities Council investigation: 250+ searches across IRS filings (EIN 38-3981098), ASX disclosures, ASIC records, ABN Lookup, corporate directories, and investigative journalism (OCCRP). Smart Cities Network investigation: Singapore ACRA records (UEN 201827719R), Philippine DOST and PNA official publications, JICA reports, NUM Cambodia faculty pages, Google Scholar, IEEE Xplore, and event archives. Multi-agent parallel investigation across 12 dimensions, June 2026.</p>
+      <p class="int-disclaimer" data-i18n="a.this.record.is.based.on.publicly">This record is based on publicly available information as of June 2026. Entities listed are invited to provide corrections with supporting documentation to the ASCN Open Platform maintainers. The presence of an entry reflects documented misrepresentation, not a finding of criminal conduct.</p>
     </div>`;
 
   renderRows();
