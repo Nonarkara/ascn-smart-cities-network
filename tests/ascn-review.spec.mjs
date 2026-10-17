@@ -40,7 +40,7 @@ test("archive filters, linked project statuses, pagination and city round trip w
   await page.locator("#review-clear").click();
   await page.locator("#review-filter-panel summary").click();
   await page.locator("#review-year").selectOption("2018");
-  await expect(page.locator("#review-archive .review-record")).toHaveCount(4);
+  await expect(page.locator("#review-archive .review-record")).toHaveCount(archive.records.filter((row) => row.year === 2018).length);
 });
 
 test("discovery fallback stays readable and cannot change performance findings", async ({ page }) => {
