@@ -1523,6 +1523,37 @@ function wireNav() {
       document.dispatchEvent(new CustomEvent("ascn:lang", { detail: { lang } }));
     });
   });
+
+  /* Generated copy is written in English inside the render functions, because
+     that is where the sentences live. Without this observer those paragraphs
+     stayed English in every language: applyLang() scans for [data-i18n], and
+     markup that app.js injects after init() was never in the document when the
+     language was first applied.
+
+     An observer rather than an applyLang() call at each of the forty-odd
+     `.innerHTML =` sites, because the set of those sites is not stable — a
+     render added later would silently miss the language, and the symptom
+     ("this one card is still English") looks like a missing translation rather
+     than a missing hook.
+
+     English is a genuine skip, not an optimisation: the templates already hold
+     the English text, so there is nothing to rewrite. The guard stops the
+     observer's own writes from re-entering it, which would otherwise loop
+     forever on the first translated page. */
+  let applyingLang = false;
+  new MutationObserver((records) => {
+    if (applyingLang || currentLang() === "en") return;
+    applyingLang = true;
+    try {
+      for (const record of records) {
+        for (const node of record.addedNodes) {
+          if (node.nodeType === 1) applyLang(currentLang(), { root: node });
+        }
+      }
+    } finally {
+      applyingLang = false;
+    }
+  }).observe(document.body, { childList: true, subtree: true });
 }
 
 async function loadJson(path) {

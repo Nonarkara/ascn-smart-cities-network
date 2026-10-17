@@ -588,6 +588,75 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   ok("switching language deletes no live content", liveIds.length === 0,
     liveIds.length ? `${liveIds.length} removed: ${liveIds.slice(0, 5).join(", ")}` : "every id survives the switch");
 
+  // The checks above ask whether the language layer WORKS. This asks whether it
+  // has been given anything to say. A paragraph with no data-i18n keeps its
+  // English forever no matter how healthy the dictionary is, and every check
+  // above would still pass: the switcher moves, html lang changes, no key
+  // leaks. The failure is invisible to all of them.
+  //
+  // Measured by SCRIPT, not by dictionary membership. A paragraph is untranslated
+  // if the letters that are not Latin outnumber the ones that are — the actual
+  // property a reader experiences. Asking "does this element have a key" instead
+  // would report 0 forever, because the whole point is the ones that do NOT.
+  //
+  // English is skipped deliberately: in English, everything is Latin. Proper
+  // nouns, acronyms and dataset names stay Latin in Thai and Chinese on purpose,
+  // so the threshold is a ratio and the length floor is generous — a short
+  // heading like "ASCN" is not an untranslated paragraph.
+  // Every route a reader can reach. Not the touch-target sweep's list: this
+  // one needs the Archive and the ASCN 9 detail sheet too, because those hold
+  // the most prose. The Archive is exempt at the element level — it ships its
+  // own language layer — so it is included here and filtered below.
+  const routesForProse = ["overview", "innovation", "record", "news", "news/regional",
+    "news/archive", "news/discovery", "history", "cities", "projects", "framework",
+    "partners", "insights", "research", "essay", "data", "contacts", "ascn9"];
+  const prose = { th: [], zh: [] };
+  {
+    const { page } = await newPage({ width: 1280, height: 900 });
+    for (const route of routesForProse) {
+      await page.goto(`${BASE}/#${route}`, { waitUntil: "domcontentloaded" });
+      await page.locator(".site-nav").waitFor({ timeout: 20_000 });
+      for (const lang of ["th", "zh"]) {
+        await page.locator(`[data-lang-set="${lang}"]`).click();
+        await page.waitForTimeout(200);
+        const found = await page.evaluate(({ v }) => {
+          const view = document.querySelector(`#view-${v}`);
+          if (!view) return [];
+          // "Is this still English" is decided by ENGLISH WORDS, not by script
+          // ratios. A first attempt measured the share of Latin characters and
+          // flagged "ข้อมูลน้ำท่วมในหน้างาน" — Thai vowel and tone marks are
+          // \p{M}, not \p{L}, so stripping non-letters counted the marks as
+          // Latin and every Thai sentence came back looking untranslated. The
+          // property that actually identifies English is its function words.
+          const STOP = new Set(["the", "and", "of", "to", "in", "is", "that", "with",
+            "for", "are", "was", "were", "on", "as", "at", "by", "from", "it",
+            "its", "this", "which", "not", "but", "has", "have", "been", "or",
+            "we", "they", "one", "every", "their", "than", "into", "also"]);
+          const out = [];
+          for (const el of view.querySelectorAll("p, li, figcaption, .ig-note, .card-sub")) {
+            if (el.getBoundingClientRect().height === 0) continue;
+            const t = (el.textContent || "").trim();
+            // Split on anything that is not a Latin letter, so "the" inside
+            // "their" or "breathe" cannot be counted as a hit.
+            const words = (t.toLowerCase().match(/[a-z]+/g) || []);
+            if (words.length < 8) continue; // headings, labels, proper nouns
+            const hits = words.filter((w) => STOP.has(w)).length;
+            if (hits >= 3) out.push(`${hits}/${words.length} ${t.slice(0, 50)}`);
+          }
+          return out;
+        }, { v: route.includes("/") ? route.split("/")[0] : route });
+        found.forEach((t) => prose[lang].push(`${route}: ${t}`));
+      }
+    }
+    await page.close();
+  }
+  for (const lang of ["th", "zh"]) {
+    const uniq = [...new Set(prose[lang])];
+    ok(`no English prose is left on screen when ${lang} is chosen`, uniq.length === 0,
+      uniq.length ? `${uniq.length} untranslated: ${uniq.slice(0, 3).join(" | ")}`
+        : `${routesForProse.length} views carry no untranslated prose`);
+  }
+
   // The language has to survive a route change, or choosing it is a one-page
   // gesture that a reader has to repeat on every view they open.
   await page.goto(`${BASE}/#cities`, { waitUntil: "domcontentloaded" });
