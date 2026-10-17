@@ -1,48 +1,141 @@
 :root {
   color-scheme: dark;
-  --bg: #191d1c;
-  --ink: #eeeae0;
-  --ink-2: #cccfc7;
-  --muted: #a5afa8;
+
+  /* ══════════════════════════════════════════════════════════════════════
+     GROUND — measured from axiom.nonarkara.org (rams.css), not invented.
+
+     Axiom's light ground is #faf9f7 warm paper over #191712 warm ink. Its
+     dark ground is #171a1e, with #0a0e14 for the deepest surfaces. This site
+     was already `color-scheme: dark` at #191d1c — a green-leaning near-black —
+     so this is a retune to Axiom's exact values, not a light-to-dark flip.
+
+     Every text value below was measured against #171a1e rather than eyeballed:
+
+       --ink   #f2efe9   15.21:1   AAA
+       --ink-2 #b9b5ac    8.54:1   AAA
+       --ink-3 #8f8b80    5.13:1   AA
+       --ocher #e2b540    9.08:1   AAA
+       --accent#6fa0e6    6.52:1   AA
+       --neg   #ef6a5d    5.73:1   AA
+       --signal#1ec96b    8.00:1   AAA
+
+     Two Axiom tokens do NOT survive the move to a dark ground, and the
+     measurement is why: --accent #1c4286 scores 1.81:1 and --neg #a51931
+     scores 2.31:1 on #171a1e. They are light-ground tokens. Axiom swaps the
+     accent to #6fa0e6 on dark for exactly this reason, so that is what the
+     role token holds here too. */
+  --paper: #171a1e;
+  --deep: #0a0e14;
+  --panel: #1f242a;
+
+  --bg: var(--paper);
+  --ink: #f2efe9;
+  --ink-2: #b9b5ac;
+  --ink-3: #8f8b80;
+  --muted: #8f8b80;
 
   /* Rules carry the whole spatial hierarchy here, so they are treated as
      information, not decoration: every value clears 3:1 against every surface
      it is used on (WCAG 1.4.11). A "soft" rule is a lighter weight and a
-     shorter span, never a colour that vanishes. */
+     shorter span, never a colour that vanishes.
+
+     These are deliberately LIGHTER than Axiom's own rules. Axiom divides
+     space with hairlines at roughly 1.2:1 against its ground, which reads as
+     tone rather than as a line you can count rows with. Here the rule IS the
+     hierarchy — 2px marks a section, 1px marks a record — and at 4.64:1 a
+     reader can actually see the record boundaries they are scanning for. */
   --line: #7c8681;
   --line-soft: #6b7772;
   --line-dim: #98a49e;
-
-  /* --rule was used in 23 rules across the FAQ list, programme cards, toolkit
-     cards and workshop gallery, and was never defined. An undefined custom
-     property makes its declaration invalid, and the two properties fail
-     differently: border-color falls back to currentColor, so those rules were
-     drawing in the inherited ivory text colour — too bright to read as a rule
-     — while background and gap usages resolved to transparent and rendered as
-     nothing at all. Rules are exactly what carries hierarchy here. Aliased to
-     --line rather than given a new value, so the names cannot drift apart. */
   --rule: var(--line);
   --border: var(--line-soft);
 
-  /* PAPER IS THE REFERENCE — the standing principle for this site.
+  /* ── Accent roles. One token, one job, no bleed ─────────────────────────
+     Axiom's layer-4 rule: the roles must never pick up a second meaning.
+       accent → wayfinding and links ONLY
+       ocher  → the single highlight channel ONLY
+       neg    → signal-loss and findings ONLY
+       signal → positive state ONLY
+       data   → data marks ONLY, never links
 
-   A reader's eye is calibrated to a printed page, not a monitor. A4 is 210mm
-   wide, US Letter 216mm; at 96dpi that is 794px and 816px. A well-set A4 page
-   sets its text inside roughly 25mm margins, giving a TEXT BLOCK of about
-   160mm = 605px. That block is the limit: past it the return sweep at the end
-   of a line starts to fail, and reading degrades into scanning.
+     --id-navy and --id-red are identity marks (wordmark, brand). They are
+     declared so nothing reaches for them as "the dark one", and they are
+     never used as a foreground on this ground — both fail contrast here. */
+  --accent: #6fa0e6;
+  --ocher: #e2b540;
+  --neg: #ef6a5d;
+  --signal: #1ec96b;
+  --id-navy: #00247d;
+  --id-red: #a51931;
 
-     --page-sheet   794px   full A4 sheet
-     --page-text    605px   the A4 text block — the binding constraint
-     --measure      66ch ≈ 594px   held UNDER --page-text
+  /* Legacy names kept as aliases so the rest of the stylesheet keeps
+     working. These are the same roles under their older names — which is the
+     point: the colour a finding reads is the same colour a finding read
+     before this pass, and only the ground changed. */
+  --navy: var(--accent);
+  --red: var(--neg);
+  --amber: var(--ocher);
+  --green: var(--signal);
 
-   66ch is both the classical ideal measure and, at this font, the width of an
-   A4 text column. The two agree, so the number does not have to be defended
-   twice.
+  /* Data marks get their own token, distinct from --accent: using the link
+     colour to fill bars made reading links and reading values the same
+     colour. Monochrome carries the series; --neg stays reserved for the one
+     row the argument turns on. */
+  --data: #97a3a8;
 
-   Expressed in `ch`, not px or rem, so the cap means the same number of
-   CHARACTERS at 12px as at 16px. A rem-based cap would silently give 12px
-   notes a far longer line than 16px prose — the same failure, one level down. */
+  --surface: #1f242a;
+  --surface-2: #2a3037;
+  --companion: #223039;
+  --on-solid: #171a1e;
+  --content: min(1280px, calc(100vw - 2rem));
+
+  /* Fonts: Axiom's own stack, which is also already this site's. Both resolve
+     to a grotesque with a Thai companion face — "Source Sans 3" led this
+     stylesheet for years without ever being loaded, which is a lie in the
+     contract and downloads nothing. */
+  --font: "Helvetica Neue", Helvetica, Arial, "IBM Plex Sans Thai", sans-serif;
+  --mono: ui-monospace, "IBM Plex Mono", "JetBrains Mono", Menlo, monospace;
+
+  /* ── Spacing scale ───────────────────────────────────────────────────────
+     Axiom declares four steps and every panel uses one of them. This
+     stylesheet invents a rem value in almost every rule, which is how the
+     measure drifted to 45rem in one section and 58rem in another. Four named
+     steps make the next edit a choice instead of a guess. */
+  --box-pad-tight: 0.5rem;
+  --box-pad: 1rem;
+  --box-pad-loose: 1.5rem;
+  --gap: 1rem;
+  --pad: 1rem;
+
+  /* ══════════════════════════════════════════════════════════════════════
+     PAPER IS THE REFERENCE — the standing principle for this site.
+
+     A reader's eye is calibrated to a printed page, not a monitor. A4 is 210mm
+     wide, US Letter 216mm; at 96dpi that is 794px and 816px. A well-set A4
+     page sets its text inside roughly 25mm margins, giving a TEXT BLOCK of
+     about 160mm = 605px. That block is the limit: past it the return sweep at
+     the end of a line starts to fail, and reading degrades into scanning.
+
+       --page-sheet   794px   full A4 sheet
+       --page-text    605px   the A4 text block — the outer bound
+
+     Axiom's denser 13px body changes the arithmetic, and this is the one place
+     the two principles pull apart. At 16px, 66ch was simultaneously the
+     classical measure AND the width of the A4 text block — 587px against
+     605px — so the number only had to be defended once. At 13px those two
+     stop agreeing: 66ch is now about 470px, comfortably readable but well
+     inside the sheet, while 93ch would fill the text block and run past 90
+     characters on a line, which is past the point where the return sweep
+     fails.
+
+     So they are separated deliberately and for the first time:
+       --page-text  stays 605px. It is the sheet, and it does not move.
+       --measure    stays at 66ch. It is the line, and 66 characters is the
+                    target that holds at every size.
+
+     Expressed in `ch`, not px, so the cap means the same number of
+     CHARACTERS at 10px as at 13px. A px cap would silently give 10px labels a
+     longer line than 13px prose — the same failure, one level down. */
   --page-sheet: 794px;
   --page-text: 605px;
   --measure: 66ch;
@@ -50,64 +143,27 @@
   /* Headings want a shorter line than prose. About two thirds. */
   --measure-heading: 40ch;
 
-  /* Signal colours. Each name now matches the hue it carries: a finding reads
-     red, an interface accent reads amber, a link reads blue. Before this pass
-     --red and --amber were the same value, so a documented finding and a
-     focus ring were indistinguishable. */
-  --red: #ef6a5d;
-  --amber: #f59e0b;
-  --navy: #7fb3d5;
-  --green: #9ac4a9;
+  /* ── Type ramp — Axiom's measured ladder ────────────────────────────────
+     display 36–76 · lead 19–24 · lede 15 · body 13 · micro 11 · label 10
 
-  /* Data marks get their own token. --navy is a link colour: using it to fill
-     bars made reading links and reading values the same colour, and put blue
-     next to red in the same comparison. Monochrome carries the series; --red
-     stays reserved for the one row the argument turns on. */
-  --data: #8b978f;
+     Axiom ships six steps and a 13px body. It reads denser and more technical
+     than the previous 12/16/32/56, and denser is the point: a ledger of 55
+     archive items and 134 project rows is a reference table, not an essay.
 
-  --surface: #222925;
-  --surface-2: #303a34;
-  --companion: #283d37;
-  --on-solid: #191d1c;
-  --content: min(1280px, calc(100vw - 2rem));
-  /* "Source Sans 3" led this stack for years but was never loaded — no
-   @font-face, no stylesheet link — so it declared an intent the site never
-   kept, and quietly resolved to Helvetica Neue on a Mac and Arial elsewhere.
-   A humanist webfont that is not present is worse than no webfont: it is a
-   lie in the contract and it downloads nothing. The lineage this site follows
-   is Braun and Vignelli, whose answer is a grotesque set tight at display
-   sizes. Naming it directly is both honest and free. */
-  --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
-
-  /* Type ramp. Three named roles, not a ladder: Display carries a statement,
-     Body carries prose, Micro carries labels. Everything a ladder would have
-     expressed — emphasis, sub-headings, tiered figures — is carried by weight,
-     rule and space instead, which is the only way a scale stays learnable.
-
-     This stylesheet previously rendered thirteen distinct sizes. Four of them
-     (27.2 / 28.8 / 29.6 / 34.56px) were six separate clamp() expressions for
-     headings that should have been identical, differing only in the fourth
-     decimal of somebody's guess. Six sizes was still one too many: at
-     16 / 18.4 / 24.8 / 33.6 the steps between neighbouring sizes were under
-     1.3x, so no two of them could be ranked and the eye had nothing to land
-     on. A scale earns its keep through the gap between steps, not the count.
-
-     Four sizes, and the gaps do the work: 56 → 32 is 1.75x, 32 → 16 is a clean
-     2:1, and 16 → 12 marks the shift from prose to apparatus. Four anchors the
-     eye can rank, instead of six it has to compare.
-
-     The two display steps are fluid so a phone is not handed a 56px headline.
-     One clamp on the token is a single decision; the six clamps this replaces
-     were six headings each inventing its own scale, which is the drift. */
-  --t-figure: clamp(2.25rem, 5vw, 3.50rem); /* the one page-level statement */
-  --t-h2: clamp(1.5rem, 2.4vw, 2rem);       /* every section and row heading */
-  --t-body: 1.00rem;                        /* all prose, and every inline figure carries weight */
-  --t-micro: 0.75rem;                       /* labels, captions, footnotes, table meta */
+     The two display steps stay fluid so a phone is never handed a 76px
+     headline. One clamp per token is a single decision; six clamps in six
+     rules is six headings each inventing its own scale, which is the drift
+     this ladder exists to stop. */
+  --t-figure: clamp(36px, 5.3vw, 76px); /* the one page-level statement */
+  --t-lead: clamp(19px, 3.4vw, 24px);    /* the largest step a number can hold unbroken */
+  --t-h2: var(--t-lead);                 /* every section and row heading */
+  --t-lede: 15px;                        /* a standfirst under a heading */
+  --t-body: 13px;                       /* all prose, and every inline figure carries weight */
+  --t-micro: 11px;                      /* labels, captions, footnotes, table meta */
+  --t-label: 10px;                      /* the smallest apparatus step: column heads, chips */
 
   /* No intermediate steps exist. A sub-heading is a heading at a smaller
      weight, not a new size; a figure inside prose is body type set bold. */
-  --t-lede: var(--t-h2);
   --t-h3: var(--t-h2);
   --t-h1: var(--t-figure);
   --t-small: var(--t-micro);
@@ -4042,7 +4098,7 @@ body .view :is(h1, h2, h3, h4) {
 .archive-money > p { max-width: 38rem; color: var(--ink-2); }
 .archive-donor {
   display: grid;
-  grid-template-columns: 1.618fr 0.5fr 0.5fr;
+  grid-template-columns: minmax(0, 1.618fr) minmax(0, 1fr) minmax(0, 1fr);
   gap: 0.35rem 1.5rem;
   align-items: start;
   border-top: 1px solid var(--ink);
@@ -4063,9 +4119,19 @@ body .view :is(h1, h2, h3, h4) {
   line-height: 1;
   letter-spacing: 0;
   font-variant-numeric: tabular-nums;
-  overflow-wrap: anywhere;
 }
-.archive-figure { font-size: var(--t-figure); }
+.archive-gap { overflow-wrap: anywhere; }
+/* A seven-to-nine digit currency amount in a two-column money row is a
+   tabular data value, not a display statement. At the 76px display step
+   "USD 10,000,000" cannot fit beside a second column and it broke mid-number
+   into "10,000" / ",000" — a figure that cannot be read as one number is not
+   a figure. The lead step is the largest that keeps the digits together, and
+   nowrap makes the break impossible rather than unlikely. */
+.archive-figure {
+  font-size: var(--t-lead);
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
 .archive-gap { font-size: var(--t-body); }
 .archive-funding details,
 .archive-money details,

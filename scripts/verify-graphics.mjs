@@ -304,12 +304,20 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
     const f = await page.evaluate(() => {
       const over = [], tiny = [];
       let n = 0;
+      // The floor is the BODY step, read from the token — not a literal. It
+      // was `px < 14`, an absolute number calibrated when the body was 16px,
+      // and it outlived the type system it described: on a 13px body it
+      // flagged every heading sitting exactly AT the body step, which the
+      // ladder explicitly allows ("a sub-heading is a heading at a smaller
+      // weight, not a new size"). Deriving the floor from --t-body keeps the
+      // rule meaning what it says after the next body-size change.
+      const bodyPx = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--t-body")) || 16;
       for (const el of document.querySelectorAll("h1,h2,h3,h4,h5")) {
         const t = (el.textContent || "").trim();
         if (!t) continue;
         const px = parseFloat(getComputedStyle(el).fontSize);
         n++;
-        if (px < 14) tiny.push(`${el.tagName}.${String(el.className).split(" ")[0]}@${px}px`);
+        if (px < bodyPx) tiny.push(`${el.tagName}.${String(el.className).split(" ")[0]}@${px}px (body ${bodyPx}px)`);
         const r = document.createRange();
         r.selectNodeContents(el);
         const rects = [...r.getClientRects()].filter((x) => x.width > 4);
