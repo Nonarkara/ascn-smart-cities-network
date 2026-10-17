@@ -1188,7 +1188,17 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .impact-stat strong { display: block; font-size:var(--t-h3); line-height: 1.05; }
 .impact-stat span { color: var(--ink-2); font-size:var(--t-body); }
 .impact-stat em { font-style: normal; color: var(--muted); font-size:var(--t-small); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; display: block; margin-top: 0.15rem; }
-.compare-wrap { max-width: 100%; overflow-x: auto; }
+.compare-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  /* Without this, a grid/flex item defaults to min-width:auto and refuses to
+     shrink below its content's min-content width — so a 608px table inside a
+     390px viewport grew its wrapper and pushed the whole PAGE sideways by 8px
+     instead of scrolling inside it. The overflow was the table escaping its
+     container, not the container failing to scroll. */
+  min-width: 0;
+}
+.info-card.wide, .info-card { min-width: 0; }
 .compare-wrap table { min-width: 38rem; }
 .compare-wrap td b { color: var(--ink); }
 .compare-wrap tr.is-ascn td { background: var(--surface); }
@@ -1229,7 +1239,7 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .doc-card p { color: var(--ink-2); font-size:var(--t-body); margin: 0 0 0.8rem; }
 .doc-card .dc-foot { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; margin-top: auto; }
 .doc-card .dc-size { color: var(--muted); font-size:var(--t-small); font-weight: 700; }
-.doc-card .dc-dl { color: var(--navy); font-weight: 800; font-size:var(--t-micro); letter-spacing: 0.06em; text-transform: uppercase; min-height: 40px; display: inline-flex; align-items: center; }
+.doc-card .dc-dl { color: var(--navy); font-weight: 800; font-size:var(--t-micro); letter-spacing: 0.06em; text-transform: uppercase; min-height: 44px; display: inline-flex; align-items: center; }
 .method-list { display: grid; gap: 0; margin-top: 0.4rem; }
 .method-row { padding: 0.65rem 0; border-top: 1px solid var(--line-soft); }
 .method-row:first-child { border-top: 0; }
@@ -1525,7 +1535,7 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 .le-meta { color: var(--muted); font-size:var(--t-micro); font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; margin: 0.18rem 0 0.42rem; }
 .le-takeaway { color: var(--ink-2); font-size:var(--t-body); margin: 0; line-height: 1.5; }
 .le-actions { display: flex; flex-direction: column; gap: 0.35rem; align-items: flex-end; min-width: 4.5rem; }
-.le-dl, .le-ext { font-size:var(--t-micro); font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; min-height: 32px; display: inline-flex; align-items: center; color: var(--navy); }
+.le-dl, .le-ext { font-size:var(--t-micro); font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; min-height: 44px; display: inline-flex; align-items: center; color: var(--navy); }
 .le-ext { color: var(--ink-2); }
 .lib-empty { padding: 2.5rem 0; color: var(--muted); font-size:var(--t-body); }
 
@@ -1554,7 +1564,12 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 
 @media (max-width: 760px) {
   :root { --content: calc(100vw - 1rem); }
-  .site-nav { align-items: flex-start; flex-direction: column; gap: 0.5rem; }
+  /* Two rows: brand, then one horizontally scrollable tab strip. The strip is
+     ~47px because its links are ~44px tall — that is the touch-target floor
+     doing its job, not bloat. Collapsing the tabs behind a menu button would
+     buy 50px by hiding the navigation, which is a worse trade for a platform
+     whose whole argument is legibility. Tightened the cheap parts instead. */
+  .site-nav { align-items: flex-start; flex-direction: column; gap: 0.35rem; padding: 0.5rem 0; }
   .site-nav nav { width: 100%; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 0.2rem; scrollbar-width: none; }
   .site-nav nav::-webkit-scrollbar { display: none; }
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
@@ -2704,7 +2719,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 
 
 /* ── Language / research-origin map panel ──────────────────────────────── */
-.lang-split { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.lang-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.5rem; }
 .lang-col { min-width: 0; }
 .ig-subhead { font-size:var(--t-small); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 0.6rem; }
 .lang-country-list { display: grid; gap: 0.5rem; }
@@ -2713,7 +2728,11 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 .lang-country-name { font-size:var(--t-small); font-weight: 700; color: var(--ink-2); }
 .lang-country-note { font-size:var(--t-small); color: var(--muted); grid-column: 2; line-height: 1.4; }
 @media (max-width: 720px) {
-  .lang-split { grid-template-columns: 1fr; }
+  /* minmax(0, 1fr), not 1fr. A bare 1fr track keeps an implicit min-width:auto,
+     so it refuses to shrink below its content and the whole page scrolled 8px
+     sideways at 390px. Same trap as .compare-wrap and .bar-row, third
+     occurrence in the same view. */
+  .lang-split { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ── Stacked area / portfolio composition panel ────────────────────────── */
@@ -3356,6 +3375,66 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
   border-bottom: 1px solid var(--navy); font-weight: 700;
 }
 .rec-source:hover { color: var(--red); border-color: var(--red); }
+
+/* Language bar rows: same min-width:auto trap as the M&E table. A row like
+   "English — Singapore, UK, Australia, US, Indonesia" has a min-content width
+   wider than the column, so the grid item refused to shrink and pushed the
+   document 8px sideways at 390px. min-width:0 lets the row wrap instead. */
+.bar-row { min-width: 0; }
+.bar-row > * { min-width: 0; }
+
+/* Remaining sub-44px controls. The notice bar link measured 14px and a news
+   headline 39px — both are real controls, both are in a thumb's way. */
+.site-notice a { display: inline-flex; align-items: center; min-height: 44px; }
+/* The headline is a standalone action, not a word in a sentence: its <h2>
+   contains nothing but the link, so the 24px inline exception does not apply.
+   What made this one stubborn is that the same control measured 45px when the
+   headline wrapped to two lines and 25px when it did not — a target sized by
+   where the text happened to break. Height now comes from min-height, so the
+   wrap no longer decides it. */
+.news-story h2 a { display: inline-flex; align-items: center; min-height: 44px; }
+/* The last 8px of document overflow on /insights: a sub-label inside a bar row
+   is itself wider than the row it sits in. */
+.bar-sub { display: block; min-width: 0; overflow-wrap: anywhere; }
+
+/* City filters and partner/toolkit links, all measured under 44px. */
+.country-row button, .cd-portal, .prog-link, .toolkit-link { min-height: 44px; }
+.segmented button { min-height: 44px; }
+
+/* Standalone action links found under the AA floor by the touch-target sweep.
+   Each is an action, not a word in a sentence: "Open video", "Techsauce",
+   "2022", "the platform team", and the essay contents list. */
+.iaas-hero-media figcaption a,
+.iaas-origin-link,
+.review-note a,
+.essay-next-cta a { display: inline-flex; align-items: center; min-height: 44px; }
+.essay-toc-link { min-height: 44px; }
+
+/* Surfaces the route-coverage sweep newly reached. /data and /contacts had never
+   been measured before, which is how a 40px Download and a 36px filter chip
+   survived: they are ordinary controls and are now held to 44. */
+.dc-dl, .lib-chip { min-height: 44px; display: inline-flex; align-items: center; }
+
+/* Reference links — a publisher name, a source name, a city inside a sentence,
+   an institution name on a contact card. These are sized by the line of text
+   they share with a sibling, like a footnote, so 44px would space a list of
+   twenty ministry names a third of a metre apart. They are held to the 24px
+   AA bar instead, which they were missing at 18-19px. */
+.news-source a, .def-row b a, .cc-inst,
+.review-record-detail p a, .review-project-links a,
+.contacts-source-note a, .alum-lede a {
+  display: inline-block; min-height: 24px;
+}
+
+/* ---------- Touch targets -------------------------------------------------
+   WCAG 2.5.5 / design-dna §6 want 44px on every control that is actually a
+   control. Found by porting another agent's assertion rather than by looking:
+   the Innovation play button was 29px, the city card link 28px, the demo link
+   19px, and the header brand 26px. Set as min-height rather than height so
+   nothing is clipped and text still centres. */
+.brand { min-height: 44px; }
+.demo-play-btn { min-width: 44px; min-height: 44px; }
+.demo-link, .iaas-card-link, .rec-source { min-height: 44px; display: inline-flex; align-items: center; }
 .rec-question-close {
   margin: 1.6rem 0 0; padding-top: 1rem; border-top: 1px solid var(--line);
   font-size:var(--t-body); font-style: italic; color: var(--ink); max-width: 52rem;

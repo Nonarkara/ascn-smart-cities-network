@@ -505,6 +505,188 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   await page.close();
 }
 
+/* ── Touch targets, header, overflow — swept across every route ──────────── */
+{
+  // These invariants came from another agent's branch and are worth keeping
+  // even though the branch itself is not being merged: its CSS rewrite would
+  // have replaced verified work, but the accessibility requirements in it are
+  // real and were never checked here.
+  //
+  // On header height we deliberately do NOT adopt their <=56px ceiling. That
+  // number assumes the tabs collapse behind a menu button. This build keeps
+  // navigation permanently visible, and the strip is ~47px tall because its
+  // links meet the 44px touch floor. Hiding the navigation to save 50px is a
+  // bad trade on a platform whose argument is legibility. The invariant that
+  // actually matters is that the tab strip occupies exactly ONE row.
+  // Route list is the set of hashes that actually mount a view, verified by
+  // reading which .view becomes visible rather than by copying the nav. It used
+  // to contain "library", which is not a route: it silently fell back to the
+  // overview, so the sweep reported "390/library" while re-measuring a page it
+  // had already checked and had never opened /data or /contacts at all. A route
+  // that resolves to a different route is an unchecked route wearing a label.
+  // The three news sub-panels are addressable as #news/<panel> and each holds a
+  // different list of headlines, so they are swept as their own surfaces.
+  const routes = ["overview", "innovation", "record", "news", "news/regional",
+    "news/archive", "news/discovery", "history", "cities", "projects", "framework",
+    "partners", "insights", "research", "essay", "data", "contacts"];
+  const bad = { targets: [], overflow: [], navRows: [], header: [], mount: [] };
+  // Which views this sweep actually put on screen, and which views exist. The
+  // gap between the two is the set of surfaces no check has ever looked at.
+  const covered = new Set();
+
+  // "Exists" has to mean "exists in the served document, open by default" — not
+  // "exists after routing". Routing sets hidden on every view except the
+  // current one, so asking the live DOM would call all of them unreachable.
+  // Reading the markup separates the two populations properly: a view shipped
+  // without `hidden` must be mountable by a route, while a view shipped WITH
+  // `hidden` is an interaction-gated panel — #view-ascn9 is the 9th-Annual-
+  // Meeting detail sheet opened by the "ASCN 9 record" button, and demanding a
+  // route for it was my check being wrong about what a route is for.
+  const markup = await (await fetch(`${BASE}/index.html`)).text();
+  // Read each .view opening tag out of the served markup. There is no DOMParser
+  // in Node, and the alternative — asking the live document — cannot answer the
+  // question, because routing has already set hidden by the time any script runs.
+  // Attribute order inside the tag does not matter: if `hidden` appears anywhere
+  // in the tag that opens the view, the view ships closed.
+  const viewTags = markup.match(/<[a-zA-Z][^>]*class="[^"]*\bview\b[^"]*"[^>]*>/g) || [];
+  if (!viewTags.length) throw new Error("no .view tags found in served index.html");
+  const idOf = (tag) => (tag.match(/\bid="([^"]+)"/) || [])[1];
+  const isGated = (tag) => /(^|\s)hidden(\s|=|>|$)/.test(tag);
+  const routable = viewTags.filter((t) => !isGated(t)).map(idOf).filter(Boolean);
+  const gated = viewTags.filter(isGated).map(idOf).filter(Boolean);
+
+  for (const width of [390, 1440]) {
+    const { page } = await newPage({ width, height: width === 390 ? 844 : 900 });
+    for (const route of routes) {
+      await page.goto(`${BASE}/#${route}`, { waitUntil: "domcontentloaded" });
+      await page.locator(".site-nav").waitFor({ timeout: 20_000 });
+      await page.waitForTimeout(250);
+      const m = await page.evaluate(() => {
+        const vis = (el) => {
+          const cs = getComputedStyle(el);
+          if (cs.display === "none" || cs.visibility === "hidden") return false;
+          const r = el.getBoundingClientRect();
+          return r.width > 0 && r.height > 0;
+        };
+        // Two populations, two standards. WCAG 2.5.8 (AA) sets 24x24 CSS px as
+        // the minimum target and explicitly exempts links inline in a sentence.
+        // 2.5.5 (AAA) sets 44px. A headline link inside a story card is text
+        // with prose around it, not a button — holding it to 44 would have me
+        // padding headlines into buttons to satisfy my own number.
+        const TEXT_MIN = 24, CONTROL_MIN = 44;
+        // "Inline in a sentence" is about WORDING, not the parent tag. A link
+        // whose own text is essentially the whole of its block is a standalone
+        // ACTION — "Open video", "Techsauce", "2022" — and gets the control
+        // minimum. Only a link embedded among other words gets the inline
+        // exception. Tag-based classification called all five of these "text"
+        // because they happened to sit inside <p>, <li> or <figcaption>.
+        //
+        // The tag list alone was also too narrow in the other direction: a
+        // publisher name in ".news-source", a source name in ".def-row" and an
+        // institution name in a contact card are all reference links sized by
+        // the line of text they share with a sibling, yet none of them sit in a
+        // <p>, so all three were called controls. Instead of adding their class
+        // names, walk up for the nearest container that actually holds more
+        // text than the link does — that is the sentence the link is part of.
+        const inlineTextLink = (el) => {
+          // A link that downloads a file is an action whatever surrounds it.
+          if (el.hasAttribute("download")) return false;
+          const own = (el.textContent || "").trim().length;
+          const roomy = (n) => (n.textContent || "").trim().length > own + 12;
+          // Inside a recognised text container the tag has already answered the
+          // question, and no sibling test may overrule it: a paragraph holding
+          // twenty comma-separated city links is a sentence, and a sibling test
+          // would have read it as a control bank and demanded 44px per city.
+          const tagged = el.closest("p, li, dd, figcaption, h1, h2, h3, h4, td, th");
+          if (tagged) return roomy(tagged);
+          // Otherwise walk up for the nearest container that holds more text than
+          // the link does — that is the line it shares with a sibling. Guard the
+          // walk against control banks: six identical "All 62 sources / Official
+          // / Academic" chips share a parent whose text dwarfs each chip, and
+          // without this the fallback would read every filter chip as prose.
+          for (let n = el.parentElement, i = 0; n && i < 3; n = n.parentElement, i++) {
+            if (!roomy(n)) continue;
+            const kin = [...n.children].filter((c) => c.tagName === el.tagName && String(c.className) === String(el.className)).length;
+            return kin <= 1;
+          }
+          return false;
+        };
+        // Legal attribution is sized by its own line height by convention and by
+        // licence: OSM and Leaflet credits must stay visible and compact, and no
+        // map anywhere makes them 44px. Excluded by name, not by accident.
+        const ATTRIBUTION = ".leaflet-control-attribution";
+        const targets = [...document.querySelectorAll("a, button, [role=button], summary")];
+        const short = targets.filter((el) => {
+          if (!vis(el)) return false;
+          if (el.closest(".leaflet-container")) return false;
+          if (el.closest(ATTRIBUTION)) return false;
+          if ((el.textContent || "").trim().length < 3) return false; // icon-only, still a control
+          return el.getBoundingClientRect().height < (inlineTextLink(el) ? TEXT_MIN : CONTROL_MIN);
+        }).map((el) => `${el.tagName.toLowerCase()}.${String(el.className).split(" ")[0]}@${el.getBoundingClientRect().height.toFixed(1)}${inlineTextLink(el) ? "(text)" : "(action)"}`);
+
+        // Whether the PAGE scrolls sideways, asked by trying to scroll it —
+        // not by reading documentElement.scrollWidth. A tall grid can report a
+        // scrollWidth a few pixels past the viewport from track rounding while
+        // every child sits inside it, and asserting that proxy fails on a page
+        // no reader can actually pan. The behaviour is the requirement.
+        const docW = document.documentElement.clientWidth;
+        const inScroller = (el) => {
+          let n = el.parentElement;
+          while (n && n !== document.body) {
+            const cs = getComputedStyle(n);
+            if (/(auto|scroll|hidden|clip)/.test(cs.overflowX + cs.overflowY)) return true;
+            n = n.parentElement;
+          }
+          return false;
+        };
+        const escaped = [...document.querySelectorAll("body *")].filter((el) => {
+          const r = el.getBoundingClientRect();
+          return r.width > 0 && r.height > 0 && r.right > docW + 1 && !inScroller(el);
+        }).length;
+        window.scrollTo(9999, 0);
+        const canPan = Math.round(window.scrollX);
+        window.scrollTo(0, 0);
+
+        const nav = document.querySelector(".site-nav nav");
+        const live = [...document.querySelectorAll(".view")]
+          .filter((v) => v.getBoundingClientRect().height > 0).map((v) => v.id);
+        return {
+          short: [...new Set(short)],
+          overflow: canPan,
+          escaped,
+          navH: Math.round(nav.getBoundingClientRect().height),
+          headerH: Math.round(document.querySelector(".site-nav").getBoundingClientRect().height),
+          live,
+        };
+      });
+      const tag = `${width}/${route}`;
+      if (m.short.length) bad.targets.push(`${tag}: ${m.short.join(", ")}`);
+      if (m.overflow > 1 || m.escaped > 0) bad.overflow.push(`${tag}: pans ${m.overflow}px, ${m.escaped} escaping`);
+      // One row of ~44px links plus a couple of pixels. A wrapped strip is 3-4x.
+      if (m.navH > 64) bad.navRows.push(`${tag}: nav ${m.navH}px`);
+      if (m.headerH > 120) bad.header.push(`${tag}: header ${m.headerH}px`);
+      // A hash that mounts nothing checks nothing, and reports as if it did.
+      if (m.live.length !== 1) bad.mount.push(`${tag}: ${m.live.length} views live (${m.live.join(",") || "none"})`);
+      for (const v of m.live) covered.add(v);
+    }
+    await page.close();
+  }
+
+  const neverReached = routable.filter((v) => !covered.has(v));
+  if (neverReached.length) bad.mount.push(`never reached: ${neverReached.join(", ")}`);
+
+  ok("every control clears its touch-target minimum", bad.targets.length === 0,
+    bad.targets.slice(0, 4).join(" | ") || `${routes.length} routes x 2 widths`);
+  ok("no route overflows horizontally", bad.overflow.length === 0,
+    bad.overflow.slice(0, 4).join(" | ") || "clean at 390 and 1440");
+  ok("the tab strip stays on one row", bad.navRows.length === 0,
+    bad.navRows.slice(0, 3).join(" | ") || "no wrapping");
+  ok("the header stays a two-row band", bad.header.length === 0,
+    bad.header.slice(0, 3).join(" | ") || "brand + one scrollable strip");
+  ok("every routable view is reached by a real route", bad.mount.length === 0,
+    bad.mount.slice(0, 3).join(" | ") || `${routable.length} routable views mounted; ${gated.length} interaction-gated: ${gated.join(", ") || "none"}`);
+}
+
 /* ── Type ramp and rules resolve, not collapse ───────────────────────────── */
 {
   const { page } = await newPage();
