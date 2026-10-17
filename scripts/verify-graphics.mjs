@@ -530,6 +530,25 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   await page.locator(".site-nav").waitFor({ timeout: 20_000 });
   await page.waitForTimeout(300);
 
+  // A dictionary entry whose English arm is not a string renders as literal
+  // text in the default language. It happened: six entries were generated with
+  // json.dumps applied to the KEY TUPLE instead of the English sentence, so the
+  // English arm was ["record", 0] and the Record view showed the words
+  // "record,0" where its lede should be. It passed the "no raw key on screen"
+  // check, because "record,0" does not look like a key. So the check is on the
+  // rendered English directly: every annotated element must show a real
+  // sentence, and the rendered text must be longer than the key it came from.
+  const english = await page.evaluate(() => [...document.querySelectorAll("[data-i18n]")].map((el) => ({
+    key: el.dataset.i18n, text: (el.textContent || "").trim(),
+  })));
+  // Precisely the failure signature, not "shorter than the key": "Overview" is
+  // a perfectly good label that happens to be shorter than "nav.overview". What
+  // must never render is empty text, the key itself, or a serialised structure.
+  const junk = english.filter((e) => !e.text || e.text === e.key || /^[[{]/.test(e.text));
+  ok("every string renders as a real sentence in the source language", junk.length === 0,
+    junk.length ? junk.slice(0, 4).map((e) => `${e.key} -> "${e.text.slice(0, 30)}"`).join(" | ")
+      : `${english.length} strings render`);
+
   const keys = await page.evaluate(() => [...document.querySelectorAll("[data-i18n]")].map((el) => el.dataset.i18n));
   ok("every translatable element declares a key", keys.length > 0 && keys.every(Boolean),
     keys.length ? `${keys.length} keys, ${keys.filter(Boolean).length} resolved` : "no [data-i18n] elements found");

@@ -325,7 +325,10 @@ test("rebuilding the mailbox source matches the committed record", {
 
 test("the archive script is external and both build lists publish it", async () => {
   const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
-  assert.match(html, /<a href="#archive" data-tab="archive">Archive<\/a>/);
+  // Matched on the attributes, not the literal tag: every nav link now also
+  // carries data-i18n, so pinning the exact markup would fail on a change that
+  // has nothing to do with the Archive.
+  assert.match(html, /<a href="#archive"[^>]*data-tab="archive"[^>]*>Archive<\/a>/);
   assert.match(html, /<section class="view" id="view-archive" data-view="archive"/);
   // This reads the SOURCE document, where the version is still whatever counter
   // the author last typed — the build replaces it with a content hash, and
