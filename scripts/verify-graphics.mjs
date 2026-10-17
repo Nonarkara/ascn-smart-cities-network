@@ -519,6 +519,47 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   }
 }
 
+/* ── Language layer ───────────────────────────────────────────────────────── */
+{
+  // The document was hardcoded `<html lang="en">` for the life of the site, so
+  // a screen reader mispronounced every Thai and Chinese passage on it — the
+  // one Layer 5 failure a single attribute fixes. These assertions are about
+  // that attribute and about the switch actually switching.
+  const { page } = await newPage();
+  await page.goto(`${BASE}/#overview`, { waitUntil: "domcontentloaded" });
+  await page.locator(".site-nav").waitFor({ timeout: 20_000 });
+  await page.waitForTimeout(300);
+
+  const keys = await page.evaluate(() => [...document.querySelectorAll("[data-i18n]")].map((el) => el.dataset.i18n));
+  ok("every translatable element declares a key", keys.length > 0 && keys.every(Boolean),
+    keys.length ? `${keys.length} keys, ${keys.filter(Boolean).length} resolved` : "no [data-i18n] elements found");
+
+  const perLang = {};
+  for (const lang of ["th", "zh"]) {
+    await page.locator(`[data-lang-set="${lang}"]`).click();
+    await page.waitForTimeout(250);
+    perLang[lang] = await page.evaluate((l) => ({
+      htmlLang: document.documentElement.lang,
+      // A key name leaking into the page means a missing translation rendered.
+      raw: [...document.querySelectorAll("[data-i18n]")].filter((el) => /^[a-z]+\.[a-z0-9]+$/i.test(el.textContent.trim())).length,
+      nav: [...document.querySelectorAll("#tab-nav a")].map((a) => a.textContent.trim()).join("|"),
+      wanted: l,
+    }), lang);
+    ok(`the document declares lang="${lang}" once Thai or Chinese is chosen`, perLang[lang].htmlLang === lang,
+      `html lang="${perLang[lang].htmlLang}"`);
+    ok(`no translation key is rendered as text (${lang})`, perLang[lang].raw === 0,
+      perLang[lang].raw ? `${perLang[lang].raw} raw keys visible` : perLang[lang].nav.slice(0, 60));
+  }
+
+  // The language has to survive a route change, or choosing it is a one-page
+  // gesture that a reader has to repeat on every view they open.
+  await page.goto(`${BASE}/#cities`, { waitUntil: "domcontentloaded" });
+  await page.waitForTimeout(700);
+  const survived = await page.evaluate(() => document.documentElement.lang);
+  ok("the chosen language survives navigation", survived === "zh", `landed on lang="${survived}"`);
+  await page.close();
+}
+
 /* ── Paper is the reference ──────────────────────────────────────────────── */
 {
   // A reader's eye is calibrated to a printed page. A4 is 210mm, Letter 216mm;

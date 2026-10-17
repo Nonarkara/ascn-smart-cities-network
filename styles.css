@@ -3466,6 +3466,42 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 .essay-next-cta a { display: inline-flex; align-items: center; min-height: 44px; }
 .essay-toc-link { min-height: 44px; }
 
+/* ── Language switch ───────────────────────────────────────────────────────
+   Three buttons, hairline-separated, sitting in the header band. It is a
+   control, so it holds the 44px touch floor like every other control on this
+   site rather than being sized to its three letters.
+
+   The pressed state is the ocher channel and nothing else — wayfinding is the
+   ocher's single job, so the active language is the only thing on this
+   surface allowed to use it. */
+.lang-switch {
+  display: flex; align-items: stretch; flex: 0 0 auto;
+  border-left: 1px solid var(--line-soft);
+}
+.lang-btn {
+  min-width: 44px; min-height: 44px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; border: 0; cursor: pointer;
+  color: var(--muted);
+  font-family: var(--mono); font-size: var(--t-micro);
+  letter-spacing: 0.06em;
+  border-bottom: 2px solid transparent;
+}
+.lang-btn:hover { color: var(--ink); }
+.lang-btn[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--ocher); font-weight: 700; }
+.lang-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+@media (max-width: 720px) {
+  /* Stay on the brand's row. Two rules above already put this header in a
+     COLUMN at 760px and 1100px, which is right for brand-over-strip and wrong
+     once a third element exists: the switch became a third row and cost 45px
+     of every phone screen. Direction goes back to row, the strip takes the
+     full width beneath, and the band is two rows again. */
+  .site-nav { flex-direction: row; flex-wrap: wrap; row-gap: 0; gap: 0.5rem; align-items: center; }
+  .brand { flex: 1 1 auto; }
+  .lang-switch { order: 2; }
+  .site-nav nav { order: 3; flex: 1 0 100%; }
+}
+
 /* Surfaces the route-coverage sweep newly reached. /data and /contacts had never
    been measured before, which is how a 40px Download and a 36px filter chip
    survived: they are ordinary controls and are now held to 44. */

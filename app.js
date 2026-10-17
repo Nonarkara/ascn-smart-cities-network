@@ -1,4 +1,5 @@
 import { escapeHtml as esc, safeUrl, csvCell, validateDataset } from "./lib/security.mjs";
+import { applyLang, initLang, currentLang, LANGS } from "./lib/i18n.mjs";
 
 /* ============================================================
    ASCN Open Platform — tabbed living observatory
@@ -1503,6 +1504,25 @@ function wireNav() {
     setTab(link.dataset.tab);
   });
   window.addEventListener("hashchange", routeFromHash);
+
+  /* ---- Language -------------------------------------------------------
+     The language lives outside the hash so it survives every route: a reader
+     who chose Thai stays in Thai whether they open Cities or the Archive. The
+     Archive tab keeps its own per-view switch and stays authoritative for its
+     own panel — this drives everything around it. */
+  initLang();
+  document.querySelectorAll("[data-lang-set]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const lang = button.dataset.langSet;
+      if (!LANGS.includes(lang)) return;
+      applyLang(lang);
+      // Re-render the current view so JS-generated copy picks the language up
+      // too. Anything already rendered from data keeps its own text.
+      const tab = state.tab;
+      if (tab && state.rendered.has(tab)) { state.rendered.delete(tab); renderTab(tab); }
+      document.dispatchEvent(new CustomEvent("ascn:lang", { detail: { lang } }));
+    });
+  });
 }
 
 async function loadJson(path) {
