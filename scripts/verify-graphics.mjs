@@ -570,6 +570,24 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
       perLang[lang].raw ? `${perLang[lang].raw} raw keys visible` : perLang[lang].nav.slice(0, 60));
   }
 
+  // Switching language must not delete live content. The Record view's
+  // correspondence note had a runtime-filled <span id="corr-method"> inside a
+  // paragraph that carried data-i18n; applying a language set textContent on
+  // that paragraph, deleted the span, and the next render threw inside
+  // renderCorrespondence — taking the entire Record view, its stack chart
+  // included, down to a blank page. Every id the app writes into must still
+  // exist after a language switch.
+  const liveIds = await page.evaluate(async () => {
+    const before = [...document.querySelectorAll("[id]")].map((el) => el.id).sort();
+    document.querySelector('[data-lang-set="zh"]').click();
+    await new Promise((r) => setTimeout(r, 300));
+    const after = [...document.querySelectorAll("[id]")].map((el) => el.id).sort();
+    const gone = before.filter((id) => !after.includes(id));
+    return gone;
+  });
+  ok("switching language deletes no live content", liveIds.length === 0,
+    liveIds.length ? `${liveIds.length} removed: ${liveIds.slice(0, 5).join(", ")}` : "every id survives the switch");
+
   // The language has to survive a route change, or choosing it is a one-page
   // gesture that a reader has to repeat on every view they open.
   await page.goto(`${BASE}/#cities`, { waitUntil: "domcontentloaded" });
@@ -676,6 +694,20 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
         // with prose around it, not a button — holding it to 44 would have me
         // padding headlines into buttons to satisfy my own number.
         const TEXT_MIN = 24, CONTROL_MIN = 44;
+        // Chromium lays out on a 1/64px LayoutUnit grid, so a box declared at
+        // exactly 44px is often READ back as 43.99993896484375. That is not a
+        // box below the floor — it is the floor, as the engine can represent
+        // it. Comparing the raw float against an integer asserted a defect that
+        // does not exist: every control in the stylesheet that declares
+        // min-height:44px failed whenever the quantisation landed low, and the
+        // report printed it as "44.0" because the diagnostic rounded to one
+        // decimal, so the message claimed a pass while the assertion beneath it
+        // claimed a failure.
+        //
+        // The tolerance is one LayoutUnit, not a round number: below 1/64px the
+        // measurement is not distinguishable from the declared value, and any
+        // larger epsilon would start excusing boxes that really are short.
+        const LAYOUT_UNIT = 1 / 64;
         // "Inline in a sentence" is about WORDING, not the parent tag. A link
         // whose own text is essentially the whole of its block is a standalone
         // ACTION — "Open video", "Techsauce", "2022" — and gets the control
@@ -723,8 +755,20 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
           if (el.closest(".leaflet-container")) return false;
           if (el.closest(ATTRIBUTION)) return false;
           if ((el.textContent || "").trim().length < 3) return false; // icon-only, still a control
-          return el.getBoundingClientRect().height < (inlineTextLink(el) ? TEXT_MIN : CONTROL_MIN);
-        }).map((el) => `${el.tagName.toLowerCase()}.${String(el.className).split(" ")[0]}@${el.getBoundingClientRect().height.toFixed(1)}${inlineTextLink(el) ? "(text)" : "(action)"}`);
+          const min = inlineTextLink(el) ? TEXT_MIN : CONTROL_MIN;
+          return el.getBoundingClientRect().height < min - LAYOUT_UNIT;
+        }).map((el) => {
+          // Print the raw height, unrounded. toFixed(1) collapses a genuine
+          // sub-pixel shortfall — 43.96px prints as "44.0" — so the report
+          // claims an element cleared the 44px floor while the assertion that
+          // flagged it read a number below it. A diagnostic that can disagree
+          // with the assertion it explains is worse than no diagnostic. Also
+          // record whether the floor is even declared, because a box with no
+          // min-height is a different bug from one that has one and misses.
+          const h = el.getBoundingClientRect().height;
+          const declared = parseFloat(getComputedStyle(el).minHeight) || 0;
+          return `${el.tagName.toLowerCase()}.${String(el.className).split(" ")[0]}@${h}px (min-height:${declared}px, ${(h - declared).toFixed(3)}px short)${inlineTextLink(el) ? " text" : " action"}`;
+        });
 
         // Whether the PAGE scrolls sideways, asked by trying to scroll it —
         // not by reading documentElement.scrollWidth. A tall grid can report a
