@@ -2016,8 +2016,13 @@ function renderEssay() {
   // hand would mean editing every call site for no gain — the English text is
   // already a unique name for each paragraph.
   const p = (text) => `<p class="essay-p">${tx(text)}</p>`;
-  const h = (n, text) => `<h${n} class="essay-h${n}">${tx(text)}</h${n}>`;
-  const pull = (text, attr) => `<blockquote class="essay-pull">${text}${attr ? `<cite>${attr}</cite>` : ""}</blockquote>`;
+  // data-essay-en survives translation on purpose. The section anchors are
+  // derived from it, so an id stays the same in every language. Deriving the id
+  // from textContent instead meant that the moment the headings became Thai,
+  // [^a-z0-9]+ collapsed every one of them to "es-" — eight sections sharing
+  // one id, and eight TOC links all scrolling to the first.
+  const h = (n, text) => `<h${n} class="essay-h${n}" data-essay-en="${esc(text)}">${tx(text)}</h${n}>`;
+  const pull = (text, attr) => `<blockquote class="essay-pull">${tx(text)}${attr ? `<cite>${esc(attr)}</cite>` : ""}</blockquote>`;
 
   /* ---- Governance diagram ---- */
   const govDiagram = `<figure class="essay-diagram" aria-label="ASCN governance structure">
@@ -2225,14 +2230,14 @@ function renderEssay() {
   const essay = `
 <div class="essay-header">
   <div class="essay-series-bar">
-    <span class="essay-series-label">ASCN Essays</span>
+    <span class="essay-series-label">${tx("ASCN Essays")}</span>
     <span class="essay-series-sep">·</span>
     <span class="essay-series-num">No. 1</span>
-    <span class="essay-series-date">June 2026 · seven years of the author’s participation, 2019–2026</span>
-    <span class="essay-series-time">20 min read</span>
+    <span class="essay-series-date">${tx("June 2026 · seven years of the author’s participation, 2019–2026")}</span>
+    <span class="essay-series-time">${tx("20 min read")}</span>
   </div>
 
-  <h1 class="essay-title">The Network at Seven</h1>
+  <h1 class="essay-title">${tx("The Network at Seven")}</h1>
   <p class="essay-subtitle" data-i18n="a.what.four.m.e.cycles.and.thirty">What four M&amp;E cycles and thirty-eight cities reveal about Southeast Asia's most ambitious governance experiment</p>
 
   <details class="essay-bio">
@@ -2242,7 +2247,7 @@ function renderEssay() {
         <strong>Non Arkaraprasertkul, PhD</strong>
         <span>Senior Expert in Smart City Promotion · DEPA Thailand · ASEAN Smart Cities Network since 2019</span>
       </div>
-      <span class="bio-expand-hint">About the author</span>
+      <span class="bio-expand-hint">${tx("About the author")}</span>
     </summary>
     <div class="essay-bio-body">
       <figure class="bio-photo-wrap">
@@ -2358,9 +2363,9 @@ function renderEssay() {
   </div>
 
   <div class="essay-section essay-footnotes">
-    <p class="essay-fn-label">Note on Shanghai</p>
+    <p class="essay-fn-label">${tx("Note on Shanghai")}</p>
     <p class="essay-fn" data-i18n="a.the.shanghai.fieldwork.2013.2015">The Shanghai fieldwork (2013–2015) — supported by the Harvard-Yenching Institute, the Fairbank Center for Chinese Studies at Harvard University, the Cora Du Bois Anthropology Fellowship, a New York University Postdoctoral Global Fellowship, a Fudan Fellowship, and the China Scholarship Council (CSC) Research Fund — was a study of neighbourhood change in the lilong alleyway-house districts of central Shanghai. The concept of gentrification from within emerged from that study and provides the analytical frame for sections I–IV above. The Shanghai case itself is not the subject of this essay; it is a set of methods applied to a different set of cities. Readers interested in the original fieldwork should start with Arkaraprasertkul (2016) in Asian Anthropology or the 2018 Urban Studies paper listed below.</p>
-    <p class="essay-fn-label">Note on interviews</p>
+    <p class="essay-fn-label">${tx("Note on interviews")}</p>
     <p class="essay-fn" data-i18n="a.the.characterisations.of.officia">The characterisations of officials, delegations, and institutions in this essay draw on the author's own conversations and interviews with leaders both inside and outside the ASEAN Smart Cities Network, gathered across seven years of direct participation. Specific quotes and observations are kept anonymous by design — to protect candour and working relationships — but each reflects real statements made by real people in real meetings and interviews. None are composite or invented.</p>
   </div>
 
@@ -2480,7 +2485,7 @@ function renderEssay() {
   <summary class="author-summary">
     <span class="author-summary-label">About the author</span>
     <span class="author-summary-name">Non Arkaraprasertkul, PhD</span>
-    <span class="author-summary-role">Architect · Urban Anthropologist · Senior Expert, DEPA Thailand · National Representative, ASCN</span>
+    <span class="author-summary-role">${tx("Architect · Urban Anthropologist · Senior Expert, DEPA Thailand · National Representative, ASCN")}</span>
     <span class="author-toggle-icon" aria-hidden="true"></span>
   </summary>
 
@@ -2488,7 +2493,7 @@ function renderEssay() {
     <p class="author-intro" data-i18n="a.unlike.most.smart.city.practitio">Unlike most smart city practitioners who lead with technology procurement, Dr. Non approaches urban development through governance frameworks, human-centric urbanism, and regional standardization — grounded in two years of immersive ethnographic fieldwork in Shanghai and a decade of policy practice in Thailand and ASEAN.</p>
 
     <div class="author-section">
-      <p class="author-section-label">ASCN — Regional Work</p>
+      <p class="author-section-label">${tx("ASCN — Regional Work")}</p>
       <ul class="author-list">
         <li data-i18n="a.architect.of.the.asean.csco.han"><b>Architect of the ASEAN CSCO Handbook</b> — Strategic Advisor and Handbook Architect for <i>The Citizen-First City</i>, the standardized manual for Chief Smart City Officers across all ASEAN member states.</li>
         <li data-i18n="a.thailand.s.national.representat"><b>Thailand's National Representative</b> — Primary liaison between Thailand's domestic smart city programme and the ASEAN Secretariat, named in official ASCN contact lists from 2024 through 2026.</li>
@@ -2508,7 +2513,7 @@ function renderEssay() {
     </div>
 
     <div class="author-section">
-      <p class="author-section-label">Publications</p>
+      <p class="author-section-label">${tx("Publications")}</p>
       <ul class="author-list">
         <li data-i18n="a.the.smart.city.primer.2022.co.a"><b>The Smart City Primer (2022)</b> — Co-authored with Reilly Paul Rabitaille; released with C-ASEAN and the U.S. Embassy Bangkok; educational baseline from the YSEALI programme for young leaders across Southeast Asia.</li>
         <li data-i18n="a.guide.to.building.smart.cities"><b>Guide to Building Smart Cities for People in a Hurry (2023)</b> — Practical guide for rapid, citizen-centric smart city implementation.</li>
@@ -2524,36 +2529,36 @@ function renderEssay() {
 </details>
 
 <div class="essay-next-section">
-  <p class="label">Contributing Essays</p>
-  <h3 class="essay-next-h">More perspectives from across the network</h3>
+  <p class="label">${tx("Contributing Essays")}</p>
+  <h3 class="essay-next-h">${tx("More perspectives from across the network")}</h3>
   <p class="essay-next-lede" data-i18n="a.this.platform.invites.essays.fro">This platform invites essays from city officials, researchers, planners, and practitioners working within or alongside the ASEAN Smart Cities Network. The goal is a record of what people actually think about how cities in this region are changing — not a curated institutional narrative, but a collection of real perspectives from people doing the work.</p>
   <div class="essay-next-grid">
     <div class="essay-next-card essay-next-card--featured">
-      <p class="essay-next-tag">Research · June 2026</p>
-      <p class="essay-next-title">Measuring what matters</p>
+      <p class="essay-next-tag">${tx("Research · June 2026")}</p>
+      <p class="essay-next-title">${tx("Measuring what matters")}</p>
       <div class="essay-next-essay">
-        <p>The 2025 M&amp;E report classifies 18 projects as "completed." Of those 18, eleven are planning or strategy documents — no physical delivery, no resident outcomes verifiable. Three are physical infrastructure. Four are digital systems of varying maturity. The report does not distinguish between them. The completion criterion is: "successfully concluded." There is no standardized threshold, no external verification, no post-completion audit.<sup>1</sup></p>
-        <p>This is not a flaw in the reporting. It is the system working exactly as designed — because the system was never designed to measure outcomes. The ASEAN Smart Cities Framework (2018) defines three strategic outcomes: Competitive Economy, Sustainable Environment, High Quality of Life.<sup>2</sup> Seven years on, the network has no mechanism for measuring any of them at the city level, let alone the network level.</p>
-        <p>Compare this to South Korea's U4SSC KPI framework, which tracks 92 standardized indicators across energy, water, transport, waste, and health for every participating city. Or the EU Cities Mission, which requires independent assessment against binding indicators tied to climate neutrality. Or India's Smart Cities Mission, where a public Smart City Index ranks all 100 cities on quantified outputs annually. ASCN scores zero on five of seven comparator features — it has no standardized KPIs, no independent verification, no city benchmarking, no digital monitoring dashboard, and no outcome indicators. It publishes annual reports. That is it.<sup>3</sup></p>
-        <p>The data, however, does exist — in scattered form. Manila's Go! app has 1.2 million registrants and 1.4 million transactions totalling PHP 15.9 billion. Jakarta's JakPreneur has formalized 405,052 small businesses. Makassar's Dottoro'ta telemedicine has served 9,773 patients across two years with 48 homecare ambulances. Vientiane's wastewater plant reaches 8,000 households at 52,000 cubic metres per day. These numbers appear as footnotes, project descriptions, city narratives — never as network-level indicators, never aggregated, never trended.<sup>4</sup></p>
-        <p>The structural reason is well known and rarely stated plainly: ASCN operates under the ASEAN Way. Consensus-based, voluntary, non-binding. Standardizing KPIs would require every member state to agree on what counts — which means agreeing on what doesn't count, and agreeing that some cities are performing better than others. That is politically difficult in a network explicitly designed to avoid peer-review and ranking mechanisms.<sup>5</sup></p>
-        <p>ASCAP 2026–2035 advances a potential resolution. The new strategic plan introduces eight pillars aligned to ASEAN Community Vision 2045, each broad enough to serve as a KPI category rather than a target. Pillar 8 — Rural-Village Collaboration — has zero current portfolio coverage: not a single project among 134 touches rural-urban linkage. That is visible now precisely because the pillars give us something to map against. If the network adopted even a minimal reporting template — project, pillar, one measurable indicator, one defined beneficiary group — the entire landscape of what is and isn't being built would become legible.<sup>6</sup></p>
+        <p>${tx(`The 2025 M&amp;E report classifies 18 projects as "completed." Of those 18, eleven are planning or strategy documents — no physical delivery, no resident outcomes verifiable. Three are physical infrastructure. Four are digital systems of varying maturity. The report does not distinguish between them. The completion criterion is: "successfully concluded." There is no standardized threshold, no external verification, no post-completion audit.<sup>1</sup>`)}</p>
+        <p>${tx(`This is not a flaw in the reporting. It is the system working exactly as designed — because the system was never designed to measure outcomes. The ASEAN Smart Cities Framework (2018) defines three strategic outcomes: Competitive Economy, Sustainable Environment, High Quality of Life.<sup>2</sup> Seven years on, the network has no mechanism for measuring any of them at the city level, let alone the network level.`)}</p>
+        <p>${tx(`Compare this to South Korea's U4SSC KPI framework, which tracks 92 standardized indicators across energy, water, transport, waste, and health for every participating city. Or the EU Cities Mission, which requires independent assessment against binding indicators tied to climate neutrality. Or India's Smart Cities Mission, where a public Smart City Index ranks all 100 cities on quantified outputs annually. ASCN scores zero on five of seven comparator features — it has no standardized KPIs, no independent verification, no city benchmarking, no digital monitoring dashboard, and no outcome indicators. It publishes annual reports. That is it.<sup>3</sup>`)}</p>
+        <p>${tx(`The data, however, does exist — in scattered form. Manila's Go! app has 1.2 million registrants and 1.4 million transactions totalling PHP 15.9 billion. Jakarta's JakPreneur has formalized 405,052 small businesses. Makassar's Dottoro'ta telemedicine has served 9,773 patients across two years with 48 homecare ambulances. Vientiane's wastewater plant reaches 8,000 households at 52,000 cubic metres per day. These numbers appear as footnotes, project descriptions, city narratives — never as network-level indicators, never aggregated, never trended.<sup>4</sup>`)}</p>
+        <p>${tx(`The structural reason is well known and rarely stated plainly: ASCN operates under the ASEAN Way. Consensus-based, voluntary, non-binding. Standardizing KPIs would require every member state to agree on what counts — which means agreeing on what doesn't count, and agreeing that some cities are performing better than others. That is politically difficult in a network explicitly designed to avoid peer-review and ranking mechanisms.<sup>5</sup>`)}</p>
+        <p>${tx(`ASCAP 2026–2035 advances a potential resolution. The new strategic plan introduces eight pillars aligned to ASEAN Community Vision 2045, each broad enough to serve as a KPI category rather than a target. Pillar 8 — Rural-Village Collaboration — has zero current portfolio coverage: not a single project among 134 touches rural-urban linkage. That is visible now precisely because the pillars give us something to map against. If the network adopted even a minimal reporting template — project, pillar, one measurable indicator, one defined beneficiary group — the entire landscape of what is and isn't being built would become legible.<sup>6</sup>`)}</p>
         <p data-i18n="a.the.question.is.not.whether.the">The question is not whether the data can be collected. It clearly can — cities are already generating it. The question is whether the network can agree on a common language for what it is trying to accomplish. That is a governance question, not a technical one. And it is the question ASCAP 2026–2035 has the best chance of resolving — if the member states choose to use it that way.</p>
         <p class="essay-footnotes"><sup>1</sup> ASCN M&amp;E Report 2025, Appendix. <sup>2</sup> ASEAN Smart Cities Framework, 2018, p. 4. <sup>3</sup> Comparative analysis from ascn_dim05.md §11.6; U4SSC indicator framework (ITU/UN-Habitat, 2021); EU Cities Mission monitoring (European Commission, 2022). <sup>4</sup> City outcome data compiled from ASCN M&amp;E reports 2022–2025 and bilateral programme reports. <sup>5</sup> Costoya, M. (2022). "Institutional Design and Policy Diffusion in ASEAN Smart Cities," <em>Politics &amp; Governance</em> 10(3). <sup>6</sup> ASCAP 2026–2035 pillar framework; gap analysis derived from ASCN project portfolio mapping.</p>
       </div>
     </div>
     <div class="essay-next-card essay-next-placeholder">
-      <p class="essay-next-tag">Perspective · Forthcoming</p>
-      <p class="essay-next-title">The view from a CSCO</p>
+      <p class="essay-next-tag">${tx("Perspective · Forthcoming")}</p>
+      <p class="essay-next-title">${tx("The view from a CSCO")}</p>
       <p class="essay-next-body" data-i18n="a.what.does.it.actually.feel.like">What does it actually feel like to be a Chief Smart City Officer in a mid-sized ASEAN city? What do the M&amp;E reports miss that you see every day?</p>
     </div>
     <div class="essay-next-card essay-next-placeholder">
-      <p class="essay-next-tag">Analysis · Forthcoming</p>
+      <p class="essay-next-tag">${tx("Analysis · Forthcoming")}</p>
       <p class="essay-next-title" data-i18n="a.smart.mobility.in.southeast.asia">Smart Mobility in Southeast Asia</p>
       <p class="essay-next-body" data-i18n="a.mobility.accounts.for.more.than">Mobility accounts for more than a quarter of all ASCN projects. What is actually being built, and for whom?</p>
     </div>
   </div>
-  <p class="essay-next-cta">To propose an essay, contact <a href="mailto:nonsmartcity@gmail.com">the platform team</a>.</p>
+  <p class="essay-next-cta">${tx("To propose an essay, contact")} <a href="mailto:nonsmartcity@gmail.com">${tx("the platform team")}</a>.</p>
 </div>`;
 
   $("#essay-content").innerHTML = essay;
@@ -2571,7 +2576,7 @@ function enhanceEssay() {
   content.querySelectorAll(".essay-section > .essay-h3").forEach((hEl) => {
     const section = hEl.closest(".essay-section");
     const txt = hEl.textContent.trim();
-    const slug = "es-" + txt.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "").slice(0, 36);
+    const slug = "es-" + (hEl.dataset.essayEn || txt).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "").slice(0, 36);
     section.id = slug;
     if (!section.classList.contains("essay-footnotes")) toc.push({ slug, txt });
   });
