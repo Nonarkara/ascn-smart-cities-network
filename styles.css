@@ -370,6 +370,10 @@ input[type="search"] { min-width: min(16rem, 100%); }
 
 /* ---------- ASCN 9 record ---------- */
 .news-head { margin-bottom: 1.3rem; max-width: 54rem; }
+/* The News view's page title. It sat at --t-h2, the same size as every
+   section beneath it, on a view whose argument is the size of its own gap
+   between what was promised and what can be shown. */
+.review-head h1 { font-size: var(--t-figure); line-height: 0.98; letter-spacing: -0.028em; }
 .news-head h1 { font-size: var(--t-figure); line-height: 0.98; letter-spacing: -0.028em; }
 /* "Regional news" is now the h1 and "ASCN in the public record" the h2 under
    it. Both were the same 24px, so the page opened with no focal point at any
@@ -415,7 +419,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .news-empty h2 { font-size:var(--t-h2); }
 .news-empty p { font-size:var(--t-body); margin-top: 0.6rem; }
 .review-head { max-width: 55rem; margin-bottom: 1rem; }
-.review-head h1, .review-verdict h2, .review-section h2, .review-band-head h2, .review-baseline h2, .review-record h2 { font-size:var(--t-h2); line-height: 1.25; letter-spacing: 0; }
+.review-verdict h2, .review-section h2, .review-band-head h2, .review-baseline h2, .review-record h2 { font-size:var(--t-h2); line-height: 1.25; letter-spacing: 0; }
 .review-head p, .review-verdict p, .review-baseline p, .review-record p, .review-method p, .review-followup p, .review-mandate p, .review-project-links { font-size:var(--t-body); }
 .review-head .label, .review-note, .review-record .review-note, .review-followup .review-note, .review-baseline .review-note { font-size:var(--t-small); color: var(--muted); }
 .review-tabs { display: flex; flex-wrap: wrap; gap: 0 1.4rem; border-bottom: 2px solid var(--ink); margin-bottom: 1rem; }
@@ -485,7 +489,12 @@ input[type="search"] { min-width: min(16rem, 100%); }
 @media (max-width: 760px) {
   .view { padding-top: 1rem; }
   .review-head { margin-bottom: 0.7rem; }
-  .review-head h1 { font-size: var(--t-h3); line-height: 1.2; }
+  /* Third instance of the same defect: the News view's page title dropped to
+     --t-h3, which is an alias of --t-h2, below 720px — the same size as the
+     sections under it. The other two were .showcase-heading h1 and
+     .news-head h1. All three were invisible to the eye on a phone because a
+     headline that is the same size as its own subhead just reads as text. */
+  .review-head h1 { font-size: var(--t-page-sm); line-height: 1.05; }
   .review-tabs { margin-bottom: 0.7rem; }
   .review-tabs a { padding: 0.4rem 0; }
   .news-head { margin-bottom: 0.8rem; }

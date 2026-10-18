@@ -1701,7 +1701,7 @@ function renderContacts() {
     <div class="contacts-wrap">
       <div class="contacts-header">
         <p class="label">Network Contacts</p>
-        <h2>Click any city to see the NR and CSCO.</h2>
+        <h1>Click any city to see the NR and CSCO.</h2>
         <p class="lede" data-i18n="a.38.cities.11.countries.each.mark">38 cities, 11 countries. Each marker shows the National Representative at the top, followed by the Chief Smart City Officer for that city. Data: April 2026 ASCN contact list.</p>
         <a class="text-button" href="docs/11_ASCN_Contact_List_2026.pdf" target="_blank">Official contact list (Jan 2026 PDF)</a>
       </div>
@@ -2014,7 +2014,7 @@ function renderResearch() {
   el.innerHTML = `
 <div class="section-head">
   <p class="label">Research</p>
-  <h2>What the scholarship says — and what it misses</h2>
+  <h1>What the scholarship says — and what it misses</h2>
   <p class="lede" data-i18n="a.a.synthesis.of.fourteen.peer.rev">A synthesis of fourteen peer-reviewed papers and official documents on ASCN. Eight structural themes, an insider FAQ, and a full bibliography — written by a participant who has attended every annual meeting since 2018.</p>
 </div>
 
@@ -2336,7 +2336,7 @@ function renderEssay() {
     <span class="essay-series-time">20 min read</span>
   </div>
 
-  <h2 class="essay-title">The Network at Seven</h2>
+  <h1 class="essay-title">The Network at Seven</h2>
   <p class="essay-subtitle" data-i18n="a.what.four.m.e.cycles.and.thirty">What four M&amp;E cycles and thirty-eight cities reveal about Southeast Asia's most ambitious governance experiment</p>
 
   <details class="essay-bio">

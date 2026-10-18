@@ -588,6 +588,19 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
       perLang[lang].raw ? `${perLang[lang].raw} raw keys visible` : perLang[lang].nav.slice(0, 60));
   }
 
+  // An HTML entity inside a TEXT-arm entry renders literally. textContent
+  // writes the characters "&amp;" — it does not parse them — so a dictionary
+  // entry copied out of index.html verbatim showed readers "M&amp;E cycles"
+  // on the Insights page, in all three languages. Twenty-two entries were
+  // affected. Only the html() arm may carry entities, because only it goes
+  // through innerHTML.
+  const entityHits = await page.evaluate(() => {
+    const m = document.body.innerText.match(/.{0,30}&(?:amp|lt|gt|quot|nbsp|mdash|ndash|hellip|middot);.{0,20}/g);
+    return m || [];
+  });
+  ok("no HTML entity is rendered as literal text", entityHits.length === 0,
+    entityHits.length ? `${entityHits.length} found: ${entityHits.slice(0, 3).join(" | ")}` : "no &amp; on the page");
+
   // Switching language must not delete live content. The Record view's
   // correspondence note had a runtime-filled <span id="corr-method"> inside a
   // paragraph that carried data-i18n; applying a language set textContent on
@@ -971,19 +984,26 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
         const shown = (e) => e.getBoundingClientRect().height > 0;
         const h1 = [...v.querySelectorAll("h1")].find(shown);
         const h2s = [...v.querySelectorAll("h2")].filter(shown);
-        if (!h1 || !h2s.length) return null;
+        // A view with subheadings but no visible h1 is a FAILURE, not a skip.
+        // Returning null here is what let the News view pass while its h1 sat
+        // inside a hidden sub-panel: the default panel had headings and no
+        // page title at all, and the check simply had nothing to compare.
+        if (!h2s.length) return null;
+        if (!h1) return { noH1: true };
         return {
           h1: Math.round(parseFloat(getComputedStyle(h1).fontSize)),
           h2: Math.max(...h2s.map((e) => Math.round(parseFloat(getComputedStyle(e).fontSize)))),
         };
       }, route);
+      if (m && m.noH1) { flat.push(`${width}/${route}: no visible h1, but it has h2s`); continue; }
       if (m) flat.push(`${width}/${route}: h1 ${m.h1}px vs h2 ${m.h2}px (${(m.h1 / m.h2).toFixed(2)}x)`);
     }
     await page.close();
   }
   const flatHits = flat.filter((f) => {
-    const [h1, h2] = f.match(/h1 (\d+)px vs h2 (\d+)px/).slice(1).map(Number);
-    return h1 / h2 < 1.5;
+    const m = f.match(/h1 (\d+)px vs h2 (\d+)px/);
+    if (!m) return true;
+    return Number(m[1]) / Number(m[2]) < 1.5;
   });
   ok("every page has a heading that outranks its own sections", flatHits.length === 0,
     flatHits.slice(0, 4).join(" | ") || `${flat.length} page/width pairs, all ≥1.5x`);
