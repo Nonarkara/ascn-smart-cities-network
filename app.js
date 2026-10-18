@@ -1,5 +1,5 @@
 import { escapeHtml as esc, safeUrl, csvCell, validateDataset } from "./lib/security.mjs";
-import { applyLang, initLang, currentLang, LANGS } from "./lib/i18n.mjs";
+import { applyLang, initLang, currentLang, tx, LANGS } from "./lib/i18n.mjs";
 
 /* ============================================================
    ASCN Open Platform — tabbed living observatory
@@ -2115,8 +2115,12 @@ function renderResearch() {
 
 /* ---------------- Essay ---------------- */
 function renderEssay() {
-  const p = (text) => `<p class="essay-p">${text}</p>`;
-  const h = (n, text) => `<h${n} class="essay-h${n}">${text}</h${n}>`;
+  // tx() so the essay speaks the reader's language. The essay is built by calling
+  // these two helpers with an English sentence as an argument, so keying it by
+  // hand would mean editing every call site for no gain — the English text is
+  // already a unique name for each paragraph.
+  const p = (text) => `<p class="essay-p">${tx(text)}</p>`;
+  const h = (n, text) => `<h${n} class="essay-h${n}">${tx(text)}</h${n}>`;
   const pull = (text, attr) => `<blockquote class="essay-pull">${text}${attr ? `<cite>${attr}</cite>` : ""}</blockquote>`;
 
   /* ---- Governance diagram ---- */

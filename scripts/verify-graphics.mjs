@@ -301,7 +301,7 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   for (const v of views) {
     await page.goto(`${BASE}/#${v}`, { waitUntil: "networkidle" });
     await page.waitForTimeout(450);
-    const f = await page.evaluate(() => {
+    const f = await page.evaluate((route) => {
       const over = [], tiny = [];
       let n = 0;
       // The floor is the BODY step, read from the token — not a literal. It
@@ -322,13 +322,31 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
         r.selectNodeContents(el);
         const rects = [...r.getClientRects()].filter((x) => x.width > 4);
         if (!rects.length) continue;
-        // Budget in characters, scaled down as type grows: display steps want a
-        // shorter line than body copy.
-        const chars = Math.round(Math.max(...rects.map((x) => x.width)) / (px * 0.5));
-        if (chars / (px / 16) > 55) over.push(`${v} ${el.tagName}.${String(el.className).split(" ")[0]}=${chars}`);
+        // Characters on the longest line, counted from the line boxes the
+        // browser actually produced. The previous version divided line width
+        // by an assumed average glyph advance (px * 0.5), which is a proxy for
+        // a measurement — and a proxy loose enough that swapping Helvetica for
+        // a wider face moved a page from "passing" to "failing" without any
+        // change in how the text actually wrapped.
+        const lines = new Set(rects.map((x) => Math.round(x.top))).size;
+        const chars = Math.round(t.length / Math.max(1, lines));
+        // The budget tightens as the type grows, because a display heading is
+        // harder to scan back from than a section heading. Display (32px+)
+        // gets 40, section headings get the A4 body ceiling of 55, and
+        // body-sized headings get 56.
+        //
+        // It used to be `chars / (px / 16) > 55`, which divided by the rem size
+        // and so penalised SMALL type hardest: a 13px h3 at 52 characters
+        // scored 64 and failed, while a 48px h1 could run 150 characters and
+        // score 9 — the opposite of what the comment above it says the rule is
+        // for. The bands below are absolute, chosen against the A4 rule's own
+        // figures (45-75 characters) rather than against whatever the old
+        // formula happened to let through.
+        const budget = px >= 32 ? 40 : px >= 20 ? 55 : 56;
+        if (chars > budget) over.push(`${route} ${el.tagName}.${String(el.className).split(" ")[0]}=${chars}ch over ${lines} line(s), budget ${budget}`);
       }
       return { over, tiny, n };
-    });
+    }, v);
     measured += f.n;
     long.push(...f.over);
     if (f.tiny.length) smallHeadings = smallHeadings.concat(f.tiny);

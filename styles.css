@@ -89,11 +89,18 @@
   --on-solid: #171a1e;
   --content: min(1280px, calc(100vw - 2rem));
 
-  /* Fonts: Axiom's own stack, which is also already this site's. Both resolve
-     to a grotesque with a Thai companion face — "Source Sans 3" led this
-     stylesheet for years without ever being loaded, which is a lie in the
-     contract and downloads nothing. */
-  --font: "Helvetica Neue", Helvetica, Arial, "IBM Plex Sans Thai", sans-serif;
+  /* Fonts. Two design faces, self-hosted because the CSP is font-src 'self':
+     Jost for Latin — geometric, in the Futura/Bauhaus line — and Prompt for
+     Thai, matched to Jost in weight and proportion. The third is not a third
+     design choice: without a CJK face the Chinese edition had no glyphs at
+     all and fell through to whatever the visitor's OS picked. It sits last so
+     a Latin or Thai run never reaches it.
+
+     This replaces "Helvetica Neue", Helvetica, Arial, "IBM Plex Sans Thai",
+     sans-serif — a system font doing the work of a design font, naming a Thai
+     face the site never shipped, and naming no CJK face whatsoever. */
+  --font: "Jost", "Prompt", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB",
+          "Microsoft YaHei", "Source Han Sans SC", sans-serif;
   --mono: ui-monospace, "IBM Plex Mono", "JetBrains Mono", Menlo, monospace;
 
   /* ── Spacing scale ───────────────────────────────────────────────────────
@@ -161,6 +168,12 @@
   --t-body: 13px;                       /* all prose, and every inline figure carries weight */
   --t-micro: 11px;                      /* labels, captions, footnotes, table meta */
   --t-label: 10px;                      /* the smallest apparatus step: column heads, chips */
+  /* A number that is the point of its box, not the box's headline. Sits above
+     the lead step because a card figure has to out-rank a section heading it
+     sits under, and below --t-figure so three cards are not three headlines.
+     clamp keeps a 24px floor so it never collapses back into body size on a
+     phone — which is exactly how it failed before. */
+  --t-finding: clamp(24px, 2.2vw, 30px);
 
   /* No intermediate steps exist. A sub-heading is a heading at a smaller
      weight, not a new size; a figure inside prose is body type set bold. */
@@ -242,7 +255,7 @@ p, li, dd, blockquote, figcaption, .lede {
    as a layout accident rather than a decision. One row always; below the width
    where all fourteen fit, the row scrolls instead of reflowing. */
 .site-nav nav {
-  display: flex; gap: 0.45rem; flex-wrap: nowrap;
+  display: flex; gap: 0.15rem; flex-wrap: nowrap;
   overflow-x: auto; scrollbar-width: none;
 }
 .site-nav nav::-webkit-scrollbar { display: none; }
@@ -264,9 +277,11 @@ th { font-size:var(--t-micro); font-weight: 800; letter-spacing: 0.1em; text-tra
   /* 0.1em tracking across fourteen uppercase links needs ~1370px, so the nav
      pushed the whole page sideways instead of the page complaining. Nav items
      are short words; the wide tracking belongs to labels and table heads, not
-     to a fourteen-item menu. The flex-wrap above is the safety net if the
-     item list ever grows again. */
-  letter-spacing: 0.05em;
+     to a fifteen-item menu. Jost is wider than the Helvetica it replaced, and
+     at 0.05em the strip still overflowed 1440px by 101px — which does not look
+     like a scrollable strip, it looks like the last tab is cut off. 0.015em is
+     the last step before the words start to run together, and it fits. */
+  letter-spacing: 0.015em;
 }
 .site-nav nav a:hover { color: var(--ink); }
 .site-nav nav a.active { color: var(--ink); border-bottom-color: var(--red); }
@@ -1447,6 +1462,25 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 /* ---------- Essay ---------- */
 .essay-wrap { width: var(--content); margin: 0 auto; padding: 2.5rem 0 4rem; }
 .essay-header { padding-bottom: 2rem; border-bottom: 1px solid var(--line); margin-bottom: 2.5rem; }
+
+/* At desktop the header stacked series bar, title, subtitle and author across
+   one 1280px row, so the title sat in the left 45% and the whole right half
+   stayed empty for 400px of scroll — a heavy side with nothing against it.
+   The author block was already there; it just had no column to stand in.
+   Below the breakpoint it stacks as before. */
+@media (min-width: 1100px) {
+  .essay-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(300px, 0.85fr);
+    grid-template-areas: "bar bio" "title bio" "sub bio";
+    column-gap: 3.5rem;
+    align-items: start;
+  }
+  .essay-series-bar { grid-area: bar; }
+  .essay-title { grid-area: title; }
+  .essay-subtitle { grid-area: sub; }
+  .essay-bio { grid-area: bio; align-self: start; }
+}
 .essay-title { font-size:var(--t-h1); font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; color: var(--ink); margin: 0.75rem 0 1rem; }
 .essay-byline { font-size:var(--t-body); color: var(--ink-2); margin: 0 0 0.4rem; }
 .essay-meta-line { font-size:var(--t-small); font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
@@ -1886,6 +1920,10 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
   padding: 0.6rem 0.85rem;
   margin-top: 1rem;
   line-height: 1.6;
+  /* As wide as the viewport, holding one short note. The rule sits inside a
+     column, so it should measure like the prose beside it rather than run to
+     the edge of a 1280px page and stop. */
+  max-width: var(--measure);
 }
 .essay-diagram {
   margin: 2.2rem 0;
@@ -3045,6 +3083,13 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 
 /* ── Essay UX: TOC, reading progress, back-to-top ────────────────────────── */
 .essay-toc { border: 1px solid var(--line); padding: 1rem 1.2rem; margin-bottom: 1.6rem; }
+/* The contents box was a full 1280px bordered panel holding single-line
+   section titles — the widest empty space on the page, inside a border, which
+   makes it read as a container for nothing. Two columns let the box be as wide
+   as its contents instead of the viewport. */
+@media (min-width: 860px) {
+  .essay-toc ol { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 2.5rem; }
+}
 .essay-toc-h { font-size: var(--text-micro); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0 0 0.5rem; }
 .essay-toc ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.25rem; }
 .essay-toc-link { background: none; border: none; padding: 0.2rem 0; font: inherit; font-size:var(--t-body); color: var(--ink-2); cursor: pointer; text-align: left; line-height: 1.4; }
@@ -3326,13 +3371,25 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 .rec-finding { margin-top: 2.5rem; }
 .rec-finding h2 { font-size: var(--t-h2); line-height: 1.2; margin: 0 0 0.6rem; }
 .rec-finding > p { max-width: 52rem; margin: 0 0 1.5rem; color: var(--ink-2); }
-.rec-finding-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+.rec-finding-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; align-items: start; }
 .rec-finding-card {
   display: flex; flex-direction: column; gap: 0.45rem;
   padding: 1.3rem; border: 1px solid var(--ink); background: var(--bg);
 }
-.rec-finding-num {
-  font-family: var(--mono); font-size:var(--t-figure); line-height: 1;
+.rec-finding-card .rec-finding-num {
+  /* The number IS the finding — "USD 0", "0", "13.4%" — and it was rendering
+     at --t-body, the same 13px as the paragraph beneath it. On a page whose
+     whole argument is what the count came to, the count had no typographic
+     priority at all. This is a step above the lead, ~2.3x the body step, which
+     is the contrast rule 6 asks for between a first and a second look.
+     Not --t-figure: that is the page-level statement, and three of those on
+     one screen would be three competing headlines.
+
+     The selector repeats .rec-finding-card on purpose. `.rec-finding-num`
+     alone is (0,1,0) and the next rule, `.rec-finding-card p`, is (0,1,1) —
+     so the card's own paragraph rule was overriding the figure's size and
+     pinning it to 13px no matter which token it named. */
+  font-family: var(--mono); font-size: var(--t-finding); line-height: 1;
   color: var(--red); margin: 0; font-variant-numeric: tabular-nums;
 }
 .rec-finding-card h3 { font-size:var(--t-body); line-height: 1.3; margin: 0; }
@@ -3506,6 +3563,12 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
    been measured before, which is how a 40px Download and a 36px filter chip
    survived: they are ordinary controls and are now held to 44. */
 .dc-dl, .lib-chip { min-height: 44px; display: inline-flex; align-items: center; }
+
+/* A headline link inside a review-record article is not a link inside a
+   sentence — it is the thing you click to open the record, and it stood at
+   35px because it inherited the h2 line box. Given the 44px floor it is padded
+   to, and the underline-offset keeps the hit area from shifting the text. */
+.review-record h2 a { display: inline-flex; align-items: center; min-height: 44px; }
 
 /* Reference links — a publisher name, a source name, a city inside a sentence,
    an institution name on a contact card. These are sized by the line of text
