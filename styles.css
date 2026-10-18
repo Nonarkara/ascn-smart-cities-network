@@ -162,6 +162,14 @@
      rules is six headings each inventing its own scale, which is the drift
      this ladder exists to stop. */
   --t-figure: clamp(36px, 5.3vw, 76px); /* the one page-level statement */
+  /* A phone-scale page title. --t-figure's 36px floor is right for a long
+     headline that wraps, but these two titles are short, and the previous
+     value in the mobile media queries was --t-h2 — the same size as the
+     sections beneath it, on two separate views, which is how the news and
+     overview pages both opened with no focal point at any width. 30px against
+     a 19px h2 is ~1.6x. Declared as a token because the stylesheet's rule is
+     that every clamp lives on the ladder, not in a rule. */
+  --t-page-sm: clamp(30px, 8.5vw, 36px);
   --t-lead: clamp(19px, 3.4vw, 24px);    /* the largest step a number can hold unbroken */
   --t-h2: var(--t-lead);                 /* every section and row heading */
   --t-lede: 15px;                        /* a standfirst under a heading */
@@ -362,7 +370,10 @@ input[type="search"] { min-width: min(16rem, 100%); }
 
 /* ---------- ASCN 9 record ---------- */
 .news-head { margin-bottom: 1.3rem; max-width: 54rem; }
-.news-head h1 { font-size:var(--t-h2); line-height: 1.1; letter-spacing: 0; }
+.news-head h1 { font-size: var(--t-figure); line-height: 0.98; letter-spacing: -0.028em; }
+/* "Regional news" is now the h1 and "ASCN in the public record" the h2 under
+   it. Both were the same 24px, so the page opened with no focal point at any
+   width — the title and its first section were the same size. */
 .news-head h2 { font-size:var(--t-h2); line-height: 1.1; letter-spacing: 0; }
 .news-head .label { letter-spacing: 0; color: var(--muted); }
 .news-controls { display: flex; gap: 0.75rem; align-items: end; flex-wrap: wrap; padding: 1rem 0; border-top: 2px solid var(--ink); }
@@ -509,7 +520,9 @@ input[type="search"] { min-width: min(16rem, 100%); }
   .news-sidebar { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
 }
 @media (max-width: 600px) {
-  .news-head h1 { font-size:var(--t-h2); }
+  /* Same defect as the showcase heading below: the page title was set to
+     --t-h2, the same value as its own section headings, on a phone. */
+  .news-head h1 { font-size: var(--t-page-sm); }
   .news-controls label { flex: 1 1 8rem; }
   .news-controls .news-search-label { flex: 1 1 0; min-width: 0; }
   .news-icon-button { order: 1; }
@@ -1059,7 +1072,14 @@ input[type="search"] { min-width: min(16rem, 100%); }
 }
 
 @media (max-width: 480px) {
-  .showcase-heading h1 { font-size:var(--t-h2); }
+  /* This used to be `var(--t-h2)`, which set the page's H1 to exactly the size
+     of its own section headings — 19px against 19px. On a phone the page had
+     no focal point at all: the first thing and the second thing were the same
+     size. --t-figure's own 36px floor already fits 390px (the h1 wraps, and
+     `overflow-wrap: anywhere` is there for exactly that), so the step is
+     trimmed rather than removed: 33px against a 19px h2 is ~1.7x, which is
+     the contrast a page needs to have something to look at first. */
+  .showcase-heading h1 { font-size: var(--t-page-sm); }
   .showcase-heading .lede { font-size:var(--t-body); }
   .showcase-clip { padding: 0.45rem; gap: 0.45rem; }
   .showcase-clip-meta { font-size:var(--t-small); }

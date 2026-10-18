@@ -942,6 +942,51 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
     bad.header.slice(0, 3).join(" | ") || "brand + one scrollable strip");
   ok("every routable view is reached by a real route", bad.mount.length === 0,
     bad.mount.slice(0, 3).join(" | ") || `${routable.length} routable views mounted; ${gated.length} interaction-gated: ${gated.join(", ") || "none"}`);
+
+  /* ── Something must win ───────────────────────────────────────────────────
+     Rule 6: every page has one obvious first thing, then a clear second. The
+     measurable form of that is a type-size gap between the page's H1 and the
+     largest H2 on it.
+
+     Two real defects this would have caught, neither of which any other check
+     here could see:
+
+     - At 390px the overview H1 was 19px against a 19px H2. A media query set
+       it to --t-h2, which is the same value the section headings use. On a
+       phone the first thing on the page and the second thing were the same
+       size, so there was nothing to look at first.
+     - The News view's own title was an <h2> while an inner section carried the
+       <h1>, both at 24px, at every width. */
+
+  const flat = [];
+  for (const width of [390, 1440]) {
+    const { page } = await newPage({ width, height: width === 390 ? 844 : 900 });
+    for (const route of routes) {
+      await page.goto(`${BASE}/#${route}`, { waitUntil: "domcontentloaded" });
+      await page.locator(".site-nav").waitFor({ timeout: 20_000 });
+      await page.waitForTimeout(200);
+      const m = await page.evaluate((r) => {
+        const v = document.querySelector(`#view-${r.includes("/") ? r.split("/")[0] : r}`);
+        if (!v) return null;
+        const shown = (e) => e.getBoundingClientRect().height > 0;
+        const h1 = [...v.querySelectorAll("h1")].find(shown);
+        const h2s = [...v.querySelectorAll("h2")].filter(shown);
+        if (!h1 || !h2s.length) return null;
+        return {
+          h1: Math.round(parseFloat(getComputedStyle(h1).fontSize)),
+          h2: Math.max(...h2s.map((e) => Math.round(parseFloat(getComputedStyle(e).fontSize)))),
+        };
+      }, route);
+      if (m) flat.push(`${width}/${route}: h1 ${m.h1}px vs h2 ${m.h2}px (${(m.h1 / m.h2).toFixed(2)}x)`);
+    }
+    await page.close();
+  }
+  const flatHits = flat.filter((f) => {
+    const [h1, h2] = f.match(/h1 (\d+)px vs h2 (\d+)px/).slice(1).map(Number);
+    return h1 / h2 < 1.5;
+  });
+  ok("every page has a heading that outranks its own sections", flatHits.length === 0,
+    flatHits.slice(0, 4).join(" | ") || `${flat.length} page/width pairs, all ≥1.5x`);
 }
 
 /* ── Type ramp and rules resolve, not collapse ───────────────────────────── */
