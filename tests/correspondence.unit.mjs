@@ -3,7 +3,12 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { validateCorrespondence } from "../lib/correspondence.mjs";
 
-const dataset = JSON.parse(await readFile(new URL("../data/ascn-correspondence.json", import.meta.url), "utf8"));
+const dataset = {
+  generatedAt: "2026-01-02T00:00:00Z",
+  method: { unit: "Synthetic subject groups.", fundedTravel: "Automated candidate; matches do not establish a funding offer.", limitation: "One member-state official; cannot establish network totals." },
+  threads: [{ threadKey: "synthetic-1", date: "2026-01-01T00:00:00Z", origin: "ASEAN Secretariat", kinds: ["funded_travel"], senderDomains: ["asean.org"], messages: 2, attachmentCount: 0, fundedTravel: true, costHeads: ["airfare"], fundingAmounts: ["USD 100"], subject: "Synthetic event" }],
+  totals: { threads: 1, emails: 2, threadsByKind: { funded_travel: 1 }, fundedTravelThreads: 1, fundedTravelByOrigin: { "ASEAN Secretariat": 1 }, fundedTravelByYear: { "2026": 1 }, threadsByYear: { "2026": 1 }, correspondenceSpan: ["2026-01-01T00:00:00Z", "2026-01-01T00:00:00Z"] },
+};
 
 const clone = () => JSON.parse(JSON.stringify(dataset));
 

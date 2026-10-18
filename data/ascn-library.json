@@ -50,7 +50,7 @@
     {
       "group": "Directory & administration",
       "items": [
-        { "title": "ASCN Contact List (as of 31 Jan 2026)", "source": "ASEAN Secretariat", "year": 2026, "takeaway": "National focal points and city representatives across all 38 cities — the human network behind the roster (personal details withheld from this public platform).", "file": "11_ASCN_Contact_List_2026.pdf" },
+        { "title": "ASCN Contact List (as of 31 Jan 2026)", "source": "ASEAN Secretariat", "year": 2026, "takeaway": "National focal points and city representatives across all 38 cities — the human network behind the roster (personal details withheld from this public platform).", "file": null, "url": "https://asean.org/asean-smart-cities-network/" },
         { "title": "ASCN Representative / Ambassador details", "source": "ASCN", "year": 2026, "takeaway": "The designated city-level representatives — confirming who actually carries each city's participation between annual meetings.", "file": null }
       ]
     },

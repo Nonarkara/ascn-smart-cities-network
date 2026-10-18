@@ -54,3 +54,29 @@ Invariant: only the reviewed publication allowlist enters dist; a keyword match
 is a candidate for review, never proof of accepted funding or completed travel.
 Counts describe subject-grouped threads in one mailbox, not unique events or
 network-wide totals. Raw messages remain local and are never build assets.
+
+
+# Public-only release, 18 October 2026
+
+Owner directive: only public material gets public. Redaction alone is not
+publication clearance. Mailbox-derived metadata, editorial notes and draft
+briefings remain local in ignored storage. Public archive projection excludes
+private-origin rows, withheld metadata and unsourced assertions, and recomputes
+funding. Browser modules and media use explicit allowlists; private paths return
+no-store 404. Published source URLs are necessary and manual source review is
+still required: a URL alone cannot authenticate a claim copied from a message.
+Previous hosting snapshots/Git history are a separate retention risk.
+
+
+# Evidence navigation and anti-slop release gate
+
+Design read: an independent index lets a visitor choose a question before
+watching a demonstration. Reference: axiomx.nonarkara.org's searchable index and
+oversized concrete opening. The question dominates a deliberate 1.7:1 opening;
+three typographic routes support it, followed by the existing large video.
+No equal card grid replaces earned media. About-this-site disclosure compacts
+mobile chrome; the keyboard-accessible Find dialog reaches cities, latest-cycle
+projects and public sources. Jost/Prompt and the current dark palette remain.
+Section rules carry hierarchy; body prose stays at 66ch. Palette data/status
+colours retain semantic roles. Objective checks run with every release; actual
+composition is checked from all views at 1440/1024/390 by a second reviewer.

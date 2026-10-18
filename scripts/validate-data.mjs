@@ -1,5 +1,5 @@
 import { readFile } from "node:fs/promises";
-import { validateCorrespondence } from "../lib/correspondence.mjs";
+import { assertPublicArchive } from "./publication-policy.mjs";
 import { validateDataset, safeUrl } from "../lib/security.mjs";
 import { validateArchive, linkProjects } from "../lib/ascn-review.mjs";
 import { validateRecordArchive } from "../lib/ascn-record.mjs";
@@ -64,17 +64,7 @@ try {
 }
 const discovery = JSON.parse(await readFile(new URL("../data/ascn-news-discovery.json", import.meta.url), "utf8"));
 
-// The correspondence ledger is built from a personal mailbox, so its invariants
-// are checked in code rather than by review: no personal data, no funding
-// figure without a cost head, one record per thread, stated limitation present.
-let correspondence = null;
-try {
-  correspondence = validateCorrespondence(
-    JSON.parse(await readFile(new URL("../data/ascn-correspondence.json", import.meta.url), "utf8")),
-  );
-} catch (error) {
-  fail(errors, `Correspondence ledger failed its runtime contract: ${error.message}`);
-}
+assertPublicArchive(recordArchive);
 if (validateDiscovery(discovery).articles.length !== discovery.articles.length) fail(errors, "ASCN discovery contains invalid records.");
 for (const record of archive.records) {
   for (const link of linkProjects(record, engine.projects, engine.reports.at(-1).year)) if (!link.row) fail(errors, `${record.id}: project link does not match the current register: ${link.project}`);

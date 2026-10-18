@@ -48,6 +48,7 @@
         <a href="#research" data-tab="research" data-i18n="nav.research">Research</a>
         <a href="#essay" data-tab="essay" data-i18n="nav.essay">Essay</a>
       </nav>
+      <button id="finder-open" class="finder-open" type="button" aria-haspopup="dialog" aria-controls="finder"><span data-i18n="find.open">Find</span> <kbd>/</kbd></button>
       <div class="lang-switch" role="group" data-i18n-attr="aria-label" data-i18n="lang.switch" aria-label="Change language">
         <button type="button" class="lang-btn" data-lang-set="en" aria-pressed="true">EN</button>
         <button type="button" class="lang-btn" data-lang-set="th" aria-pressed="false">TH</button>
@@ -55,18 +56,29 @@
       </div>
     </header>
 
-    <div class="site-notice">
+    <details class="site-notice"><summary data-i18n="intro.disclosure">Independent review · About this site</summary><div>
       Independent observatory · Built by <strong>Non Arkaraprasertkul</strong> — Senior Expert, Smart City Promotion, DEPA · ASCN staff contact since 2019.
       &nbsp;·&nbsp; Official site: <a href="https://ascn.depa.or.th" target="_blank" rel="noopener">ascn.depa.or.th</a>
-    </div>
+    </div></details>
 
-    <main>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <main id="main-content" tabindex="-1">
       <!-- OVERVIEW -->
       <section class="view" id="view-overview" data-view="overview">
+        <section class="evidence-opening" aria-labelledby="observatory-heading">
+          <div><p class="label" data-i18n="intro.kicker">ASEAN Smart Cities Network · Independent observatory</p>
+          <h1 id="observatory-heading" data-i18n="intro.title">38 cities. What changed?</h1>
+          <p class="lede" data-i18n="intro.lede">Follow a city, inspect the project record, or test a claim against its source. Published evidence sets the limits of every finding.</p></div>
+          <ol class="evidence-routes" aria-label="Start exploring">
+            <li><a href="#cities" data-tab="cities"><span>01</span><strong data-i18n="intro.city">Start with a city</strong><span aria-hidden="true">↗</span></a></li>
+            <li><a href="#projects" data-tab="projects"><span>02</span><strong data-i18n="intro.project">Inspect the project record</strong><span aria-hidden="true">↗</span></a></li>
+            <li><a href="#archive" data-tab="archive"><span>03</span><strong data-i18n="intro.source">Follow the public evidence</strong><span aria-hidden="true">↗</span></a></li>
+          </ol>
+        </section>
         <section class="innovation-showcase" aria-labelledby="innovation-heading">
           <header class="showcase-heading">
             <p class="label" data-i18n="over.asean.smart.cities.network.demon">ASEAN Smart Cities Network · Demonstrations</p>
-            <h1 id="innovation-heading" data-i18n="view.iaas">Innovation-as-a-Service</h1>
+            <h2 id="innovation-heading" data-i18n="view.iaas">Innovation-as-a-Service</h2>
             <p class="lede" data-i18n="lede.iaas">Flood intelligence in the field, at the operations desk, and on the map. Data made useful for cities.</p>
           </header>
           <div class="showcase-layout">
@@ -107,20 +119,12 @@
           <div id="news-preview-list"><p class="news-muted" data-i18n="over.loading.regional.headlines">Loading regional headlines…</p></div>
         </section>
 
-        <a class="meeting-summary" href="#ascn9" data-tab="ascn9">
-          <img src="media/ascn9/ASCN_2026-07-20_IMG_air-dash.png?v=34" width="320" height="180" loading="lazy" alt="Air-quality map presented at the ninth ASCN annual meeting." />
-          <div>
-            <p class="label">ASCN 2026 · 9th Annual Meeting · 20 July</p>
-            <h2 data-i18n="h.what-they-did">What they actually did</h2>
-            <p data-i18n="over.the.philippines.chaired.twenty.f">The Philippines chaired. Twenty-five cities joined. Three new members. Japan, Korea, UN-Habitat, and a finance pilot all presented. Draft record, not yet adopted.</p>
-          </div>
-          <span class="meeting-summary-link">Read the full record ↗</span>
-        </a>
+        <a class="meeting-summary" href="#ascn9" data-tab="ascn9"><span class="meeting-summary-copy"><strong>Annual meeting records</strong><span>Read published reports. Internal drafts stay private.</span></span></a>
 
         <div class="overview-intro">
           <div class="hero-text">
             <p class="label">ASEAN Smart Cities Network</p>
-            <h1 data-i18n="h.how-performing">38 cities. 134 projects. How is it performing?</h2>
+            <h2 data-i18n="h.how-performing">38 cities. 134 projects. How is it performing?</h2>
             <p class="lede" data-i18n="lede.overview.hero">134 projects tracked since 2018. Not one public platform has asked how the network is performing against its own goals. This one does.</p>
             <div class="hero-cta">
               <a class="text-button" href="#ascn9" data-tab="ascn9">ASCN 9 record</a>
@@ -553,7 +557,7 @@
             </li>
           </ol>
 
-          <p class="iaas-origins-close" data-i18n="inn.stolen.improved.and.credited.the">Stolen, improved and credited: the ideas came from Taipei, the adaptation is ours, and the credit is in the source code. The network is ten years old. This method is three.</p>
+          <p class="iaas-origins-close" data-i18n="inn.stolen.improved.and.credited.the">Stolen, improved and credited: the ideas came from Taipei, the adaptation is ours, and the credit is in the source code. The network was founded in 2018. This method is three.</p>
         </section>
 
         <!-- CONTACT -->
@@ -573,8 +577,8 @@
         <header class="section-head split">
           <div>
             <p class="label" data-i18n="rec.e.public.record.28.april.2018.20">The public record · 28 April 2018 → 2026</p>
-            <h1 data-i18n="h.ten-years">Ten years, counted</h1>
-            <p class="lede" data-i18n="lede.record.hero">ASCN turns ten this year. This page counts what was committed to it, what it holds, and what can be shown to have reached a citizen — separating money announced from money moved, and activity held from outcome delivered.</p>
+            <h1 data-i18n="h.ten-years">Since 2018, counted</h1>
+            <p class="lede" data-i18n="lede.record.hero">ASCN was founded in 2018. This review covers 2018–2026. This page counts what was committed to it, what it holds, and what can be shown to have reached a citizen — separating money announced from money moved, and activity held from outcome delivered.</p>
           </div>
           <div class="innovation-status-badge">
             <span class="label">Method</span>
@@ -585,7 +589,7 @@
         <!-- THE STRUCTURAL FINDING -->
         <section class="rec-finding" aria-labelledby="rec-finding-heading">
           <h2 id="rec-finding-heading" data-i18n="h.first-finding">The first finding is the accounting</h2>
-          <p data-i18n="rec.fore.you.can.ask.whether.ascn.wo">Before you can ask whether ASCN worked, you have to ask what ASCN spent. After ten years, that question cannot be answered from the public record — not because the money did not move, but because nobody is obliged to say.</p>
+          <p data-i18n="rec.fore.you.can.ask.whether.ascn.wo">Before you can ask whether ASCN worked, you have to ask what ASCN spent. Across the published record since 2018, that question cannot be answered from the public record — not because the money did not move, but because nobody is obliged to say.</p>
           <div class="rec-finding-grid">
             <div class="rec-finding-card">
               <p class="rec-finding-num">USD 0</p>
@@ -764,34 +768,12 @@
             <p class="iaas-row-num">B</p>
             <div>
               <p class="label">Ledger · Travel &amp; funding</p>
-              <h2 id="rec-travel-heading" data-i18n="h.correspondence">What the correspondence records</h2>
-              <p class="lede" data-i18n="rec.e.member.state.official.s.receiv">One member-state official’s received mailbox, grouped into threads. Cost-related language is indexed for review; it does not prove who travelled, who paid, or how much was spent.</p>
+              <h2 id="rec-travel-heading">Public reporting limits</h2>
+              <p class="lede">Published reports describe meetings and programmes. Private messages and internal drafts stay outside this public review.</p>
             </div>
           </header>
 
-          <div id="corr-summary" class="corr-summary"></div>
-          <div id="corr-origin" class="corr-origin"></div>
-          <div id="corr-caps" class="corr-caps"></div>
-
-          <div class="corr-ledger" id="corr-ledger">
-            <div class="corr-controls">
-              <label><span>Activity</span><select id="corr-kind">
-                <option value="all">All threads</option>
-                <option value="funded_travel">Cost mentions · unreviewed</option>
-                <option value="event">Events</option>
-                <option value="training">Training</option>
-                <option value="monitoring">Monitoring &amp; reporting</option>
-                <option value="agreement">Agreements &amp; endorsement</option>
-                <option value="other">Unclassified</option>
-              </select></label>
-              <label><span>Sending organisation</span><select id="corr-origin-filter"><option value="all">All origins</option></select></label>
-              <label><span>Search threads</span><input id="corr-search" type="search" placeholder="Subject or organisation" /></label>
-              <p class="corr-count" id="corr-count" role="status"></p>
-            </div>
-            <ol class="corr-list" id="corr-list"></ol>
-            <button id="corr-more" class="text-button" type="button" hidden>Show 60 more threads</button>
-          </div>
-
+          <div id="corr-summary" class="privacy-note">Private correspondence stays local. Public evidence is available in the Archive.</div>
           <details class="rec-public-context"><summary>Public reporting rules and first-hand disclosure</summary>
           <div class="rec-uncounted">
             <div class="rec-uncounted-row">
@@ -805,7 +787,7 @@
               <p class="rec-uncounted-num">USD 0</p>
               <div>
                 <h3>Cost of the network itself</h3>
-                <p data-i18n="rec.budget.line.staff.number.or.sec">No budget line, staff number or secondment figure appears in any founding, chairmanship or M&amp;E document. This is a structural blank, not a search failure. Ten years of ASEAN official time have been spent, and none of it is priced anywhere.</p>
+                <p data-i18n="rec.budget.line.staff.number.or.sec">No budget line, staff number or secondment figure appears in any founding, chairmanship or M&amp;E document. This is a structural blank, not a search failure. ASEAN official time has been spent since 2018, and none of it is priced anywhere.</p>
               </div>
             </div>
             <div class="rec-uncounted-row">
@@ -825,7 +807,7 @@
 
           </details>
 
-          <p class="rec-footnote" data-i18n-html="reco.span.data.i18n.rec.ope.stated.p"><span data-i18n="rec.ope.stated.plainly.this.is.one.o">Scope, stated plainly: this is one official's received mail, 2024 to date, not the network's full correspondence. It indexes subjects and cost-related language for source review. It cannot establish what was offered to officials this person was not copied on, and no figure on this page is a network-wide total. Replies with matching subjects are grouped together. Personal identifiers are redacted before publication. </p></span> <span id="corr-method"></span></p>
+          <p class="rec-footnote">Only independently published material is included in the public archive. Redaction alone does not make correspondence public.</p>
         </section>
 
         <!-- LEDGER: AGREEMENTS AND COMMUNICATIONS -->
@@ -938,7 +920,7 @@
             <p class="rec-urban-src" data-i18n="rec.urce.world.bank.world.developmen">Source: World Bank, World Development Indicators, SP.URB.TOTL.IN.ZS, 2023. Malaysia's 76.4% sits alongside 58% forest cover, which looks contradictory until you read the definition: each country classifies a settlement as urban on its own national rule, and Malaysia's census counts a place of 2,000 or more residents where at least half the workforce is in non-agricultural work — so a small township ringed by forest counts. The numbers above are not measured on a common basis, which is itself a reason to treat any "only one urbanised state" comparison as unsettled.</p>
           </div>
 
-          <p class="rec-question-close" data-i18n="rec.e.open.question.is.narrower.and">The open question is narrower and more answerable: ten years of apparatus later, did the network move practice between cities, or only document it? That has never been tested with a shared dataset. This platform exists to build one.</p>
+          <p class="rec-question-close" data-i18n="rec.e.open.question.is.narrower.and">The open question is narrower and more answerable: since its founding in 2018, did the network move practice between cities, or only document it? That has never been tested with a shared dataset. This platform exists to build one.</p>
         </section>
 
         <!-- WHAT ACTUALLY WORKS -->
@@ -1028,86 +1010,16 @@
 
       <!-- ASCN 9 RECORD -->
       <section class="view" id="view-ascn9" data-view="ascn9" hidden>
-        <article class="record">
-          <p class="label"><a href="#overview" data-tab="overview" class="record-back">Overview</a> · 9th Annual Meeting</p>
-          <h1>What they actually did</h1>
-          <p class="lede" data-i18n="lede.ascn9.hero">On 20 July 2026 the ASEAN Smart Cities Network met on a video call. The Philippines ran it. Twenty-five cities were on the line. Draft record, 13 August 2026. Not yet adopted.</p>
-
-          <p data-i18n="ascn.the.chair.was.marlo.l.iringan.un">The chair was Marlo L. Iringan, Undersecretary for Local Government at the Philippines’ Department of the Interior and Local Government. He read opening remarks from Interior Secretary Juanito Victor C. Remulla: cities are where a policy becomes a service someone can use. Technology is a tool, not the destination. The Philippines wants a joint statement that pushes Sustainable Development Goal 11 — sustainable cities and communities — by 2030, and that turns the 2026–2035 action plan into work.</p>
-
-          <p data-i18n="ascn.in.the.room.on.camera.national.r">In the room, on camera: national representatives from Brunei, Cambodia, Indonesia, Malaysia, and Myanmar. Officials standing in for Lao PDR, Singapore, Thailand, Viet Nam, and Timor-Leste. City officers from 25 member cities. The ASEAN Secretariat. Japan’s land ministry, Korea’s land ministry, UN-Habitat, and Evercity came to present.</p>
-
-          <p data-i18n-html="ascn.three.cities.had.joined.since.la">Three cities had joined since last September: Denpasar and Semarang from Indonesia, and Dili from Timor-Leste. All three are included in this platform’s 38-city roster, following the <a href="https://asean.org/asean-smart-cities-network/" target="_blank" rel="noopener noreferrer">official membership list as of January 2026</a>. Project totals still follow the September 2025 monitoring cycle.</p>
-
-          <p data-i18n="ascn.malaysia.last.year.s.chair.recap">Malaysia, last year’s chair, recapped 2025. A sustainable-urbanisation forum in Kuala Lumpur in August. The eighth annual meeting, an expert talk, an exhibition, and site visits in September. Adoption of the ASEAN Smart Cities Action Plan for 2026–2035. Another round of the Korea-funded professional programme at Seoul National University, including master’s scholarships.</p>
-
-          <p class="label">This year’s work</p>
-          <p data-i18n="ascn.the.philippines.named.three.thin">The Philippines named three things it wants done in 2026.</p>
-          <p data-i18n="ascn.first.that.joint.statement.on.sd">First, that joint statement on SDG 11. The title changed after comments. Members were asked to send further comments or to agree by 31 July 2026. If nobody objects, the text stands. This draft is dated 13 August, after that date. The record does not say whether the statement has been adopted.</p>
-          <p data-i18n="ascn.second.smart.city.talks.the.next">Second, Smart City Talks the next day, 21 July, also on a video call: cities swapping what actually worked, under the same 2030 theme.</p>
-          <p data-i18n="ascn.third.a.second.asean.sustainable">Third, a second ASEAN Sustainable Urbanisation Report, paid for through Australia’s Aus4ASEAN Futures Initiative. An expert group already met on 7 July to check the aims, talk through regional trends, and start country profiles.</p>
-
-          <p data-i18n="ascn.the.network.s.own.rulebook.is.be">The network’s own rulebook is being rewritten to catch up with facts on the ground. Timor-Leste is now the 11th ASEAN member. Reporting is moving from the Joint Consultative Meeting to the Committee of Permanent Representatives. The 2026–2035 action plan and the 2045 community vision have to be written in. Singapore already sent comments. Everyone else was asked to send theirs by 31 July.</p>
-          <p data-i18n="ascn.the.secretariat.also.tabled.a.sp">The Secretariat also tabled a spreadsheet for tracking the 2026–2035 action plan — a living document. Comments by the same date.</p>
-
-          <p data-i18n="ascn.twenty.five.cities.reported.on.t">Twenty-five cities reported on their local plans. Two points landed. A smart city is not the city with the most machines. It is the city that uses them to run services and make life better. And flood work is shifting from reacting after the water comes to forecasting before it does.</p>
-          <p data-i18n="ascn.indonesia.invited.everyone.to.a">Indonesia invited everyone to a waste-to-energy forum in Jakarta, 11–13 August 2026, inside its ninth international smart city expo. Mexico City will host the World Cities Summit Mayors Forum in September 2027. Mexico City won the Lee Kuan Yew World City Prize in 2024.</p>
-          <p data-i18n="ascn.the.2026.monitoring.report.goes">The 2026 monitoring report goes to ASEAN’s Coordinating Council in early November. It has to be finished in the first week of October. Members were asked to send their numbers by 14 August. The public version will not include the full project-by-project matrix. That is how it has been done before.</p>
-
-          <p class="label">Japan</p>
-          <figure class="record-photo">
-            <img src="media/ascn9/ASCN_2026-07-20_IMG_jasca.png?v=34" loading="lazy" alt="Japan briefing slide: JASCA, the Japan Association for Smart Cities in ASEAN, linking eleven ASEAN flags with Japanese ministries, cities, and companies." />
-            <figcaption>On screen during Japan’s briefing: JASCA, set up in 2019 to match Japanese firms and cities with ASEAN work. The slide is from the call, not from the written record.</figcaption>
-          </figure>
-          <figure class="record-photo">
-            <img src="media/ascn9/ASCN_2026-07-20_IMG_jasca-members.png?v=34" loading="lazy" alt="Japan briefing slide showing JASCA’s 322 members as of January 2026, including ministries, development banks, and Japanese city crests." />
-            <figcaption>Same briefing: 322 Japanese members as of January 2026. Ministries, JICA, JBIC, prefectures, and private firms. Again, the slide, not the written record.</figcaption>
-          </figure>
-          <p data-i18n="ascn.japan.s.land.ministry.listed.fiv">Japan’s land ministry listed five city projects for 2025–2026: modular housing in Phnom Penh; camera-based river monitoring in Jakarta; satellite flood monitoring in Makassar; a tourism travel platform in Manila; and a real-time crisis information platform in Timor-Leste.</p>
-          <p data-i18n="ascn.region.wide.japan.has.started.a">Region-wide, Japan has started a transit-oriented development guidebook for ASEAN with Nikken Sekkei, Nikken Sekkei Research Institute, and Pacific Consultants. The point is a guide to building around stations that fits ASEAN legal, social, and economic conditions, and a city’s own history. It is meant for government officials, railway operators, developers, and academics.</p>
-          <figure class="record-photo">
-            <img src="media/ascn9/ASCN_2026-07-20_IMG_japan-history.png?v=34" loading="lazy" alt="Japan briefing slide: timeline of ASEAN–Japan smart city cooperation from ASCN’s founding in 2018 to a high-level meeting in Otsu in late 2026." />
-            <figcaption>Japan will host the eighth ASEAN–Japan high-level meeting in Otsu, Shiga Prefecture, on 30 November and 1 December 2026. The hotel and theme on the slide are from the briefing, not from the written record.</figcaption>
-          </figure>
-
-          <p class="label">Korea</p>
-          <figure class="record-photo">
-            <img src="media/ascn9/ASCN_2026-07-20_IMG_korea-proposal.png?v=34" loading="lazy" alt="Korea title slide: Korea’s Proposal on Smart City Development for ASCN, 20 July 2026, presented by Younhee Kim of MOLIT." />
-            <figcaption>Korea’s briefing, 20 July 2026. Presenter named on the slide: Younhee Kim, Director of Urban Economy Division, Ministry of Land, Infrastructure and Transport.</figcaption>
-          </figure>
-          <p data-i18n="ascn.korea.s.k.city.network.has.run.6">Korea’s K-City Network has run 67 projects in 30 countries since 2020. This year it is in six ASEAN projects, including on-demand transport in Ho Chi Minh City and a city platform in Bandar Seri Begawan.</p>
-          <p data-i18n="ascn.korea.is.now.talking.about.ai.ci">Korea is now talking about “AI cities”: using data from transport, safety, welfare, administration, and energy to predict problems and tailor services, with people still in charge. It is preparing AI-specialised pilots in both existing and new urban areas. That is Korea’s direction. It is not an ASCN decision.</p>
-          <p data-i18n="ascn.seoul.national.university.floate">Seoul National University floated a Phase 2 of the professional programme: less data-planning for working-level staff, more AI policy for working-level staff and senior decision-makers. A proposal. Not a vote.</p>
-
-          <p class="label" data-i18n="ascn.money.training.a.ministerial.ide">Money, training, a ministerial idea</p>
-          <p data-i18n="ascn.evercity.funded.through.the.asea">Evercity, funded through the ASEAN–Russia dialogue fund, wants to test a digital outcome bond in the region — green and climate finance that, in this design, is issued digitally and reported at project level. They are scoring which ASEAN countries are ready for that kind of instrument. Next they will come back to this network to check the scores and look for a pilot city.</p>
-          <p data-i18n="ascn.un.habitat.under.the.philippines">UN-Habitat, under the Philippines’ ASEAN year, is running the second phase of the sustainable urbanisation project. Leadership training ran from March to July and is due to finish in October. Diagnostic reports for new cities are done; technical proposals are due in September. Phase 1 assistance is finished, with outputs also due in September. The second urbanisation report’s first draft is due in August. UN-Habitat wants extra help, inside the same budget, to turn those city proposals into something that can actually be built. They will come back through the Secretariat with the details.</p>
-          <p data-i18n="ascn.malaysia.proposed.lifting.the.ne">Malaysia proposed lifting the network to ministerial level: an ASEAN Ministerial Meeting on Smart and Sustainable Cities. The paper came out in December 2025. Brunei, Indonesia, the Philippines, and Thailand have already commented. Indonesia and the Philippines said they support it. Indonesia’s caveat: ministers could meet every two years; the current annual meeting of national and city officials should stay as the working body, because that is where city plans get done. Malaysia will send a revised paper. No decision yet.</p>
-          <p data-i18n="ascn.singapore.takes.the.chair.in.202">Singapore takes the chair in 2027. Date and place of the tenth meeting: later.</p>
-
-          <p class="label">Homework</p>
-          <p data-i18n="ascn.the.meeting.left.a.list.deadline">The meeting left a list. Deadlines are what the meeting set. This draft does not say what has been sent in since.</p>
-          <ol class="record-follow">
-            <li data-i18n-html="ascn.strong.joint.statement.on.sdg.1"><strong>Joint statement on SDG 11</strong><span>Comments or agreement by 31 July 2026 · members</span></li>
-            <li data-i18n-html="ascn.strong.network.rulebook.strong"><strong>Network rulebook</strong><span>Comments by 31 July 2026 · members and the Secretariat</span></li>
-            <li data-i18n-html="ascn.strong.action.plan.tracking.she"><strong>Action-plan tracking sheet</strong><span>Comments by 31 July 2026 · members</span></li>
-            <li data-i18n-html="ascn.strong.project.partnerships.lis"><strong>Project partnerships list</strong><span>Updates by 31 July 2026 · members and the Secretariat</span></li>
-            <li data-i18n-html="ascn.strong.monitoring.numbers.stron"><strong>Monitoring numbers</strong><span>Worksheet by 14 August 2026 · members and the Secretariat</span></li>
-            <li data-i18n-html="ascn.strong.digital.finance.readines"><strong>Digital-finance readiness</strong><span>Come back to the network · Evercity</span></li>
-            <li data-i18n-html="ascn.strong.extra.help.on.city.propo"><strong>Extra help on city proposals</strong><span>Come back to the network · UN-Habitat</span></li>
-            <li data-i18n-html="ascn.strong.ministerial.level.paper"><strong>Ministerial-level paper</strong><span>Revised proposal · Malaysia</span></li>
-            <li data-i18n-html="ascn.strong.tenth.annual.meeting.str"><strong>Tenth annual meeting</strong><span>Date and programme · Singapore</span></li>
-          </ol>
-
-          <p class="source-note" data-i18n-html="ascn.strong.source.strong.draft.summ"><strong>Source</strong> Draft summary record of the 9th ASCN Annual Meeting, 13 August 2026. Not yet adopted. Photo captions describe slides and screens from the call; those details are not in the written record. This page is not an official ASEAN publication.</p>
-        </article>
+        <a href="#overview" data-tab="overview" class="record-back">← Back to overview</a>
+        <header class="section-head"><p class="label">Public record</p><h1>Published evidence comes first</h1><p class="lede">The meeting draft and briefing images are held privately until public publication can be verified.</p></header>
+        <p><a class="text-button" href="#data" data-tab="data">Read published reports</a> <a class="text-button" href="#news/archive">Browse sourced evidence</a></p>
       </section>
 
       <!-- HISTORY -->
       <section class="view" id="view-history" data-view="history" hidden>
         <div class="section-head">
           <p class="label">History</p>
-          <h1 data-i18n="h.history-title">From 26 pilot cities to a regional network</h2>
+          <h1 data-i18n="h.history-title">From 26 pilot cities to a regional network</h1>
           <p class="lede" data-i18n="lede.history">Established at the 32nd ASEAN Summit in April 2018, the network has grown across eight chair years and five rounds of expansion.</p>
         </div>
         <div class="history-grid">
@@ -1138,7 +1050,7 @@
         <div class="section-head split">
           <div>
             <p class="label">Member Cities</p>
-            <h1 data-i18n="h.cities-title">38 cities, 11 countries — and what each is building</h2>
+            <h1 data-i18n="h.cities-title">38 cities, 11 countries — and what each is building</h1>
             <div class="cities-related">
               <a href="https://slic.nonarkara.org/" target="_blank" rel="noopener" class="cities-rel-link">
                 <span class="cities-rel-label">SLIC Index</span>
@@ -1174,7 +1086,7 @@
         <div class="section-head split">
           <div>
             <p class="label">Projects</p>
-            <h1 data-i18n="h.projects-title">The smart-city project portfolio</h2>
+            <h1 data-i18n="h.projects-title">The smart-city project portfolio</h1>
           </div>
           <div class="controls">
             <input id="search-filter" type="search" placeholder="Search projects" aria-label="Search projects" />
@@ -1215,7 +1127,7 @@
       <section class="view" id="view-framework" data-view="framework" hidden>
         <div class="section-head">
           <p class="label">Framework &amp; By-laws</p>
-          <h1 data-i18n="h.framework-title">The ASEAN Smart Cities Framework</h2>
+          <h1 data-i18n="h.framework-title">The ASEAN Smart Cities Framework</h1>
           <p class="lede" id="framework-status"></p>
         </div>
         <div class="framework-grid">
@@ -1236,7 +1148,7 @@
       <section class="view" id="view-partners" data-view="partners" hidden>
         <div class="section-head">
           <p class="label">Partnerships &amp; Finance</p>
-          <h1 data-i18n="h.partners-title">A multi-stakeholder ecosystem</h2>
+          <h1 data-i18n="h.partners-title">A multi-stakeholder ecosystem</h1>
           <p class="lede" data-i18n="lede.partners">ASCN coordinates rather than funds. Bilateral partners, multilateral banks, and blended finance carry the projects.</p>
         </div>
         <div class="sub-head"><p class="label">Dialogue partners</p><h3>Major bilateral programmes</h3></div>
@@ -1266,7 +1178,7 @@
       <section class="view" id="view-insights" data-view="insights" hidden>
         <div class="section-head">
           <p class="label">Insights</p>
-          <h1 data-i18n="h.insights-title">The network in numbers</h2>
+          <h1 data-i18n="h.insights-title">The network in numbers</h1>
           <p class="lede" data-i18n="lede.insights">Four M&amp;E cycles, 134 projects, 38 cities. What the official record shows — and what it doesn't.</p>
         </div>
         <div class="info-grid">
@@ -1388,7 +1300,7 @@
       <section class="view" id="view-data" data-view="data" hidden>
         <div class="section-head">
           <p class="label">Library &amp; Open Data</p>
-          <h1 data-i18n="h.data-title">The knowledge base behind this platform.</h2>
+          <h1 data-i18n="h.data-title">The knowledge base behind this platform.</h1>
           <p class="lede" id="data-lede"></p>
         </div>
         <div class="download-grid" id="dataset-downloads"></div>
@@ -1456,8 +1368,6 @@
         <section class="archive-pending" id="archive-pending"></section>
         <section class="archive-withheld" id="archive-withheld"></section>
       </section>
-    </main>
-
       <!-- CONTACTS -->
       <section class="view" id="view-contacts" data-view="contacts" hidden>
         <div id="contacts-content"></div>
@@ -1473,6 +1383,15 @@
         <div class="essay-wrap" id="essay-content"></div>
       </section>
 
+
+    </main>
+
+    <dialog id="finder" class="finder" aria-labelledby="finder-title">
+      <div class="finder-head"><h2 id="finder-title" data-i18n="find.title">Find in the observatory</h2><button type="button" id="finder-close" data-i18n="find.close">Close</button></div>
+      <label for="finder-query" data-i18n="find.label">City, project, section or source</label>
+      <input id="finder-query" type="search" autocomplete="off" maxlength="160" />
+      <p id="finder-status" role="status" aria-live="polite"></p><ol id="finder-results"></ol>
+    </dialog>
     <footer class="site-footer">
       <div class="footer-content">
         <p data-i18n-html="footer.depa">This platform is developed by the <strong>Digital Economy Promotion Agency (DEPA)</strong> and the <strong>Smart City Thailand Office</strong>, under the Ministry of Digital Economy and Society of Thailand — a contribution to the ASEAN Smart Cities Network.</p>
@@ -1482,7 +1401,7 @@
           <img src="logos/mdes.png" alt="Ministry of Digital Economy and Society" />
           <img src="logos/smart-city-thailand.svg" alt="Smart City Thailand Office" />
         </div>
-        <p class="footer-fine" data-i18n="essa.built.from.asean.source.document">Built from ASEAN source documents and redacted correspondence metadata. An independent review; not an official ASEAN publication.</p>
+        <p class="footer-fine" data-i18n="essa.built.from.asean.source.document">Built from published ASEAN source documents. An independent review; not an official ASEAN publication.</p>
         <p class="footer-fine footer-sourcelang" data-i18n="note.source.language">Everything on this site that we wrote is translated. Headlines, document titles, organisation and project names, and email subject lines are not: they appear exactly as they were issued, in their original language.</p>
       </div>
     </footer>

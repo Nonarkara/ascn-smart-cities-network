@@ -1,4 +1,5 @@
 import { writeFile } from "node:fs/promises";
+import { publicArchive } from "./publication-policy.mjs";
 import { buildFromDirectory } from "../lib/ascn-record.mjs";
 
 // public/round2/ is read when the folder exists. A scrape-schema CSV joins the
@@ -17,6 +18,6 @@ if (!process.env.ASCN_ARCHIVE_DIR) {
 }
 const dir = process.env.ASCN_ARCHIVE_DIR;
 const { document, report } = await buildFromDirectory(dir);
-await writeFile(new URL("../data/ascn-archive.json", import.meta.url), `${JSON.stringify(document, null, 2)}\n`);
+await writeFile(new URL("../data/ascn-archive.json", import.meta.url), `${JSON.stringify(publicArchive(document), null, 2)}\n`);
 console.log(report);
 console.log(`Wrote data/ascn-archive.json (${document.items.length} public items).`);

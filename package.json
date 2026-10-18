@@ -13,15 +13,17 @@
     "vendor:leaflet": "node scripts/vendor-leaflet.mjs",
     "vendor:fonts": "node scripts/vendor-fonts.mjs",
     "test": "npm run test:unit && playwright test",
-    "test:unit": "node --test tests/security.unit.mjs tests/news.unit.mjs tests/ascn-review.unit.mjs tests/correspondence.unit.mjs tests/archive.unit.mjs",
+    "test:unit": "node --test tests/security.unit.mjs tests/news.unit.mjs tests/ascn-review.unit.mjs tests/correspondence.unit.mjs tests/archive.unit.mjs tests/publication.unit.mjs",
     "validate": "node scripts/validate-data.mjs",
-    "check": "npm run validate && npm run test:unit && npm run build",
+    "check": "npm run check:design && npm run validate && npm run test:unit && npm run build",
     "build:archive": "node scripts/build-archive.mjs",
     "build": "npm run vendor:leaflet && npm run vendor:fonts && node scripts/build-static.mjs",
     "dev": "npm run build && npx wrangler pages dev dist --compatibility-date=2026-06-20",
     "deploy": "npm run check && npx wrangler pages deploy dist --project-name ascn-smart-cities-network --branch main",
     "extract:emails": "python3 scripts/extract_ascn_emails.py --help",
-    "predeploy": "node scripts/refresh-ascn-news.mjs || echo \"news refresh failed, shipping the existing snapshot\""
+    "predeploy": "node scripts/refresh-ascn-news.mjs || echo \"news refresh failed, shipping the existing snapshot\"",
+    "check:design": "node scripts/check-design.mjs",
+    "audit:visual": "node scripts/capture-design.mjs"
   },
   "devDependencies": {
     "@fontsource/jost": "^5.3.0",

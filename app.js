@@ -112,7 +112,7 @@ function setTab(tab, push = true) {
   if (!TABS.includes(tab)) tab = "overview";
   state.tab = tab;
   $$(".view").forEach((v) => { v.hidden = v.dataset.view !== tab; });
-  $$("#tab-nav a").forEach((a) => a.classList.toggle("active", a.dataset.tab === tab));
+  $$("#tab-nav a").forEach((a) => { a.classList.toggle("active", a.dataset.tab === tab); if(a.dataset.tab === tab)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current"); });
   renderTab(tab);
   // Compare only the first path segment so a #cities/{slug} sub-route survives a tab re-entry
   if (push && location.hash.split("/")[0] !== `#${tab}`) history.replaceState(null, "", `#${tab}`);
@@ -207,7 +207,8 @@ function mountTwinPeeks() {
 /* ---------------- The Record ---------------- */
 function renderRecord() {
   // Static content in view-record is rendered from HTML and styled via CSS.
-  renderCorrespondence();
+  const host = document.getElementById("corr-summary");
+  if (host) host.innerHTML = '<p class="privacy-note">Private correspondence is held locally. This public review uses published reports and cited public pages.</p>';
   renderRecordCharts();
 }
 
@@ -283,118 +284,6 @@ function renderRecordCharts() {
     }
   }
 }
-
-/* ---------------- Correspondence ledger ---------------- */
-const COST_LABELS = {
-  airfare: "airfare",
-  accommodation: "accommodation",
-  per_diem: "per diem",
-  local_transport: "local transport",
-  fee_waived: "fee waived",
-  fully_funded: "stated as funded",
-};
-
-const KIND_LABELS = {
-  funded_travel: "Cost mention · unreviewed",
-  event: "Event",
-  training: "Training",
-  monitoring: "Monitoring",
-  agreement: "Agreement",
-  other: "Unclassified",
-};
-
-function corrYear(t) { return (t.date || "").slice(0, 4); }
-
-function renderCorrespondence() {
-  const host = document.getElementById("corr-summary");
-  if (!host) return;
-  const corr = state.CORR;
-  if (!corr) {
-    host.innerHTML = '<p class="corr-missing" data-i18n="a.the.correspondence.ledger.is.not">The correspondence ledger is not available in this build.</p>';
-    return;
-  }
-  const t = corr.totals;
-
-  const travelByOrigin = Object.entries(t.fundedTravelByOrigin || {});
-  const caps = corr.threads.filter((x) => x.fundedTravel && x.fundingAmounts.length);
-
-  host.innerHTML = `
-    <div class="corr-stat"><p class="corr-stat-num">${t.emails}</p><p class="corr-stat-label">messages held</p></div>
-    <div class="corr-stat"><p class="corr-stat-num">${t.threads}</p><p class="corr-stat-label" data-i18n="a.threads.after.collapsing.replies">threads after collapsing replies</p></div>
-    <div class="corr-stat corr-stat-key"><p class="corr-stat-num">${t.fundedTravelThreads}</p><p class="corr-stat-label" data-i18n="a.threads.with.cost.related.keywor">threads with cost-related keywords · unreviewed candidates</p></div>
-    <div class="corr-stat"><p class="corr-stat-num">${caps.length}</p><p class="corr-stat-label" data-i18n="a.of.those.with.a.detected.amount">of those, with a detected amount · context requires review</p></div>`;
-
-  const maxOrigin = Math.max(...travelByOrigin.map(([, v]) => v), 1);
-
-  const originHtml = travelByOrigin.map(([origin, n]) => `
-    <div class="corr-bar">
-      <span class="corr-bar-name">${esc(origin)}</span>
-      <span class="corr-bar-track"><span class="corr-bar-fill${origin.startsWith("ASEAN") ? " corr-bar-self" : ""}" style="width:${Math.round((n / maxOrigin) * 100)}%"></span></span>
-      <span class="corr-bar-num">${n}</span>
-    </div>`).join("");
-
-  document.getElementById("corr-origin").innerHTML = `
-    <h3 class="corr-h3">Sending organisations in cost-related threads</h3>
-    <p class="corr-lede" data-i18n="a.counted.by.sending.organisation">Counted by sending organisation, not by who is mentioned inside the text — a single newsletter names every partner, so in-text mentions cannot carry a count.</p>
-    <div class="corr-bars">${originHtml}</div>
-    <p class="corr-note">Marked bar: the network's own Secretariat. The ASEAN Secretariat originated
-      ${(t.fundedTravelByOrigin || {})["ASEAN Secretariat"] ?? 0} of the cost-related threads in this mailbox. Sender attribution does not identify the payer.</p>
-    <p class="corr-note corr-note-dim" data-i18n="a.threads.attributed.to.a.mail.rel">Threads attributed to a mail relay or a notification bot carry no institutional sender in their headers, so they cannot be tied to a funder from the metadata alone. They are counted, not hidden, and left unattributed rather than guessed.</p>`;
-
-  document.getElementById("corr-caps").innerHTML = caps.length ? `
-    <h3 class="corr-h3">Detected amounts in context</h3>
-    <p class="corr-lede" data-i18n="a.extracted.snippets.and.detected">Extracted snippets and detected amounts from unreviewed keyword matches. A matched amount may refer to another part of the message; it is not a verified cap, payment or network total.</p>
-    <ul class="corr-quotes">${caps.map((c) => `
-      <li class="corr-quote">
-        <p class="corr-quote-head"><span class="corr-quote-origin">${esc(c.origin)}</span>
-          <span class="corr-quote-date">${esc((c.date || "").slice(0, 10))}</span></p>
-        <p class="corr-quote-subject">${esc(c.subjectClean || c.subject || "")}</p>
-        <blockquote>${esc(c.fundingQuote || "")}</blockquote>
-        <p class="corr-quote-meta">${c.fundingAmounts.map((a) => `<span class="corr-amount">${esc(a)}</span>`).join("")}
-          ${c.costHeads.map((h) => `<span class="corr-head-tag">${esc(COST_LABELS[h] || h)}</span>`).join("")}</p>
-      </li>`).join("")}</ul>` : '<p class="corr-missing" data-i18n="a.no.candidate.thread.contains.a.d">No candidate thread contains a detected amount.</p>';
-
-  // Filters
-  const kindSel = document.getElementById("corr-kind");
-  const originSel = document.getElementById("corr-origin-filter");
-  const origins = [...new Set(corr.threads.map((x) => x.origin))].sort();
-  originSel.innerHTML = '<option value="all">All origins</option>' +
-    origins.map((o) => `<option value="${esc(o)}">${esc(o)} (${corr.threads.filter((x) => x.origin === o).length})</option>`).join("");
-
-  const search = document.getElementById("corr-search");
-  const more = document.getElementById("corr-more");
-  let limit = 60;
-  const apply = () => {
-    state.corrKind = kindSel.value;
-    state.corrOrigin = originSel.value;
-    const list = corr.threads.filter((x) =>
-      (state.corrKind === "all" || x.kinds.includes(state.corrKind)) &&
-      (state.corrOrigin === "all" || x.origin === state.corrOrigin) &&
-      (!search.value.trim() || `${x.subjectClean || x.subject} ${x.origin}`.toLowerCase().includes(search.value.trim().toLowerCase()))).sort((a, b) => b.date.localeCompare(a.date));
-    document.getElementById("corr-count").textContent =
-      `${list.length} of ${corr.threads.length} threads · ${Math.min(limit, list.length)} shown`;
-    document.getElementById("corr-list").innerHTML = list.slice(0, limit).map((x) => `
-      <li class="corr-item${x.fundedTravel ? " corr-item-funded" : ""}">
-        <p class="corr-item-top">
-          <span class="corr-item-date">${esc((x.date || "").slice(0, 10))}</span>
-          <span class="corr-item-origin">${esc(x.origin)}</span>
-          ${x.messages > 1 ? `<span class="corr-item-msgs" title="messages in this thread">${x.messages} msgs</span>` : ""}
-        </p>
-        <p class="corr-item-subject">${esc(x.subjectClean || x.subject || "")}</p>
-        <p class="corr-item-tags">${x.kinds.map((k) => `<span class="corr-tag corr-tag-${k}">${esc(KIND_LABELS[k] || k)}</span>`).join("")}</p>
-      </li>`).join("") || '<li class="corr-item-more" data-i18n="a.no.threads.match.these.filters">No threads match these filters.</li>';
-    more.hidden = list.length <= limit;
-  };
-  const reset = () => { limit = 60; apply(); };
-  kindSel.onchange = reset;
-  originSel.onchange = reset;
-  search.oninput = reset;
-  more.onclick = () => { limit += 60; apply(); };
-  apply();
-
-  document.getElementById("corr-method").textContent = `Source: one official’s mailbox · extracted ${corr.generatedAt.slice(0, 10)} · ${t.correspondenceSpan[0].slice(0, 10)} to ${t.correspondenceSpan[1].slice(0, 10)}. ${corr.method.limitation} Method: ${corr.method.unit} ${corr.method.fundedTravel}`;
-}
-
 
 /* ---------------- Overview ---------------- */
 function renderOverview() {
@@ -606,10 +495,15 @@ function selectCity(city) {
 }
 
 /* ---------------- Map ---------------- */
+function observeMapSize(map) {
+  if (window.ResizeObserver) new ResizeObserver(() => map.invalidateSize({ pan: false })).observe(map.getContainer());
+  document.fonts?.ready.then(() => map.invalidateSize({ pan: false }));
+}
+
 function ensureMap() {
   if (state.mapReady) { setTimeout(() => state.map && state.map.invalidateSize(), 60); return; }
   if (!window.L || !$("#sea-map")) return;
-  state.map = L.map("sea-map", { zoomControl: true, scrollWheelZoom: false, minZoom: 3, maxZoom: 9, worldCopyJump: false }).setView([8.5, 112], 4);
+  state.map = L.map("sea-map", { fadeAnimation: false, zoomControl: true, scrollWheelZoom: false, minZoom: 3, maxZoom: 9, worldCopyJump: false }).setView([8.5, 112], 4);
   state.tileLayer = L.tileLayer(tileLayers.map.url, { attribution: tileLayers.map.attr }).addTo(state.map);
   state.map.setMaxBounds([[-15, 88], [25, 142]]);
   state.markerLayer = L.layerGroup().addTo(state.map);
@@ -625,7 +519,8 @@ function ensureMap() {
     buildMarkers();
   });
   state.mapReady = true;
-  setTimeout(() => state.map.invalidateSize(), 60);
+  state.map.fitBounds(state.C.map((city) => [city.lat, city.lon]), { padding: [24,24], maxZoom: 5, animate: false });
+  observeMapSize(state.map);
 }
 
 function buildMarkers() {
@@ -838,7 +733,7 @@ function renderFramework() {
     <article class="cap-card">
       <b class="cap-name">${esc(c.name)}</b>
       <span class="cap-by">${c.by}</span>
-      <p class="cap-desc">${c.desc}</p>
+      <p class="cap-desc">${tx(c.desc)}</p>
       <span class="cap-stat">${c.stat}</span>
     </article>`).join("")}</div>
     <p class="ig-note" data-i18n="a.capacity.building.is.where.ascn">Capacity building is where ASCN's softer value sits: not projects delivered, but officials trained to deliver them. These programmes run through dialogue partners rather than a central ASCN budget. Source: ASCN partnership &amp; M&amp;E documents.</p>`;
@@ -893,7 +788,7 @@ function renderPartners() {
         <a class="prog-link" href="${p.url}" target="_blank" rel="noopener">↗</a>
       </div>
       <p class="prog-tagline">${esc(p.tagline)}</p>
-      <p class="prog-desc">${p.desc}</p>
+      <p class="prog-desc">${tx(p.desc)}</p>
       <div class="prog-cities">${p.cities.map((c) => `<span>${esc(c)}</span>`).join("")}</div>
       <div class="prog-stat">${esc(p.stat)}</div>
     </article>`).join("");
@@ -1420,7 +1315,7 @@ function renderOpenData() {
 
   $("#document-grid").innerHTML = state.K.documents.map((d) => `
     <article class="doc-card"><span class="dc-kind">${esc(d.kind)} · ${esc(d.year)}</span><b>${esc(d.title)}</b><p>${esc(d.note)}</p>
-      <div class="dc-foot"><span class="dc-size">${esc(d.size || "PDF")}</span><a class="dc-dl" href="docs/${encodeURIComponent(d.file)}" download>Download ↓</a></div></article>`).join("");
+      <div class="dc-foot"><span class="dc-size">${esc(d.size || "PDF")}</span><a class="dc-dl" href="${d.file ? `docs/${encodeURIComponent(d.file)}` : esc(safeUrl(d.url))}" ${d.file ? "download" : 'target="_blank" rel="noopener noreferrer"'}>${d.file ? "Download ↓" : "Official source ↗"}</a></div></article>`).join("");
 
   $("#source-list").innerHTML = state.K.data_sources.map((s) => `
     <div class="def-row"><b><a href="${esc(safeUrl(s.url))}" target="_blank" rel="noopener noreferrer">${esc(s.name)} ↗</a></b><em>${esc(s.type)}</em></div>`).join("");
@@ -1703,7 +1598,7 @@ function renderContacts() {
         <p class="label">Network Contacts</p>
         <h1>Click any city to see the NR and CSCO.</h2>
         <p class="lede" data-i18n="a.38.cities.11.countries.each.mark">38 cities, 11 countries. Each marker shows the National Representative at the top, followed by the Chief Smart City Officer for that city. Data: April 2026 ASCN contact list.</p>
-        <a class="text-button" href="docs/11_ASCN_Contact_List_2026.pdf" target="_blank">Official contact list (Jan 2026 PDF)</a>
+        <a class="text-button" href="https://asean.org/asean-smart-cities-network/" target="_blank" rel="noopener noreferrer">Official contact directory (ASEAN)</a>
       </div>
 
       <div class="contacts-map-wrap">
@@ -1732,7 +1627,7 @@ function ensureContactsMap(popupFn) {
   const el = document.getElementById("contacts-map");
   if (!window.L || !el) return;
   const aseanBounds = L.latLngBounds(L.latLng(-15, 85), L.latLng(28, 155));
-  state.cMap = L.map("contacts-map", { zoomControl: true, scrollWheelZoom: true, minZoom: 4, maxZoom: 9, worldCopyJump: false, maxBounds: aseanBounds, maxBoundsViscosity: 0.9 })
+  state.cMap = L.map("contacts-map", { fadeAnimation: false, zoomControl: true, scrollWheelZoom: true, minZoom: 3, maxZoom: 9, worldCopyJump: false, maxBounds: aseanBounds, maxBoundsViscosity: 0.9 })
     .setView([5, 115], 5);
   L.tileLayer(tileLayers.map.url, { attribution: tileLayers.map.attr }).addTo(state.cMap);
   // Tall popups (NR + CSCO + Staff) open above the marker and can clip the map's top
@@ -1765,7 +1660,8 @@ function ensureContactsMap(popupFn) {
     m.addTo(state.cMap);
   }
   state.cMapReady = true;
-  setTimeout(() => state.cMap.invalidateSize(), 60);
+  state.cMap.fitBounds(state.C.map((city) => [city.lat, city.lon]), { padding: [24,24], maxZoom: 5, animate: false });
+  observeMapSize(state.cMap);
 }
 
 /* ---------------- ASCN Alumni (removed from active roster) ---------------- */
@@ -2024,10 +1920,10 @@ function renderResearch() {
     ${THEMES.map(t => `<article class="research-theme">
       <div class="research-theme-top">
         <span class="research-theme-n">${t.n}</span>
-        <span class="research-theme-label">${t.label}</span>
+        <span class="research-theme-label">${tx(t.label)}</span>
       </div>
       <h3 class="research-theme-h">${t.heading}</h3>
-      <p class="research-theme-body">${t.body}</p>
+      <p class="research-theme-body">${tx(t.body)}</p>
       <div class="research-theme-tags">${t.tags.map(tag => `<span class="research-tag">${tag}</span>`).join("")}</div>
     </article>`).join("")}
   </div>
@@ -2332,11 +2228,11 @@ function renderEssay() {
     <span class="essay-series-label">ASCN Essays</span>
     <span class="essay-series-sep">·</span>
     <span class="essay-series-num">No. 1</span>
-    <span class="essay-series-date">June 2026</span>
+    <span class="essay-series-date">June 2026 · seven years of the author’s participation, 2019–2026</span>
     <span class="essay-series-time">20 min read</span>
   </div>
 
-  <h1 class="essay-title">The Network at Seven</h2>
+  <h1 class="essay-title">The Network at Seven</h1>
   <p class="essay-subtitle" data-i18n="a.what.four.m.e.cycles.and.thirty">What four M&amp;E cycles and thirty-eight cities reveal about Southeast Asia's most ambitious governance experiment</p>
 
   <details class="essay-bio">
@@ -2883,8 +2779,57 @@ function renderIntegrity_UNUSED() {
   });
 }
 
+/* Axiom X's index principle: a reader can jump directly to the evidence. */
+function initFinder() {
+  const dialog = $("#finder"), input = $("#finder-query"), results = $("#finder-results");
+  let entries = [];
+  const copy = (text) => tx(text, currentLang());
+  const open = () => {
+    entries = [...document.querySelectorAll("#tab-nav a")].map((a) => ({label:a.textContent, kind:"Section", href:a.getAttribute("href")}));
+    for (const city of state.C) entries.push({label:city.name, detail:city.country, kind:"City", href:"#cities/"+citySlug(city.name)});
+    const latest = state.data?.reports?.at(-1)?.year;
+    for (const row of state.data?.projects || []) if (row.report_year === latest) entries.push({label:row.project, detail:row.city+" · "+row.country, kind:"Project", href:"#projects", query:row.project});
+    for (const row of state.LF?.entries || []) entries.push({label:row.title, detail:String(row.year || ""), kind:"Source", href:"#data", query:row.title});
+    input.value = "";
+    dialog.showModal(); render(); input.focus();
+  };
+  const render = () => {
+    const words = input.value.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
+    const matches = entries.filter((entry) => words.every((word) => `${entry.label} ${entry.detail || ''} ${entry.kind}`.toLocaleLowerCase().includes(word)));
+    const shown = matches.slice(0,40);
+    results.innerHTML = shown.map((entry) => `<li><a href="${esc(entry.href)}" data-finder-index="${entries.indexOf(entry)}"><span class="finder-kind">${esc(copy(entry.kind))}</span><strong>${esc(entry.label)}</strong><span>${esc(entry.detail || '')}</span></a></li>`).join("");
+    $("#finder-status").textContent = matches.length ? `${matches.length} ${copy("matches")} · ${shown.length} ${copy("shown")}` : copy("No matches. Try a city, project or source name.");
+  };
+  $("#finder-open").addEventListener("click",open);
+  $("#finder-close").addEventListener("click",()=>dialog.close());
+  input.addEventListener("input",render);
+  dialog.addEventListener("close",()=>$("#finder-open").focus({preventScroll:true}));
+  results.addEventListener("click",(event)=>{
+    const link=event.target.closest("[data-finder-index]"); if(!link)return;
+    event.preventDefault();
+    const entry=entries[Number(link.dataset.finderIndex)]; if(!entry)return;
+    dialog.close();
+    location.hash=entry.href;
+    routeFromHash();
+    const filter=entry.kind==='Project'?$("#search-filter"):entry.kind==='Source'?$("#lib-search"):null;
+    if(filter){filter.value=entry.query;filter.dispatchEvent(new Event('input',{bubbles:true}));filter.focus({preventScroll:true});}
+    else { const heading=document.querySelector(`#view-${state.tab} h1`); if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});} }
+  });
+  document.addEventListener("keydown",(event)=>{
+    if(event.key==='/' && !dialog.open && !event.ctrlKey && !event.metaKey && !event.altKey && !event.target.closest('input,textarea,select,[contenteditable="true"]')){event.preventDefault();open();}
+  });
+  dialog.addEventListener("keydown",(event)=>{
+    const links=[...results.querySelectorAll("a")];
+    if(event.key==='ArrowDown'){event.preventDefault();links[(links.indexOf(document.activeElement)+1)%links.length]?.focus();}
+    if(event.key==='ArrowUp'){event.preventDefault();const i=links.indexOf(document.activeElement);if(i<=0)input.focus();else links[i-1].focus();}
+    if(event.key==='Enter' && document.activeElement===input && links[0]){event.preventDefault();links[0].click();}
+  });
+}
+
 async function init() {
   wireNav();
+  document.querySelector('.skip-link').addEventListener('click',(event)=>{event.preventDefault();document.querySelector('main').focus();document.querySelector('main').scrollIntoView({behavior:'instant'});});
+  initFinder();
   routeFromHash();
   try {
     const [data, K, cities, library, libraryFull, cityStats, correspondence] = await Promise.all([
@@ -2896,7 +2841,7 @@ async function init() {
       loadJson("data/city-stats-merged.json").catch(() => []),
       // Correspondence ledger is optional: the rest of the site must still work
       // if it is absent, so a failure degrades this one section only.
-      loadJson("data/ascn-correspondence.json").catch(() => null),
+      Promise.resolve(null),
     ]);
     state.data = data; state.K = K; state.C = cities.cities; state.L = library; state.LF = libraryFull; state.CS = Array.isArray(cityStats) ? cityStats : [];
     state.CORR = correspondence;

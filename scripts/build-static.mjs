@@ -4,6 +4,8 @@ import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { siteEntries, copySiteEntry } from "./site-assets.mjs";
 
+import { assertPublicArchive } from "./publication-policy.mjs";
+
 const root = new URL("..", import.meta.url);
 const dist = new URL("../dist/", import.meta.url);
 
@@ -30,6 +32,8 @@ const entries = [
 if (entries.length !== siteEntries.length || entries.some((entry) => !siteEntries.includes(entry))) {
   throw new Error("Build entries do not match the reviewed site asset list.");
 }
+
+assertPublicArchive(JSON.parse(await readFile(new URL("../data/ascn-archive.json", import.meta.url), "utf8")));
 
 // maxRetries: a local preview server reading dist/ can make a bare rm fail
 // with ENOTEMPTY on APFS, which turns a transient race into a failed build.

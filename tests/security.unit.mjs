@@ -52,15 +52,16 @@ test("publication excludes hidden files, notes, and executable files in document
   const output = join(root, "out");
   try {
     await mkdir(join(root, "docs"));
-    for (const name of ["public.pdf", ".env", "security-audit.md", "script.js", "local.txt"]) {
+    for (const name of ["hero-banner.png", ".env", "security-audit.md", "script.js", "local.txt"]) {
       await writeFile(join(root, "docs", name), "test");
     }
     await copySiteEntry(root, output, "docs");
-    await access(join(output, "docs", "public.pdf"));
+    await access(join(output, "docs", "hero-banner.png"));
     for (const name of [".env", "security-audit.md", "script.js", "local.txt"]) {
       await assert.rejects(access(join(output, "docs", name)));
     }
-    await symlink(join(root, "docs", ".env"), join(root, "docs", "linked.pdf"));
+    await rm(join(root, "docs", "hero-banner.png"));
+    await symlink(join(root, "docs", ".env"), join(root, "docs", "hero-banner.png"));
     await assert.rejects(copySiteEntry(root, output, "docs"), /symbolic link/);
   } finally { await rm(root, { recursive: true, force: true }); }
 });
@@ -82,11 +83,11 @@ test("publication only copies reviewed datasets even when raw mailbox JSON exist
   const output = join(root, "out");
   try {
     await mkdir(join(root, "data"));
-    for (const name of ["ascn-correspondence.json", "ascn-email-evidence.json", "unreviewed.json"]) {
+    for (const name of ["ascn-cities.json", "ascn-correspondence.json", "ascn-email-evidence.json", "unreviewed.json"]) {
       await writeFile(join(root, "data", name), "{}");
     }
     await copySiteEntry(root, output, "data");
-    await access(join(output, "data", "ascn-correspondence.json"));
-    for (const name of ["ascn-email-evidence.json", "unreviewed.json"]) await assert.rejects(access(join(output, "data", name)));
+    await access(join(output, "data", "ascn-cities.json"));
+    for (const name of ["ascn-correspondence.json", "ascn-email-evidence.json", "unreviewed.json"]) await assert.rejects(access(join(output, "data", name)));
   } finally { await rm(root, { recursive: true, force: true }); }
 });

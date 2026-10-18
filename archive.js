@@ -9,7 +9,7 @@ const COPY = {
   en: {
     kicker: "Record",
     title: "ASCN, 2018–2026",
-    subtitle: "Inbox and public pages",
+    subtitle: "Published sources",
     medium: "Medium confidence",
     selfReported: "Self-reported",
     pending: "Pending review",
@@ -60,7 +60,7 @@ const COPY = {
   th: {
     kicker: "บันทึก",
     title: "ASCN, 2018–2026",
-    subtitle: "กล่องจดหมายและหน้าสาธารณะ",
+    subtitle: "แหล่งข้อมูลสาธารณะ",
     medium: "ความเชื่อมั่นระดับกลาง",
     selfReported: "รายงานเอง",
     pending: "รอการทบทวน",
@@ -111,7 +111,7 @@ const COPY = {
   zh: {
     kicker: "记录",
     title: "ASCN, 2018–2026",
-    subtitle: "收件箱与公开网页",
+    subtitle: "公开来源",
     medium: "中等可信度",
     selfReported: "自行报告",
     pending: "待审阅",

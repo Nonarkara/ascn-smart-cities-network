@@ -155,7 +155,7 @@ Attach a custom domain in the Cloudflare dashboard if you want one. Do not put a
 
 ## Innovation-as-a-Service Videos
 
-The overview plays three complete demonstrations from `media/showcase/`. Playback starts on request, and leaving Overview pauses it. The ASCN 2026 meeting summary links to the full record below the player.
+The overview plays three complete demonstrations from `media/showcase/`. Playback starts on request, and leaving Overview pauses it. The annual-meeting link explains when a draft has not been verified as public.
 
 To rebuild the web copies from the Desktop originals (requires FFmpeg):
 
@@ -203,24 +203,32 @@ This independent project is released under the MIT License. See [LICENSE](LICENS
 ASEAN, ASCN, and member-state names, documents, and marks remain with their respective owners. Their appearance here is citation and commentary, not a license grant and not an official product claim.
 
 
-### Independent review and correspondence ledger
+### Public-only publication
 
-The independent observatory uses charcoal, ivory and amber, with a bounded
-mineral-green introduction. The agency-facing V1 remains at ascn.depa.or.th.
-All maps, videos, project analytics and source documents remain available.
+Only published reports, public pages and reviewed assets enter the release.
+The archive contains 40 records with public source links. Private-origin rows,
+withheld-record metadata, unsourced personal statements and internal meeting
+drafts are excluded. Funding totals are recalculated from retained records.
 
-`#record` includes 458 messages grouped into 367 normalised-subject threads,
-with search, organisation/activity filters and access to every matching row.
-The 57 cost-keyword matches are **unreviewed candidates**. They do not prove
-funding offers, accepted subsidies, expenditure or completed travel. A sender
-is not necessarily a payer; a subject group is not necessarily a unique event.
-The page displays the extraction date, source scope and classification method.
+Mailbox extraction and classification tools remain available locally. Their
+inputs and derived correspondence JSON are ignored and never copied to dist.
+A redacted subject or snippet is still private unless independently published.
+`npm run build` rejects an archive that fails `scripts/publication-policy.mjs`.
+`scripts/public-assets.json` is the reviewed asset inventory; new images, PDFs
+or media files require a provenance review and an explicit manifest change.
+Only named browser modules are published. Build-only archive modules stay out.
+The Pages middleware returns no-store 404 responses for private paths.
 
-The extraction and classification scripts run locally. Raw mailbox exports stay
-ignored and are excluded from the build independently of Git. Only datasets
-named in `scripts/site-assets.mjs` can enter the published data directory.
-`lib/correspondence.mjs` validates the public ledger in both validation and the
-browser, retaining provenance and rejecting private source fields, addresses,
-invalid dates/counts and mismatched summary totals. Invalid ledger data leaves
-the other views available. `tests/correspondence.spec.mjs` exercises loading,
-filtering, all rows, unavailable data and three viewport sizes.
+Old Git commits and immutable hosting snapshots require separate remediation;
+a new release does not erase previous public copies. Local research is kept in
+ignored folders and is never a release asset.
+
+### Design release checks
+
+`npm run check:design` enforces objective anti-slop rules as part of `check`.
+`npm run audit:visual` captures all 15 views at 1440/1024/390px; run it against a
+local preview or set `ASCN_TEST_URL`. A second reviewer must inspect the actual
+screenshots. The Find button (or `/` outside a text field) searches cities,
+latest-cycle projects and public sources; Escape closes it and restores focus.
+The overview offers three explicit routes before the full demonstrations.
+See AUDIT-2026-10-18.md for the findings, fixes and remaining historical risk.

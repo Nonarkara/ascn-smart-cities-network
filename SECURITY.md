@@ -38,3 +38,16 @@ Run `npm run check`, `npm audit --audit-level=high`, and `npm test`. To exercise
 Run `gitleaks git . --redact --no-banner --log-opts='--all'` to scan history. Never attach unredacted scanner output. The initial scan found no secrets in 50 commits; this is evidence from one scan, not a guarantee about future commits.
 
 Report a suspected issue privately to the repository owner; do not include credentials, personal data, or exploitable payloads in public issues.
+
+## Public-only boundary (18 October 2026)
+
+Mailbox metadata is private even after redaction. It is no longer a published
+dataset. Build-only archive modules and internal drafts are excluded. Datasets,
+runtime modules and media use explicit allowlists; new files do not become
+public merely because their extension is supported. The archive projection and
+reviewed-content fingerprint reject private fields and unreviewed prose.
+
+Private routes return no-store 404. Full contact-directory documents with
+unclear republication provenance link to the official publisher instead.
+See AUDIT-2026-10-18.md for verification, the independent review, and the
+separate risk from old deployments and public Git history.

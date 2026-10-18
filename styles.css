@@ -430,7 +430,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .review-controls label, .discovery-search { display: grid; gap: 0.3rem; min-width: 0; font-size:var(--t-small); color: var(--muted); }
 .review-controls > label { flex: 1 1 12rem; }
 .review-controls .review-search { flex: 2 1 18rem; }
-.review-controls input, .review-controls select, .discovery-search input { width: 100%; min-width: 0; min-height: 44px; border: 1px solid var(--line-dim); font-size:var(--t-body); padding: 0.5rem; background: white; color: var(--ink); }
+.review-controls input, .review-controls select, .discovery-search input { width: 100%; min-width: 0; min-height: 44px; border: 1px solid var(--line-dim); font-size:var(--t-body); padding: 0.5rem; background: var(--bg); color: var(--ink); }
 .review-controls > details { flex: 1 1 100%; order: 2; }
 .review-controls summary, .review-method summary, .review-record summary { cursor: pointer; min-height: 44px; padding: 0.6rem 0; font-size:var(--t-body); }
 .review-filter-fields { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; padding-bottom: 0.5rem; }
@@ -474,7 +474,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .review-project-links li { margin: 0.5rem 0; }
 .review-reported { font-variant-numeric: tabular-nums; }
 .review-pagination { display: flex; gap: 1rem; justify-content: space-between; align-items: center; margin: 1rem 0; font-size:var(--t-body); }
-.review-pagination button { width: 44px; height: 44px; flex-shrink: 0; background: white; border: 1px solid var(--line-dim); cursor: pointer; font-size:var(--t-h2); }
+.review-pagination button { width: 44px; height: 44px; flex-shrink: 0; background: var(--bg); border: 1px solid var(--line-dim); cursor: pointer; font-size:var(--t-h2); }
 .review-pagination button:disabled { opacity: 0.4; cursor: default; }
 .review-method { border-top: 2px solid var(--ink); margin-top: 1.5rem; }
 .review-method p { max-width: 55rem; }
@@ -4359,3 +4359,62 @@ body .view :is(h1, h2, h3, h4) {
 }
 
 .footer-sourcelang { max-width: 62ch; color: var(--ink-3); border-top: 1px solid var(--line); padding-top: 0.75rem; margin-top: 1rem; }
+
+/* Public evidence first. One question wins; three routes explain the next action.
+   Inspired by Axiom X's index, without reproducing its institutional identity. */
+.evidence-opening { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(16rem, 1fr); gap: clamp(1.2rem, 4vw, 4rem); align-items: end; margin-bottom: 2.5rem; }
+.evidence-opening h1 { max-width: 15ch; margin: .4rem 0 1rem; font-size: var(--t-figure); line-height: 1; }
+.evidence-opening .lede { max-width: 53ch; color: var(--ink-2); }
+.evidence-routes { list-style: none; padding: 0; margin: 0; width: 100%; }
+.evidence-routes li { max-width: none; border-top: 1px solid var(--line-soft); }
+.evidence-routes a { display: grid; grid-template-columns: 2rem minmax(0,1fr) 1rem; gap: .5rem; padding: .9rem 0; align-items: baseline; }
+.evidence-routes a:hover strong { color: var(--amber); }
+.evidence-routes a > span { color: var(--muted); font-size: var(--t-micro); }
+.showcase-heading { background: transparent; padding: .7rem 0 1rem; border-top: 2px solid var(--line); max-width: none; }
+#innovation-heading { font-size: var(--t-lead); max-width: none; line-height: 1.15; }
+.site-notice { padding: .35rem 1rem; text-align: left; }
+.site-notice summary { cursor: pointer; width: fit-content; color: var(--ink-2); }
+.site-notice > div { max-width: 65ch; padding: .5rem 0; }
+.site-nav nav { min-width: 0; gap: .7rem; }
+.finder-open { flex-shrink: 0; background: transparent; border: 0; color: var(--ink); min-height: 44px; padding: .3rem; cursor: pointer; }
+.finder-open kbd { border: 1px solid var(--line-soft); padding: 0 .35rem; margin-left: .3rem; font: inherit; }
+.finder { width: min(44rem, calc(100vw - 2rem)); max-height: min(80vh, 50rem); margin: 7vh auto; padding: 1.25rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+.finder::backdrop { background: rgba(0,0,0,.75); }
+.finder-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: 1.1rem; }
+.finder-head h2 { font-size: var(--t-lead); }
+.finder-head button { color: var(--ink); background: transparent; border: 1px solid var(--line); min-height: 44px; padding: .3rem .6rem; cursor: pointer; }
+.finder label { display: block; color: var(--ink-2); }
+.finder input { width: 100%; margin: .4rem 0; }
+#finder-status { font-size: var(--t-small); color: var(--muted); }
+#finder-results { margin: 0; padding: 0; list-style: none; }
+#finder-results li { max-width: none; border-top: 1px solid var(--line-soft); }
+#finder-results a { display: grid; grid-template-columns: 4.5rem minmax(0,1fr); gap: .2rem .8rem; padding: .7rem 0; }
+#finder-results strong { overflow-wrap: anywhere; }
+#finder-results a > span:last-child { grid-column: 2; color: var(--muted); }
+.finder-kind { color: var(--amber); font-size: var(--t-small); }
+.skip-link { position: fixed; top: .5rem; left: .5rem; z-index: 300; transform: translateY(-200%); background: var(--ink); color: var(--bg); padding: .6rem; }
+.skip-link:focus { transform: none; }
+.privacy-note { max-width: 65ch; margin: 1rem 0; padding-left: .8rem; border-left: 2px solid var(--line); }
+@media (max-width: 900px) {
+  .evidence-opening { grid-template-columns: 1fr; gap: 1rem; }
+  .evidence-opening h1 { font-size: var(--t-figure); max-width: 15ch; }
+  .finder-open { order: 2; margin-left: auto; }
+  .lang-switch { margin-left: 0; }
+  .site-nav nav { scrollbar-width: thin; gap: 1rem; padding-bottom: .2rem; }
+}
+@media (prefers-reduced-motion: reduce) { .finder, .skip-link { transition: none; } }
+@media (max-width: 720px) { .brand i { display: none; } }
+.overview-intro h2 { font-size: var(--t-lead); line-height: 1.15; }
+@media (min-width: 721px) and (max-width: 1100px) {
+  .site-nav { flex-direction: row; flex-wrap: wrap; align-items: center; gap: .3rem .7rem; }
+  .brand { flex: 1 1 auto; }
+  .finder-open { order: 2; }
+  .lang-switch { order: 2; }
+  .site-nav nav { order: 3; flex: 1 0 100%; }
+}
+.ig-traj-row { grid-template-columns: minmax(5rem, 8rem) minmax(0, 1fr); gap: .5rem; }
+.ig-traj-bars { min-width: 0; }
+.ig-traj-track { min-width: 0; }
+@media (max-width: 1100px) { .ig-traj-delta { min-width: 0; overflow-wrap: anywhere; } }
+
+#archive-title { font-size: var(--t-figure); line-height: 1.05; }

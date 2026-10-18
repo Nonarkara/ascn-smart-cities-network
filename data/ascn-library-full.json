@@ -180,8 +180,8 @@
       "title": "ASCN Contact List (as of 31 Jan 2026)",
       "source": "ASEAN Secretariat",
       "year": 2026,
-      "url": null,
-      "file": "11_ASCN_Contact_List_2026.pdf",
+      "url": "https://asean.org/asean-smart-cities-network/",
+      "file": null,
       "takeaway": "National focal points and city representatives across all 38 cities — the human network behind the roster. Personal contact details are withheld from public display here, but the document confirms that every city has a designated representative who carries the city's participation between annual meetings.",
       "tags": ["contacts", "directory", "2026", "representatives"]
     },
@@ -189,12 +189,12 @@
       "id": "mlit-guidebook-draft",
       "type": "official",
       "category": "Methodology Guide",
-      "title": "MLIT ASEAN Smart City Planning Guidebook (Draft Final)",
+      "title": "ASEAN Smart City Planning Guidebook (published edition)",
       "source": "MLIT, Japan",
       "year": 2020,
-      "url": null,
+      "url": "https://www.jasca2021.jp/pdf/ASEAN_SmartCityPlanningGuidebook_en.pdf",
       "file": null,
-      "takeaway": "Japan's draft methodology submitted for ASCN consideration — a case study in how a partner's planning framework becomes regional practice. Its urban-spatial emphasis reflects Japanese city planning tradition; the risk is template transfer without local adaptation.",
+      "takeaway": "Published guide to smart-city planning, with examples from Japan and ASEAN.",
       "tags": ["Japan", "MLIT", "methodology", "template"]
     },
     {

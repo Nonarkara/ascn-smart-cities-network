@@ -63,8 +63,9 @@ test("loads no video on arrival; all selections decode, play, and pause on navig
 
   await page.locator(".meeting-summary").click();
   await expect(page.locator("#view-ascn9")).toBeVisible();
-  await expect(page.locator("#view-ascn9 h1")).toHaveText("What they actually did");
-  expect(await page.locator(".record-photo").count()).toBeGreaterThan(3);
+  await expect(page.locator("#view-ascn9 h1")).toHaveText("Published evidence comes first");
+  await expect(page.locator(".record-photo")).toHaveCount(0);
+  await expect(page.locator("#view-ascn9")).toContainText("held privately");
   await expect.poll(() => player.evaluate((video) => video.paused)).toBe(true);
   await page.locator(".record-back").click();
   await expect(player).toBeVisible();

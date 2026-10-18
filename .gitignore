@@ -27,3 +27,6 @@ Kimi_Agent_ASCN Research/
 # ledger is derived from it by scripts/classify_ascn_emails.py.
 data/ascn-email-evidence.json
 ascn-emails-text.jsonl
+
+# Mailbox-derived metadata remains local; redaction does not establish public provenance.
+data/ascn-correspondence.json
