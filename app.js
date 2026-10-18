@@ -2581,7 +2581,7 @@ function enhanceEssay() {
     if (!section.classList.contains("essay-footnotes")) toc.push({ slug, txt });
   });
   if (toc.length) {
-    const tocHtml = `<nav class="essay-toc" aria-label="Essay contents"><p class="essay-toc-h">Contents</p><ol>${toc.map((t) => `<li><button type="button" class="essay-toc-link" data-essay-target="${t.slug}">${esc(t.txt)}</button></li>`).join("")}</ol></nav>`;
+    const tocHtml = `<nav class="essay-toc" aria-label="${tx("Essay contents")}"><p class="essay-toc-h">${tx("Contents")}</p><ol>${toc.map((t) => `<li><button type="button" class="essay-toc-link" data-essay-target="${t.slug}">${esc(t.txt)}</button></li>`).join("")}</ol></nav>`;
     const body = content.querySelector(".essay-body");
     (body || content).insertAdjacentHTML("beforebegin", tocHtml);
   }
