@@ -4265,3 +4265,5 @@ body .view :is(h1, h2, h3, h4) {
     text-transform: none;
   }
 }
+
+.footer-sourcelang { max-width: 62ch; color: var(--ink-3); border-top: 1px solid var(--line); padding-top: 0.75rem; margin-top: 1rem; }

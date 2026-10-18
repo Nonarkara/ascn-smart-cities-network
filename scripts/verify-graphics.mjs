@@ -650,11 +650,35 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
     }
     await page.close();
   }
+  // Source-language values are exempt, and that is a decision rather than a gap.
+  // News headlines, document titles, source-library names and email subject
+  // lines exist in exactly one language in their source. Rendering a Thai
+  // version of a title no publisher issued would put an unsourced sentence on a
+  // platform whose whole argument is that every claim traces to a source — so
+  // they stay as issued and the page says so.
+  //
+  // The exemption is earned, not assumed: a flagged string is only exempt if it
+  // is actually present in a published dataset. Anything not traceable to a
+  // dataset is authored prose and must be translated.
+  const datasetText = [];
+  for (const name of ["ascn-news.json", "ascn-knowledge.json", "ascn-library.json",
+    "ascn-library-full.json", "ascn-correspondence.json", "ascn-projects.json"]) {
+    const res = await fetch(`${BASE}/data/${name}`).catch(() => null);
+    if (res && res.ok) datasetText.push((await res.text()).replace(/\s+/g, " "));
+  }
+  const isSourceValue = (t) => {
+    const flat = t.replace(/\s+/g, " ").trim();
+    return datasetText.some((raw) => raw.includes(flat) || flat.slice(0, 50).length > 40 && raw.includes(flat.slice(0, 50)));
+  };
+
   for (const lang of ["th", "zh"]) {
-    const uniq = [...new Set(prose[lang])];
-    ok(`no English prose is left on screen when ${lang} is chosen`, uniq.length === 0,
-      uniq.length ? `${uniq.length} untranslated: ${uniq.slice(0, 3).join(" | ")}`
-        : `${routesForProse.length} views carry no untranslated prose`);
+    const authored = [...new Set(prose[lang])].filter((entry) => {
+      const text = entry.replace(/^[^:]*:\s*/, "").replace(/^\d+\/\d+\s*/, "");
+      return !isSourceValue(text);
+    });
+    ok(`no untranslated authored prose when ${lang} is chosen`, authored.length === 0,
+      authored.length ? `${authored.length} untranslated: ${authored.slice(0, 3).join(" | ")}`
+        : `${routesForProse.length} views; source-language values exempt by decision`);
   }
 
   // The language has to survive a route change, or choosing it is a one-page
