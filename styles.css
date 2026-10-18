@@ -2430,6 +2430,16 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
   line-height: 1.5;
 }
 .site-notice strong { color: var(--ink-2); font-weight: 600; }
+/* The disclosure summary is a control, and it was carrying no min-height: it
+   measured 16.5px — one line of 11px type — so the whole "Independent review ·
+   About this site" toggle was a target half the width of a fingertip. The
+   links inside got 44px from the rule further down; the control that opens the
+   panel they live in did not. */
+.site-notice summary {
+  display: inline-flex; align-items: center; min-height: 44px;
+  cursor: pointer; list-style-position: inside;
+}
+.site-notice summary::marker { color: var(--ink-3); }
 .site-notice a { color: var(--amber); text-decoration: none; }
 .site-notice a:hover { text-decoration: underline; }
 
