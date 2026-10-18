@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { siteEntries, copySiteEntry } from "./site-assets.mjs";
 
+import { assertPublicBuild } from "./verify-publication.mjs";
 import { assertPublicArchive } from "./publication-policy.mjs";
 
 const root = new URL("..", import.meta.url);
@@ -89,5 +90,7 @@ for (const [rel, hash] of cacheable) {
   if (html !== before) rewritten++;
 }
 await writeFile(htmlPath, html);
+
+await assertPublicBuild(dist);
 
 console.log(`Built static site in dist/ (${rewritten} asset URLs hashed from content)`);

@@ -51,3 +51,23 @@ Private routes return no-store 404. Full contact-directory documents with
 unclear republication provenance link to the official publisher instead.
 See AUDIT-2026-10-18.md for verification, the independent review, and the
 separate risk from old deployments and public Git history.
+
+## Finished-build and live release guard
+
+Every static build inspects the completed `dist/` tree, rejects unreviewed
+files, hidden files and symlinks, and revalidates the archive's reviewed-content
+fingerprint. This catches files inserted after the normal copy filter. Run
+`npm run check:publication` again before uploading an existing artifact.
+
+`npm run deploy` also runs `npm run verify:live` after upload. It compares the
+live index, app, stylesheet and archive bytes with the local artifact, then
+GETs known private paths without following redirects. Each must return a
+no-store 404; a healthy home page, redirect or successful provider operation
+cannot substitute for this check. Override `ASCN_TEST_URL` only to verify a
+specific HTTPS origin or local preview. Failure exits nonzero and needs
+investigation; it does not automatically delete or roll back deployments.
+
+These guards protect future releases. They cannot erase historical Git objects,
+old deployment caches or downloaded copies, and cannot establish provenance for
+arbitrary prose. Source review and the separate historical cleanup remain
+necessary. Do not bypass these gates with a direct raw Wrangler upload.

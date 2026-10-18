@@ -16,3 +16,9 @@ seven design rules, fix and re-capture, and obtain an independent reviewer as
 required by the skill. Existing deliberate palette/type choices remain unless
 the owner asks to change them. Commit, push, deploy and verify live bytes and
 actual user flows before reporting success.
+
+Publication guard: every build validates the completed artifact, and the standard
+`npm run deploy` verifies exact live bytes and no-store denial of private paths.
+Use these gates for every release; never treat provider success or a healthy
+home page as proof of privacy. Historical Git cleanup still requires the owner's
+separate approval; safety work does not authorize a rewrite or force-push.

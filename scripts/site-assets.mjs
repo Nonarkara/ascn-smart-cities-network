@@ -1,5 +1,6 @@
 import { cp, lstat, mkdir, readdir, readFile } from "node:fs/promises";
 import { extname, join } from "node:path";
+import { isPrivatePath } from "../lib/private-paths.mjs";
 
 export const siteEntries = ["index.html", "styles.css", "app.js", "showcase.js", "news.js", "ascn-news.js", "archive.js", "favicon.svg", "_headers",
   "lib", "vendor", "fonts", "data", "docs", "Photos", "logos", "media"];
@@ -41,4 +42,18 @@ export async function copySiteEntry(root, output, entry, relative = entry) {
   const destination = join(output, relative);
   await mkdir(join(destination, ".."), { recursive: true });
   await cp(source, destination, { dereference: false });
+}
+
+// Validate finished artifacts independently of the copy loop: a later build step
+// or a manual dist/ edit must not smuggle an unreviewed file into deployment.
+export function isPublishedFile(relative) {
+  const parts = relative.split('/');
+  if (relative.includes('\\') || parts.some((part) => !part || part.startsWith('.')) || isPrivatePath(`/${relative}`)) return false;
+  if (parts.length === 1) return siteEntries.includes(relative) && !extensions[relative];
+  const entry = parts[0];
+  if (entry === 'data') return publishedDatasets.has(parts.slice(1).join('/'));
+  if (entry === 'lib') return runtimeModules.has(parts.slice(1).join('/'));
+  if (assetFolders.has(entry)) return publicAssets.has(relative);
+  if (!['vendor', 'fonts'].includes(entry)) return false;
+  return extensions[entry].has(extname(relative).toLowerCase()) || ['vendor/leaflet/LICENSE', 'fonts/LICENSE'].includes(relative);
 }
