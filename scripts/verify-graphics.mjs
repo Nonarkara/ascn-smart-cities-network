@@ -220,21 +220,38 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   });
   ok("the twin URL keeps the wayfinding colour", linkHover !== "", linkHover);
 
-  // The box must fit the information. These rows were a 1280px ruled box
-  // holding 919px of content — the URL sat in a third grid track at x≈780,
-  // which is what pushed the content out that far, and the row kept the page
-  // width regardless. Measured now: the row is as wide as its own content.
-  const fit = await page.evaluate(() => {
-    const row = document.querySelector(".twin-row");
-    const rb = row.getBoundingClientRect();
-    const inner = [row.querySelector(".twin-row-main"), row.querySelector(".twin-row-thumb")]
-      .map((e) => e.getBoundingClientRect());
-    const right = Math.max(...inner.map((r) => r.right));
-    return { row: Math.round(rb.width), content: Math.round(right - rb.left) };
+  // The landscape composition. Three bands — header, disclosure strip, main —
+  // used to disagree: the strip was full-bleed with its type centred across
+  // the whole viewport while the other two were a 1280px island at x=288. Two
+  // left edges 288px apart is what made the page read as randomly assembled.
+  const edges = await page.evaluate(() => {
+    const l = (s) => Math.round(document.querySelector(s).getBoundingClientRect().left);
+    return { nav: l(".site-nav"), notice: l(".site-notice summary"), main: l("main") };
   });
-  ok("the twin row is no wider than its own content",
-    fit.row - fit.content <= 2,
-    `row=${fit.row}px content=${fit.content}px slack=${fit.row - fit.content}px`);
+  ok("header, disclosure strip and main share one left edge",
+    edges.nav === edges.notice && edges.notice === edges.main,
+    `nav=${edges.nav} notice=${edges.notice} main=${edges.main}`);
+
+  // The row spans its container so both margins are used, and the URL is the
+  // right anchor. Left-packed, it was 919px of content inside a 1280px frame
+  // with a dead right third.
+  const anchor = await page.evaluate(() => {
+    const row = document.querySelector(".twin-row").getBoundingClientRect();
+    const link = document.querySelector(".twin-link-label").getBoundingClientRect();
+    return { offset: Math.round(row.right - link.right) };
+  });
+  ok("the twin URL anchors the row's right edge",
+    anchor.offset <= 2, `URL sits ${anchor.offset}px from the right edge`);
+
+  // ...and the copy track must not grow past the copy, or the slack reappears
+  // as a hole INSIDE the text column. `minmax(0, 1fr)` did exactly this: an
+  // 833px track holding 477px of text.
+  const hole = await page.evaluate(() => {
+    const main = document.querySelector(".twin-row-main").getBoundingClientRect();
+    const desc = document.querySelector(".twin-desc").getBoundingClientRect();
+    return Math.round(main.width - desc.width);
+  });
+  ok("no dead space inside the twin copy track", hole <= 2, `${hole}px wider than the text`);
 
   // And the text is optically centred against the thumbnail rather than
   // stranded at the top of a 135px band with 59px of nothing beneath it.
