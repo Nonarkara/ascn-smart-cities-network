@@ -90,8 +90,9 @@
   --content: min(1280px, calc(100vw - 2rem));
 
   /* Fonts. Two design faces, self-hosted because the CSP is font-src 'self':
-     Jost for Latin — geometric, in the Futura/Bauhaus line — and Prompt for
-     Thai, matched to Jost in weight and proportion. The third is not a third
+     League Spartan for Latin — the circle-and-square Bauhaus weight, the
+     closest freely licensed face to Bauhaus Universal — and Prompt for Thai,
+     matched in weight and proportion. The third is not a third
      design choice: without a CJK face the Chinese edition had no glyphs at
      all and fell through to whatever the visitor's OS picked. It sits last so
      a Latin or Thai run never reaches it.
@@ -99,7 +100,7 @@
      This replaces "Helvetica Neue", Helvetica, Arial, "IBM Plex Sans Thai",
      sans-serif — a system font doing the work of a design font, naming a Thai
      face the site never shipped, and naming no CJK face whatsoever. */
-  --font: "Jost", "Prompt", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB",
+  --font: "League Spartan", "Prompt", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB",
           "Microsoft YaHei", "Source Han Sans SC", sans-serif;
   --mono: ui-monospace, "IBM Plex Mono", "JetBrains Mono", Menlo, monospace;
 
@@ -282,14 +283,17 @@ th { font-size:var(--t-micro); font-weight: 800; letter-spacing: 0.1em; text-tra
   display: inline-flex;
   align-items: center;
   white-space: nowrap;
-  /* 0.1em tracking across fourteen uppercase links needs ~1370px, so the nav
-     pushed the whole page sideways instead of the page complaining. Nav items
-     are short words; the wide tracking belongs to labels and table heads, not
-     to a fifteen-item menu. Jost is wider than the Helvetica it replaced, and
-     at 0.05em the strip still overflowed 1440px by 101px — which does not look
-     like a scrollable strip, it looks like the last tab is cut off. 0.015em is
-     the last step before the words start to run together, and it fits. */
-  letter-spacing: 0.015em;
+  /* The strip is measured, not eyeballed: fifteen uppercase items at the
+     shared 11px/800 step overflowed 1440px by 75px and 1280px by 107px with
+     League Spartan, clipping "Research" and "Essay". A clipped last tab reads
+     as broken rather than as a scrollable strip, so it has to fit. Weight was
+     tried first and is not enough — even 400 at 11px with negative tracking
+     still overflows 1280 by 21px. 10px at weight 600 with zero tracking fits
+     1440 and 1280 with room to spare, and is the smallest change that gets
+     there: the label shrinks, the control does not — min-height stays 44px. */
+  font-size: var(--t-label);
+  font-weight: 600;
+  letter-spacing: 0;
 }
 .site-nav nav a:hover { color: var(--ink); }
 .site-nav nav a.active { color: var(--ink); border-bottom-color: var(--red); }
