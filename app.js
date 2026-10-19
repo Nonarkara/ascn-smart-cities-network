@@ -308,6 +308,12 @@ function renderOverview() {
 
 function renderPerspective() {
   const p = state.K.perspective, st = state.K.stance;
+  /* This block was four equal boxes — label, bold line, two lines of body,
+     a rule — repeated four times, under a person's name set at exactly the
+     same 24px as the thesis above it. Nothing won, so everything shouted.
+     The fix is structural, not cosmetic: one heading for the block (the
+     stance), a byline that is not a heading, and points that carry an index
+     and run the claim into its explanation as one sentence pair. */
   $("#perspective").innerHTML = `
     <div class="persp-stance">
       <p class="label">The stance</p>
@@ -315,13 +321,14 @@ function renderPerspective() {
       <p class="lede">${esc(st.body)}</p>
     </div>
     <div class="persp-article">
-      <p class="label">${esc(p.kicker)}</p>
-      <h3>${esc(p.author)}</h3>
+      <p class="persp-byline">${esc(p.author)}</p>
       <p class="persp-role">${esc(p.role)} · ${esc(p.credentials)}</p>
-      <p class="persp-framing">${esc(p.framing)}</p>
-      <blockquote class="persp-quote">${esc(p.pull_quote)}</blockquote>
-      <div class="persp-points">${p.points.map((pt) => `<div class="persp-point"><b>${esc(pt.h)}</b><span>${esc(pt.t)}</span></div>`).join("")}</div>
-      <a class="persp-link" href="${esc(safeUrl(p.url))}" target="_blank" rel="noopener noreferrer">Read the full essay — ${esc(p.source)} ↗</a>
+      <ol class="persp-points">${p.points.map((pt, i) => `<li class="persp-point"><span class="persp-n">${String(i + 1).padStart(2, "0")}</span><p><b>${esc(pt.h)}</b> ${esc(pt.t)}</p></li>`).join("")}</ol>
+      <blockquote class="persp-quote">
+        <p>${esc(p.pull_quote)}</p>
+        <cite>${esc(p.author)}, <i>The ASEAN Magazine</i>, Issue 14, ${esc(p.year)}</cite>
+      </blockquote>
+      <p class="persp-cta"><a href="${esc(safeUrl(p.url))}" target="_blank" rel="noopener noreferrer">Read the essay in <i>The ASEAN Magazine</i>, Issue 14 <span aria-hidden="true">↗</span></a></p>
     </div>
     <aside class="persp-aside">
       <figure class="persp-figure">

@@ -90,9 +90,10 @@
   --content: min(1280px, calc(100vw - 2rem));
 
   /* Fonts. Two design faces, self-hosted because the CSP is font-src 'self':
-     League Spartan for Latin — the circle-and-square Bauhaus weight, the
-     closest freely licensed face to Bauhaus Universal — and Prompt for Thai,
-     matched in weight and proportion. The third is not a third
+     Josefin Sans for Latin — the 1920s geometric line, close in period to
+     Bauhaus Universal without inheriting its unicase, and light enough to
+     stay readable at the 13px body size — and Prompt for Thai, matched in
+     proportion. The third is not a third
      design choice: without a CJK face the Chinese edition had no glyphs at
      all and fell through to whatever the visitor's OS picked. It sits last so
      a Latin or Thai run never reaches it.
@@ -100,7 +101,7 @@
      This replaces "Helvetica Neue", Helvetica, Arial, "IBM Plex Sans Thai",
      sans-serif — a system font doing the work of a design font, naming a Thai
      face the site never shipped, and naming no CJK face whatsoever. */
-  --font: "League Spartan", "Prompt", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB",
+  --font: "Josefin Sans", "Prompt", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB",
           "Microsoft YaHei", "Source Han Sans SC", sans-serif;
   --mono: ui-monospace, "IBM Plex Mono", "JetBrains Mono", Menlo, monospace;
 
@@ -204,6 +205,10 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font);
+  /* Josefin Sans sets narrower than the faces it replaced. At the 13px body
+     size that closed the counters, so body copy carries a little tracking to
+     reopen them. Display sizes are untouched — they were never tight. */
+  letter-spacing: 0.008em;
   font-size: var(--t-body);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
@@ -259,13 +264,16 @@ p, li, dd, blockquote, figcaption, .lede {
 .brand i { font-style: normal; font-weight: 700; font-size:var(--t-micro); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-left: 0.1rem; }
 .brand-mark { width: 1.6rem; height: 1.6rem; }
 
-/* Fourteen uppercase items need 991px at this tracking. They were allowed to
-   wrap, which dropped "Essay" onto a second line under a flex header and read
-   as a layout accident rather than a decision. One row always; below the width
-   where all fourteen fit, the row scrolls instead of reflowing. */
+/* Fifteen uppercase destinations. Every face tried ran past the strip —
+   League Spartan only fit at 10px, Josefin Sans still overflowed 1440 by 86px
+   at 10px/400 — and the honest reading of that is that this was never a
+   one-line menu. It was forced into one. From 1200px up it takes two rows and
+   every label keeps a legible size; below that the row scrolls, which is the
+   behaviour a phone should have and a desktop should not. */
 .site-nav nav {
-  display: flex; gap: 0.15rem; flex-wrap: nowrap;
+  display: flex; gap: 0.1rem 0.15rem; flex-wrap: wrap;
   overflow-x: auto; scrollbar-width: none;
+  align-content: flex-start;
 }
 .site-nav nav::-webkit-scrollbar { display: none; }
 
@@ -283,17 +291,22 @@ th { font-size:var(--t-micro); font-weight: 800; letter-spacing: 0.1em; text-tra
   display: inline-flex;
   align-items: center;
   white-space: nowrap;
-  /* The strip is measured, not eyeballed: fifteen uppercase items at the
-     shared 11px/800 step overflowed 1440px by 75px and 1280px by 107px with
-     League Spartan, clipping "Research" and "Essay". A clipped last tab reads
-     as broken rather than as a scrollable strip, so it has to fit. Weight was
-     tried first and is not enough — even 400 at 11px with negative tracking
-     still overflows 1280 by 21px. 10px at weight 600 with zero tracking fits
-     1440 and 1280 with room to spare, and is the smallest change that gets
-     there: the label shrinks, the control does not — min-height stays 44px. */
-  font-size: var(--t-label);
+  /* Fifteen destinations do not belong on one line. Every face tried
+     overflowed the strip — League Spartan needed 10px to fit, Josefin Sans
+     still ran 86px over at 10px/400 — and the honest reading of that is that
+     the nav was treating fifteen top-level sections as a single menu. At
+     desktop it wraps to two rows instead, which keeps every label at a
+     legible size and keeps the control at its full 44px. Below 1200px the
+     existing horizontal scroll strip takes over unchanged. */
+  font-size: var(--t-micro);
   font-weight: 600;
   letter-spacing: 0;
+}
+@media (min-width: 1200px) {
+  .site-nav nav a { min-height: 38px; padding: 0.2rem 0; }
+}
+@media (max-width: 1199px) {
+  .site-nav nav { flex-wrap: nowrap; }
 }
 .site-nav nav a:hover { color: var(--ink); }
 .site-nav nav a.active { color: var(--ink); border-bottom-color: var(--red); }
@@ -1372,10 +1385,23 @@ td { color: var(--ink-2); font-size:var(--t-body); }
      Tracks are sized to content and packed left, matching the twins
      directory, so the leftover space sits at the page edge where it reads as
      margin instead of as a hole. */
+  /* Fill the column. This was minmax(0, var(--measure)) 360px packed left with
+     justify-content: start, which put a 498px + 360px grid inside a 1248px
+     container and left roughly 360px of dead page at the right edge — the
+     composition stopped halfway across the screen, which reads as a mistake
+     rather than as margin. The text track now takes the slack and the prose
+     keeps its own 65ch cap inside it, so the measure rule and the grid rule
+     stop fighting each other. */
+  /* Text keeps its measure, the photographs take a fixed 440px, and the pair is
+     centred. Two earlier attempts each fixed the void by moving it: left-packed
+     left ~360px dead at the page edge, and letting the photos absorb the slack
+     pushed them to 704px, where two large frames outweighed a thin column of
+     argument. Centring puts the same slack on both sides, which reads as a
+     margin rather than as a hole. */
   display: grid;
-  grid-template-columns: minmax(0, var(--measure)) 360px;
-  justify-content: start;
-  gap: 2.2rem 2rem;
+  grid-template-columns: minmax(0, var(--measure)) 440px;
+  justify-content: center;
+  gap: 2.2rem 3rem;
 }
 .persp-stance, .persp-article { grid-column: 1; }
 .persp-aside {
@@ -1424,23 +1450,63 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 @media (max-width: 620px) {
   .persp-aside { flex-direction: column; }
 }
-.persp-stance h2 { margin: 0.3rem 0 0.7rem; }
-.persp-stance h2 { max-width: 34ch; }
-.persp-stance .lede { max-width: 54rem; }
-.persp-article { border-top: 1px solid var(--line); padding-top: 1.6rem; max-width: 54rem; }
-.persp-article h3 { font-size: var(--t-h2); margin-bottom: 0.2rem; }
-.persp-role { color: var(--muted); font-size:var(--t-small); margin: 0 0 0.7rem; }
-.persp-framing { color: var(--ink-2); margin: 0 0 0.9rem; }
-.persp-quote {
-  margin: 0 0 1rem; padding: 0.15rem 0 0.15rem 1.1rem;
-  border-left: 2px solid var(--red);
-  font-size: var(--t-body); line-height: 1.5; color: var(--ink); font-weight: 500;
+.persp-stance h2 { margin: 0.3rem 0 0.7rem; max-width: 34ch; }
+.persp-stance .lede { max-width: var(--measure); }
+
+/* The author is a byline, not a heading. It used to be an h3 at --t-h2 —
+   exactly the 24px of the stance above it — so a person's name carried the
+   same weight as the argument, and the block had no focal point at all. */
+.persp-article { border-top: 1px solid var(--line); padding-top: 1.5rem; max-width: var(--measure); }
+.persp-byline {
+  margin: 0 0 0.15rem; color: var(--ink); font-size: var(--t-lede);
+  font-weight: 700; letter-spacing: 0.01em;
 }
-.persp-points { display: grid; gap: 0; margin-bottom: 1.1rem; }
-.persp-point { padding: 0.55rem 0; border-top: 1px solid var(--line-soft); }
-.persp-point b { display: block; color: var(--ink); font-size:var(--t-body); }
-.persp-point span { color: var(--ink-2); font-size:var(--t-body); }
-.persp-link { display: inline-flex; min-height: 44px; align-items: center; color: var(--navy); font-weight: 800; font-size:var(--t-small); letter-spacing: 0.06em; text-transform: uppercase; border-bottom: 2px solid var(--red); }
+.persp-role { color: var(--muted); font-size: var(--t-micro); margin: 0 0 1.1rem; max-width: 58ch; }
+
+/* An index and a running sentence, not four stacked label boxes. The old
+   version rendered each point as bold-heading-then-paragraph, which made all
+   four measure exactly 79px — a template, not a structure. The claim now runs
+   straight into its explanation, and the number does the work a rule was
+   pretending to. */
+.persp-points { list-style: none; margin: 0 0 1.4rem; padding: 0; border-top: 1px solid var(--line); }
+.persp-point {
+  display: grid; grid-template-columns: 2.2rem 1fr; gap: 0.9rem;
+  padding: 0.7rem 0; border-bottom: 1px solid var(--line-soft);
+}
+.persp-n {
+  font-family: var(--mono); font-size: var(--t-small); font-weight: 700;
+  color: var(--amber); padding-top: 0.18rem;
+}
+.persp-point p { margin: 0; color: var(--ink-2); font-size: var(--t-body); line-height: 1.6; }
+.persp-point b { color: var(--ink); font-weight: 700; }
+
+/* The quote is the author's, from the 2021 essay, so it now says so. It was
+   floating in the page's own voice with no attribution, which is how a
+   borrowed sentence starts reading as the site asserting it. */
+.persp-quote {
+  margin: 0 0 1.3rem; padding: 0 0 0 1.1rem;
+  border-left: 2px solid var(--amber);
+}
+.persp-quote p {
+  margin: 0 0 0.45rem; font-size: var(--t-body); line-height: 1.6; color: var(--ink);
+}
+.persp-quote cite {
+  display: block; font-style: normal; font-size: var(--t-micro); color: var(--muted);
+}
+
+/* Body-size, sentence case, amber. It was 11px uppercase in --navy (a blue
+   that appears nowhere else on the site) reading "Read the full essay — The
+   ASEAN Magazine, Issue 14 — "The Road to Sustainable Cities"", three em
+   dashes in one link. */
+.persp-cta { margin: 0; }
+.persp-cta a {
+  display: inline-flex; align-items: center; min-height: 44px; gap: 0.35rem;
+  color: var(--amber); font-size: var(--t-body); font-weight: 600;
+  text-decoration: none; border-bottom: 1px solid var(--amber);
+}
+.persp-cta a:hover { color: var(--ink); }
+.persp-cta a i { font-style: italic; }
+.persp-cta a span { font-size: var(--t-small); }
 
 /* ---------- Library / evidence base ---------- */
 .library { display: grid; gap: 1.9rem; }

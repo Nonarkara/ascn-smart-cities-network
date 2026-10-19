@@ -31,7 +31,11 @@ test("data-supplied executable links are neutralized and project exports are spr
   await page.route("**/data/ascn-knowledge.json*", (route) => route.fulfill({ json: knowledge }));
   await page.route("**/data/ascn-v2-data.json*", (route) => route.fulfill({ json: engine }));
   await page.goto("/#overview");
-  await expect(page.locator(".persp-link")).toHaveAttribute("href", "#");
+  // The perspective link moved from .persp-link to .persp-cta a when the block
+  // was rebuilt. The assertion is unchanged and still the point of the test:
+  // a javascript: URL coming from the dataset must never reach the href.
+  await expect(page.locator(".persp-cta a")).toHaveAttribute("href", "#");
+  await expect(page.locator(".persp-cta a")).toHaveAttribute("rel", /noopener/);
   await page.locator('#tab-nav [data-tab="projects"]').click();
   await expect(page.locator("#project-table")).toContainText("=HYPERLINK");
   const downloaded = page.waitForEvent("download");

@@ -7,11 +7,12 @@
    "Source Sans 3" was downloaded, vendored, and referenced by nothing.
 
    Two faces now, both self-hosted because the CSP is font-src 'self':
-     League Spartan — Latin. Jost was the previous Latin face and read as the
-       same Futura-derived geometric every AI layout ships; League Spartan is
-       the circle-and-square Bauhaus weight, closer to Bauhaus Universal than
-       anything else freely licensed, and it holds up at 13px on this dark
-       theme rather than only at display sizes.
+     Josefin Sans — Latin. Jost was the first Latin face and League Spartan
+       the second; both were Futura-derived geometrics that read as the same
+       face as each other, and League Spartan's Bauhaus weight turned heavy
+       and clunky at the 13px body size this site runs at. Josefin Sans is the
+       1920s geometric line — closer in character to Bauhaus Universal's
+       period without its unicase, and it stays light at small sizes.
      Prompt  — Thai, geometric and matched in weight and proportion.
    A third is not a third design choice: Noto Sans CJK is the script fallback
    that lets the Chinese edition render at all. It is listed after the two
@@ -21,8 +22,8 @@ import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
 const FACES = [
-  { pkg: "@fontsource/league-spartan", name: "league-spartan", label: "League Spartan",
-    weights: ["400", "500", "600", "700", "800"] },
+  { pkg: "@fontsource/josefin-sans", name: "josefin-sans", label: "Josefin Sans",
+    weights: ["300", "400", "600", "700"] },
   { pkg: "@fontsource/prompt", name: "prompt", label: "Prompt",
     weights: ["400", "500", "600", "700"] },
 ];
