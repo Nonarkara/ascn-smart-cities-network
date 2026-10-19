@@ -731,18 +731,28 @@ input[type="search"] { min-width: min(16rem, 100%); }
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   min-width: 0;
+  /* The box has to fit the information. These five rows hold 240px of
+     thumbnail beside 492px of text: 756px of content inside a 1280px column,
+     so the ruled box was 524px wider than anything inside it. Packing the
+     tracks left only moved that emptiness from the middle to the edge — the
+     reader still saw a frame drawn around mostly nothing. The component now
+     takes the width it needs and the remaining space is margin outside the
+     rule rather than a void inside it. */
+  width: fit-content;
+  max-width: 100%;
 }
 .twin-row {
   display: grid;
-  /* Fixed tracks packed to the left, Vignelli-style. Two earlier attempts
-     each produced a hole: `1fr auto` stranded every URL ~300px from its own
-     description, and a bare `1fr` left the URL orphaned under the copy. Tracks
-     sized to content and `justify-content: start` put the empty space at the
-     page edge where it reads as margin instead of as a gap in the middle. */
-  grid-template-columns: 240px minmax(0, 66ch) auto;
+  /* Two tracks, not three. The URL was its own column at x≈780, which is what
+     carried the content out to 919px and left the hole; it is metadata about
+     the city above it, so it belongs in that column. `align-items: center`
+     because the thumbnail sets the row height at 135px while the text block
+     is 117px — starting the copy at the top stranded 59px of nothing beneath
+     it before the rule. */
+  grid-template-columns: 240px minmax(0, 66ch);
   justify-content: start;
   gap: 0 1.5rem;
-  align-items: start;
+  align-items: center;
   padding: 1.05rem 0;
   border-bottom: 1px solid var(--line-soft);
   color: var(--ink);
@@ -797,8 +807,11 @@ input[type="search"] { min-width: min(16rem, 100%); }
   max-width: 64ch;
 }
 .twin-link-label {
-  /* Auto-placed into track 3 of row 1, so it aligns with the city name. */
+  /* Last line of the text column. It is a child of .twin-row-main, so it is
+     simply the end of the paragraph block — no grid placement. As a sibling of
+     the text it landed on row 2 and grew the row to 195px. */
   display: inline-block;
+  margin-top: 0.55rem;
   font-family: var(--mono);
   font-size: var(--t-micro);
   font-weight: 600;
@@ -812,12 +825,11 @@ input[type="search"] { min-width: min(16rem, 100%); }
 @media (max-width: 980px) {
   .twin-row { grid-template-columns: 150px minmax(0, 1fr); }
   .twin-row-thumb { width: 150px; }
-  .twin-link-label { grid-column: 2; margin-top: 0.5rem; }
 }
 @media (max-width: 520px) {
   .twin-row { grid-template-columns: minmax(0, 1fr); gap: 0.65rem; }
   .twin-row-thumb { width: 100%; }
-  .twin-link-label { grid-column: 1; margin-top: 0; }
+  .twin-link-label { margin-top: 0; }
 }
 
 @media (max-width: 1060px) {

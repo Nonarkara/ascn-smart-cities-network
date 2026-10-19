@@ -220,6 +220,41 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   });
   ok("the twin URL keeps the wayfinding colour", linkHover !== "", linkHover);
 
+  // The box must fit the information. These rows were a 1280px ruled box
+  // holding 919px of content — the URL sat in a third grid track at x≈780,
+  // which is what pushed the content out that far, and the row kept the page
+  // width regardless. Measured now: the row is as wide as its own content.
+  const fit = await page.evaluate(() => {
+    const row = document.querySelector(".twin-row");
+    const rb = row.getBoundingClientRect();
+    const inner = [row.querySelector(".twin-row-main"), row.querySelector(".twin-row-thumb")]
+      .map((e) => e.getBoundingClientRect());
+    const right = Math.max(...inner.map((r) => r.right));
+    return { row: Math.round(rb.width), content: Math.round(right - rb.left) };
+  });
+  ok("the twin row is no wider than its own content",
+    fit.row - fit.content <= 2,
+    `row=${fit.row}px content=${fit.content}px slack=${fit.row - fit.content}px`);
+
+  // And the text is optically centred against the thumbnail rather than
+  // stranded at the top of a 135px band with 59px of nothing beneath it.
+  // This has to compare the two *offsets*, not their heights: `align-items`
+  // moves the text without changing how tall it is, so a height comparison
+  // passes with the defect present. The first version of this check did
+  // exactly that and never failed.
+  const centring = await page.evaluate(() => {
+    const row = document.querySelector(".twin-row");
+    const main = row.querySelector(".twin-row-main").getBoundingClientRect();
+    const thumb = row.querySelector(".twin-row-thumb").getBoundingClientRect();
+    return {
+      offset: Math.round(main.top - thumb.top),
+      expected: Math.round((thumb.height - main.height) / 2),
+    };
+  });
+  ok("the twin text sits centred against its thumbnail, not stranded",
+    Math.abs(centring.offset - centring.expected) <= 2 && centring.offset > 0,
+    `text sits ${centring.offset}px below the thumbnail top; centred would be ${centring.expected}px`);
+
   ok("no page errors on the Overview twins directory", failures.length === 0, failures.slice(0, 2).join(" | "));
   await page.close();
 }
