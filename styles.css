@@ -90,10 +90,10 @@
   --content: min(1280px, calc(100vw - 2rem));
 
   /* Fonts. Two design faces, self-hosted because the CSP is font-src 'self':
-     Josefin Sans for Latin — the 1920s geometric line, close in period to
-     Bauhaus Universal without inheriting its unicase, and light enough to
-     stay readable at the 13px body size — and Prompt for Thai, matched in
-     proportion. The third is not a third
+     Julius Sans One for the display register and Archivo for prose, with
+     Prompt carrying Thai in both. Julius Sans One is unicase, which is the
+     Bauhaus Universal signature; Archivo is the grotesque that keeps 13px
+     copy readable. The third is not a third
      design choice: without a CJK face the Chinese edition had no glyphs at
      all and fell through to whatever the visitor's OS picked. It sits last so
      a Latin or Thai run never reaches it.
@@ -101,8 +101,21 @@
      This replaces "Helvetica Neue", Helvetica, Arial, "IBM Plex Sans Thai",
      sans-serif — a system font doing the work of a design font, naming a Thai
      face the site never shipped, and naming no CJK face whatsoever. */
-  --font: "Josefin Sans", "Prompt", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB",
+  /* Two registers, not two families competing.
+     --font is every line a reader reads as prose. Archivo is a grotesque:
+     tight apertures, flat terminals, no geometric circles — deliberately not
+     the Poppins/Jost/Josefin shape.
+     --font-display is everything that states something: headlines, figures,
+     section heads, nav, labels. Julius Sans One is unicase, so its lowercase
+     and uppercase are one shape, which is the signature of Bauhaus Universal
+     and the thing no free geometric on Google Fonts actually has. It is one
+     weight and reads as capitals at small sizes, so it never sets prose.
+     Prompt serves Thai in both registers and CJK falls through to the system
+     stack, which is why it sits before them in both. */
+  --font: "Archivo", "Prompt", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB",
           "Microsoft YaHei", "Source Han Sans SC", sans-serif;
+  --font-display: "Julius Sans One", "Prompt", "Noto Sans SC", "PingFang SC",
+          "Hiragino Sans GB", "Microsoft YaHei", "Source Han Sans SC", sans-serif;
   --mono: ui-monospace, "IBM Plex Mono", "JetBrains Mono", Menlo, monospace;
 
   /* ── Spacing scale ───────────────────────────────────────────────────────
@@ -148,12 +161,14 @@
      block; that is roughly 50ch at this face, about ten words a line, and it
      is the width the reader already knows from every book they have finished.
 
-     Expressed in `ch`, not px, so the cap means the same number of
-     CHARACTERS at 10px as at 13px. A px cap would silently give 10px labels a
-     longer line than 13px prose — the same failure, one level down. */
+     Expressed in `ch`, so the cap holds as the face changes rather than being
+     pinned to one typeface's digits — swapping Jost for League Spartan for
+     Josefin for Archivo moved the physical measure by 40px at a fixed ch. 55ch
+     of Archivo is 410px, the A5 text block; the same number in the previous
+     face was 451px, which overshot it. */
   --page-sheet: 794px;
   --page-text: 605px;
-  --measure: 50ch;
+  --measure: 55ch;
   /* 50ch of this face is ~410px — the A5 text block (148mm sheet less 20mm
      margins at 96dpi). Stated in ch so it still means the same number of
      characters if the body size ever moves, which is the whole reason the
@@ -216,10 +231,6 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font);
-  /* Josefin Sans sets narrower than the faces it replaced. At the 13px body
-     size that closed the counters, so body copy carries a little tracking to
-     reopen them. Display sizes are untouched — they were never tight. */
-  letter-spacing: 0.008em;
   font-size: var(--t-body);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
@@ -339,6 +350,27 @@ main { width: var(--content); margin: 0 auto; min-width: 0; }
 /* ---------- Typography ---------- */
 .label { margin: 0 0 0.42rem; color: var(--navy); }
 h1, h2, h3, p { margin-top: 0; }
+
+/* ── The display register ───────────────────────────────────────────────────
+   Two faces, two jobs. Archivo sets everything a reader reads as running
+   prose. Julius Sans One sets everything that states something — headlines,
+   section heads, the wordmark, labels, the nav, the big figures — and it is
+   unicase, so "38 cities" draws with one set of letter shapes rather than
+   two. That single-shape property is the Bauhaus Universal signature and the
+   reason it is here rather than another geometric: Bauhaus Universal, Johnson
+   Hess & Co., 1973, has no lowercase to speak of.
+
+   It ships one weight and reads as capitals below about 20px, so nothing on
+   this list may be set in it at body size. Prose is never in this rule. */
+h1, h2, h3,
+.brand, .brand i,
+.site-nav nav a, .finder-open,
+.label, .muted, th,
+.kpi strong, .rec-finding-num, .archive-title,
+.essay-title, .essay-next-title, .essay-next-h,
+.persp-stance h2, .persp-byline,
+.persp-point b, .essay-h2, .essay-h3,
+.essay-section > .essay-h3 { font-family: var(--font-display); }
 /* Display sizes are optically loose at tracking 0 — the same face reads
    tighter large because the counters occupy less relative space. The headline
    was set with no correction at all, which is a large part of why it read as

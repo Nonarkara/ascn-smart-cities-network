@@ -6,15 +6,8 @@
    Chinese string rendered in whatever the visitor's OS happened to pick.
    "Source Sans 3" was downloaded, vendored, and referenced by nothing.
 
-   Two faces now, both self-hosted because the CSP is font-src 'self':
-     Josefin Sans — Latin. Jost was the first Latin face and League Spartan
-       the second; both were Futura-derived geometrics that read as the same
-       face as each other, and League Spartan's Bauhaus weight turned heavy
-       and clunky at the 13px body size this site runs at. Josefin Sans is the
-       1920s geometric line — closer in character to Bauhaus Universal's
-       period without its unicase, and it stays light at small sizes.
-     Prompt  — Thai, geometric and matched in weight and proportion.
-   A third is not a third design choice: Noto Sans CJK is the script fallback
+   Three faces, all self-hosted because the CSP is font-src 'self':
+   Noto Sans CJK is the script fallback
    that lets the Chinese edition render at all. It is listed after the two
    design faces, so a Latin or Thai run never reaches it. */
 import { cp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
@@ -22,8 +15,20 @@ import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
 const FACES = [
-  { pkg: "@fontsource/josefin-sans", name: "josefin-sans", label: "Josefin Sans",
-    weights: ["300", "400", "600", "700"] },
+  // Display. Julius Sans One is the closest freely licensed face to Bauhaus
+  // Universal: it is unicase, so a lowercase 'a' and an uppercase 'A' are the
+  // same shape, which is the one thing every "Bauhaus-inspired" geometric on
+  // Google Fonts is not. Bauhaus Universal itself is a 1973 Albert Janer face
+  // that is not redistributable. It ships a single weight and cannot set
+  // 13px prose, so it never appears below the display sizes.
+  { pkg: "@fontsource/julius-sans-one", name: "julius-sans-one", label: "Julius Sans One",
+    weights: ["400"] },
+  // Body. Archivo is a grotesque — tight apertures, flat terminals, no
+  // geometric circles — which is the opposite of the Poppins/Jost/Josefin
+  // look this site kept being handed. It carries every line of running text.
+  { pkg: "@fontsource/archivo", name: "archivo", label: "Archivo",
+    weights: ["400", "500", "600", "700"] },
+  // Thai, matched in proportion, used for both registers.
   { pkg: "@fontsource/prompt", name: "prompt", label: "Prompt",
     weights: ["400", "500", "600", "700"] },
 ];
