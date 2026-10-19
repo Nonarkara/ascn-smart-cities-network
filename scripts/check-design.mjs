@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 const css=(await readFile(new URL('../styles.css',import.meta.url),'utf8')).replace(/\/\*[\s\S]*?\*\//g,'');
 const errors=[];
 for(const match of css.matchAll(/(?:^|[;{])\s*(border-radius|box-shadow|background(?:-image)?|font-family|--font)\s*:\s*([^;}]+)/g)) {
@@ -19,5 +19,23 @@ if(!/--measure\s*:\s*(?:4[5-9]|[56][0-9]|7[0-5])ch\b/.test(css)) errors.push('Pr
 const html=await readFile(new URL('../index.html',import.meta.url),'utf8');
 if(!/id="observatory-heading"/.test(html)||!/id="finder-open"/.test(html)) errors.push('The evidence opening and direct finder must remain available.');
 if(!/prefers-reduced-motion/.test(css)) errors.push('Reduced-motion support missing.');
+/* A vendored OFL licence belongs to a face the site actually sets. The build
+   already refuses to publish them (site-assets.mjs allowlists only the exact
+   name fonts/LICENSE), so this is repo hygiene, not a live-bytes leak — the
+   three stale licences are inert in dist/ and only live in git history. They
+   survived three typeface changes because nothing in the repo looks at fonts/
+   except the copy loop, and the copy loop is the wrong place to notice. An OFL
+   licence must be kept alongside the font it covers, so the rule is not "no
+   stale licences" but "a licence for a current face and nothing else". Directories
+   and dotfiles are exempt for the same reason site-assets.mjs exempts them:
+   never published. */
+{
+  const vendored = await readdir(new URL('../fonts/', import.meta.url), { withFileTypes: true });
+  const keep = new Set(['design-faces.css', 'archivo-LICENSE', 'julius-sans-one-LICENSE', 'prompt-LICENSE']);
+  const stale = vendored
+    .filter((e) => e.isFile() && !e.name.startsWith('.') && !keep.has(e.name))
+    .map((e) => e.name);
+  if (stale.length) errors.push('Stale font files tracked beside the vendored faces: '+stale.join(', ')+'. Delete them from git — the build will not publish them, but they still misrepresent the typeface set.');
+}
 if(errors.length)throw new Error(errors.join('\n'));
 console.log('Objective design checks passed. Composition still requires screenshots and independent review.');

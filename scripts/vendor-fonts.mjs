@@ -72,4 +72,25 @@ await writeFile(new URL("design-faces.css", output), css);
     console.log(`Pruned ${orphans.length} unreferenced font file(s).`);
   }
 }
+
+// The block above only reaches files/, so it could never clean the licences
+// sitting beside it — and a licence outlives its face. Swapping Poppins for
+// Jost, then Jost for Julius, left josefin-sans-LICENSE, jost-LICENSE and
+// league-spartan-LICENSE in fonts/ and in git, for faces no rule references.
+// They were never published: site-assets.mjs allowlists only the exact name
+// fonts/LICENSE, so the build drops them. That is why nobody noticed for three
+// typeface changes — the cost of leaving them was invisible from the live site,
+// which is precisely why they survived. An OFL licence must be kept alongside
+// the font it covers, so the rule is not "no stale licences" but "a licence for
+// a current face and nothing else".
+{
+  const dir = new URL(".", output);
+  const keep = new Set(["design-faces.css", ...FACES.map((f) => `${f.name}-LICENSE`)]);
+  const present = await readdir(dir);
+  const orphans = present.filter((f) => !keep.has(f) && !f.startsWith(".") && f !== "files");
+  if (orphans.length) {
+    for (const f of orphans) await rm(new URL(f, dir), { recursive: true, force: true });
+    console.log(`Pruned ${orphans.length} stale top-level font file(s): ${orphans.join(", ")}`);
+  }
+}
 console.log(`Vendored ${FACES.map((f) => f.label).join(" + ")} (self-hosted, OFL).`);
