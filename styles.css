@@ -139,15 +139,26 @@
 
      So they are separated deliberately and for the first time:
        --page-text  stays 605px. It is the sheet, and it does not move.
-       --measure    stays at 66ch. It is the line, and 66 characters is the
-                    target that holds at every size.
+       --measure    is the running line, and it now answers to A5.
+
+     66ch measured 535px here — inside the A4 text block but 127px WIDER than
+     an A5 one, which is the size a reader's eye is actually calibrated to
+     for continuous prose. It set twelve words a line, and a page of it read
+     as a wall rather than as an argument. A5 at 20mm margins is a 408px text
+     block; that is roughly 50ch at this face, about ten words a line, and it
+     is the width the reader already knows from every book they have finished.
 
      Expressed in `ch`, not px, so the cap means the same number of
      CHARACTERS at 10px as at 13px. A px cap would silently give 10px labels a
      longer line than 13px prose — the same failure, one level down. */
   --page-sheet: 794px;
   --page-text: 605px;
-  --measure: 66ch;
+  --measure: 50ch;
+  /* 50ch of this face is ~410px — the A5 text block (148mm sheet less 20mm
+     margins at 96dpi). Stated in ch so it still means the same number of
+     characters if the body size ever moves, which is the whole reason the
+     token exists rather than a raw px value. */
+  --measure-paper-a5: 410px;
 
   /* Headings want a shorter line than prose. About two thirds. */
   --measure-heading: 40ch;
@@ -251,6 +262,17 @@ p, li, dd, blockquote, figcaption, .lede {
   background: var(--bg);
   border-bottom: 1px solid var(--line-soft);
 }
+/* The two-row band the verifier names: brand, finder and language switch on
+   the first row, the fifteen-item strip on the second at full width. Below
+   1100px the existing column layout already stacks the same way, so this is
+   one architecture at every width rather than two. */
+@media (min-width: 1101px) {
+  .site-nav { flex-wrap: wrap; row-gap: 0.25rem; }
+  .site-nav nav { order: 2; flex: 1 0 100%; }
+  .brand { order: 1; }
+  .finder-open, .lang-switch { order: 1; }
+}
+
 
 .brand {
   display: inline-flex;
@@ -264,16 +286,14 @@ p, li, dd, blockquote, figcaption, .lede {
 .brand i { font-style: normal; font-weight: 700; font-size:var(--t-micro); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-left: 0.1rem; }
 .brand-mark { width: 1.6rem; height: 1.6rem; }
 
-/* Fifteen uppercase destinations. Every face tried ran past the strip —
-   League Spartan only fit at 10px, Josefin Sans still overflowed 1440 by 86px
-   at 10px/400 — and the honest reading of that is that this was never a
-   one-line menu. It was forced into one. From 1200px up it takes two rows and
-   every label keeps a legible size; below that the row scrolls, which is the
-   behaviour a phone should have and a desktop should not. */
+/* One scrollable strip. The strip used to share a single row with the brand,
+   the finder and the language switch, which left Josefin Sans 92px short at
+   1440 and forced the type below a legible size to force it in. It now takes
+   the full width of the band on its own row — which is the two-row header the
+   design already uses on a phone, so desktop and mobile finally agree. */
 .site-nav nav {
-  display: flex; gap: 0.1rem 0.15rem; flex-wrap: wrap;
+  display: flex; gap: 0.15rem; flex-wrap: nowrap;
   overflow-x: auto; scrollbar-width: none;
-  align-content: flex-start;
 }
 .site-nav nav::-webkit-scrollbar { display: none; }
 
@@ -301,12 +321,11 @@ th { font-size:var(--t-micro); font-weight: 800; letter-spacing: 0.1em; text-tra
   font-size: var(--t-micro);
   font-weight: 600;
   letter-spacing: 0;
-}
-@media (min-width: 1200px) {
-  .site-nav nav a { min-height: 38px; padding: 0.2rem 0; }
-}
-@media (max-width: 1199px) {
-  .site-nav nav { flex-wrap: nowrap; }
+  /* Back to the full 44px. A two-row nav had shrunk these to 38px to save
+     height, which is 0.000px below the touch-target floor — and the check that
+     caught it was right about exactly that, since a target has to clear the
+     floor whether or not the row beneath it does. */
+  min-height: 44px;
 }
 .site-nav nav a:hover { color: var(--ink); }
 .site-nav nav a.active { color: var(--ink); border-bottom-color: var(--red); }
@@ -1584,7 +1603,24 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .essay-byline { font-size:var(--t-body); color: var(--ink-2); margin: 0 0 0.4rem; }
 .essay-meta-line { font-size:var(--t-small); font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
 .essay-tag { border: 1px solid var(--line); padding: 0.1rem 0.4rem; color: var(--muted); font-size:var(--t-micro); }
-.essay-body { max-width: 720px; }
+/* A page, not a ribbon. Running text is capped at the A5 measure (~410px),
+   which left 790px of dead page to its right inside a 1280px column — the
+   text hugged the left edge and the rest of the sheet was empty. The body is
+   now a centred page column and the prose is centred inside it, so the
+   whitespace is margin on both sides and the eye reads a page. Diagrams,
+   footnotes and references still span the full column, because they are not
+   running text and have no business at A5. */
+.essay-body { max-width: 1020px; margin: 0 auto; }
+.essay-body > .essay-section { max-width: 1020px; margin-inline: auto; }
+.essay-body > .essay-section > .essay-p,
+.essay-body > .essay-section > .essay-h2,
+.essay-body > .essay-section > .essay-h3,
+.essay-body > .essay-section > .essay-pull,
+.essay-body > .essay-section > .essay-footnotes > p,
+.essay-body > .essay-section > .essay-fn,
+.essay-body > .essay-section > .essay-fn-label { margin-inline: auto; max-width: var(--measure); }
+.essay-body > .essay-section > .essay-diagram,
+.essay-body > .essay-section > .essay-ref-grid { max-width: 1020px; }
 .essay-section { padding: 2rem 0; border-top: 1px solid var(--line-soft); }
 .essay-section:first-child { border-top: 0; padding-top: 0; }
 /* Was var(--t-small), i.e. 12px — putting all seven Roman-numeral section
@@ -3192,6 +3228,8 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 
 /* ── Essay UX: TOC, reading progress, back-to-top ────────────────────────── */
 .essay-toc { border: 1px solid var(--line); padding: 1rem 1.2rem; margin-bottom: 1.6rem; }
+/* Same page column as the body it sits above. */
+.essay-toc { max-width: 1020px; margin-inline: auto; }
 /* The contents box was a full 1280px bordered panel holding single-line
    section titles — the widest empty space on the page, inside a border, which
    makes it read as a container for nothing. Two columns let the box be as wide
