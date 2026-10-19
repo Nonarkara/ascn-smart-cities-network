@@ -232,20 +232,28 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
     edges.nav === edges.notice && edges.notice === edges.main,
     `nav=${edges.nav} notice=${edges.notice} main=${edges.main}`);
 
-  // The row spans its container so both margins are used, and the URL is the
-  // right anchor. Left-packed, it was 919px of content inside a 1280px frame
-  // with a dead right third.
-  const anchor = await page.evaluate(() => {
-    const row = document.querySelector(".twin-row").getBoundingClientRect();
-    const link = document.querySelector(".twin-link-label").getBoundingClientRect();
-    return { offset: Math.round(row.right - link.right) };
+  // No middle column, no gutter. A previous version put the URL in a third
+  // track anchored at the right edge, which left 380px of empty space between
+  // the description and the URL — the gap that severs the left half of the
+  // row from the right half. The only horizontal gap that is allowed now is
+  // the one between the thumb and the text column.
+  const row = await page.evaluate(() => {
+    const r = document.querySelector(".twin-row").getBoundingClientRect();
+    const t = document.querySelector(".twin-row-thumb").getBoundingClientRect();
+    const m = document.querySelector(".twin-row-main").getBoundingClientRect();
+    return {
+      gap: Math.round(m.left - t.right),
+      rightAnchored: Math.round(r.right - m.right),
+      thumbWidth: Math.round(t.width),
+      mainWidth: Math.round(m.width),
+    };
   });
-  ok("the twin URL anchors the row's right edge",
-    anchor.offset <= 2, `URL sits ${anchor.offset}px from the right edge`);
+  ok("the twin row has only one horizontal gap (between thumb and text)",
+    row.gap === 24 && row.rightAnchored <= 1,
+    `thumb=${row.thumbWidth} gap=${row.gap} text=${row.mainWidth} rightEdge=${row.rightAnchored}`);
 
-  // ...and the copy track must not grow past the copy, or the slack reappears
-  // as a hole INSIDE the text column. `minmax(0, 1fr)` did exactly this: an
-  // 833px track holding 477px of text.
+  // The copy track must not be wider than the copy — `1fr` on the text track
+  // does exactly that. Now sized `auto`, it should match the text measure.
   const hole = await page.evaluate(() => {
     const main = document.querySelector(".twin-row-main").getBoundingClientRect();
     const desc = document.querySelector(".twin-desc").getBoundingClientRect();

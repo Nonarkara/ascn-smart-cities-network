@@ -740,13 +740,18 @@ input[type="search"] { min-width: min(16rem, 100%); }
 }
 .twin-row {
   display: grid;
-  /* Three tracks, and the row spans the container so both margins are used:
-     thumbnail, copy, and the URL anchoring the right edge. The copy keeps its
-     own 66ch cap — the middle of the row is a gutter between two anchors, not
-     a measure the text is stretched across. `align-items: center` because the
-     thumbnail sets the row height while the text block is shorter; starting
-     the copy at the top stranded 59px of nothing beneath it before the rule. */
-  grid-template-columns: 260px auto 1fr;
+  /* The landscape composition: thumbnail on the left filling its half of the
+     row, text on the right capped at 64ch, no middle column, no gutter.
+     Earlier versions tried a third track for the URL anchored at the right
+     edge, which left 380px of void between the description's last word and
+     the URL — the same hallucinated space between two halves of one thing,
+     just relabelled. With two columns the row's left edge is the thumb and
+     the right edge is the text; the row fills the container with a single
+     relationship the eye can follow.
+     `align-items: center` because the thumbnail now sets a row height of
+     ~430px while the text block is ~117px; top-pinning the copy left 313px
+     of dead space beneath the description before the next rule. */
+  grid-template-columns: 1fr minmax(0, 64ch);
   gap: 0 1.5rem;
   align-items: center;
   padding: 1.05rem 0;
@@ -766,7 +771,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
 }
 .twin-row-thumb {
   display: block;
-  width: 260px;
+  width: 100%;
   aspect-ratio: 16 / 9;
   background: var(--surface-2);
   overflow: hidden;
@@ -803,10 +808,9 @@ input[type="search"] { min-width: min(16rem, 100%); }
   max-width: 64ch;
 }
 .twin-link-label {
-  /* The right-hand anchor of the row: it holds the container's right edge so
-     the row has two margins instead of one trailing void. */
+  /* Last line of the text column. */
   display: inline-block;
-  justify-self: end;
+  margin-top: 0.55rem;
   font-family: var(--mono);
   font-size: var(--t-micro);
   font-weight: 600;
@@ -820,7 +824,6 @@ input[type="search"] { min-width: min(16rem, 100%); }
 @media (max-width: 980px) {
   .twin-row { grid-template-columns: 150px minmax(0, 1fr); }
   .twin-row-thumb { width: 150px; }
-  .twin-link-label { grid-column: 2; justify-self: start; margin-top: 0.5rem; }
 }
 @media (max-width: 520px) {
   .twin-row { grid-template-columns: minmax(0, 1fr); gap: 0.65rem; }
