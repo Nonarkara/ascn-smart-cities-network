@@ -232,6 +232,16 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
     edges.nav === edges.notice && edges.notice === edges.main,
     `nav=${edges.nav} notice=${edges.notice} main=${edges.main}`);
 
+  // The page header stops being a single column with most of its right side
+  // empty at landscape widths. Below 1100 it stacks; at landscape widths it
+  // has exactly two grid tracks with content in both.
+  const headerCols = await page.evaluate(() => {
+    const cs = getComputedStyle(document.querySelector(".twins-header"));
+    return cs.gridTemplateColumns.split(" ").length;
+  });
+  ok("the twins header has two columns when the viewport allows it",
+    headerCols === 2, `header has ${headerCols} grid column(s)`);
+
   // No middle column, no gutter. A previous version put the URL in a third
   // track anchored at the right edge, which left 380px of empty space between
   // the description and the URL — the gap that severs the left half of the

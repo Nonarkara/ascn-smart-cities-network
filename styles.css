@@ -87,7 +87,7 @@
   --surface-2: #2a3037;
   --companion: #223039;
   --on-solid: #171a1e;
-  --content: min(1280px, calc(100vw - 2rem));
+  --content: min(1600px, calc(100vw - 6rem));
 
   /* Fonts. Two design faces, self-hosted because the CSP is font-src 'self':
      Julius Sans One for the display register and Archivo for prose, with
@@ -678,8 +678,18 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .twins-header {
   margin-bottom: 1.5rem;
   display: grid;
-  gap: 0.75rem;
+  /* Two columns at landscape widths: the title block (label + h2) on the
+     left, the explainer anchored on the right. The previous single column
+     stack left 928–1600 ≈ 480–672px of empty right edge inside a 1280
+     container — the inside-the-container version of the same 288px black
+     bars the page had at the canvas edge. With a shared container wide
+     enough to fit both halves, the header stops looking stranded. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 38rem);
+  gap: 0 1.5rem;
+  align-items: start;
 }
+.twins-header-main, .twins-explainer { min-width: 0; }
+.twins-explainer { max-width: none; }
 .twins-header-main h2 {
   font-size: var(--t-h2);
   line-height: 1.15;
@@ -833,6 +843,13 @@ input[type="search"] { min-width: min(16rem, 100%); }
 
 @media (max-width: 1060px) {
   .twins-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 1100px) {
+  /* The header's two columns need roughly 38rem + a meaningful title column.
+     Below 1100px container the title column squeezes to ~370px and the h2
+     wraps into more lines than read as a single thought. Stacking is
+     clearer than cramping. */
+  .twins-header { grid-template-columns: 1fr; gap: 0.75rem; }
 }
 @media (max-width: 680px) {
   .twins-grid { grid-template-columns: 1fr; }
