@@ -26,43 +26,88 @@
     <link rel="stylesheet" href="styles.css?v=41" />
   </head>
   <body>
-    <header class="site-nav">
-      <a class="brand" href="#overview" data-tab="overview">
-        <img src="logos/asean.png" alt="ASEAN" class="brand-mark" />
-        <span>ASCN<i data-i18n="brand.review">Independent Review</i></span>
-      </a>
-      <nav aria-label="Primary" id="tab-nav">
-        <a href="#overview" data-tab="overview" data-i18n="nav.overview">Overview</a>
-        <a href="#innovation" data-tab="innovation" data-i18n="nav.innovation">Innovation</a>
-        <a href="#record" data-tab="record" data-i18n="nav.record">The Record</a>
-        <a href="#news" data-tab="news" data-i18n="nav.news">News</a>
-        <a href="#history" data-tab="history" data-i18n="nav.history">History</a>
-        <a href="#cities" data-tab="cities" data-i18n="nav.cities">Cities</a>
-        <a href="#projects" data-tab="projects" data-i18n="nav.projects">Projects</a>
-        <a href="#framework" data-tab="framework" data-i18n="nav.framework">Framework</a>
-        <a href="#partners" data-tab="partners" data-i18n="nav.partners">Partners</a>
-        <a href="#contacts" data-tab="contacts" data-i18n="nav.contacts">Contacts</a>
-        <a href="#insights" data-tab="insights" data-i18n="nav.insights">Insights</a>
-        <a href="#data" data-tab="data" data-i18n="nav.data">Library</a>
-        <a href="#archive" data-tab="archive" data-i18n="nav.archive">Archive</a>
-        <a href="#research" data-tab="research" data-i18n="nav.research">Research</a>
-        <a href="#essay" data-tab="essay" data-i18n="nav.essay">Essay</a>
-      </nav>
-      <button id="finder-open" class="finder-open" type="button" aria-haspopup="dialog" aria-controls="finder"><span data-i18n="find.open">Find</span> <kbd>/</kbd></button>
-      <div class="lang-switch" role="group" data-i18n-attr="aria-label" data-i18n="lang.switch" aria-label="Change language">
-        <button type="button" class="lang-btn" data-lang-set="en" aria-pressed="true">EN</button>
-        <button type="button" class="lang-btn" data-lang-set="th" aria-pressed="false">TH</button>
-        <button type="button" class="lang-btn" data-lang-set="zh" aria-pressed="false">ZH</button>
-      </div>
-    </header>
-
-    <details class="site-notice"><summary data-i18n="intro.disclosure">Independent review · About this site</summary><div>
-      Independent observatory · Built by <strong>Non Arkaraprasertkul</strong> — Senior Expert, Smart City Promotion, DEPA · ASCN staff contact since 2019.
-      &nbsp;·&nbsp; Official site: <a href="https://ascn.depa.or.th" target="_blank" rel="noopener">ascn.depa.or.th</a>
-    </div></details>
-
     <a class="skip-link" href="#main-content">Skip to content</a>
-    <main id="main-content" tabindex="-1">
+
+    <div class="shell" id="shell">
+      <!-- SCREEN 1: Index Pane (Left) -->
+      <aside class="index" id="indexPane">
+        <header class="bar">
+          <a class="brand mark" href="#overview" data-tab="overview">
+            <img src="logos/asean.png" alt="ASEAN" class="brand-mark" />
+            <span>ASCN<i data-i18n="brand.review">Independent Review</i></span>
+          </a>
+          <div class="locale" role="group" data-i18n-attr="aria-label" data-i18n="lang.switch" aria-label="Change language">
+            <button type="button" class="locale-btn is-active" data-lang-set="en" aria-pressed="true">EN</button>
+            <button type="button" class="locale-btn" data-lang-set="th" aria-pressed="false">TH</button>
+            <button type="button" class="locale-btn" data-lang-set="zh" aria-pressed="false">ZH</button>
+          </div>
+          <button type="button" class="text-btn" id="themeBtn" aria-label="Toggle theme">Dark</button>
+        </header>
+
+        <div class="find">
+          <label class="sr" for="q">Find in ASCN observatory</label>
+          <input id="q" type="search" placeholder="Find in index..." autocomplete="off" spellcheck="false" enterkeyhint="search" />
+          <span class="find-count" id="findCount" hidden></span>
+          <button id="finder-open" class="finder-open" type="button" aria-haspopup="dialog" aria-controls="finder" title="Deep search across cities &amp; projects (/)"><span data-i18n="find.open">Find</span> <kbd>/</kbd></button>
+        </div>
+
+        <nav class="index-scroll" id="tab-nav" aria-label="Contents">
+          <section class="group">
+            <div class="group-label">Intelligence <span>4</span></div>
+            <a href="#overview" data-tab="overview" class="item active" aria-current="page" data-num="01" data-i18n="nav.overview">Overview</a>
+            <a href="#innovation" data-tab="innovation" class="item" data-num="02" data-i18n="nav.innovation">Innovation</a>
+            <a href="#record" data-tab="record" class="item" data-num="03" data-i18n="nav.record">The Record</a>
+            <a href="#news" data-tab="news" class="item" data-num="04" data-i18n="nav.news">News</a>
+          </section>
+
+          <section class="group">
+            <div class="group-label">Observatory <span>4</span></div>
+            <a href="#history" data-tab="history" class="item" data-num="05" data-i18n="nav.history">History</a>
+            <a href="#cities" data-tab="cities" class="item" data-num="06" data-i18n="nav.cities">Cities</a>
+            <a href="#projects" data-tab="projects" class="item" data-num="07" data-i18n="nav.projects">Projects</a>
+            <a href="#framework" data-tab="framework" class="item" data-num="08" data-i18n="nav.framework">Framework</a>
+          </section>
+
+          <section class="group">
+            <div class="group-label">Network <span>3</span></div>
+            <a href="#partners" data-tab="partners" class="item" data-num="09" data-i18n="nav.partners">Partners</a>
+            <a href="#contacts" data-tab="contacts" class="item" data-num="10" data-i18n="nav.contacts">Contacts</a>
+            <a href="#insights" data-tab="insights" class="item" data-num="11" data-i18n="nav.insights">Insights</a>
+          </section>
+
+          <section class="group">
+            <div class="group-label">Knowledge <span>4</span></div>
+            <a href="#data" data-tab="data" class="item" data-num="12" data-i18n="nav.data">Library</a>
+            <a href="#archive" data-tab="archive" class="item" data-num="13" data-i18n="nav.archive">Archive</a>
+            <a href="#research" data-tab="research" class="item" data-num="14" data-i18n="nav.research">Research</a>
+            <a href="#essay" data-tab="essay" class="item" data-num="15" data-i18n="nav.essay">Essay</a>
+          </section>
+        </nav>
+
+        <footer class="index-footer">
+          <details class="site-notice"><summary data-i18n="intro.disclosure">Independent review · About this site</summary><div>
+            Independent observatory · Built by <strong>Non Arkaraprasertkul</strong> — Senior Expert, Smart City Promotion, DEPA · ASCN staff contact since 2019.
+            &nbsp;·&nbsp; Official site: <a href="https://ascn.depa.or.th" target="_blank" rel="noopener">ascn.depa.or.th</a>
+          </div></details>
+        </footer>
+      </aside>
+
+      <!-- SCREEN 2: Plate / Reading Pane (Right) -->
+      <main class="plate" id="platePane">
+        <header class="bar plate-bar">
+          <button type="button" class="text-btn back" id="backBtn" aria-label="Back to index">Index</button>
+          <p class="bar-kicker" id="barKicker">ASCN · Overview</p>
+          <a class="text-btn bar-open" id="barOpen" href="https://ascn.depa.or.th" target="_blank" rel="noopener">Official site ↗</a>
+          <button type="button" class="text-btn theme-mobile" id="themeBtn2" aria-label="Toggle theme">Dark</button>
+        </header>
+
+        <div class="locator" id="locator">
+          <span id="locatorNum">01</span>
+          <span id="locatorMeta">Overview · 38 Cities · 134 Projects</span>
+        </div>
+
+        <div class="plate-scroll" id="plate" tabindex="-1">
+          <div id="main-content" tabindex="-1">
       <!-- OVERVIEW -->
       <section class="view" id="view-overview" data-view="overview">
         <section class="evidence-opening" aria-labelledby="observatory-heading">
@@ -119,7 +164,7 @@
           <div id="news-preview-list"><p class="news-muted" data-i18n="over.loading.regional.headlines">Loading regional headlines…</p></div>
         </section>
 
-        <a class="meeting-summary" href="#ascn9" data-tab="ascn9"><span class="meeting-summary-copy"><strong>Annual meeting records</strong><span>Read published reports. Internal drafts stay private.</span></span></a>
+        <a class="meeting-summary" href="#ascn9" data-tab="ascn9"><span class="meeting-summary-copy"><strong>Annual meeting records</strong> <span>Read published reports. Internal drafts stay private.</span></span></a>
 
         <div class="overview-intro">
           <div class="hero-text">
@@ -273,7 +318,7 @@
               <source src="media/showcase/iaas-hero.mp4" type="video/mp4" />
               <p><a href="media/showcase/iaas-hero.mp4">Open the video</a></p>
             </video>
-            <figcaption>The ground condition. Every tool on this page exists to answer a question a person asks while standing in it. <a href="media/showcase/iaas-hero.mp4" target="_blank" rel="noopener">Open video ↗</a></figcaption>
+            <figcaption><span data-i18n="audit.ground">The ground condition. Every tool on this page exists to answer a question a person asks while standing in it.</span> <a href="media/showcase/iaas-hero.mp4" target="_blank" rel="noopener" data-i18n="audit.open-video">Open video ↗</a></figcaption>
           </figure>
         </section>
 
@@ -769,7 +814,7 @@
             <div>
               <p class="label">Ledger · Travel &amp; funding</p>
               <h2 id="rec-travel-heading">Public reporting limits</h2>
-              <p class="lede">Published reports describe meetings and programmes. Private messages and internal drafts stay outside this public review.</p>
+              <p class="lede" data-i18n="audit.public-reports">Published reports describe meetings and programmes. Private messages and internal drafts stay outside this public review.</p>
             </div>
           </header>
 
@@ -807,7 +852,7 @@
 
           </details>
 
-          <p class="rec-footnote">Only independently published material is included in the public archive. Redaction alone does not make correspondence public.</p>
+          <p class="rec-footnote" data-i18n="audit.public-only">Only independently published material is included in the public archive. Redaction alone does not make correspondence public.</p>
         </section>
 
         <!-- LEDGER: AGREEMENTS AND COMMUNICATIONS -->
@@ -1083,17 +1128,15 @@
 
       <!-- PROJECTS -->
       <section class="view" id="view-projects" data-view="projects" hidden>
-        <div class="section-head split">
-          <div>
-            <p class="label">Projects</p>
-            <h1 data-i18n="h.projects-title">The smart-city project portfolio</h1>
-          </div>
+        <div class="section-head split projects-head">
+          <p class="label">Projects</p>
           <div class="controls">
             <input id="search-filter" type="search" placeholder="Search projects" aria-label="Search projects" />
             <select id="country-filter" aria-label="Filter by country"><option value="all">All countries</option></select>
             <select id="focus-filter" aria-label="Filter by focus area"><option value="all">All focus areas</option></select>
             <button id="export-csv" class="text-button" type="button">Export CSV</button>
           </div>
+          <h1 data-i18n="h.projects-title">The smart-city project portfolio</h1>
         </div>
         <div class="kpi-grid kpi-grid--four" id="project-kpis"></div>
         <div class="analytics-grid">
@@ -1103,7 +1146,7 @@
           </article>
           <article class="chart-panel">
             <div class="panel-head"><h3>Implementation status</h3><span class="muted" id="status-count"></span></div>
-            <div id="status-bars" class="stack-bars"></div>
+            <div id="status-bars" class="status-bars"></div>
           </article>
           <article class="chart-panel">
             <div class="panel-head"><h3>Top cities by project load</h3><span class="muted">filtered</span></div>
@@ -1384,7 +1427,23 @@
       </section>
 
 
-    </main>
+        <footer class="site-footer">
+          <div class="footer-content">
+            <p data-i18n-html="footer.depa">This platform is developed by the <strong>Digital Economy Promotion Agency (DEPA)</strong> and the <strong>Smart City Thailand Office</strong>, under the Ministry of Digital Economy and Society of Thailand — a contribution to the ASEAN Smart Cities Network.</p>
+            <p data-i18n="essa.a.space.to.share.learn.and.build">A space to share, learn, and build. The data behind it is synthesized from official ASEAN documents and released as open data for everyone.</p>
+            <div class="footer-logos">
+              <img src="logos/depa.png" alt="Digital Economy Promotion Agency (DEPA)" />
+              <img src="logos/mdes.png" alt="Ministry of Digital Economy and Society" />
+              <img src="logos/smart-city-thailand.svg" alt="Smart City Thailand Office" />
+            </div>
+            <p class="footer-fine" data-i18n="essa.built.from.asean.source.document">Built from published ASEAN source documents. An independent review; not an official ASEAN publication.</p>
+            <p class="footer-fine footer-sourcelang" data-i18n="note.source.language">Everything on this site that we wrote is translated. Headlines, document titles, organisation and project names, and email subject lines are not: they appear exactly as they were issued, in their original language.</p>
+          </div>
+        </footer>
+      </div><!-- /#main-content -->
+    </div><!-- /#plate -->
+  </main><!-- /#platePane -->
+</div><!-- /#shell -->
 
     <dialog id="finder" class="finder" aria-labelledby="finder-title">
       <div class="finder-head"><h2 id="finder-title" data-i18n="find.title">Find in the observatory</h2><button type="button" id="finder-close" data-i18n="find.close">Close</button></div>
@@ -1392,19 +1451,6 @@
       <input id="finder-query" type="search" autocomplete="off" maxlength="160" />
       <p id="finder-status" role="status" aria-live="polite"></p><ol id="finder-results"></ol>
     </dialog>
-    <footer class="site-footer">
-      <div class="footer-content">
-        <p data-i18n-html="footer.depa">This platform is developed by the <strong>Digital Economy Promotion Agency (DEPA)</strong> and the <strong>Smart City Thailand Office</strong>, under the Ministry of Digital Economy and Society of Thailand — a contribution to the ASEAN Smart Cities Network.</p>
-        <p data-i18n="essa.a.space.to.share.learn.and.build">A space to share, learn, and build. The data behind it is synthesized from official ASEAN documents and released as open data for everyone.</p>
-        <div class="footer-logos">
-          <img src="logos/depa.png" alt="Digital Economy Promotion Agency (DEPA)" />
-          <img src="logos/mdes.png" alt="Ministry of Digital Economy and Society" />
-          <img src="logos/smart-city-thailand.svg" alt="Smart City Thailand Office" />
-        </div>
-        <p class="footer-fine" data-i18n="essa.built.from.asean.source.document">Built from published ASEAN source documents. An independent review; not an official ASEAN publication.</p>
-        <p class="footer-fine footer-sourcelang" data-i18n="note.source.language">Everything on this site that we wrote is translated. Headlines, document titles, organisation and project names, and email subject lines are not: they appear exactly as they were issued, in their original language.</p>
-      </div>
-    </footer>
 
     <script src="vendor/leaflet/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="></script>
     <script src="showcase.js?v=35"></script>

@@ -81,9 +81,17 @@ function svgSpark(vals, w = 150, h = 44, color = "var(--ink)") {
   if (vals.length < 2) return "";
   const min = Math.min(...vals), max = Math.max(...vals);
   const range = max - min || 1;
-  const px = 4, py = 6;
+  // The points sit at the CENTRES of equal columns, not at the edges. The
+  // label rows under the plot are a grid of the same number of columns, each
+  // label centred in its own cell, so a label and the point it belongs to
+  // share an x. Pinning the points to the edges instead left the outer
+  // labels stranded: '24 and '25 sat 199px away from the end of a 152px
+  // plot, in blank space, attached to no data at all.
+  const colW = w / vals.length;
+  const px = colW / 2;
+  const py = 6;
   const pts = vals.map((v, i) => {
-    const x = px + (i / (vals.length - 1)) * (w - px * 2);
+    const x = px + i * colW;
     const y = range === 0 ? h / 2 : h - py - ((v - min) / range) * (h - py * 2);
     return [+x.toFixed(1), +y.toFixed(1)];
   });
@@ -97,7 +105,10 @@ function svgLine(points, w = 280, h = 90) {
   if (points.length < 2) return "";
   const vals = points.map((p) => p.v);
   const minV = Math.min(...vals), maxV = Math.max(...vals);
-  const padT = 6, padB = 18, padL = 6, padR = 6;
+  // The year labels are centred on their points, so the padding has to be
+  // wide enough to hold half a label at each end or the first and last
+  // years get cut off by the viewBox.
+  const padT = 6, padB = 18, padL = 10, padR = 10;
   const scX = (i) => padL + (i / (points.length - 1)) * (w - padL - padR);
   const scY = (v) => padT + (1 - (v - minV) / (maxV - minV || 1)) * (h - padT - padB);
   const ptStr = points.map((p, i) => `${scX(i).toFixed(1)},${scY(p.v).toFixed(1)}`);
@@ -108,11 +119,62 @@ function svgLine(points, w = 280, h = 90) {
 }
 
 /* ---------------- Routing ---------------- */
+const TAB_META = {
+  overview: { num: "01", kicker: "ASCN · Overview", meta: "Overview · 38 Cities · 134 Projects" },
+  innovation: { num: "02", kicker: "ASCN · Demonstrations", meta: "Innovation-as-a-Service · Digital Twins" },
+  record: { num: "03", kicker: "ASCN · The Record", meta: "The Record · Public Reporting" },
+  news: { num: "04", kicker: "ASCN · News", meta: "Regional Dispatches · Live Wire" },
+  // The 9th annual meeting record is a sheet opened from a button on the
+  // Overview — and it says so itself: its own back link reads "← Back to
+  // overview". So it belongs to the Overview, and it wears the Overview's
+  // number and lights the Overview's row. It used to borrow News's number
+  // and highlight nothing at all, which left the index blank while you were
+  // still reading inside it and the number pointing somewhere else.
+  ascn9: { num: "01", parent: "overview", kicker: "ASCN · 9th Annual Meeting", meta: "Luang Prabang · 2026 Meeting Record" },
+  history: { num: "05", kicker: "ASCN · Timeline", meta: "Chronology 2018–2026 · 10 Annual Meetings" },
+  cities: { num: "06", kicker: "ASCN · Cities", meta: "38 Cities · Interactive Atlas & Profiles" },
+  projects: { num: "07", kicker: "ASCN · Projects", meta: "134 Projects · 378 Action Appendix Rows" },
+  framework: { num: "08", kicker: "ASCN · Framework", meta: "6 Strategic Focus Areas · 32 Action Outlines" },
+  partners: { num: "09", kicker: "ASCN · External Partners", meta: "Dialogue Partners & Multilateral Financing" },
+  contacts: { num: "10", kicker: "ASCN · National Focal Points", meta: "Chief Smart City Officers & Coordinators" },
+  insights: { num: "11", kicker: "ASCN · Synthesis", meta: "Cross-Cutting Analysis & Benchmarks" },
+  data: { num: "12", kicker: "ASCN · Library", meta: "62 Sourced Documents · Reference Archive" },
+  archive: { num: "13", kicker: "ASCN · Public Evidence", meta: "40 Sourced Items · Provenance Ledger" },
+  research: { num: "14", kicker: "ASCN · Research", meta: "Monographs, Working Papers & Datasets" },
+  essay: { num: "15", kicker: "ASCN · Independent Review", meta: "Critical Assessment & Performance Analysis" },
+};
+
 function setTab(tab, push = true) {
   if (!TABS.includes(tab)) tab = "overview";
   state.tab = tab;
   $$(".view").forEach((v) => { v.hidden = v.dataset.view !== tab; });
-  $$("#tab-nav a").forEach((a) => { a.classList.toggle("active", a.dataset.tab === tab); if(a.dataset.tab === tab)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current"); });
+
+  const meta = TAB_META[tab] || TAB_META.overview;
+  // A drill-down lights up the index row it belongs to, so the index always
+  // says where you are. Without this, #ascn9 highlighted no row at all.
+  const indexTab = meta.parent || tab;
+  $$("#tab-nav a").forEach((a) => {
+    a.classList.toggle("active", a.dataset.tab === indexTab);
+    if (a.dataset.tab === indexTab) a.setAttribute("aria-current", "page");
+    else a.removeAttribute("aria-current");
+  });
+
+  const numEl = $("#locatorNum");
+  const metaEl = $("#locatorMeta");
+  const kickerEl = $("#barKicker");
+  if (numEl) numEl.textContent = meta.num;
+  if (metaEl) metaEl.textContent = meta.meta;
+  if (kickerEl) kickerEl.textContent = meta.kicker;
+
+  const plate = $("#plate");
+  if (plate) plate.scrollTop = 0;
+
+  const shell = $("#shell");
+  if (shell && window.matchMedia("(max-width: 860px)").matches) {
+    shell.classList.add("is-open");
+    if (plate) plate.focus();
+  }
+
   renderTab(tab);
   // Compare only the first path segment so a #cities/{slug} sub-route survives a tab re-entry
   if (push && location.hash.split("/")[0] !== `#${tab}`) history.replaceState(null, "", `#${tab}`);
@@ -208,7 +270,7 @@ function mountTwinPeeks() {
 function renderRecord() {
   // Static content in view-record is rendered from HTML and styled via CSS.
   const host = document.getElementById("corr-summary");
-  if (host) host.innerHTML = '<p class="privacy-note">Private correspondence is held locally. This public review uses published reports and cited public pages.</p>';
+  if (host) host.innerHTML = '<p class="privacy-note" data-i18n="audit.local-private">Private correspondence is held locally. This public review uses published reports and cited public pages.</p>';
   renderRecordCharts();
 }
 
@@ -255,11 +317,11 @@ function renderRecordCharts() {
 
   const cap = document.getElementById("rec-stack-caption");
   if (cap) {
-    cap.innerHTML = `Column height is the total project count; the column is split by status.
-      <span class="rec-legend"><span class="rec-key rec-seg-done"></span>completed
-      <span class="rec-key rec-seg-open"></span>ongoing
-      <span class="rec-key rec-seg-plan"></span>planning
-      <span class="rec-key rec-key-base"></span>2021 baseline</span>`;
+    cap.innerHTML = `<span data-i18n="audit.chart-caption">Column height is the total project count; the column is split by status.</span>
+      <span class="rec-legend"><span class="rec-key rec-seg-done"></span><span data-i18n="audit.completed">completed</span>
+      <span class="rec-key rec-seg-open"></span><span data-i18n="audit.ongoing">ongoing</span>
+      <span class="rec-key rec-seg-plan"></span><span data-i18n="audit.planning">planning</span>
+      <span class="rec-key rec-key-base"></span><span data-i18n="audit.baseline">2021 baseline</span></span>`;
   }
 
   // Urbanisation: a ranked bar reads faster than the table it sits above, and
@@ -420,9 +482,13 @@ function ascapHtml() {
     alignNote = `<p class="ig-note" style="margin-top:1rem"><b>Coverage gap — ${esc(a.coverage_gap.name)}:</b> ${esc(a.coverage_gap.note)}</p>`;
   }
 
+  // The two notes sit in a column of their own beside the title, not in a
+  // full-width band under it. As a band they were 360px of note in a 994px
+  // panel, and the panel is a box with a border: a box that is 63% empty
+  // (rule 1) and a section that is 62% dead on the right (rule 2).
   return `<p class="label">Forward agenda</p><h3>${esc(a.name)}</h3><p class="lede" style="margin:0.5rem 0 0">${esc(a.note)} Adopted ${esc(a.adopted)}.</p>
-    <p class="ig-note" style="margin:0.75rem 0 0.25rem" data-i18n="a.each.pillar.shows.which.current">Each pillar shows which current focus area feeds into it and its 2025 project count.</p>
-    <div class="pillars">${pillarsHtml}</div>${alignNote}`;
+    <div class="ascap-notes"><p class="ig-note" style="margin:0.75rem 0 0.25rem" data-i18n="a.each.pillar.shows.which.current">Each pillar shows which current focus area feeds into it and its 2025 project count.</p>${alignNote}</div>
+    <div class="pillars">${pillarsHtml}</div>`;
 }
 
 /* ---------------- Cities ---------------- */
@@ -694,10 +760,15 @@ function renderProjectTables() {
 function renderFramework() {
   const f = state.K.framework, g = state.K.governance;
   $("#framework-status").textContent = f.status;
-  const block = (label, items) => `<p class="label">${label}</p><ul class="fw-list">${items.map((i) => `<li><b>${esc(i)}</b></li>`).join("")}</ul>`;
-  $("#fw-outcomes").innerHTML = `<h3>Three strategic outcomes</h3>` + block("Outcomes", f.strategic_outcomes);
-  $("#fw-systems").innerHTML = `<h3>Two urban systems</h3>` + block("Systems", f.urban_systems);
-  $("#fw-enablers").innerHTML = `<h3>Two enablers</h3>` + block("Enablers", f.enablers);
+  // The heading already names the block. The helper used to add a second
+  // label under it — "THREE STRATEGIC OUTCOMES" immediately followed by
+  // "OUTCOMES", 7.8px apart, in the same column — so three blocks carried
+  // six labels, and the one blue accent in the view landed on the word that
+  // said least. A number that repeats its own title is not a hierarchy.
+  const block = (items) => `<ul class="fw-list">${items.map((i) => `<li><b>${esc(i)}</b></li>`).join("")}</ul>`;
+  $("#fw-outcomes").innerHTML = `<h3>Three strategic outcomes</h3>` + block(f.strategic_outcomes);
+  $("#fw-systems").innerHTML = `<h3>Two urban systems</h3>` + block(f.urban_systems);
+  $("#fw-enablers").innerHTML = `<h3>Two enablers</h3>` + block(f.enablers);
   const fmax = Math.max(...f.focus_areas.map((a) => a.share));
   $("#focus-detail").innerHTML = f.focus_areas.map((a) => `
     <div class="focus-item"><div class="fi-head"><b>${esc(a.name)}</b><span class="fi-share">${esc(a.share)}%</span></div>
@@ -743,7 +814,7 @@ function renderFramework() {
       <p class="cap-desc">${tx(c.desc)}</p>
       <span class="cap-stat">${c.stat}</span>
     </article>`).join("")}</div>
-    <p class="ig-note" data-i18n="a.capacity.building.is.where.ascn">Capacity building is where ASCN's softer value sits: not projects delivered, but officials trained to deliver them. These programmes run through dialogue partners rather than a central ASCN budget. Source: ASCN partnership &amp; M&amp;E documents.</p>`;
+    <p class="ig-note col-flow" data-i18n="a.capacity.building.is.where.ascn">Capacity building is where ASCN's softer value sits: not projects delivered, but officials trained to deliver them. These programmes run through dialogue partners rather than a central ASCN budget. Source: ASCN partnership &amp; M&amp;E documents.</p>`;
 }
 
 /* ---------------- Partners ---------------- */
@@ -823,6 +894,38 @@ function renderPartners() {
 }
 
 /* ---------------- Insights ---------------- */
+// The charts are drawn to the width they are given, so they have to be
+// measured at the width they are actually shown at.
+//
+// Two hardcoded sizes were wrong. The momentum line was drawn 380px wide
+// inside a 994px section, so 614px of that section — 62% of it — was empty
+// (rule 2: a lopsided section). The focus sparklines were drawn 152px wide
+// under label rows that spread across the whole 319px cell, so the outer
+// year labels sat up to 199px away from the point they belong to: a number
+// that does not attach to its datum.
+//
+// Drawing to the measured width fixes both, but only if the drawing is
+// redone when the width changes. The plate is a container, not the window,
+// so the width that matters is the plate's.
+let INSIGHTS_LINE_POINTS = [];
+
+function drawInsightsCharts() {
+  const line = document.querySelector("#ig-momentum .ig-mini-line");
+  if (line && INSIGHTS_LINE_POINTS.length > 1) {
+    const w = Math.max(240, Math.round(line.clientWidth));
+    // A chart stretched across 994px but left 72px tall reads as a squashed
+    // ribbon, so the height follows the width inside a sane band.
+    const h = Math.round(Math.min(150, Math.max(72, w / 7)));
+    line.innerHTML = svgLine(INSIGHTS_LINE_POINTS, w, h);
+  }
+  for (const plot of document.querySelectorAll("#ig-focus-trends .ig-spark-plot")) {
+    const vals = (plot.dataset.vals || "").split(",").map(Number).filter((n) => !Number.isNaN(n));
+    if (vals.length < 2) continue;
+    const w = Math.max(120, Math.round(plot.clientWidth));
+    plot.innerHTML = svgSpark(vals, w, 44, plot.dataset.color || "var(--ink)");
+  }
+}
+
 function renderInsights() {
   const reports = state.data.reports;
   const derived = state.data.derived;
@@ -841,7 +944,8 @@ function renderInsights() {
     { v: `+${deltas[0].project_delta} / +${deltas[1].project_delta} / +${deltas[2].project_delta}`, label: "Annual additions 2022→23→24→25", note: "Accelerating each cycle; 2024 jump driven by completion surge" },
   ];
   const linePoints = totals.map((t) => ({ v: t.total, label: `'${String(t.year).slice(2)}` }));
-  $("#ig-momentum").innerHTML = `<div class="ig-momentum-row">${momentumStats.map((s) => `<div class="ig-stat-card"><strong>${esc(String(s.v))}</strong><span>${esc(s.label)}</span><em>${esc(s.note)}</em></div>`).join("")}</div><div class="ig-mini-line">${svgLine(linePoints, 380, 72)}</div>`;
+  INSIGHTS_LINE_POINTS = linePoints;
+  $("#ig-momentum").innerHTML = `<div class="ig-momentum-row">${momentumStats.map((s) => `<div class="ig-stat-card"><strong>${esc(String(s.v))}</strong><span>${esc(s.label)}</span><em>${esc(s.note)}</em></div>`).join("")}</div><div class="ig-mini-line"></div>`;
 
   // ── 2. Focus area trends (4-year sparklines) ─────────────────────────────
   const focusTrends = derived.focus_trends;
@@ -853,7 +957,10 @@ function renderInsights() {
     const deltaStr = delta > 0 ? `+${delta}pp` : delta < 0 ? `${delta}pp` : "flat";
     const color = FOCUS_COLORS[name] || "#444";
     const yLabels = vals.map((v, i) => `<span>${esc(String(v))}%</span>`).join("");
-    return `<div class="ig-spark-item"><div class="ig-spark-head"><span class="ig-spark-dot" style="background:${color}"></span><span class="ig-spark-name">${esc(name)}</span><span class="ig-spark-pct">${vals[3]}%</span><span class="ig-spark-delta ${cls}">${sym} ${esc(deltaStr)}</span></div>${svgSpark(vals, 152, 44, color)}<div class="ig-spark-vals">${yLabels}</div><div class="ig-spark-yrs"><span>'22</span><span>'23</span><span>'24</span><span>'25</span></div></div>`;
+    // The plot is drawn to the cell's own width, and its points sit at the
+    // centres of the same four columns the two label rows use. That is what
+    // puts a number on the datum it belongs to.
+    return `<div class="ig-spark-item"><div class="ig-spark-head"><span class="ig-spark-dot" style="background:${color}"></span><span class="ig-spark-name">${esc(name)}</span><span class="ig-spark-pct">${vals[3]}%</span><span class="ig-spark-delta ${cls}">${sym} ${esc(deltaStr)}</span></div><div class="ig-spark-plot" data-vals="${vals.join(",")}" data-color="${color}"></div><div class="ig-spark-vals">${yLabels}</div><div class="ig-spark-yrs"><span>'22</span><span>'23</span><span>'24</span><span>'25</span></div></div>`;
   }).join("");
   $("#ig-focus-trends").innerHTML = `<div class="ig-spark-grid">${sparkItems}</div>`;
 
@@ -1305,6 +1412,23 @@ function renderInsights() {
   }).join("");
   $("#ig-funding-scale").innerHTML = `<div class="fs-wrap">${fundRows}</div>
     <p class="ig-note" data-i18n="a.japan.s.smartjamp.usd.2.4b.is.ro">Japan's SmartJAMP (~USD 2.4B) is roughly <strong>170×</strong> Australia's AASCTF (~USD 14M) — the largest bilateral commitment dwarfs every other donor. Separately, the ADB-managed ACGF carries ~USD 3.7B in total project value across ~30 projects. USD-normalised; China's commitment is undisclosed. Source: ascn_cross_verification.md HC-5; programme reports.</p>`;
+
+  // The charts are drawn last, because drawing them is how their width is
+  // known: the markup above lays the section out, and only then can the
+  // plot be drawn to the width it actually has to fill.
+  drawInsightsCharts();
+
+  // And drawn again when that width changes. The plate is a container, not
+  // the window, so a resize of the window can change the width the charts
+  // have to fill — a chart left at the width it was drawn at strands itself
+  // in the middle of a wider section, which is the defect the measured
+  // drawing exists to remove.
+  let insightsRedraw = null;
+  window.addEventListener("resize", () => {
+    if (state.tab !== "insights") return;
+    clearTimeout(insightsRedraw);
+    insightsRedraw = setTimeout(drawInsightsCharts, 120);
+  });
 }
 
 /* ---------------- Open Data / Library ---------------- */
@@ -2838,8 +2962,107 @@ function initFinder() {
   });
 }
 
+function wireShellChrome() {
+  const backBtn = $("#backBtn");
+  const shell = $("#shell");
+  if (backBtn && shell) {
+    backBtn.addEventListener("click", () => {
+      shell.classList.remove("is-open");
+    });
+  }
+  // On a phone the index rail gives way to the plate, and the plate's "Index"
+  // button gives the rail back. That swap used to happen only when a route
+  // was opened, so a reader who resized the window — or turned a tablet —
+  // across the 860px line kept the arrangement they had: on a phone the
+  // plate they were reading disappeared behind a rail they could not see,
+  // and the archive test caught it at 390px.
+  //
+  // The breakpoint is watched, so the shell follows the viewport instead of
+  // the last route that happened to be opened.
+  const phone = window.matchMedia("(max-width: 860px)");
+  const followViewport = () => {
+    if (!shell) return;
+    if (phone.matches) shell.classList.add("is-open");
+    else shell.classList.remove("is-open");
+  };
+  if (typeof phone.addEventListener === "function") phone.addEventListener("change", followViewport);
+  else if (typeof phone.addListener === "function") phone.addListener(followViewport);
+}
+
+function wireTheme() {
+  const themeBtn = $("#themeBtn");
+  const themeBtn2 = $("#themeBtn2");
+  const setTheme = (theme) => {
+    if (theme === "light") {
+      document.documentElement.setAttribute("data-theme", "light");
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+    }
+    try { localStorage.setItem("ascn_theme", theme); } catch (e) {}
+    const label = theme === "light" ? "Dark" : "Light";
+    if (themeBtn) themeBtn.textContent = label;
+    if (themeBtn2) themeBtn2.textContent = label;
+  };
+  let currentTheme = "dark";
+  try {
+    currentTheme = localStorage.getItem("ascn_theme") || "dark";
+  } catch (e) {}
+  setTheme(currentTheme);
+
+  const toggle = () => {
+    const isLight = document.documentElement.getAttribute("data-theme") === "light";
+    setTheme(isLight ? "dark" : "light");
+  };
+  if (themeBtn) themeBtn.addEventListener("click", toggle);
+  if (themeBtn2) themeBtn2.addEventListener("click", toggle);
+}
+
+function wireIndexSearch() {
+  const q = $("#q");
+  const findCount = $("#findCount");
+  if (!q) return;
+  q.addEventListener("input", () => {
+    const term = q.value.trim().toLowerCase();
+    const items = $$("#tab-nav .item");
+    let visibleCount = 0;
+    items.forEach((item) => {
+      const text = item.textContent.toLowerCase();
+      const match = !term || text.includes(term);
+      item.style.display = match ? "" : "none";
+      if (match) visibleCount++;
+    });
+    $$("#tab-nav .group").forEach((group) => {
+      const groupItems = $$(".item", group);
+      const hasVisible = groupItems.some((it) => it.style.display !== "none");
+      group.style.display = hasVisible ? "" : "none";
+    });
+    if (findCount) {
+      if (term) {
+        findCount.hidden = false;
+        findCount.textContent = `${visibleCount}/${items.length}`;
+      } else {
+        findCount.hidden = true;
+      }
+    }
+  });
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      if (q && q.value) {
+        q.value = "";
+        q.dispatchEvent(new Event("input"));
+        q.blur();
+      }
+      const shell = $("#shell");
+      if (shell) shell.classList.remove("is-open");
+    }
+  });
+}
+
 async function init() {
   wireNav();
+  wireTheme();
+  wireIndexSearch();
+  wireShellChrome();
   document.querySelector('.skip-link').addEventListener('click',(event)=>{event.preventDefault();document.querySelector('main').focus();document.querySelector('main').scrollIntoView({behavior:'instant'});});
   initFinder();
   routeFromHash();

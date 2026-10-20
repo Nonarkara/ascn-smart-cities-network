@@ -13,7 +13,7 @@
     "vendor:leaflet": "node scripts/vendor-leaflet.mjs",
     "vendor:fonts": "node scripts/vendor-fonts.mjs",
     "test": "npm run test:unit && playwright test",
-    "test:unit": "node --test tests/security.unit.mjs tests/news.unit.mjs tests/ascn-review.unit.mjs tests/correspondence.unit.mjs tests/archive.unit.mjs tests/publication.unit.mjs tests/publication-guard.unit.mjs",
+    "test:unit": "node --test tests/security.unit.mjs tests/news.unit.mjs tests/ascn-review.unit.mjs tests/correspondence.unit.mjs tests/archive.unit.mjs tests/publication.unit.mjs tests/publication-guard.unit.mjs tests/visual-audit.unit.mjs",
     "validate": "node scripts/validate-data.mjs",
     "check": "npm run check:design && npm run validate && npm run test:unit && npm run build",
     "build:archive": "node scripts/build-archive.mjs",
@@ -24,6 +24,7 @@
     "predeploy": "node scripts/refresh-ascn-news.mjs || echo \"news refresh failed, shipping the existing snapshot\"",
     "check:design": "node scripts/check-design.mjs",
     "audit:visual": "node scripts/capture-design.mjs",
+    "audit:graphics": "node scripts/verify-graphics.mjs",
     "check:publication": "node scripts/verify-publication.mjs",
     "verify:live": "node scripts/verify-publication.mjs --live"
   },

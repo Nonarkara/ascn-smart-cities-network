@@ -283,7 +283,11 @@ function renderOutcomes(items) {
   const rows = OUTCOMES.map((outcome) => {
     const matched = items.filter((item) => item.outcome === outcome);
     const titles = matched.map((item) => `<li>${esc(phrase(item.title))}</li>`).join("");
-    return `<li><span class="label">${esc(text.outcomes[outcome])}</span><strong>${matched.length}</strong><ul>${titles}</ul></li>`;
+    // The label and the count sit on their own line, and the titles run
+    // underneath in columns. They used to share one row with the titles —
+    // label, count, and a third track so narrow that the titles measured 29
+    // characters a line, in a section 59% dead on the right.
+    return `<li><div class="archive-outcome-head"><span class="label">${esc(text.outcomes[outcome])}</span><strong>${matched.length}</strong></div><ul class="archive-outcome-titles col-flow">${titles}</ul></li>`;
   }).join("");
   $("#archive-outcomes").innerHTML = `<h3 id="archive-outcomes-heading">${esc(text.outcomeHeading)}</h3><p>${esc(text.outcomeLede)}</p><ol>${rows}</ol>`;
 }
@@ -337,7 +341,7 @@ function renderFunding() {
     ${row.selfReported ? `<span class="archive-flag">${esc(text.selfReported)}</span>` : ""}
     ${row.amount != null && !row.counts ? `<span class="archive-flag">${esc(text.notAdded)}</span>` : ""}
     <p>${esc(phrase(row.title))}</p>
-    <p>${esc(phrase(row.note))}</p>
+    <p class="col-flow">${esc(phrase(row.note))}</p>
     <p>${sourceCell(row)}</p>
   </li>`)).join("");
   host.innerHTML = `<h2 class="archive-funding-title" id="archive-funding-title">${esc(text.funding)}</h2><p>${esc(text.fundingLede)}</p><div>${donors}</div>${renderReconciliation()}${rows ? `<details><summary>${esc(text.breakdown)}</summary><ul>${rows}</ul></details>` : ""}`;
@@ -385,13 +389,13 @@ function renderMoney() {
   if (cited.length) {
     const ascn = cited.filter((claim) => claim.scope === "ascn");
     const general = cited.filter((claim) => claim.scope !== "ascn");
-    const open = ascn.length ? `<ul>${ascn.map(claimItem).join("")}</ul>` : "";
+    const open = ascn.length ? `<ul class="col-flow">${ascn.map(claimItem).join("")}</ul>` : "";
     const closed = general.length
-      ? `<details><summary>${esc(text.generalStats)}</summary><ul>${general.map(claimItem).join("")}</ul></details>`
+      ? `<details><summary>${esc(text.generalStats)}</summary><ul class="col-flow">${general.map(claimItem).join("")}</ul></details>`
       : "";
     claims = `<p>${esc(text.moneyLede)}</p>${open}${closed}`;
   } else if (flows.length) {
-    claims = `<ul>${flows.map((item) => `<li>
+    claims = `<ul class="col-flow">${flows.map((item) => `<li>
       <span class="label">${esc(item.flow === "tied-aid" ? text.tiedAid : text.phantomAid)}</span>
       <strong>${esc(phrase(item.title))}</strong>
       <p>${esc(phrase(item.note))}</p>
@@ -412,11 +416,13 @@ function renderPending() {
     return;
   }
   const items = rows.map((row) => `<li>
-    <strong>${esc(phrase(row.title))}</strong>
-    ${flagLine(row)}
-    <span class="archive-flag">${esc(text.pending)}</span>
-    <p>${esc(phrase(row.note))}</p>
-    <p>${sourceCell(row)}</p>
+    <div class="archive-pending-head">
+      <strong>${esc(phrase(row.title))}</strong>
+      ${flagLine(row)}
+      <span class="archive-flag">${esc(text.pending)}</span>
+      <p>${sourceCell(row)}</p>
+    </div>
+    <p class="archive-pending-note">${esc(phrase(row.note))}</p>
   </li>`).join("");
   host.innerHTML = `<h3 class="archive-subhead">${esc(text.pending)} ${rows.length}</h3><ul>${items}</ul>`;
 }
@@ -429,7 +435,7 @@ function renderWithheld() {
     itemsHave(state.doc.items, "mou") ? "" : `<p>${esc(text.noMou)}</p>`,
     (state.doc.items || []).some((item) => item.amount != null) ? "" : `<p>${esc(text.noAmount)}</p>`,
   ].join("");
-  $("#archive-withheld").innerHTML = `${rows.length ? `<h3 class="archive-subhead">${esc(text.withheld)} ${rows.length}</h3><ul>${reasons}</ul>` : ""}<div class="archive-limits">${limits}<p>${esc(text.footnote)}</p></div>`;
+  $("#archive-withheld").innerHTML = `${rows.length ? `<h3 class="archive-subhead">${esc(text.withheld)} ${rows.length}</h3><ul>${reasons}</ul>` : ""}<div class="archive-limits col-flow">${limits}<p>${esc(text.footnote)}</p></div>`;
 }
 
 function itemsHave(items, type) {

@@ -39,7 +39,16 @@ for (const width of [390, 1024, 1440]) {
     await expect(page.locator('#corr-summary')).toContainText('Private correspondence');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.screenshot({ path: testInfo.outputPath('record.png'), animations: 'disabled' });
+    // The way back to the Overview depends on the width. On a phone the index
+    // rail is replaced by the plate, so the route back is the plate's own
+    // "Index" button and then the entry in the rail — which is the flow a
+    // reader on a phone actually takes.
+    if (width <= 860) {
+      await page.locator('#backBtn').click();
+      await expect(page.locator('#tab-nav')).toBeVisible();
+    }
     await page.locator('#tab-nav [data-tab="overview"]').click();
+    await expect(page.locator('#view-overview')).toBeVisible();
     await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
     await page.screenshot({ path: testInfo.outputPath('overview.png'), animations: 'disabled' });
   });

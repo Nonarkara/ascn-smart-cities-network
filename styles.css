@@ -87,7 +87,7 @@
   --surface-2: #2a3037;
   --companion: #223039;
   --on-solid: #171a1e;
-  --content: min(1600px, calc(100vw - 6rem));
+  --content: min(1600px, calc(100vw - 2rem));
 
   /* Fonts. Two design faces, self-hosted because the CSP is font-src 'self':
      Julius Sans One for the display register and Archivo for prose, with
@@ -128,6 +128,7 @@
   --box-pad-loose: 1.5rem;
   --gap: 1rem;
   --pad: 1rem;
+  --hover-wash: rgba(111, 160, 230, 0.08);
 
   /* ══════════════════════════════════════════════════════════════════════
      PAPER IS THE REFERENCE — the standing principle for this site.
@@ -220,25 +221,88 @@
   --text-micro: var(--t-micro);
 }
 
+[data-theme="light"] {
+  color-scheme: light;
+  --paper: #faf9f7;
+  --deep: #f2efe9;
+  --panel: #f0ede6;
+  --bg: #faf9f7;
+  --ink: #191712;
+  --ink-2: #5c564e;
+  --ink-3: #756f66;
+  --muted: #5c564e;
+  --line: #c4beb4;
+  --line-soft: #dcd7ce;
+  --line-dim: #b0aaa0;
+  --rule: var(--line);
+  --border: var(--line-soft);
+  --accent: #1c4286;
+  --navy: #1c4286;
+  --ocher: #9e6f00;
+  --neg: #a51931;
+  --signal: #0b7a3e;
+  --surface: #f0ede6;
+  --surface-2: #e8e4dc;
+  --companion: #ece8df;
+  --on-solid: #faf9f7;
+  --hover-wash: rgba(0, 36, 125, 0.04);
+}
+
 *,
 *::before,
 *::after { box-sizing: border-box; }
 
 html { scroll-behavior: smooth; }
 
-body {
+html, body {
   margin: 0;
-  background: var(--bg);
+  height: 100%;
+  overflow: hidden;
+  background: var(--paper);
   color: var(--ink);
   font-family: var(--font);
   font-size: var(--t-body);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 a { color: inherit; text-decoration: none; }
 button, select, input { font: inherit; }
 img { display: block; max-width: 100%; }
+
+/* Screen-reader-only text. The index rail's search field is labelled by a
+   <label class="sr"> — and until this rule existed the label was VISIBLE,
+   wrapping to three lines above the field and duplicating its placeholder.
+   A label for a reader who uses a screen is not decoration for the page. */
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  z-index: 1000;
+  padding: 8px 16px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  /* The body step. It was 12px — a size nothing else on the site used, so
+     the skip link added a rung to the ramp for a control that is on screen
+     for one keystroke. */
+  font-size: var(--t-body);
+}
+.skip-link:focus { top: 0; }
 
 /* ---------- Reading measure, enforced on every prose element ----------
    Not a per-class patch. Prose on this site appears in ~40 differently-named
@@ -258,92 +322,392 @@ p, li, dd, blockquote, figcaption, .lede {
   max-width: var(--measure);
 }
 
-/* ---------- Header / tabs ---------- */
-.site-nav {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  width: var(--content);
-  margin: 0 auto;
-  padding: 0.7rem 0;
+/* ---------- Two-Screen Architecture (axiomx.nonarkara.org style) ---------- */
+.shell {
+  height: 100dvh;
+  display: grid;
+  grid-template-columns: clamp(300px, 32vw, 420px) minmax(0, 1fr);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.index, .plate {
+  min-width: 0;
+  min-height: 0;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.index {
+  border-right: 1px solid var(--line);
+  background: var(--paper);
+  /* The rail's own width, not the viewport's, decides what fits in its bar.
+     It is 32vw wide — 328px on a 1024px screen, 420px on a wide one — so a
+     container query is the only honest way to ask "is there room for the
+     tagline?". */
+  container-type: inline-size;
+  container-name: rail;
+}
+
+main.plate {
+  width: 100%;
+  margin: 0;
+  background: var(--paper);
+}
+
+.bar {
+  height: 44px;
+  flex: 0 0 44px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  background: var(--bg);
-  border-bottom: 1px solid var(--line-soft);
-}
-/* The two-row band the verifier names: brand, finder and language switch on
-   the first row, the fifteen-item strip on the second at full width. Below
-   1100px the existing column layout already stacks the same way, so this is
-   one architecture at every width rather than two. */
-@media (min-width: 1101px) {
-  .site-nav { flex-wrap: wrap; row-gap: 0.25rem; }
-  .site-nav nav { order: 2; flex: 1 0 100%; }
-  .brand { order: 1; }
-  .finder-open, .lang-switch { order: 1; }
+  gap: 12px;
+  padding: 0 var(--pad);
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
 }
 
+.plate-bar {
+  gap: 16px;
+}
 
-.brand {
+.brand.mark {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-size:var(--t-body);
+  font-size: var(--t-body);
   font-weight: 800;
   letter-spacing: 0.04em;
+  color: inherit;
+  text-decoration: none;
+  min-height: 44px;
+  min-width: 44px;
   flex-shrink: 0;
 }
-.brand i { font-style: normal; font-weight: 700; font-size:var(--t-micro); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-left: 0.1rem; }
-.brand-mark { width: 1.6rem; height: 1.6rem; }
-
-/* One scrollable strip. The strip used to share a single row with the brand,
-   the finder and the language switch, which left Josefin Sans 92px short at
-   1440 and forced the type below a legible size to force it in. It now takes
-   the full width of the band on its own row — which is the two-row header the
-   design already uses on a phone, so desktop and mobile finally agree. */
-.site-nav nav {
-  display: flex; gap: 0.15rem; flex-wrap: nowrap;
-  overflow-x: auto; scrollbar-width: none;
-}
-.site-nav nav::-webkit-scrollbar { display: none; }
-
-.site-nav nav a,
-.label,
-.muted,
-.segmented button,
-th { font-size:var(--t-micro); font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
-
-.site-nav nav a {
+.brand.mark i {
+  font-style: normal;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--muted);
-  padding: 0.35rem 0;
-  border-bottom: 2px solid transparent;
+  /* The tagline sits under the wordmark, not beside it. On one line the
+     brand was 217px wide, and the rail's bar — brand, language switch and
+     theme button — did not fit inside a 420px rail at ANY viewport: the theme
+     button was clipped and the switch fell outside the rail altogether on a
+     1024px screen. Stacked, the brand is as wide as its longest line. */
+  display: block;
+  margin-left: 0;
+  line-height: 1.2;
+}
+.brand-mark {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+/* The wordmark's tagline is the first thing to go when the rail narrows:
+   the brand, the language switch and the theme button all have to fit inside
+   the rail, and the rail is 32vw wide. It sits here, after the rule it
+   overrides, because a container query at the same specificity still loses to
+   a later plain rule. */
+@container rail (max-width: 380px) {
+  .brand.mark i { display: none; }
+}
+
+/* The language switch in the index rail.
+   Two implementations of this control used to exist — `.lang-switch`/`.lang-btn`
+   from the old page header and `.locale`/`.locale-btn` from the rail — and the
+   markup carried BOTH class names on the same three buttons, so the two
+   blocks fought. The old block set the pressed state to an ocher underline;
+   the new one filled the pressed button with the ink colour. Both applied, so
+   the active language drew as ink-coloured text on an ink-coloured ground: a
+   white box with nothing in it. One implementation now, and the pressed state
+   is the ocher underline the design language reserves for wayfinding. */
+.locale {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: stretch;
+  height: 44px;
+  border: 1px solid var(--line);
+}
+
+.locale-btn {
+  /* The 44px floor in both directions: it is a control, and the switch sits
+     in the rail where a thumb lands. */
+  min-width: 44px;
   min-height: 44px;
+  padding: 0 6px;
   display: inline-flex;
   align-items: center;
-  white-space: nowrap;
-  /* Fifteen destinations do not belong on one line. Every face tried
-     overflowed the strip — League Spartan needed 10px to fit, Josefin Sans
-     still ran 86px over at 10px/400 — and the honest reading of that is that
-     the nav was treating fifteen top-level sections as a single menu. At
-     desktop it wraps to two rows instead, which keeps every label at a
-     legible size and keeps the control at its full 44px. Below 1200px the
-     existing horizontal scroll strip takes over unchanged. */
+  justify-content: center;
+  border-left: 1px solid var(--line);
+  border-top: 0;
+  border-right: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: none;
+  font-family: var(--mono);
   font-size: var(--t-micro);
-  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  cursor: pointer;
+}
+.locale-btn:first-child { border-left: 0; }
+.locale-btn:hover { color: var(--ink); }
+.locale-btn.is-active,
+.locale-btn[aria-pressed="true"] {
+  color: var(--ink);
+  border-bottom-color: var(--ocher);
+  font-weight: 700;
+}
+.locale-btn:focus-visible {
+  outline: 1px solid var(--navy);
+  outline-offset: -1px;
+}
+
+.text-btn {
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  text-decoration: none;
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  cursor: pointer;
+  padding: 0 8px;
+}
+.text-btn:hover { color: var(--navy); }
+.text-btn:focus-visible {
+  outline: 1px solid var(--navy);
+  outline-offset: -1px;
+}
+
+.back, .theme-mobile { display: none; }
+.bar-open[hidden] { display: none; }
+
+.bar-kicker {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.find {
+  height: 44px;
+  flex: 0 0 44px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 var(--pad);
+  border-bottom: 1px solid var(--line);
+}
+
+.find input {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  outline: none;
+  font-size: 13px;
+  color: var(--ink);
+}
+.find input::placeholder { color: var(--muted); }
+.find input:focus-visible {
+  outline: 1px solid var(--navy);
+  outline-offset: -1px;
+}
+
+.find-count {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.finder-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 0.5rem;
+  border: 1px solid var(--line-soft);
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  cursor: pointer;
+}
+.finder-open kbd {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 1px 4px;
+  border: 1px solid var(--line-soft);
+}
+
+.locator {
+  height: 40px;
+  flex: 0 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;
+  padding: 0 var(--pad);
+  border-bottom: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--paper);
+}
+
+.index-scroll, .plate-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.index-scroll {
+  padding: 8px 0 24px;
+  overflow-x: clip;
+}
+
+.group { margin-top: 18px; }
+.group:first-child { margin-top: 8px; }
+
+.group-label {
+  margin: 0;
+  padding: 0 var(--pad) 4px calc(var(--pad) + 44px);
+  /* The micro step — a label, which is what --t-micro is for. It was 10px,
+     a size the rest of the site never used. */
+  font-size: var(--t-micro);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.group-label span {
   letter-spacing: 0;
-  /* Back to the full 44px. A two-row nav had shrunk these to 38px to save
-     height, which is 0.000px below the touch-target floor — and the check that
-     caught it was right about exactly that, since a target has to clear the
-     floor whether or not the row beneath it does. */
+  text-transform: none;
+  font-family: var(--mono);
+  font-weight: 400;
+  margin-left: 8px;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  column-gap: 8px;
+  align-items: baseline;
+  align-content: center;
+  width: 100%;
+  min-height: 44px;
+  text-align: left;
+  padding: 6px var(--pad);
+  /* The body step. The rail's links are links, and on this site links are
+     body size; 14px was a third chrome size that only the rail used. */
+  font-size: var(--t-body);
+  line-height: 1.35;
+  letter-spacing: -0.011em;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.item::before {
+  content: attr(data-num);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (hover: hover) {
+  .item:hover {
+    color: var(--navy);
+    background: var(--hover-wash);
+  }
+  .item:hover::before { color: var(--navy); }
+}
+
+.item.active,
+.item[aria-current="page"] {
+  font-weight: 600;
+  box-shadow: inset 2px 0 0 var(--ink);
+}
+.item.active::before,
+.item[aria-current="page"]::before { color: var(--ink); }
+
+.item:focus-visible {
+  outline: 1px solid var(--navy);
+  outline-offset: -1px;
+}
+
+.index-footer {
+  margin-top: auto;
+  padding: 12px var(--pad);
+  border-top: 1px solid var(--line);
+  font-size: 11px;
+  color: var(--muted);
+}
+.index-footer .site-notice {
+  background: transparent;
+  border: 0;
+  font-size: 11px;
+}
+.index-footer .site-notice > summary,
+.index-footer .site-notice > div {
+  width: 100%;
+  margin: 0;
+  max-width: none;
+}
+.index-footer .site-notice summary {
   min-height: 44px;
 }
-.site-nav nav a:hover { color: var(--ink); }
-.site-nav nav a.active { color: var(--ink); border-bottom-color: var(--red); }
 
-/* ---------- Layout / views ---------- */
-main { width: var(--content); margin: 0 auto; min-width: 0; }
-.view { padding: clamp(1.4rem, 3vw, 2.4rem) 0 clamp(2rem, 4vw, 3.2rem); animation: fade 0.25s ease-out; }
+.plate-scroll #main-content {
+  width: min(100%, var(--content));
+  margin: 0 auto;
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 2.4rem) var(--pad) 48px;
+}
+
+@media (max-width: 860px) {
+  .shell { grid-template-columns: 1fr; }
+  .index { border-right: 0; }
+  .plate { display: none; }
+  .shell.is-open .index { display: none; }
+  .shell.is-open .plate { display: flex; }
+  .back, .theme-mobile { display: inline-flex; }
+  .locale-btn { min-width: 24px; padding: 0 4px; font-size: 9px; }
+}
+.view {
+  padding: clamp(1.4rem, 3vw, 2.4rem) 0 clamp(2rem, 4vw, 3.2rem);
+  animation: fade 0.25s ease-out;
+  /* The plate is the viewport minus a 420px index rail, so a media query on
+     the viewport measures the wrong thing for anything living in here. This
+     is the width the content actually has, and the strip below is laid out
+     against it. */
+  container-type: inline-size;
+  container-name: view;
+}
 .view[hidden] { display: none; }
 @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
@@ -384,6 +748,26 @@ h3 { margin-bottom: 0; font-size:var(--t-body); line-height: 1.25; }
 .section-head { max-width: 52rem; margin-bottom: 1.4rem; }
 .section-head .lede { margin-top: 0.6rem; }
 .section-head.split { max-width: none; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+/* The projects head is a title, a row of filters and a heading that has to
+   keep the full width. The filters sat on a second line, left-aligned, with
+   471px of nothing to their right. They now share the label's row, and the
+   heading runs across the full width underneath. */
+.projects-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "label controls" "title title";
+  align-items: baseline;
+}
+.projects-head > .label { grid-area: label; margin: 0; }
+.projects-head > .controls { grid-area: controls; }
+.projects-head > h1 { grid-area: title; }
+@container view (max-width: 760px) {
+  .projects-head {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "label" "title" "controls";
+  }
+  .projects-head > .controls { width: 100%; }
+}
 .sub-head { margin: 2.2rem 0 1rem; padding-top: 1rem; border-top: 1px solid var(--line); }
 
 .source-note { margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid var(--line-soft); color: var(--ink-2); }
@@ -459,7 +843,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .news-icon-button { display: grid; place-items: center; width: 44px; height: 44px; flex-shrink: 0; border: 1px solid var(--line-dim); background: var(--bg); cursor: pointer; font-size:var(--t-h2); }
 .news-icon-button:disabled { opacity: 0.45; cursor: default; }
 .news-topics { display: flex; gap: 0.3rem 1rem; flex-wrap: wrap; border-bottom: 1px solid var(--line); }
-.news-topics button { padding: 0.6rem 0; min-height: 44px; border: 0; border-bottom: 3px solid transparent; background: transparent; cursor: pointer; color: var(--muted); font-size:var(--t-body); }
+.news-topics button { padding: 0.6rem 0; min-height: 44px; min-width: 44px; border: 0; border-bottom: 3px solid transparent; background: transparent; cursor: pointer; color: var(--muted); font-size:var(--t-body); }
 .news-topics button[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--amber); font-weight: 700; }
 .news-feed-status { display: flex; justify-content: space-between; gap: 1rem; padding: 0.75rem 0; font-size:var(--t-small); color: var(--muted); }
 .news-feed-status p { margin: 0; }
@@ -528,7 +912,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .review-city-table td, .review-city-table th { padding: 0.6rem; border-bottom: 1px solid var(--line); text-align: right; font-variant-numeric: tabular-nums; }
 .review-city-table th:first-child { text-align: left; }
 .review-city-table small { display: block; font-size:var(--t-small); font-weight: 400; color: var(--muted); }
-.review-city-table button { min-height: 44px; border: 0; background: transparent; padding: 0; font-weight: 700; cursor: pointer; text-align: left; text-decoration: underline; text-underline-offset: 3px; }
+.review-city-table button { min-height: 44px; min-width: 44px; border: 0; background: transparent; padding: 0; font-weight: 700; cursor: pointer; text-align: left; text-decoration: underline; text-underline-offset: 3px; }
 .review-band-head { display: flex; justify-content: space-between; gap: 1rem; align-items: center; padding: 0.8rem 0; }
 .review-band-head > a { font-size:var(--t-body); min-height: 44px; display: inline-flex; align-items: center; white-space: nowrap; }
 .review-record { padding: 1.3rem 0; border-bottom: 1px solid var(--line); }
@@ -684,9 +1068,15 @@ input[type="search"] { min-width: min(16rem, 100%); }
      container — the inside-the-container version of the same 288px black
      bars the page had at the canvas edge. With a shared container wide
      enough to fit both halves, the header stops looking stranded. */
-  grid-template-columns: minmax(0, 1fr) minmax(0, 38rem);
-  gap: 0 1.5rem;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
   align-items: start;
+}
+/* Two columns once the plate can hold both halves with room to read. The
+   explainer column is 38rem; below that the title column would squeeze
+   under ~370px and the h2 would wrap further than a single thought. */
+@container view (min-width: 1000px) {
+  .twins-header { grid-template-columns: minmax(0, 1fr) minmax(0, 38rem); gap: 0 1.5rem; }
 }
 .twins-header-main, .twins-explainer { min-width: 0; }
 .twins-explainer { max-width: none; }
@@ -738,49 +1128,55 @@ input[type="search"] { min-width: min(16rem, 100%); }
    "Live" lived in a chip stamped on all five; it is now stated once, in the
    heading and the Level 2 badge. */
 .twins-grid {
+  display: grid;
+  /* Five across, one row — the strip the Overview opens with.
+     A previous card version of this was rejected for carrying a full
+     paragraph in a 209px measure: unreadable copy and an illegible 23%
+     screenshot. The correction is not "go back to cards" but "a card in a
+     strip carries identity, not a paragraph": picture, city, project, link.
+     The detail is what the click is for. Each cell is ~280px at the 1920px
+     page width, which holds the picture at a readable size and the copy at
+     three lines. */
+  grid-template-columns: 1fr;
+  /* Five tracks, one per band of the cell: picture, city, meta, caption,
+     link. Above 840px of plate the cells SUBGRID those tracks, so the five
+     cities, the five captions and the five links share ONE baseline
+     whatever their individual text lengths. The earlier version reserved
+     min-heights for the same purpose — "HO CHI MINH CITY" is two lines, the
+     longest caption is four — which is rule 1's "fixed heights that leave
+     empty space under short text" wearing a hat. Subgrid measures the
+     tallest cell instead of guessing it, and leaves no slack when nothing
+     wraps. */
+  grid-template-rows: auto auto auto auto auto;
+  column-gap: 1.5rem;
+  row-gap: 0;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   min-width: 0;
-  /* Spans the page grid. This was `width: fit-content`, which left the list as
-     a 756px island inside a 1280px column — the same unanchored void the page
-     had at its edges, one level in. A row that spans its container has two
-     defined edges, so the space between the copy and the URL reads as a
-     column rather than as a hole. */
-  width: 100%;
 }
 .twin-row {
   display: grid;
-  /* The landscape composition: thumbnail on the left filling its half of the
-     row, text on the right capped at 64ch, no middle column, no gutter.
-     Earlier versions tried a third track for the URL anchored at the right
-     edge, which left 380px of void between the description's last word and
-     the URL — the same hallucinated space between two halves of one thing,
-     just relabelled. With two columns the row's left edge is the thumb and
-     the right edge is the text; the row fills the container with a single
-     relationship the eye can follow.
-     `align-items: center` because the thumbnail now sets a row height of
-     ~430px while the text block is ~117px; top-pinning the copy left 313px
-     of dead space beneath the description before the next rule. */
-  grid-template-columns: 1fr minmax(0, 64ch);
-  gap: 0 1.5rem;
-  align-items: center;
-  padding: 1.05rem 0;
-  border-bottom: 1px solid var(--line-soft);
+  /* Five bands inside the cell: picture, city, meta, caption, link. The
+     caption row takes the slack (1fr) so the link sits on the cell's bottom
+     edge and every link in a band lands on the same line. */
+  grid-template-rows: auto auto auto 1fr auto;
+  padding: 1.05rem 0 1.15rem;
   color: var(--ink);
   min-width: 0;
-  /* No background, no shadow, no lift. Feedback is the rule darkening and
-     the URL underlining — the two things that actually change. The old
-     translateY(-2px) + box-shadow was elevation the page has no other use
-     for, and hover recoloured the link with --red, which is the alarm token. */
+  /* No background, no shadow, no lift. Feedback is the link underlining and
+     the picture's border darkening — the two things that actually change.
+     The old translateY(-2px) + box-shadow was elevation the page has no
+     other use for, and hover recoloured the link with --red, the alarm
+     token. */
 }
-.twin-row:last-child { border-bottom: 0; }
-.twin-row:hover { border-bottom-color: var(--line); }
 .twin-row:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 2px;
 }
 .twin-row-thumb {
   display: block;
+  grid-column: 1;
+  grid-row: 1;
   width: 100%;
   aspect-ratio: 16 / 9;
   background: var(--surface-2);
@@ -793,34 +1189,45 @@ input[type="search"] { min-width: min(16rem, 100%); }
   object-fit: cover;
 }
 .twin-row-main {
-  display: block;
-  min-width: 0;
+  /* The wrapper dissolves so its children can take their place in the cell's
+     own grid. It carries no semantics of its own, so nothing is lost from
+     the accessibility tree by removing it from the box tree. */
+  display: contents;
 }
 .twin-city {
   display: block;
+  grid-column: 1;
+  grid-row: 2;
   font-size: var(--t-h2);
-  line-height: 1.1;
-  letter-spacing: -0.015em;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
   color: var(--ink);
-  margin: 0 0 0.2rem;
+  /* The top margin is the gap under the picture. It lives on the item, not
+     on the grid, so the gap is not the same everywhere: the picture wants
+     air under it, the caption does not. */
+  margin: 0.85rem 0 0.25rem;
 }
 .twin-meta {
   display: block;
+  grid-column: 1;
+  grid-row: 3;
   font-size: var(--t-micro);
   color: var(--muted);
   margin-bottom: 0.5rem;
 }
 .twin-desc {
   display: block;
+  grid-column: 1;
+  grid-row: 4;
   font-size: var(--t-body);
   line-height: 1.5;
   color: var(--ink-2);
-  max-width: 64ch;
 }
 .twin-link-label {
-  /* Last line of the text column. */
   display: inline-block;
-  margin-top: 0.55rem;
+  grid-column: 1;
+  grid-row: 5;
+  margin-top: 0.6rem;
   font-family: var(--mono);
   font-size: var(--t-micro);
   font-weight: 600;
@@ -831,29 +1238,70 @@ input[type="search"] { min-width: min(16rem, 100%); }
   text-decoration: underline;
 }
 
-@media (max-width: 980px) {
-  .twin-row { grid-template-columns: 150px minmax(0, 1fr); }
-  .twin-row-thumb { width: 150px; }
+/* Five across whenever the plate can hold five cells that still read.
+   The old card version failed at 209px per cell; a cell of 150px holds the
+   city name at two lines and the caption at four, which is a directory, not
+   a paragraph. Below that the strip does NOT step down to three-across and
+   two-across: five items in a three-column grid leave a hole in the last
+   row, and five in two leave an orphan — both are the "empty side" of the
+   balance rule. It goes to one column instead, where the picture sits
+   beside the copy and the copy keeps a real measure.
+   These are container queries, not media queries: the plate is the viewport
+   minus the index rail, so the viewport would count a width the strip
+   never has. */
+@container view (min-width: 840px) {
+  .twins-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    /* One set of five tracks for the whole band, and every cell SUBGRIDS
+       them, so the five cities, the five captions and the five links sit on
+       ONE shared baseline whatever their individual text lengths. The
+       earlier version reserved min-heights for the same purpose — "HO CHI
+       MINH CITY" is two lines, the longest caption is four — which is rule
+       1's "fixed heights that leave empty space under short text" wearing
+       a hat. Subgrid measures the tallest cell instead of guessing it, and
+       leaves no slack at all when nothing wraps. */
+    grid-template-rows: auto auto auto auto auto;
+  }
+  .twin-row {
+    grid-template-rows: subgrid;
+    grid-row: span 5;
+  }
 }
-@media (max-width: 520px) {
-  .twin-row { grid-template-columns: minmax(0, 1fr); gap: 0.65rem; }
-  .twin-row-thumb { width: 100%; }
-  .twin-link-label { margin-top: 0; }
+@container view (max-width: 839px) {
+  .twins-grid { grid-template-columns: 1fr; }
+  .twin-row {
+    /* One directory row: a modest picture beside the copy. The picture is
+       capped so a wide plate does not turn the strip back into the wall of
+       779px screenshots that was rejected. */
+    grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+    grid-template-rows: auto auto auto auto;
+    column-gap: 1.5rem;
+    padding: 1.05rem 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .twin-row:last-child { border-bottom: 0; }
+  .twin-row-thumb { grid-column: 1; grid-row: 1 / span 4; }
+  .twin-city { grid-column: 2; grid-row: 1; margin-top: 0; }
+  .twin-meta { grid-column: 2; grid-row: 2; }
+  .twin-desc { grid-column: 2; grid-row: 3; max-width: var(--measure); }
+  .twin-link-label { grid-column: 2; grid-row: 4; }
+}
+@container view (max-width: 560px) {
+  /* A phone has no room for a picture beside the copy: the text column came
+     out 84px wide, so every caption broke to one word per line and the URLs
+     ran off the edge. The picture goes on top and the copy takes the width. */
+  .twin-row {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto auto auto;
+    column-gap: 0;
+  }
+  .twin-row-thumb { grid-column: 1; grid-row: 1; }
+  .twin-city { grid-column: 1; grid-row: 2; margin-top: 0.85rem; }
+  .twin-meta { grid-column: 1; grid-row: 3; }
+  .twin-desc { grid-column: 1; grid-row: 4; max-width: var(--measure); }
+  .twin-link-label { grid-column: 1; grid-row: 5; }
 }
 
-@media (max-width: 1060px) {
-  .twins-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-}
-@media (max-width: 1100px) {
-  /* The header's two columns need roughly 38rem + a meaningful title column.
-     Below 1100px container the title column squeezes to ~370px and the h2
-     wraps into more lines than read as a single thought. Stacking is
-     clearer than cramping. */
-  .twins-header { grid-template-columns: 1fr; gap: 0.75rem; }
-}
-@media (max-width: 680px) {
-  .twins-grid { grid-template-columns: 1fr; }
-}
 
 /* ---------- Innovation-as-a-Service View ---------- */
 .innovation-status-badge {
@@ -1254,6 +1702,27 @@ input[type="search"] { min-width: min(16rem, 100%); }
 
 .ascap-panel { margin-top: 2.2rem; border: 1px solid var(--line); padding: 1.4rem; background: var(--surface); }
 .ascap-panel h3 { font-size:var(--t-lede); }
+/* The panel is a box, so it has to be filled: the title block on the left,
+   the two notes in a column of their own on the right, the pillars across
+   the bottom. The notes used to sit in a full-width band under the title,
+   360px of note in a 950px panel. */
+.ascap-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+  grid-template-areas:
+    "label notes"
+    "title notes"
+    "lede  notes"
+    "pillars pillars";
+  gap: 0.4rem 2.4rem;
+  align-items: start;
+}
+.ascap-panel > .label { grid-area: label; }
+.ascap-panel > h3 { grid-area: title; }
+.ascap-panel > .lede { grid-area: lede; }
+.ascap-panel > .ascap-notes { grid-area: notes; }
+.ascap-panel > .pillars { grid-area: pillars; }
+.ascap-notes p { margin-top: 0; }
 .ascap-panel .pillars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 1rem; }
 .ascap-pillar { padding: 0.7rem 0.8rem 0.7rem 0; border-top: 1px solid var(--line-soft); }
 .ascap-pillar b { color: var(--navy); display: block; font-size:var(--t-small); }
@@ -1311,6 +1780,15 @@ input[type="search"] { min-width: min(16rem, 100%); }
 
 /* ---------- Projects ---------- */
 .analytics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; margin-bottom: 1.6rem; }
+/* The three panels hold 6, 3 and 12 rows. Stretched to a common height, the
+   three-bar panel was given a 326px cell and 3.5% of it was ink — 105px of
+   air between one 6px bar and the next. Each panel is now as tall as what
+   it holds, and the grid row is as tall as the tallest of them. */
+.analytics-grid { align-items: start; }
+/* `.stack-bars` belongs to the insights stacked-area, where a column's
+   height IS its data. The status panel borrowed the class and inherited
+   that fill; it has its own now. */
+.status-bars { display: grid; gap: 0.5rem; align-content: start; }
 .chart-panel, .table-panel { border-top: 1px solid var(--line); padding-top: 0.85rem; }
 .panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 0.85rem; }
 .table-wrap { width: 100%; max-height: 34rem; overflow: auto; border-top: 1px solid var(--line-soft); }
@@ -1601,7 +2079,7 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .lib-item p { margin: 0; color: var(--ink-2); font-size:var(--t-body); }
 
 /* ---------- Contacts ---------- */
-.contacts-wrap { width: var(--content); margin: 0 auto; padding: 2.5rem 0 4rem; }
+.contacts-wrap { width: 100%; max-width: var(--content); margin: 0 auto; padding: 2.5rem 0 4rem; }
 .contacts-header { padding-bottom: 2rem; border-bottom: 1px solid var(--line); margin-bottom: 2.5rem; }
 .contacts-header h2 { font-size:var(--t-h1); font-weight: 700; letter-spacing: -0.02em; margin: 0.5rem 0 0.75rem; }
 .contacts-header .lede { max-width: 600px; margin-bottom: 1.25rem; }
@@ -1638,7 +2116,7 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 }
 
 /* ---------- Essay ---------- */
-.essay-wrap { width: var(--content); margin: 0 auto; padding: 2.5rem 0 4rem; }
+.essay-wrap { width: 100%; max-width: var(--content); margin: 0 auto; padding: 2.5rem 0 4rem; }
 .essay-header { padding-bottom: 2rem; border-bottom: 1px solid var(--line); margin-bottom: 2.5rem; }
 
 /* At desktop the header stacked series bar, title, subtitle and author across
@@ -1754,7 +2232,15 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 
 /* ---------- Footer ---------- */
 .site-footer { margin-top: 2rem; padding: 2rem 0 2.5rem; border-top: 1px solid var(--line-soft); }
-.footer-content { width: var(--content); margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr auto; gap: 1rem; align-items: start; }
+.footer-content { width: 100%; max-width: var(--content); margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr auto; gap: 1rem; align-items: start; }
+/* The footer's five blocks in three columns put the two fine-print notes in
+   the first column alone, so everything to their right was empty: 603px of
+   the plate, 61% of it, from the second row down. The notes now take the
+   first two columns and the logos the third, and the row above them ends
+   with the logos' own height. */
+.footer-fine { grid-column: 1; grid-row: 2; }
+.footer-sourcelang { grid-column: 2; grid-row: 2; }
+.footer-logos { grid-column: 3; grid-row: 2; }
 .footer-content p { color: var(--ink-2); }
 .footer-logos { display: flex; align-items: center; gap: 0.8rem; }
 .footer-logos img { width: auto; max-width: 7rem; max-height: 2.4rem; }
@@ -1820,7 +2306,7 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 .le-meta { color: var(--muted); font-size:var(--t-micro); font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; margin: 0.18rem 0 0.42rem; }
 .le-takeaway { color: var(--ink-2); font-size:var(--t-body); margin: 0; line-height: 1.5; }
 .le-actions { display: flex; flex-direction: column; gap: 0.35rem; align-items: flex-end; min-width: 4.5rem; }
-.le-dl, .le-ext { font-size:var(--t-micro); font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; min-height: 44px; display: inline-flex; align-items: center; color: var(--navy); }
+.le-dl, .le-ext { font-size:var(--t-micro); font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; color: var(--navy); }
 .le-ext { color: var(--ink-2); }
 .lib-empty { padding: 2.5rem 0; color: var(--muted); font-size:var(--t-body); }
 
@@ -2350,10 +2836,19 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 .trend-up { color: var(--green); background: color-mix(in srgb, var(--green) 12%, transparent); }
 .trend-dn { color: var(--red); background: color-mix(in srgb, var(--red) 12%, transparent); }
 .trend-flat { color: var(--muted); }
-.ig-spark-vals { display: flex; justify-content: space-between; margin-top: 0.2rem; }
+/* The two label rows under a focus sparkline are a grid of four columns,
+   each label centred in its own column. The plot above draws its points at
+   the centres of the same four columns, so a number stands on the datum it
+   belongs to. These rows used to be `justify-content: space-between`, which
+   spread the labels to the cell's edges while the plot sat in the middle —
+   the outer labels were up to 199px from the point they were labelling. */
+.ig-spark-vals { display: grid; grid-template-columns: repeat(4, 1fr); text-align: center; margin-top: 0.2rem; }
 .ig-spark-vals span { font-size:var(--t-micro); color: var(--muted); font-variant-numeric: tabular-nums; }
-.ig-spark-yrs { display: flex; justify-content: space-between; margin-top: 0.05rem; }
+.ig-spark-yrs { display: grid; grid-template-columns: repeat(4, 1fr); text-align: center; margin-top: 0.05rem; }
 .ig-spark-yrs span { font-size:var(--t-micro); color: var(--muted); font-weight: 600; letter-spacing: 0.03em; }
+/* The plot is drawn to the cell's own width, so the box must not clip it. */
+.ig-spark-plot { min-width: 0; }
+.ig-spark-plot svg { display: block; }
 
 /* Country trajectories */
 .ig-traj-legend { font-size:var(--t-small); color: var(--muted); display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.8rem; }
@@ -2636,7 +3131,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
   width: 100%;
   height: 480px;
   border: 1px solid var(--rule);
-  background: #0a0e14;
+  background: var(--deep);
 }
 .contacts-map-hint {
   font-size:var(--t-small);
@@ -2670,7 +3165,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
   border: 1px solid rgba(0,0,0,0.45);
   border-radius: 0;
   box-shadow: none; /* override Leaflet's default drop shadow — §11.6 */
-  color: #e6edf3;
+  color: var(--ink);
   padding: 0;
 }
 .cpop-wrap .leaflet-popup-tip-container { display: none; }
@@ -2680,7 +3175,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 .cpop-city {
   font-size:var(--t-lede);
   font-weight: 700;
-  color: #e6edf3;
+  color: var(--ink);
   line-height: 1.2;
   margin-bottom: 0.75rem;
 }
@@ -2705,7 +3200,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 .cpop-name {
   font-size:var(--t-body);
   font-weight: 600;
-  color: #e6edf3;
+  color: var(--ink);
   line-height: 1.3;
 }
 .cpop-detail {
@@ -3423,7 +3918,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
   max-height: 26rem;
   aspect-ratio: 480 / 860;
   object-fit: cover;
-  background: #0b0f14;
+  background: var(--deep);
   border: 1px solid var(--line);
 }
 .iaas-hero-media figcaption {
@@ -3750,6 +4245,10 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 .review-note a,
 .essay-next-cta a { display: inline-flex; align-items: center; min-height: 44px; }
 .essay-toc-link { min-height: 44px; }
+/* An outbound link is an action, so it holds the 44px floor in BOTH
+   directions. "2022 ↗" is 38px of text: tall enough to tap, too narrow to
+   hit reliably with a thumb. */
+.ext-link { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; }
 
 /* ── Language switch ───────────────────────────────────────────────────────
    Three buttons, hairline-separated, sitting in the header band. It is a
@@ -3759,22 +4258,6 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
    The pressed state is the ocher channel and nothing else — wayfinding is the
    ocher's single job, so the active language is the only thing on this
    surface allowed to use it. */
-.lang-switch {
-  display: flex; align-items: stretch; flex: 0 0 auto;
-  border-left: 1px solid var(--line-soft);
-}
-.lang-btn {
-  min-width: 44px; min-height: 44px;
-  display: inline-flex; align-items: center; justify-content: center;
-  background: transparent; border: 0; cursor: pointer;
-  color: var(--muted);
-  font-family: var(--mono); font-size: var(--t-micro);
-  letter-spacing: 0.06em;
-  border-bottom: 2px solid transparent;
-}
-.lang-btn:hover { color: var(--ink); }
-.lang-btn[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--ocher); font-weight: 700; }
-.lang-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 @media (max-width: 720px) {
   /* Stay on the brand's row. Two rules above already put this header in a
      COLUMN at 760px and 1100px, which is right for brand-over-strip and wrong
@@ -3783,7 +4266,6 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
      full width beneath, and the band is two rows again. */
   .site-nav { flex-direction: row; flex-wrap: wrap; row-gap: 0; gap: 0.5rem; align-items: center; }
   .brand { flex: 1 1 auto; }
-  .lang-switch { order: 2; }
   .site-nav nav { order: 3; flex: 1 0 100%; }
 }
 
@@ -4050,7 +4532,7 @@ button:active { transform: scale(0.97); }
 
 .spotlight-tag { color: var(--on-solid); }
 .spotlight-actions .text-button.primary { background: var(--amber); color: var(--on-solid); border-color: var(--amber); }
-.cpop-wrap .leaflet-popup-content { color: #e6edf3; }
+.cpop-wrap .leaflet-popup-content { color: var(--ink); }
 #corr-more[hidden] { display: none; }
 
 .rec-public-context { margin-top: 1.5rem; border-top: 1px solid var(--line); padding-top: 1rem; }
@@ -4244,10 +4726,40 @@ body .view :is(p, li, dd, blockquote, figcaption, .lede) {
 body .view :is(h1, h2, h3, h4) {
   max-width: var(--measure-heading);
 }
+/* ---------- Prose that has to fill a wide band runs in columns ----------
+   The measure belongs to the COLUMN, not to the item. A paragraph capped at
+   55ch inside a 994px section leaves 59% of that section dead — a hole
+   shaped exactly like the content that should have filled it. But a single
+   column wider than the measure is a line nobody wants to read, so the band
+   is capped where only one column will fit.
+
+   The columns are sized against the PLATE, not the viewport: the viewport
+   counts a width the content never had. */
+.col-flow {
+  column-width: 45ch;
+  column-gap: 2.4rem;
+}
+.col-flow > * { break-inside: avoid; }
+/* A paragraph may be split across columns — a note that fills the band has
+   to flow into the second one. A list item may not: an entry cut in half
+   reads as two entries. */
+.col-flow > p { break-inside: auto; }
+/* A note that runs in columns takes its measure from the column, so the
+   global cap on prose comes off it. */
+body .view p.col-flow,
+body .view .ig-note.col-flow { max-width: none; }
+@container view (max-width: 709px) {
+  .col-flow { max-width: 75ch; }
+}
+
 /* ---------- Archive: one rule, unequal fields, no cards ---------- */
 .archive-head {
   display: grid;
-  grid-template-columns: 1.618fr 1fr;
+  /* The language switcher used to sit in a column of its own sized by the
+     grid's 1fr, so a 1px rule ran 367px under a switcher 86px wide, and
+     281px of that header carried nothing. The column is now the switcher's
+     own width and the rule under it is the switcher's own width. */
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 1.25rem 2.4rem;
   align-items: start;
 }
@@ -4396,23 +4908,29 @@ body .view :is(h1, h2, h3, h4) {
 .archive-outcomes { margin-top: 2rem; border-top: 1px solid var(--ink); padding-top: 0.9rem; }
 .archive-outcomes > p { max-width: 38rem; color: var(--ink-2); }
 .archive-outcomes ol { list-style: none; margin: 0.8rem 0 0; padding: 0; }
-.archive-outcomes li {
-  display: grid;
-  grid-template-columns: 9rem 2.6rem minmax(0, 1fr);
-  gap: 0.75rem 1rem;
-  align-items: start;
+/* The outcome block is a heading line and the titles under it, not three
+   tracks on one row. The titles used to share a row with the label and the
+   count, and the third track — the one holding the titles — was 233px wide,
+   so a title measured 29 characters a line. */
+body .view .archive-outcomes li {
+  display: block;
   border-top: 1px solid var(--line);
   padding: 0.7rem 0;
+  max-width: none;
 }
-.archive-outcomes li .label { margin: 0; text-align: left; }
-.archive-outcomes li strong {
+.archive-outcome-head { display: flex; align-items: baseline; gap: 0.75rem; }
+.archive-outcome-head .label { margin: 0; text-align: left; }
+.archive-outcome-head strong {
   font-size: var(--t-body);
   font-weight: 800;
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
-.archive-outcomes ul { margin: 0; padding: 0; list-style: none; }
-.archive-outcomes ul li { display: block; border: 0; padding: 0.12rem 0; }
+.archive-outcome-titles { margin: 0.35rem 0 0; padding: 0; list-style: none; }
+/* The titles run in columns so the block fills the width it is given. Their
+   measure is the column's, so the item cap that made them a third of the
+   section is lifted here — and only here. */
+.archive-outcome-titles.col-flow > li { border: 0; padding: 0.12rem 0; max-width: none; }
 .archive-funding { margin-top: 1.7rem; }
 .archive-funding-title {
   margin: 0 0 0.35rem;
@@ -4425,11 +4943,26 @@ body .view :is(h1, h2, h3, h4) {
 .archive-money > p { max-width: 38rem; color: var(--ink-2); }
 .archive-donor {
   display: grid;
-  grid-template-columns: minmax(0, 1.618fr) minmax(0, 1fr) minmax(0, 1fr);
+  /* The two money columns take their content's width as a floor, so a figure
+     that cannot be broken ("KRW 1,500,000,000,000" is nowrap) never runs over
+     the column beside it. The name column takes what is left. */
+  grid-template-columns: minmax(0, 1fr) minmax(max-content, 1.618fr) minmax(max-content, 1fr);
   gap: 0.35rem 1.5rem;
   align-items: start;
   border-top: 1px solid var(--ink);
   padding: 0.9rem 0 1rem;
+}
+/* The money row needs the committed figure to fit inside its own column, and
+   "KRW 1,500,000,000,000" at the lead step is 450px of nowrap. In the old
+   layout the archive's content was the full 1248px page, so the committed
+   column had 485px and the figure fitted. The plate is the viewport minus the
+   index rail, so at a 1024px viewport the column fell to 278px and the
+   figure ran straight over the disbursed column: "KRW 1,500,000,000,000"
+   printed on top of "— not public".
+   The stack below is measured against the PLATE, not the viewport, because
+   the viewport counts a width this content never had. */
+@container view (max-width: 900px) {
+  .archive-donor { grid-template-columns: 1fr; }
 }
 .archive-donor h3 {
   margin: 0;
@@ -4476,6 +5009,12 @@ body .view :is(h1, h2, h3, h4) {
 .archive-money ul { list-style: none; margin: 0.6rem 0 0; padding: 0; }
 .archive-funding details li,
 .archive-money li { border-top: 1px solid var(--line); padding: 0.55rem 0; }
+/* The money claims are prose. Capped at 55ch inside a 994px section they
+   left 585px of it — 59% — empty, and the hairline over each claim stopped
+   at the same 41%, which is what made it read as broken rather than
+   measured. The claims run in columns now, and the column is the measure,
+   so the item cap comes off here and only here. */
+body .view .archive-money ul.col-flow > li { max-width: none; }
 .archive-money { margin-top: 1.7rem; }
 .archive-account-block { border-top: 1px solid var(--ink); margin-top: 0.9rem; padding-top: 0.8rem; max-width: 40rem; }
 .archive-account { margin: 0.2rem 0 0; font-size: var(--t-body); font-weight: 700; letter-spacing: 0; }
@@ -4483,10 +5022,32 @@ body .view :is(h1, h2, h3, h4) {
 .archive-withheld { margin-top: 1.6rem; border-top: 1px solid var(--ink); padding-top: 0.9rem; }
 .archive-pending ul { margin: 0.4rem 0 0; padding: 0; list-style: none; }
 .archive-pending li { border-top: 1px solid var(--line); padding: 0.55rem 0; }
+/* One pending row in a 994px section left 604px of it empty. The row's two
+   halves now sit side by side: what is known about the item, and what is
+   not yet known. The global cap on list items is lifted here — the row's
+   own two columns are the measure. */
+body .view .archive-pending li {
+  max-width: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.3rem 2.4rem;
+  align-items: start;
+}
+.archive-pending-head { display: grid; gap: 0.25rem; }
+.archive-pending-note { margin: 0.25rem 0 0; color: var(--ink-2); }
+@container view (max-width: 709px) {
+  .archive-pending li { grid-template-columns: minmax(0, 1fr); }
+}
 .archive-pending p { margin: 0.25rem 0 0; color: var(--ink-2); }
+/* One pending item in a 994px section left 604px of it empty. The note now
+   runs in columns, so the paragraph fills the band it is given. */
+body .view .archive-pending li p.col-flow { max-width: none; }
 .archive-withheld ul { margin: 0.4rem 0 0; padding: 0; list-style: none; }
 .archive-withheld li { border-top: 1px solid var(--line); padding: 0.45rem 0; }
-.archive-limits { max-width: 38rem; }
+/* The limits note is the whole of the withheld section, and it was 589px
+   short of the section's width. */
+.archive-limits { max-width: none; }
+body .view .archive-limits.col-flow > p { max-width: none; }
 .archive-limits p { margin: 0.7rem 0 0; color: var(--ink-2); }
 #view-archive button:focus-visible,
 #view-archive select:focus-visible,
@@ -4566,7 +5127,7 @@ body .view :is(h1, h2, h3, h4) {
 .evidence-opening .lede { max-width: 53ch; color: var(--ink-2); }
 .evidence-routes { list-style: none; padding: 0; margin: 0; width: 100%; }
 .evidence-routes li { max-width: none; border-top: 1px solid var(--line-soft); }
-.evidence-routes a { display: grid; grid-template-columns: 2rem minmax(0,1fr) 1rem; gap: .5rem; padding: .9rem 0; align-items: baseline; }
+.evidence-routes a { display: grid; grid-template-columns: 2rem minmax(0,1fr) 1rem; gap: .5rem; padding: .9rem 0; align-items: baseline; min-height: 44px; }
 .evidence-routes a:hover strong { color: var(--amber); }
 .evidence-routes a > span { color: var(--muted); font-size: var(--t-micro); }
 .showcase-heading { background: transparent; padding: .7rem 0 1rem; border-top: 2px solid var(--line); max-width: none; }
@@ -4598,17 +5159,14 @@ body .view :is(h1, h2, h3, h4) {
   .evidence-opening { grid-template-columns: 1fr; gap: 1rem; }
   .evidence-opening h1 { font-size: var(--t-figure); max-width: 15ch; }
   .finder-open { order: 2; margin-left: auto; }
-  .lang-switch { margin-left: 0; }
   .site-nav nav { scrollbar-width: thin; gap: 1rem; padding-bottom: .2rem; }
 }
 @media (prefers-reduced-motion: reduce) { .finder, .skip-link { transition: none; } }
-@media (max-width: 720px) { .brand i { display: none; } }
 .overview-intro h2 { font-size: var(--t-lead); line-height: 1.15; }
 @media (min-width: 721px) and (max-width: 1100px) {
   .site-nav { flex-direction: row; flex-wrap: wrap; align-items: center; gap: .3rem .7rem; }
   .brand { flex: 1 1 auto; }
   .finder-open { order: 2; }
-  .lang-switch { order: 2; }
   .site-nav nav { order: 3; flex: 1 0 100%; }
 }
 .ig-traj-row { grid-template-columns: minmax(5rem, 8rem) minmax(0, 1fr); gap: .5rem; }

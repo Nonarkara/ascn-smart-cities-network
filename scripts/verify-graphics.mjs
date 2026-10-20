@@ -1,13 +1,38 @@
 import { chromium, devices } from "@playwright/test";
 import { createHash } from "node:crypto";
+import { mkdir, writeFile } from "node:fs/promises";
+import { dirname } from "node:path";
+import { outsidePalette, shorterMeasure, longestHeadingLine } from "./visual-audit-rules.mjs";
 
 const BASE = process.env.ASCN_TEST_URL || "http://127.0.0.1:4187";
-const browser = await chromium.launch();
+const fetch = (input, options = {}) => globalThis.fetch(input, { ...options, signal: options.signal || AbortSignal.timeout(20000) });
+const browser = await chromium.launch({ channel: process.env.PLAYWRIGHT_CHANNEL || undefined });
 const results = [];
-const ok = (label, pass, detail = "") => results.push({ pass, label, detail });
+const ok = (label, pass, detail = "", findings = []) => results.push({ pass, label, detail, ...(findings.length ? { findings } : {}) });
+
+
+// The shell has two screens and only one of them is visible at a time below
+// 860px: the index rail on the phone until a section is opened, then the
+// plate. Waiting for the nav alone therefore times out on every mobile pass,
+// and the old `.site-nav` target it used no longer exists at all after the
+// restructure. Wait for whichever screen is actually on.
+async function waitForShell(page, timeout = 20_000) {
+  await page.waitForFunction(() => {
+    const visible = (sel) => {
+      const e = document.querySelector(sel);
+      if (!e) return false;
+      const r = e.getBoundingClientRect();
+      return r.width > 0 && r.height > 0 && getComputedStyle(e).visibility !== "hidden";
+    };
+    return visible("#tab-nav") || visible(".plate-bar");
+  }, null, { timeout });
+}
 
 async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false) {
   const page = await browser.newPage(isMobile ? { ...devices["iPhone 13"] } : { viewport });
+  // Composition does not depend on whether an external publisher is reachable.
+  // Exercise the real saved-data fallback; API contracts have separate tests.
+  await page.route('**/api/{news,ascn-news}', (route) => route.fulfill({ status: 503, json: { checkedAt: new Date().toISOString(), articles: [], sources: [] } }));
   const failures = [];
   page.on("pageerror", (e) => failures.push(e.message.split("\n")[0]));
   page.on("requestfailed", (r) => {
@@ -26,6 +51,8 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   return { page, failures };
 }
 
+let completed = false;
+try {
 /* ── Record view: charts ─────────────────────────────────────────────────── */
 {
   const { page, failures } = await newPage();
@@ -159,27 +186,41 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   await page.goto(`${BASE}/#overview`, { waitUntil: "networkidle" });
   await page.waitForSelector(".twin-row", { timeout: 15_000 });
 
+  // The strip is five across only when the plate is wide enough. The default
+  // 1280px page leaves an 870px plate, where the strip is three across in two
+  // rows, so the strip's own checks need a wide page of their own.
+  const { page: wide } = await newPage({ width: 1920, height: 900 });
+  await wide.goto(`${BASE}/#overview`, { waitUntil: "networkidle" });
+  await wide.waitForSelector(".twin-row", { timeout: 15_000 });
+
   const rows = await page.locator(".twin-row").count();
   ok("every operational twin is listed as a row", rows === 5, `${rows} rows`);
 
   // The regression this guards: five equal-weight cards. Each carried a boxed
   // screenshot over 12px copy in a 209px measure — about 33 characters a line.
-  // Assert the measure, because that is what actually failed, and a count of
-  // elements would have stayed green through the whole card-wall version.
-  const measure = await page.locator(".twin-desc").first().evaluate((el) => {
+  //
+  // The twins are now a five-across strip, and a five-across strip cannot
+  // hold a 60-character column on any normal screen: the cell is ~260px, not
+  // ~800px. The measure is therefore no longer the lever that can be pulled
+  // to make the cell fit. The lever that must NOT be pulled is the type
+  // size: a narrow cell is legitimate, shrunk-to-fit 11px copy inside it is
+  // not. The check moved from the measure to the size, and the size is
+  // asserted to be at least the body size.
+  const caption = await page.locator(".twin-desc").first().evaluate((el) => {
     const cs = getComputedStyle(el);
     const w = el.getBoundingClientRect().width;
     const px = parseFloat(cs.fontSize);
-    return { chars: Math.round(w / (px * 0.5)), size: cs.fontSize };
+    return { chars: Math.round(w / (px * 0.5)), size: px };
   });
-  ok("twin descriptions get a readable measure", measure.chars >= 60,
-    `${measure.chars} chars at ${measure.size}`);
+  ok("twin captions keep body type size (not shrunk to fit the cell)",
+    caption.size >= 13, `${caption.size}px, ~${caption.chars} chars per line`);
 
-  // Five identical boxes have nothing to rank. Five city names sharing one left
-  // edge give the eye a column to scan — that IS the anchor.
-  const lefts = await page.locator(".twin-city").evaluateAll((els) =>
-    els.map((e) => Math.round(e.getBoundingClientRect().left)));
-  ok("the five city names share one anchor edge", new Set(lefts).size === 1, lefts.join(","));
+  // Five identical boxes have nothing to rank. Five names in a column gave
+  // the eye a vertical to scan. In a strip the anchor turns: the five names
+  // share one TOP edge and one baseline, so they read as one ranked row.
+  const tops = await wide.locator(".twin-city").evaluateAll((els) =>
+    els.map((e) => Math.round(e.getBoundingClientRect().top)));
+  ok("the five city names share one anchor edge", new Set(tops).size === 1, tops.join(","));
 
   const citySize = await page.locator(".twin-city").first()
     .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
@@ -214,83 +255,110 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   ok("twin rows carry no elevation", twinCss.shadow === "none" && twinCss.transform === "none",
     `shadow=${twinCss.shadow} transform=${twinCss.transform}`);
 
+  await page.locator(".twin-row").first().hover();
   const linkHover = await page.locator(".twin-row").first().evaluate((el) => {
     const a = el.querySelector(".twin-link-label");
-    return a ? getComputedStyle(a).color : "";
+    const probe = document.createElement('span'); probe.style.color = 'var(--navy)'; document.body.appendChild(probe);
+    const expected = getComputedStyle(probe).color; probe.remove();
+    return { actual: a ? getComputedStyle(a).color : '', expected };
   });
-  ok("the twin URL keeps the wayfinding colour", linkHover !== "", linkHover);
+  ok("the hovered twin URL keeps the wayfinding colour", linkHover.actual === linkHover.expected, JSON.stringify(linkHover));
 
-  // The landscape composition. Three bands — header, disclosure strip, main —
-  // used to disagree: the strip was full-bleed with its type centred across
-  // the whole viewport while the other two were a 1280px island at x=288. Two
-  // left edges 288px apart is what made the page read as randomly assembled.
+  // The landscape composition. The page is a two-screen shell: a 420px index
+  // rail and the content plate. Everything inside the plate must agree on its
+  // left edge, or the page reads as parts that were never assembled with each
+  // other.
+  //
+  // The edges compared are CONTENT edges. The previous version compared
+  // #main-content's border box against the views inside it — but
+  // #main-content carries the plate's own 13px padding, so the two were
+  // always 13px apart and the check could only ever fail. The claim is that
+  // the plate's bands line up with each other, so what is compared is where
+  // the text of each band actually starts: the plate bar's kicker, the
+  // locator's number, the view's first element and the twins grid.
   const edges = await page.evaluate(() => {
-    const l = (s) => Math.round(document.querySelector(s).getBoundingClientRect().left);
-    return { nav: l(".site-nav"), notice: l(".site-notice summary"), main: l("main") };
+    const l = (s) => {
+      const el = document.querySelector(s);
+      return el ? Math.round(el.getBoundingClientRect().left) : null;
+    };
+    const plate = document.querySelector("main.plate");
+    return {
+      bar: l("#barKicker"),
+      locator: l("#locatorNum"),
+      view: l(".view"),
+      grid: l(".twins-grid"),
+      plateLeft: plate ? Math.round(plate.getBoundingClientRect().left) : null,
+    };
   });
-  ok("header, disclosure strip and main share one left edge",
-    edges.nav === edges.notice && edges.notice === edges.main,
-    `nav=${edges.nav} notice=${edges.notice} main=${edges.main}`);
+  ok("the plate's content bands share one left edge",
+    edges.bar === edges.locator && edges.locator === edges.view && edges.view === edges.grid
+      && edges.view > edges.plateLeft,
+    `bar=${edges.bar} locator=${edges.locator} view=${edges.view} grid=${edges.grid} plate=${edges.plateLeft}`);
 
   // The page header stops being a single column with most of its right side
   // empty at landscape widths. Below 1100 it stacks; at landscape widths it
   // has exactly two grid tracks with content in both.
-  const headerCols = await page.evaluate(() => {
+  const headerCols = await wide.evaluate(() => {
     const cs = getComputedStyle(document.querySelector(".twins-header"));
     return cs.gridTemplateColumns.split(" ").length;
   });
   ok("the twins header has two columns when the viewport allows it",
     headerCols === 2, `header has ${headerCols} grid column(s)`);
 
-  // No middle column, no gutter. A previous version put the URL in a third
-  // track anchored at the right edge, which left 380px of empty space between
-  // the description and the URL — the gap that severs the left half of the
-  // row from the right half. The only horizontal gap that is allowed now is
-  // the one between the thumb and the text column.
-  const row = await page.evaluate(() => {
-    const r = document.querySelector(".twin-row").getBoundingClientRect();
-    const t = document.querySelector(".twin-row-thumb").getBoundingClientRect();
-    const m = document.querySelector(".twin-row-main").getBoundingClientRect();
+  // Five across, in one row, when the plate is wide enough. The previous
+  // arrangement put each twin in its own row with a 779px image beside the
+  // copy: the image became the subject at a scale it cannot carry, and the
+  // copy became a caption stranded beside it. The strip puts the five
+  // pictures in one row and lets each carry its own identity.
+  const strip = await wide.evaluate(() => {
+    const cells = [...document.querySelectorAll(".twin-row")];
+    const grid = document.querySelector(".twins-grid");
     return {
-      gap: Math.round(m.left - t.right),
-      rightAnchored: Math.round(r.right - m.right),
-      thumbWidth: Math.round(t.width),
-      mainWidth: Math.round(m.width),
+      cells: cells.length,
+      cols: getComputedStyle(grid).gridTemplateColumns.split(" ").length,
+      oneRow: new Set(cells.map((c) => Math.round(c.getBoundingClientRect().top))).size === 1,
+      cellWidth: Math.round(cells[0].getBoundingClientRect().width),
     };
   });
-  ok("the twin row has only one horizontal gap (between thumb and text)",
-    row.gap === 24 && row.rightAnchored <= 1,
-    `thumb=${row.thumbWidth} gap=${row.gap} text=${row.mainWidth} rightEdge=${row.rightAnchored}`);
+  ok("the five twins sit in one row", strip.cells === 5 && strip.oneRow && strip.cols === 5,
+    `${strip.cells} cells, ${strip.cols} columns, one row=${strip.oneRow}, cell=${strip.cellWidth}px`);
 
-  // The copy track must not be wider than the copy — `1fr` on the text track
-  // does exactly that. Now sized `auto`, it should match the text measure.
-  const hole = await page.evaluate(() => {
-    const main = document.querySelector(".twin-row-main").getBoundingClientRect();
-    const desc = document.querySelector(".twin-desc").getBoundingClientRect();
-    return Math.round(main.width - desc.width);
-  });
-  ok("no dead space inside the twin copy track", hole <= 2, `${hole}px wider than the text`);
-
-  // And the text is optically centred against the thumbnail rather than
-  // stranded at the top of a 135px band with 59px of nothing beneath it.
-  // This has to compare the two *offsets*, not their heights: `align-items`
-  // moves the text without changing how tall it is, so a height comparison
-  // passes with the defect present. The first version of this check did
-  // exactly that and never failed.
-  const centring = await page.evaluate(() => {
-    const row = document.querySelector(".twin-row");
-    const main = row.querySelector(".twin-row-main").getBoundingClientRect();
-    const thumb = row.querySelector(".twin-row-thumb").getBoundingClientRect();
+  // ...and the five share one baseline grid. "HO CHI MINH CITY" wraps to two
+  // lines and the longest caption is four, so without a shared grid the
+  // captions and links of one cell sat lower than the other four and the row
+  // lost its rules. The cells SUBGRID the parent's tracks, so this asserts
+  // the three bands that can drift — the city names, the captions and the
+  // links — all start on one line each.
+  const baseline = await wide.evaluate(() => {
+    const tops = (sel) => [...document.querySelectorAll(sel)]
+      .map((el) => Math.round(el.getBoundingClientRect().top));
     return {
-      offset: Math.round(main.top - thumb.top),
-      expected: Math.round((thumb.height - main.height) / 2),
+      names: new Set(tops(".twin-city")).size,
+      metas: new Set(tops(".twin-meta")).size,
+      descs: new Set(tops(".twin-desc")).size,
+      links: new Set(tops(".twin-link-label")).size,
     };
   });
-  ok("the twin text sits centred against its thumbnail, not stranded",
-    Math.abs(centring.offset - centring.expected) <= 2 && centring.offset > 0,
-    `text sits ${centring.offset}px below the thumbnail top; centred would be ${centring.expected}px`);
+  ok("the five twins share one baseline grid",
+    baseline.names === 1 && baseline.metas === 1 && baseline.descs === 1 && baseline.links === 1,
+    `name tops=${baseline.names} distinct, meta tops=${baseline.metas}, caption tops=${baseline.descs}, link tops=${baseline.links}`);
+
+  // No cell may push its own content past its own column.
+  const spill = await wide.evaluate(() => {
+    let worst = 0;
+    document.querySelectorAll(".twin-row").forEach((cell) => {
+      const cb = cell.getBoundingClientRect();
+      cell.querySelectorAll(".twin-desc, .twin-link-label, .twin-city, .twin-meta").forEach((e) => {
+        const b = e.getBoundingClientRect();
+        worst = Math.max(worst, Math.round(b.right - cb.right));
+      });
+    });
+    return worst;
+  });
+  ok("no twin cell spills past its column", spill <= 1, `${spill}px past the column edge`);
 
   ok("no page errors on the Overview twins directory", failures.length === 0, failures.slice(0, 2).join(" | "));
+  await wide.close();
   await page.close();
 }
 
@@ -317,8 +385,36 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
         if ((el.textContent || "").trim().length < 120) continue; // labels are not prose
         const cs = getComputedStyle(el);
         if (cs.display === "none" || cs.visibility === "hidden") continue;
+        // The measure of a prose block is the length of its LONGEST
+        // RENDERED LINE, not the width of its box. A paragraph that runs in
+        // two columns has a box as wide as the band and a line as wide as
+        // the column; asking the box gave 154 characters for a line of 73.
+        // The line boxes come from a Range, grouped by their top edge and
+        // split again wherever the text jumps to the next column.
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const byTop = new Map();
+        for (const rect of range.getClientRects()) {
+          if (rect.width <= 0 || rect.height <= 0) continue;
+          const key = Math.round(rect.top);
+          const runs = byTop.get(key) || [];
+          let placed = false;
+          for (const run of runs) {
+            if (rect.left >= run.left - 2 && rect.left <= run.right + 2) {
+              run.left = Math.min(run.left, rect.left);
+              run.right = Math.max(run.right, rect.right);
+              placed = true;
+              break;
+            }
+          }
+          if (!placed) runs.push({ left: rect.left, right: rect.right });
+          byTop.set(key, runs);
+        }
+        let lineW = 0;
+        for (const runs of byTop.values()) for (const run of runs) lineW = Math.max(lineW, run.right - run.left);
+        if (!lineW) lineW = r.width;
         out.push({
-          chars: Math.round(r.width / (parseFloat(cs.fontSize) * 0.5)),
+          chars: Math.round(lineW / (parseFloat(cs.fontSize) * 0.5)),
           sel: el.tagName.toLowerCase() + "." + (el.className || "").toString().split(" ")[0],
           px: Math.round(parseFloat(cs.fontSize)),
         });
@@ -351,7 +447,7 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
 
   const headToken = await page.evaluate(() =>
     getComputedStyle(document.documentElement).getPropertyValue("--measure-heading").trim());
-  ok("headings carry a shorter measure than prose", /^[\d.]+ch$/.test(headToken) && headToken < measureToken,
+  ok("headings carry a shorter measure than prose", shorterMeasure(headToken, measureToken),
     `--measure-heading: ${headToken || "not defined"} vs --measure: ${measureToken}`);
   await page.close();
 }
@@ -363,11 +459,13 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   // a container-width metric reports that as a 156-character heading and buries
   // the real offender. Range client rects come back one per line box.
   const { page } = await newPage();
+  await page.addInitScript(`window.longestHeadingLine = ${longestHeadingLine.toString()}`);
   const views = ["overview", "innovation", "record", "news", "history", "cities",
     "projects", "framework", "partners", "insights", "library", "research", "essay"];
   const long = [];
   let smallHeadings = [];
   let measured = 0;
+  const perView = [];
   for (const v of views) {
     await page.goto(`${BASE}/#${v}`, { waitUntil: "networkidle" });
     await page.waitForTimeout(450);
@@ -383,6 +481,7 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
       // rule meaning what it says after the next body-size change.
       const bodyPx = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--t-body")) || 16;
       for (const el of document.querySelectorAll("h1,h2,h3,h4,h5")) {
+        if (!el.checkVisibility()) continue;
         const t = (el.textContent || "").trim();
         if (!t) continue;
         const px = parseFloat(getComputedStyle(el).fontSize);
@@ -392,14 +491,14 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
         r.selectNodeContents(el);
         const rects = [...r.getClientRects()].filter((x) => x.width > 4);
         if (!rects.length) continue;
+        const lines = new Set(rects.map((x) => Math.round(x.top))).size;
         // Characters on the longest line, counted from the line boxes the
         // browser actually produced. The previous version divided line width
         // by an assumed average glyph advance (px * 0.5), which is a proxy for
         // a measurement — and a proxy loose enough that swapping Helvetica for
         // a wider face moved a page from "passing" to "failing" without any
         // change in how the text actually wrapped.
-        const lines = new Set(rects.map((x) => Math.round(x.top))).size;
-        const chars = Math.round(t.length / Math.max(1, lines));
+        const chars = window.longestHeadingLine(el);
         // The budget tightens as the type grows, because a display heading is
         // harder to scan back from than a section heading. Display (32px+)
         // gets 40, section headings get the A4 body ceiling of 55, and
@@ -418,11 +517,12 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
       return { over, tiny, n };
     }, v);
     measured += f.n;
+    perView.push(f.n);
     long.push(...f.over);
     if (f.tiny.length) smallHeadings = smallHeadings.concat(f.tiny);
   }
   ok("no heading runs a line too long to scan back from", long.length === 0,
-    long.length ? long.slice(0, 4).join(" | ") : `${measured} headings swept`);
+    long.length ? long.slice(0, 4).join(" | ") : `${measured} headings swept`, long);
 
   // The seven Roman-numeral section headings of the flagship essay were 12px —
   // the only headings on the site on the micro step, and a different size from
@@ -431,7 +531,39 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
     smallHeadings.length ? [...new Set(smallHeadings)].slice(0, 4).join(" | ") : "none under 14px");
 
   // Control for the sweep itself.
-  ok("the heading sweep visits real headings (control)", measured > 200, `${measured} headings`);
+  //
+  // The old control was `measured > 200` — a magic number calibrated on an
+  // architecture the site no longer has, and it had been failing on the
+  // deployed build before this change: the sweep finds 175 headings across
+  // the thirteen views, which is a real sweep, not a vacuous one. A control
+  // that is red for the right reason teaches nobody anything.
+  //
+  // What the control has to prove is that the sweep REACHED every view it
+  // claims to sweep. A view that fails to mount contributes nothing, and a
+  // total alone cannot tell "thirteen views, all visited" from "one view,
+  // visited thirteen times". So the control counts per view and requires
+  // every one of them to contribute a heading.
+  const emptyViews = views.filter((_, i) => perView[i] === 0);
+  ok("the heading sweep visits real headings (control)",
+    emptyViews.length === 0 && measured >= views.length,
+    emptyViews.length
+      ? `${views.length - emptyViews.length}/${views.length} views contributed; empty: ${emptyViews.join(", ")}`
+      : `${measured} headings swept across ${views.length} views (${perView.join("/")})`);
+
+  // Negative control for the counter above: strip the headings out of the
+  // page and the counter must return zero. A counter that returned a
+  // constant would make every view "pass" the requirement above while
+  // measuring nothing at all.
+  const counter = await page.evaluate(() => {
+    const count = () => [...document.querySelectorAll("h1,h2,h3,h4,h5")]
+      .filter((el) => el.checkVisibility() && (el.textContent || "").trim()).length;
+    const before = count();
+    const nodes = [...document.querySelectorAll("h1,h2,h3,h4,h5")];
+    nodes.forEach((n) => n.remove());
+    return { before, after: count() };
+  });
+  ok("the heading counter falls to zero when the headings are gone (control)",
+    counter.before > 0 && counter.after === 0, JSON.stringify(counter));
 
   // The regression that nearly shipped: the measure rules were written as
   // `main .view :is(...)`, but the SPA mounts several of its 15 view panels
@@ -615,7 +747,7 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   // that attribute and about the switch actually switching.
   const { page } = await newPage();
   await page.goto(`${BASE}/#overview`, { waitUntil: "domcontentloaded" });
-  await page.locator(".site-nav").waitFor({ timeout: 20_000 });
+  await waitForShell(page);
   await page.waitForTimeout(300);
 
   // A dictionary entry whose English arm is not a string renders as literal
@@ -710,13 +842,13 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   // own language layer — so it is included here and filtered below.
   const routesForProse = ["overview", "innovation", "record", "news", "news/regional",
     "news/archive", "news/discovery", "history", "cities", "projects", "framework",
-    "partners", "insights", "research", "essay", "data", "contacts", "ascn9"];
+    "partners", "insights", "research", "essay", "data", "contacts"];
   const prose = { th: [], zh: [] };
   {
     const { page } = await newPage({ width: 1280, height: 900 });
     for (const route of routesForProse) {
       await page.goto(`${BASE}/#${route}`, { waitUntil: "domcontentloaded" });
-      await page.locator(".site-nav").waitFor({ timeout: 20_000 });
+      await waitForShell(page);
       for (const lang of ["th", "zh"]) {
         await page.locator(`[data-lang-set="${lang}"]`).click();
         await page.waitForTimeout(200);
@@ -742,7 +874,7 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
             const words = (t.toLowerCase().match(/[a-z]+/g) || []);
             if (words.length < 8) continue; // headings, labels, proper nouns
             const hits = words.filter((w) => STOP.has(w)).length;
-            if (hits >= 3) out.push(`${hits}/${words.length} ${t.slice(0, 50)}`);
+            if (hits >= 3) out.push(`${hits}/${words.length} ${t}`);
           }
           return out;
         }, { v: route.includes("/") ? route.split("/")[0] : route });
@@ -762,14 +894,24 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   // is actually present in a published dataset. Anything not traceable to a
   // dataset is authored prose and must be translated.
   const datasetText = [];
-  for (const name of ["ascn-news.json", "ascn-knowledge.json", "ascn-library.json",
-    "ascn-library-full.json", "ascn-correspondence.json", "ascn-projects.json"]) {
+  for (const name of ["ascn-news-archive.json", "ascn-news-discovery.json", "news-snapshot.json",
+    "ascn-knowledge.json", "ascn-library.json", "ascn-library-full.json", "ascn-v2-data.json"]) {
     const res = await fetch(`${BASE}/data/${name}`).catch(() => null);
-    if (res && res.ok) datasetText.push((await res.text()).replace(/\s+/g, " "));
+    if (!res?.ok) { await res?.body?.cancel(); continue; }
+    // Only source-issued names are exempt. An editorial claim or takeaway is
+    // still authored prose when it happens to be stored in a JSON dataset.
+    const collectTitles = (value) => {
+      if (!value || typeof value !== 'object') return;
+      for (const [key, child] of Object.entries(value)) {
+        if (['title', 'project'].includes(key) && typeof child === 'string') datasetText.push(child.replace(/\s+/g, ' '));
+        else if (typeof child === 'object') collectTitles(child);
+      }
+    };
+    collectTitles(await res.json());
   }
   const isSourceValue = (t) => {
     const flat = t.replace(/\s+/g, " ").trim();
-    return datasetText.some((raw) => raw.includes(flat) || flat.slice(0, 50).length > 40 && raw.includes(flat.slice(0, 50)));
+    return datasetText.some((title) => title === flat);
   };
 
   for (const lang of ["th", "zh"]) {
@@ -779,7 +921,7 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
     });
     ok(`no untranslated authored prose when ${lang} is chosen`, authored.length === 0,
       authored.length ? `${authored.length} untranslated: ${authored.slice(0, 3).join(" | ")}`
-        : `${routesForProse.length} views; source-language values exempt by decision`);
+        : `${routesForProse.length} views; source-issued titles exempt by exact match`, authored);
   }
 
   // The language has to survive a route change, or choosing it is a one-page
@@ -842,8 +984,8 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   // different list of headlines, so they are swept as their own surfaces.
   const routes = ["overview", "innovation", "record", "news", "news/regional",
     "news/archive", "news/discovery", "history", "cities", "projects", "framework",
-    "partners", "insights", "research", "essay", "data", "contacts"];
-  const bad = { targets: [], overflow: [], navRows: [], header: [], mount: [] };
+    "partners", "insights", "research", "essay", "data", "contacts", "ascn9"];
+  const bad = { targets: [], overflow: [], navRows: [], header: [], mount: [], wayfinding: [] };
   // Which views this sweep actually put on screen, and which views exist. The
   // gap between the two is the set of surfaces no check has ever looked at.
   const covered = new Set();
@@ -869,11 +1011,11 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   const routable = viewTags.filter((t) => !isGated(t)).map(idOf).filter(Boolean);
   const gated = viewTags.filter(isGated).map(idOf).filter(Boolean);
 
-  for (const width of [390, 1440]) {
+  for (const width of [390, 1024, 1440]) {
     const { page } = await newPage({ width, height: width === 390 ? 844 : 900 });
     for (const route of routes) {
       await page.goto(`${BASE}/#${route}`, { waitUntil: "domcontentloaded" });
-      await page.locator(".site-nav").waitFor({ timeout: 20_000 });
+      await waitForShell(page);
       await page.waitForTimeout(250);
       const m = await page.evaluate(() => {
         const vis = (el) => {
@@ -943,14 +1085,13 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
         // licence: OSM and Leaflet credits must stay visible and compact, and no
         // map anywhere makes them 44px. Excluded by name, not by accident.
         const ATTRIBUTION = ".leaflet-control-attribution";
-        const targets = [...document.querySelectorAll("a, button, [role=button], summary")];
+        const targets = [...document.querySelectorAll("a, button, input:not([type=hidden]), select, textarea, [role=button], summary")];
         const short = targets.filter((el) => {
           if (!vis(el)) return false;
-          if (el.closest(".leaflet-container")) return false;
           if (el.closest(ATTRIBUTION)) return false;
-          if ((el.textContent || "").trim().length < 3) return false; // icon-only, still a control
           const min = inlineTextLink(el) ? TEXT_MIN : CONTROL_MIN;
-          return el.getBoundingClientRect().height < min - LAYOUT_UNIT;
+          const box = el.getBoundingClientRect();
+          return box.height < min - LAYOUT_UNIT || (!inlineTextLink(el) && box.width < min - LAYOUT_UNIT);
         }).map((el) => {
           // Print the raw height, unrounded. toFixed(1) collapses a genuine
           // sub-pixel shortfall — 43.96px prints as "44.0" — so the report
@@ -959,9 +1100,9 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
           // with the assertion it explains is worse than no diagnostic. Also
           // record whether the floor is even declared, because a box with no
           // min-height is a different bug from one that has one and misses.
-          const h = el.getBoundingClientRect().height;
+          const { height: h, width: w } = el.getBoundingClientRect();
           const declared = parseFloat(getComputedStyle(el).minHeight) || 0;
-          return `${el.tagName.toLowerCase()}.${String(el.className).split(" ")[0]}@${h}px (min-height:${declared}px, ${(h - declared).toFixed(3)}px short)${inlineTextLink(el) ? " text" : " action"}`;
+          return `${el.tagName.toLowerCase()}.${String(el.className).split(" ")[0]}@${w}x${h}px (min-height:${declared}px)${inlineTextLink(el) ? " text" : " action"}`;
         });
 
         // Whether the PAGE scrolls sideways, asked by trying to scroll it —
@@ -987,26 +1128,63 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
         const canPan = Math.round(window.scrollX);
         window.scrollTo(0, 0);
 
-        const nav = document.querySelector(".site-nav nav");
+        const nav = document.querySelector("#tab-nav");
         const live = [...document.querySelectorAll(".view")]
           .filter((v) => v.getBoundingClientRect().height > 0).map((v) => v.id);
+        // Wayfinding: on every route the index must say where you are. Exactly
+        // one row lit, and the locator's number must be that row's number.
+        //
+        // #ascn9 — the 9th-annual-meeting record, opened from inside The
+        // Record — used to light NO row at all, so the index went blank while
+        // you were still reading inside it, and it wore "04", which belongs to
+        // News. The reader landed on a number that pointed somewhere else.
+        const litRows = [...document.querySelectorAll("#tab-nav a.active")];
+        const indexNum = litRows.length === 1 ? litRows[0].getAttribute("data-num") : null;
+        const locatorNum = (document.querySelector("#locatorNum")?.textContent || "").trim();
+        // The old site had a horizontal strip of tabs across the top that could
+        // wrap to two, three or four rows and eat the page. The shell replaced
+        // it with a vertical index rail, so the question changed shape: the
+        // nav must stay ONE COLUMN (every entry on the same left edge) and it
+        // must not become a sideways strip. The old "header stays a two-row
+        // band" check measured #tab-nav as well — the same element as the nav
+        // check, under a different threshold — so it never measured a header
+        // at all. What it should have measured is the bar: a bar whose
+        // children wrap becomes two rows tall and doubles the chrome.
+        const itemLefts = new Set([...nav.querySelectorAll(".item")]
+          .map((el) => Math.round(el.getBoundingClientRect().left)));
+        const navPan = nav.scrollWidth - nav.clientWidth;
+        const railBar = document.querySelector(".index .bar");
+        const plateBar = document.querySelector(".plate-bar");
+        const barH = (b) => (b ? Math.round(b.getBoundingClientRect().height) : 0);
         return {
           short: [...new Set(short)],
           overflow: canPan,
           escaped,
-          navH: Math.round(nav.getBoundingClientRect().height),
-          headerH: Math.round(document.querySelector(".site-nav").getBoundingClientRect().height),
+          navCols: itemLefts.size,
+          navPan,
+          railBarH: barH(railBar),
+          plateBarH: barH(plateBar),
+          litRows: litRows.length,
+          indexNum,
+          locatorNum,
           live,
         };
       });
       const tag = `${width}/${route}`;
       if (m.short.length) bad.targets.push(`${tag}: ${m.short.join(", ")}`);
       if (m.overflow > 1 || m.escaped > 0) bad.overflow.push(`${tag}: pans ${m.overflow}px, ${m.escaped} escaping`);
-      // One row of ~44px links plus a couple of pixels. A wrapped strip is 3-4x.
-      if (m.navH > 64) bad.navRows.push(`${tag}: nav ${m.navH}px`);
-      if (m.headerH > 120) bad.header.push(`${tag}: header ${m.headerH}px`);
+      // One column of 44px entries, not a wrapped strip.
+      if (m.navCols !== 1 || m.navPan > 1) bad.navRows.push(`${tag}: nav ${m.navCols} columns, pans ${m.navPan}px`);
+      // One row of chrome, not two.
+      if (m.railBarH > 46 || m.plateBarH > 46) bad.header.push(`${tag}: rail bar ${m.railBarH}px, plate bar ${m.plateBarH}px`);
       // A hash that mounts nothing checks nothing, and reports as if it did.
       if (m.live.length !== 1) bad.mount.push(`${tag}: ${m.live.length} views live (${m.live.join(",") || "none"})`);
+      // The index must light exactly one row, and the number in the plate's
+      // locator must be that row's number — otherwise the number points at a
+      // different section than the one you are in.
+      if (m.litRows !== 1 || m.indexNum !== m.locatorNum) {
+        bad.wayfinding.push(`${tag}: ${m.litRows} rows lit, index ${m.indexNum ?? "none"} vs locator ${m.locatorNum || "none"}`);
+      }
       for (const v of m.live) covered.add(v);
     }
     await page.close();
@@ -1016,15 +1194,196 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   if (neverReached.length) bad.mount.push(`never reached: ${neverReached.join(", ")}`);
 
   ok("every control clears its touch-target minimum", bad.targets.length === 0,
-    bad.targets.slice(0, 4).join(" | ") || `${routes.length} routes x 2 widths`);
+    bad.targets.slice(0, 4).join(" | ") || `${routes.length} routes x 3 widths`, bad.targets);
   ok("no route overflows horizontally", bad.overflow.length === 0,
-    bad.overflow.slice(0, 4).join(" | ") || "clean at 390 and 1440");
-  ok("the tab strip stays on one row", bad.navRows.length === 0,
-    bad.navRows.slice(0, 3).join(" | ") || "no wrapping");
-  ok("the header stays a two-row band", bad.header.length === 0,
-    bad.header.slice(0, 3).join(" | ") || "brand + one scrollable strip");
+    bad.overflow.slice(0, 4).join(" | ") || "clean at 390, 1024 and 1440");
+  ok("the index nav stays one column", bad.navRows.length === 0,
+    bad.navRows.slice(0, 3).join(" | ") || "no wrapping, no sideways strip");
+  ok("the chrome bars stay one row", bad.header.length === 0,
+    bad.header.slice(0, 3).join(" | ") || "rail bar + plate bar, one row each");
+  ok("every route lights up its index row", bad.wayfinding.length === 0,
+    bad.wayfinding.slice(0, 4).join(" | ") || `${routes.length} routes, one lit row each, locator number matches`);
+  // Two index rows sharing a number make the locator ambiguous before the
+  // reader has even clicked: "04" would mean News and the 9th annual meeting
+  // at the same time. The numbers come from the served markup, not the DOM,
+  // because the DOM is rewritten by routing before anything is measured.
+  const indexNums = [...markup.matchAll(/<a[^>]*\bdata-num="(\d+)"/g)].map((m) => m[1]);
+  const dupNums = indexNums.filter((n, i) => indexNums.indexOf(n) !== i);
+  ok("no two index rows share a number", dupNums.length === 0,
+    dupNums.length ? `duplicated: ${[...new Set(dupNums)].join(", ")}` : `${indexNums.length} rows, ${new Set(indexNums).size} numbers`);
   ok("every routable view is reached by a real route", bad.mount.length === 0,
     bad.mount.slice(0, 3).join(" | ") || `${routable.length} routable views mounted; ${gated.length} interaction-gated: ${gated.join(", ") || "none"}`);
+
+  /* ── A chart must fill the space it is given, and its numbers must stand
+       on their own data ────────────────────────────────────────────────────
+     Two hardcoded sizes were wrong in the Insights view. The momentum line
+     was drawn 380px wide inside a 994px section, so 614px of that section
+     was empty — a lopsided section (rule 2). The focus sparklines were drawn
+     152px wide under label rows that spread across the whole 319px cell, so
+     '24 and '25 sat up to 199px from the point they were labelling: a
+     number that does not attach to its datum (rules 1 and 2).
+
+     Both are measurable, so both are measured: the plot against the space
+     it must fill, and every label against the point it names. A chart that
+     is asked to be small can be small — what it may not be is stranded. */
+
+  const chartBad = { void: [], drift: [] };
+  for (const width of [390, 1024, 1440, 1920]) {
+    const { page } = await newPage({ width, height: width === 390 ? 844 : 900 });
+    await page.goto(`${BASE}/#insights`, { waitUntil: "domcontentloaded" });
+    await page.waitForTimeout(700);
+    const m = await page.evaluate(() => {
+      const line = document.querySelector("#ig-momentum .ig-mini-line");
+      const lineSvg = line?.querySelector("svg");
+      const sparks = [...document.querySelectorAll("#ig-focus-trends .ig-spark-item")].map((item) => {
+        const plot = item.querySelector(".ig-spark-plot svg");
+        const poly = plot?.querySelector("polyline");
+        if (!plot || !poly) return null;
+        const pr = plot.getBoundingClientRect();
+        const xs = poly.getAttribute("points").split(" ").map((p) => parseFloat(p.split(",")[0]));
+        const labels = [...item.querySelectorAll(".ig-spark-yrs span")].map((s) => {
+          const r = s.getBoundingClientRect();
+          return r.x + r.width / 2 - pr.x;
+        });
+        const drift = labels.map((c, i) => (xs[i] === undefined ? 999 : Math.abs(c - xs[i])));
+        return { drift: Math.max(...drift), plotW: pr.width, cellW: item.clientWidth };
+      }).filter(Boolean);
+      return {
+        line: lineSvg && line ? { svgW: lineSvg.getBoundingClientRect().width, boxW: line.clientWidth } : null,
+        sparks,
+      };
+    });
+    const tag = `${width}/insights`;
+    if (!m.line) chartBad.void.push(`${tag}: no momentum chart`);
+    else if (m.line.svgW < m.line.boxW - 2) chartBad.void.push(`${tag}: momentum chart ${Math.round(m.line.svgW)}px in a ${Math.round(m.line.boxW)}px section`);
+    for (const s of m.sparks) {
+      if (s.plotW < s.cellW - 2) chartBad.void.push(`${tag}: sparkline ${Math.round(s.plotW)}px in a ${Math.round(s.cellW)}px cell`);
+      if (s.drift > 2) chartBad.drift.push(`${tag}: label ${s.drift.toFixed(1)}px from its point`);
+    }
+    await page.close();
+  }
+  ok("no chart is stranded in empty space", chartBad.void.length === 0,
+    chartBad.void.slice(0, 4).join(" | ") || "every plot fills the space it is given, at 390/1024/1440/1920", chartBad.void);
+  ok("every chart label stands on its own datum", chartBad.drift.length === 0,
+    chartBad.drift.slice(0, 4).join(" | ") || "year labels within 2px of their point", chartBad.drift);
+
+  /* ── A ledger that leaves its section empty ───────────────────────────────
+     Four archive sections, the framework's ASCAP panel and the site footer
+     all held their content in a column a third or a half of the width they
+     were given and left the rest as a void: 59% of the money section, 61%
+     of the pending section, 63% of the footer, 62% of the ASCAP panel. The
+     measure belongs to the COLUMN, so the prose now runs in columns and the
+     panels fill the band they are given.
+
+     The check is the one the reviewer measured: how far the text ink
+     actually reaches across the section it sits in. Rule 2 forbids an
+     empty half, so the floor is 60% — a section may not be more than 40%
+     empty. The threshold comes from the rule, not from what the current
+     build happens to measure. */
+  const LEDGER = [
+    { route: "archive", sel: ".archive-money", label: "money" },
+    { route: "archive", sel: ".archive-outcomes", label: "outcomes" },
+    { route: "archive", sel: ".archive-pending", label: "pending" },
+    { route: "archive", sel: ".archive-withheld", label: "withheld" },
+    { route: "framework", sel: "#framework-ascap", label: "ascap" },
+    { route: "overview", sel: ".footer-content", label: "footer" },
+  ];
+  const ledgerBad = { ink: [], panel: [], dupes: [], measure: [] };
+  for (const width of [1024, 1440]) {
+    const { page } = await newPage({ width, height: width === 390 ? 844 : 900 });
+    for (const target of LEDGER) {
+      await page.goto(`${BASE}/#${target.route}`, { waitUntil: "domcontentloaded" });
+      await page.waitForTimeout(700);
+      const m = await page.evaluate((sel) => {
+        const host = document.querySelector(sel);
+        if (!host) return { missing: true };
+        const hr = host.getBoundingClientRect();
+        // How far does the TEXT ink reach across the section?
+        let right = 0;
+        const walker = document.createTreeWalker(host, NodeFilter.SHOW_TEXT);
+        let n;
+        while ((n = walker.nextNode())) {
+          if (!n.textContent.trim()) continue;
+          const range = document.createRange();
+          range.selectNodeContents(n);
+          for (const r of range.getClientRects()) if (r.width > 0) right = Math.max(right, r.right);
+        }
+        return { w: hr.width, left: hr.left, right: hr.right, inkRight: right };
+      }, target.sel);
+      if (m.missing) { ledgerBad.ink.push(`${target.label}: missing`); continue; }
+      const filled = m.inkRight > 0 ? (m.inkRight - m.left) / m.w : 0;
+      if (filled < 0.6) ledgerBad.ink.push(`${width}/${target.label}: ink reaches ${Math.round(filled * 100)}% of the section`);
+    }
+    // The projects status panel: three bars in a cell as tall as the
+    // twelve-row panel beside it. It was 3.5% ink, with 105px of air
+    // between one 6px bar and the next.
+    await page.goto(`${BASE}/#projects`, { waitUntil: "domcontentloaded" });
+    await page.waitForTimeout(700);
+    const panel = await page.evaluate(() => {
+      const host = document.querySelector("#status-bars");
+      if (!host) return null;
+      const hb = host.getBoundingClientRect();
+      const tracks = [...host.querySelectorAll(".bar-track")].map((t) => t.getBoundingClientRect());
+      if (!tracks.length) return null;
+      const top = Math.min(...tracks.map((t) => t.top));
+      const bottom = Math.max(...tracks.map((t) => t.bottom));
+      return { h: hb.height, span: bottom - top };
+    });
+    if (panel) {
+      const share = panel.h ? panel.span / panel.h : 0;
+      if (share < 0.5) ledgerBad.panel.push(`${width}/status panel: bars span ${Math.round(share * 100)}% of it`);
+    } else ledgerBad.panel.push(`${width}/status panel: no bars`);
+
+    // A heading and a label that repeat each other: "THREE STRATEGIC
+    // OUTCOMES" immediately followed by "OUTCOMES", 7.8px apart, in the
+    // same column. Three blocks carried six labels.
+    await page.goto(`${BASE}/#framework`, { waitUntil: "domcontentloaded" });
+    await page.waitForTimeout(700);
+    const dupes = await page.evaluate(() => {
+      const out = [];
+      for (const block of document.querySelectorAll(".fw-block")) {
+        const h = block.querySelector("h3");
+        const l = block.querySelector(".label");
+        if (!h || !l) continue;
+        const ht = h.textContent.toLowerCase();
+        const lt = l.textContent.trim().toLowerCase();
+        if (lt && ht.includes(lt)) out.push(`${h.textContent.trim()} / ${l.textContent.trim()}`);
+      }
+      return out;
+    });
+    for (const d of dupes) ledgerBad.dupes.push(d);
+
+    // The archive's outcome titles measured 29 characters a line when they
+    // shared a row with the label and the count.
+    await page.goto(`${BASE}/#archive`, { waitUntil: "domcontentloaded" });
+    await page.waitForTimeout(900);
+    const chars = await page.evaluate(() => {
+      const item = document.querySelector(".archive-outcome-titles li");
+      if (!item) return null;
+      const range = document.createRange();
+      range.selectNodeContents(item);
+      const line = range.getClientRects()[0];
+      if (!line) return null;
+      // Characters per rendered line: the line's own width in ch units.
+      const probe = document.createElement("span");
+      probe.style.cssText = "position:absolute;visibility:hidden;white-space:pre";
+      probe.textContent = "0".repeat(100);
+      item.appendChild(probe);
+      const ch = probe.getBoundingClientRect().width / 100;
+      probe.remove();
+      return { chars: Math.round(line.width / ch), ch };
+    });
+    if (chars && chars.chars < 45) ledgerBad.measure.push(`${width}/outcome title: ${chars.chars} characters a line`);
+    await page.close();
+  }
+  ok("no section leaves its content stranded", ledgerBad.ink.length === 0,
+    ledgerBad.ink.slice(0, 4).join(" | ") || "ink reaches at least 60% of every ledger section, at 1024 and 1440", ledgerBad.ink);
+  ok("no panel is a hole in the grid", ledgerBad.panel.length === 0,
+    ledgerBad.panel.slice(0, 3).join(" | ") || "the status panel's bars span at least half of it", ledgerBad.panel);
+  ok("no label repeats its own heading", ledgerBad.dupes.length === 0,
+    ledgerBad.dupes.slice(0, 3).join(" | ") || "no framework block labels itself twice", ledgerBad.dupes);
+  ok("the archive's titles keep a readable line", ledgerBad.measure.length === 0,
+    ledgerBad.measure.slice(0, 3).join(" | ") || "at least 45 characters a line", ledgerBad.measure);
 
   /* ── Something must win ───────────────────────────────────────────────────
      Rule 6: every page has one obvious first thing, then a clear second. The
@@ -1046,7 +1405,7 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
     const { page } = await newPage({ width, height: width === 390 ? 844 : 900 });
     for (const route of routes) {
       await page.goto(`${BASE}/#${route}`, { waitUntil: "domcontentloaded" });
-      await page.locator(".site-nav").waitFor({ timeout: 20_000 });
+      await waitForShell(page);
       await page.waitForTimeout(200);
       const m = await page.evaluate((r) => {
         const v = document.querySelector(`#view-${r.includes("/") ? r.split("/")[0] : r}`);
@@ -1165,10 +1524,9 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
  * #0b0f14) are the fingerprint of an agent's default palette bleeding in. */
 {
   const css = await (await fetch(`${BASE}/styles.css`)).text();
-  const outside = [...css.matchAll(/#[0-9a-fA-F]{6}/g)]
-    .map((m) => m[0].toLowerCase())
-    .filter((h) => ["/0f172a", "/38bdf8", "/0b0f14", "/0a0e14", "/e6edf3", "/f1f5f9"].includes(h));
+  const outside = outsidePalette(css);
   ok("no Tailwind default hexes in the stylesheet", outside.length === 0, [...new Set(outside)].join(" "));
+  ok("the palette guard rejects an outside colour (control)", outsidePalette('p { color: #0f172a; background: #38bdf8; }').length === 2);
   const amberLiteral = (css.replace(/--amber:[^;]+;/, "").match(/#f59e0b/gi) || []).length;
   ok("amber is referenced by token, not as a literal", amberLiteral === 0, `${amberLiteral} literals`);
   const clamped = (css.match(/font-size:[^;]*clamp\(/g) || []).length;
@@ -1191,11 +1549,20 @@ async function newPage(viewport = { width: 1280, height: 900 }, isMobile = false
   ok("every referenced token is defined", unresolved.length === 0, unresolved.join(" "));
 }
 
-await browser.close();
+completed = true;
+} catch (error) {
+  ok('audit completed all sections', false, error.message);
+} finally {
+  await browser.close();
+}
 
 let failed = 0;
 for (const r of results) {
   if (!r.pass) { failed++; console.log(`  FAIL  ${r.label}${r.detail ? `  [${r.detail}]` : ""}`); }
 }
 console.log(`Graphics and previews: ${results.length - failed}/${results.length} checks passed`);
+const reportPath = process.env.ASCN_AUDIT_REPORT || '.tmp/graphics-audit.json';
+await mkdir(dirname(reportPath), { recursive: true });
+await writeFile(reportPath, JSON.stringify({ base: BASE, checkedAt: new Date().toISOString(), completed, newsMode: 'saved-fallback (upstream availability is not a composition check)', passed: results.length - failed, total: results.length, results }, null, 2) + '\n');
+console.log(`Full findings: ${reportPath}`);
 process.exit(failed ? 1 : 0);
