@@ -12,7 +12,8 @@ try {
     await page.goto(`${base}/#overview`);
     await page.locator('#kpi-grid .kpi').first().waitFor({state:'attached'});
     for(const tab of ['overview','cities','record','archive','projects','innovation','news','history','framework','partners','contacts','insights','data','research','essay']) {
-      await page.locator(`#tab-nav [data-tab="${tab}"]`).click();
+      // On phones the index is hidden while a section is open.
+      await page.goto(`${base}/#${tab}`, {waitUntil:'domcontentloaded'});
       await page.locator(`#view-${tab}`).waitFor();
       await page.evaluate(()=>document.fonts.ready);
       if(['cities','contacts'].includes(tab)) {
@@ -24,9 +25,12 @@ try {
           return tiles.length>0&&tiles.every(img=>img.complete&&img.naturalWidth===256);
         },map,{timeout:20000});
       }
-      await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
+      await page.evaluate(()=>{document.querySelector('#plate').scrollTop=0;scrollTo({top:0,behavior:'instant'});});
       await page.screenshot({path:`${output}/${tab}-${width}.png`,animations:'disabled'});
-      const metrics=await page.evaluate(()=>({overflow:document.documentElement.scrollWidth>innerWidth,headerHeight:document.querySelector('.site-nav').getBoundingClientRect().height}));
+      const metrics=await page.evaluate(()=>{
+        const plate=document.querySelector('#plate');
+        return {overflow:document.documentElement.scrollWidth>innerWidth || plate.scrollWidth>plate.clientWidth+1,headerHeight:document.querySelector('.plate-bar').getBoundingClientRect().height};
+      });
       report.push({tab,width,...metrics});
     }
   }

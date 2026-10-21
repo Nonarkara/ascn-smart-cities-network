@@ -2,7 +2,7 @@ import { chromium, devices } from "@playwright/test";
 import { createHash } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
-import { outsidePalette, shorterMeasure, longestHeadingLine } from "./visual-audit-rules.mjs";
+import { outsidePalette, shorterMeasure, longestHeadingLine, mediaCaptionFits } from "./visual-audit-rules.mjs";
 
 const BASE = process.env.ASCN_TEST_URL || "http://127.0.0.1:4187";
 const fetch = (input, options = {}) => globalThis.fetch(input, { ...options, signal: options.signal || AbortSignal.timeout(20000) });
@@ -1294,7 +1294,10 @@ try {
     await page.addInitScript(`window.longestHeadingLine = ${longestHeadingLine.toString()}`);
     for (const target of LEDGER) {
       await page.goto(`${BASE}/#${target.route}`, { waitUntil: "domcontentloaded" });
-      await page.waitForTimeout(700);
+      await page.waitForFunction((sel) => {
+        const host = document.querySelector(sel);
+        return host?.textContent.trim() && host.getBoundingClientRect().width > 0;
+      }, target.sel);
       const m = await page.evaluate((sel) => {
         const host = document.querySelector(sel);
         if (!host) return { missing: true };
@@ -1319,7 +1322,7 @@ try {
     // twelve-row panel beside it. It was 3.5% ink, with 105px of air
     // between one 6px bar and the next.
     await page.goto(`${BASE}/#projects`, { waitUntil: "domcontentloaded" });
-    await page.waitForTimeout(700);
+    await page.locator('#status-bars .bar-track').first().waitFor({state:'attached'});
     const panel = await page.evaluate(() => {
       const host = document.querySelector("#status-bars");
       if (!host) return null;
@@ -1706,8 +1709,8 @@ try {
     await page.close();
   }
 
-  /* The innovation hero: the list's rule is the width of the items under
-     it, and the caption belongs to the video it sits beneath. */
+  /* A caption underneath cannot overhang the video. Beside it, the caption
+     must remain within the figure and not overlap the video. */
   {
     const { page } = await newPage({ width: 1440, height: 900 });
     await page.goto(`${BASE}/#innovation`, { waitUntil: "networkidle" });
@@ -1717,12 +1720,17 @@ try {
         const el = document.querySelector(sel);
         return el ? Math.round(el.getBoundingClientRect().width) : null;
       };
-      return { ol: w(".iaas-method"), li: w(".iaas-method li"), video: w(".iaas-hero-media video"), cap: w(".iaas-hero-media figcaption") };
+      const video = document.querySelector('.iaas-hero-media video').getBoundingClientRect();
+      const cap = document.querySelector('.iaas-hero-media figcaption').getBoundingClientRect();
+      const figure = document.querySelector('.iaas-hero-media').getBoundingClientRect();
+      const band = document.querySelector('.iaas-row-hero').getBoundingClientRect();
+      const beside = cap.right <= video.left + 1 || cap.left >= video.right - 1;
+      return { ol: w(".iaas-method"), li: w(".iaas-method li"), video: Math.round(video.width), cap: Math.round(cap.width), bounds: {video:video.toJSON(),caption:cap.toJSON(),figure:figure.toJSON(),band:band.toJSON()}, beside };
     });
     ok("the method list's rule is the width of its own items", hero.ol != null && Math.abs(hero.ol - hero.li) <= 1,
       `list ${hero.ol}px vs items ${hero.li}px`);
-    ok("the caption does not outrun the video it belongs to", hero.cap != null && hero.video != null && hero.cap <= hero.video + 2,
-      `caption ${hero.cap}px vs video ${hero.video}px`);
+    ok("the caption stays within its media composition", mediaCaptionFits(hero.bounds),
+      `caption ${hero.cap}px vs video ${hero.video}px; ${hero.beside ? 'beside' : 'underneath'}`);
     await page.close();
   }
 

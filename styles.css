@@ -1953,14 +1953,87 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .cd-empty { color: var(--muted); }
 .cd-portal { display: inline-flex; min-height: 40px; align-items: center; margin-top: 0.8rem; color: var(--navy); font-weight: 800; font-size:var(--t-small); letter-spacing: 0.06em; text-transform: uppercase; }
 
-/* Five across, the width the entries need. Four columns held
-   293px cards whose own text ran to about 165px: the card was half empty
-   because the grid put it there. The plate is 1198px wide now that the rail
-   is 242px, and five across is the same count the overview's strip uses. */
-.city-cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; border-top: 1px solid var(--line); }
-.city-card { text-align: left; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; border: 0; box-shadow: inset 0 -1px 0 var(--line-soft), inset -1px 0 0 var(--line-soft); background: transparent; cursor: pointer; padding: 0.85rem 0.9rem 0.9rem 0; }
+/* The wall of member cities: 38 entries, each the width its own text
+   needs, in a flow that closes its last row. */
+.city-cards {
+  /* A flow, not a grid. Thirty-eight cities divide by two and by nineteen
+     and by nothing else, so every column count leaves the last row short —
+     468px of empty grid at five across. A multicol flow balanced them
+     instead, but it balanced them badly: Chrome fills the first columns
+     to the balance height and drops the remainder in the last, so six
+     across gave 7/7/7/7/7/3 and a four-card hole at the foot of the
+     wall. Flex wraps and then stretches: six to a row at the plate's
+     width, and the last row's two entries grow to close the row rather
+     than leave a hole under them. */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  /* The wall's top rule is an inset shadow, not a border: a border takes
+     a pixel of layout space and leaves the rule 1px above the content
+     it heads. */
+  box-shadow: inset 0 1px 0 var(--line);
+}
+/* The cell, not the card, is the flex item: the card is a button and a
+   button shrinks to its own text, so at 195px of cell the cards were
+   measuring 98px to 143px and the hairline under each one ran a
+   different length. The cell also carries the measurement — a container
+   cannot style itself, so the queries below need a box to read. */
+.city-cell {
+  flex: 1 1 15rem;
+  min-width: 0;
+  container-type: inline-size;
+  container-name: city;
+}
+.city-card {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  align-items: start;
+  justify-items: start;
+  text-align: left; border: 0; box-shadow: inset 0 -1px 0 var(--line-soft), inset -1px 0 0 var(--line-soft); background: transparent; cursor: pointer; padding: 0.85rem 0.9rem 0.9rem 0;
+}
+/* The selected city keeps the wall's rules and gains the ocher one: the
+   earlier rule replaced both, so the selected card lost the vertical rule
+   that separates it from its neighbour. */
 .city-card:hover { background: var(--surface); }
-.city-card.active { background: var(--surface); box-shadow: inset 0 -2px 0 var(--ocher); }
+.city-card.active { background: var(--surface); box-shadow: inset 0 -1px 0 var(--line-soft), inset -1px 0 0 var(--line-soft), inset 0 -2px 0 var(--ocher); }
+/* An entry wide enough for two columns — 131px of name, 11.7px of
+   gutter, 117px of membership and 11.7px of padding is 271px, so the
+   threshold is 286px — puts the membership beside the name instead of
+   under it. */
+@container city (min-width: 22rem) {
+  .city-card {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    column-gap: 0.9rem;
+  }
+  .city-card b { grid-column: 1; grid-row: 1; }
+  .city-card .cc-country { grid-column: 1; grid-row: 2; }
+  .city-card .cc-meta { grid-column: 2; grid-row: 1 / span 2; margin-top: 0; }
+}
+/* Wide enough for all three across — 131 + 128 + 117 and three gutters
+   is 411px, so the threshold is 422px — the entry becomes a row across
+   the width, with the name at the left, the country in the middle and
+   the membership at the right. This is the form the stretched closing
+   row takes, and it is the only form in which a 586px cell is not
+   mostly empty. The right-hand rule goes with it: the closing row is
+   one band across the wall, not a row of cells. */
+@container city (min-width: 32.5rem) {
+  .city-card {
+    grid-template-columns: max-content max-content max-content;
+    justify-content: space-between;
+    align-items: baseline;
+    column-gap: 0.9rem;
+    box-shadow: inset 0 -1px 0 var(--line-soft);
+  }
+  .city-card b { grid-column: 1; grid-row: 1; }
+  .city-card .cc-country { grid-column: 2; grid-row: 1; }
+  .city-card .cc-meta { grid-column: 3; grid-row: 1; }
+  .city-card.active { box-shadow: inset 0 -1px 0 var(--line-soft), inset 0 -2px 0 var(--ocher); }
+}
 .city-card b { display: block; font-size:var(--t-body); }
 .city-card .cc-country { color: var(--muted); font-size:var(--t-small); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
 .city-card .cc-meta { color: var(--ink-2); font-size:var(--t-small); margin-top: 0.3rem; }
@@ -2367,7 +2440,7 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .essay-ref-item:first-child { border-top: 0; }
 .essay-ref-n { font-family: var(--mono, monospace); font-size:var(--t-small); font-weight: 700; color: var(--muted); padding-top: 0.15rem; }
 @media (max-width: 640px) {
-  .essay-title { font-size:var(--t-h2); }
+  .essay-title { font-size:var(--t-figure); }
   .essay-p { font-size:var(--t-body); line-height: 1.75; }
   .essay-pull { padding: 0.6rem 1rem; }
 }
@@ -2511,7 +2584,7 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
   .kpi-grid { grid-template-columns: repeat(3, 1fr); }
   .kpi-grid--four { grid-template-columns: repeat(2, 1fr); }
   .meetings-grid, .ascap-panel .pillars, .partner-cards, .download-grid,
-  .document-grid, .city-cards { grid-template-columns: repeat(2, 1fr); }
+  .document-grid { grid-template-columns: repeat(2, 1fr); }
   .big-projects, .impact-grid { grid-template-columns: 1fr; }
   .big-project:nth-child(odd) { border-right: 0; }
   .info-card.wide { grid-column: auto; }
@@ -2542,7 +2615,7 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 
 @media (max-width: 520px) {
   .kpi-grid, .kpi-grid--four, .meetings-grid, .partner-cards, .download-grid,
-  .document-grid, .city-cards { grid-template-columns: 1fr; }
+  .document-grid { grid-template-columns: 1fr; }
   .kpi + .kpi { border-left: 0; padding-left: 0; }
   .bar-row, .bar-row.wide-label { grid-template-columns: 1fr; gap: 0.25rem; }
   .bar-row strong { text-align: left; }
@@ -3092,6 +3165,8 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 .ig-traj-fg.silent { background: var(--muted); opacity: 0.3; }
 .ig-traj-n { font-size:var(--t-body); font-weight: 700; color: var(--ink); min-width: 1.4rem; text-align: right; }
 .ig-traj-delta { font-size:var(--t-small); font-weight: 700; min-width: 4.5rem; }
+/* These compact chart tracks reuse the delta label, not its wider legend slot. */
+.imd-row > .ig-traj-delta, .slope-row > .ig-traj-delta { min-width: 0; overflow-wrap: anywhere; }
 .traj-up { color: var(--green); }
 .traj-dn { color: var(--red); }
 .traj-silent { color: var(--red); font-weight: 800; }
@@ -3474,7 +3549,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 
 .research-theme-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1px;
   box-shadow: inset 0 0 0 1px var(--rule);
 }
@@ -3709,14 +3784,18 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 .workshop-photo img { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity 0.2s; }
 .workshop-photo img:hover { opacity: 0.85; }
 
+@container view (max-width: 70rem) {
+  .research-theme-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@container view (max-width: 38rem) {
+  .research-theme-grid { grid-template-columns: minmax(0, 1fr); }
+}
 @media (max-width: 900px) {
-  .research-theme-grid { grid-template-columns: 1fr 1fr; }
   .paper-grid { grid-template-columns: 1fr; }
   .programme-cards { grid-template-columns: 1fr; }
   .workshop-gallery { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 600px) {
-  .research-theme-grid { grid-template-columns: 1fr; }
   .workshop-gallery { grid-template-columns: 1fr; }
 }
 
@@ -4119,20 +4198,43 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 /* ── Row 00: the hero ─────────────────────────────────────────────────────── */
 .iaas-row-hero {
   display: grid;
-  /* The copy track is the width the copy needs — 33rem, which is the
-     project's own 55ch measure — and the media track is the width the
-     portrait phone video needs. It used to be 1.35fr / 0.65fr: a share of
-     the screen, so the copy track was 774px wide while its own text ran to
-     429px, leaving a 370px band of nothing between the list and the video,
-     and the list's rule at the top of that band ran 345px past the four
-     rules below it. The grid had put it there. */
-  grid-template-columns: minmax(0, 33rem) minmax(13rem, 1fr);
+  /* Three columns and no slack. The band used to be 1.35fr / 0.65fr with
+     the four steps stacked in the copy column, so the block used 599px of a
+     1172px plate and the rest was nothing; then the video was parked
+     beside the copy and the band still ended at 899px, leaving 528px of
+     empty plate at the right while the step strip below it ran the full
+     width. Now the band is bracketed: the copy holds the left edge, the
+     video holds the right edge, and the four steps fill the middle with
+     the method they describe.
+
+     The three columns need 364 (the copy at its measure) + 364 (the method
+     at the same measure) + 390 (the video at its own aspect with the
+     caption standing beside it) + 52 (two gutters) = 1170px of plate, so
+     the band is measured against the PLATE and not the viewport: the rail
+     is 242px of the viewport, and a viewport query left the method column
+     28.5px wide at 901px, which wrapped the sentences to nine lines and
+     overflowed the label. The container queries below answer that.
+
+     The method column is capped at the copy's measure, and the evidence
+     column takes the rest. Left as 1fr it was 756px wide at a 1920px
+     viewport — the four steps at 197-289px of ink under 467-559px of
+     empty plate, and a 560px hole in the middle of the band between the
+     method and the video. The grid put it there.
+
+     The evidence column grows instead: the video holds the plate's right
+     edge at every width, and the caption beside it takes the slack up to
+     70ch — the top of the house's reading band. Past that the slack is
+     the gutter between the method and the evidence, which is a space
+     between two groups rather than a hole inside one. */
+  grid-template-columns: 28rem minmax(0, 28rem) minmax(30.9rem, 1fr);
+  grid-template-areas: "copy steps media";
   gap: 2rem;
   align-items: start;
   border-top: 0;
   margin-top: 1.6rem;
   padding-top: 0;
 }
+.iaas-hero-copy { grid-area: copy; }
 .iaas-hero-copy h2 {
   font-size: var(--t-h2);
   line-height: 1.1;
@@ -4140,25 +4242,43 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 }
 .iaas-hero-copy .lede { max-width: 40rem; }
 .iaas-method {
+  /* The method: what the band claims, stated in four lines, in the middle
+     where the claim sits next to the evidence it rests on. */
+  grid-area: steps;
   list-style: none;
-  margin: 1.4rem 0 0;
+  margin: 0;
   padding: 0;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 0;
-  border-top: 1px solid var(--line);
-  /* The list's own measure. The four entries carry the same 55ch cap as
-     every other prose block on the site, so the list is 429px wide while
-     its four rules below are 429px wide too — one rule and four rules that
-     line up, instead of a rule 345px longer than the entries under it. */
-  max-width: var(--measure);
 }
-.iaas-method li {
+/* The method list: four steps, one per row, in the band between the
+   claim and the evidence. */
+body .view .iaas-method li {
+  /* The label rides above its line: a step beside its sentence left a
+     gutter the sentence could not use. */
   display: grid;
-  grid-template-columns: 9.5rem minmax(0, 1fr);
-  gap: 1rem;
-  align-items: baseline;
-  padding: 0.55rem 0;
-  border-bottom: 1px solid var(--line-soft);
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.15rem;
+  align-items: start;
+  padding: 0.75rem 0 0.85rem;
+  /* The prose measure caps every list item, and this column is wider
+     than the measure — so the row was 359px of a 567px column and its
+     rule stopped 208px short of the video, leaving the reader a hole
+     between the method and the evidence. A step is a statement, not a
+     paragraph: it takes the column it is given. The selector has to
+     outrank the house cap, which is `body .view :is(p, li, ...)`. */
+  max-width: none;
+  /* NO RULE UNDER THE STEP. A hairline under 197-289px of text in a
+     567px column is an empty table cell: the rule ran 279-371px past
+     the sentence it headed, which reads as a failed attempt at a table
+     rather than as a list. The house's own ruled rows keep the rule
+     within 1.06-1.26x their ink (.persp-point, .big-project,
+     .partner-card); the house's UNRULED blocks run looser than that
+     (.iaas-facts items, 2.07-3.27x) and are accepted. So the step
+     becomes what it is — a list of four statements — and the column
+     reads like the copy column beside it, whose own label, headline
+     and closing line are all short measures in a 364px column. */
 }
 .iaas-method b {
   font-size:var(--t-body);
@@ -4178,7 +4298,32 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
   color: var(--ink-2);
   letter-spacing: 0.01em;
 }
-.iaas-hero-media { margin: 0; min-width: 0; justify-self: end; }
+/* The video closes the band at the plate's right edge — the same edge the
+   step strip used to end on — so the band no longer stops short of the
+   page it is printed on.
+
+   The caption stands at the video's foot, not under it. Under the video it
+   added 92px to the band, and the band's height IS the height of the dead
+   plate under the text: with the caption underneath, the band was 437.6px
+   tall while the tallest text column ended at 236.4px, leaving 201.17px of
+   empty plate under the method and 260.23px under the copy. Beside the
+   video the band is the video's height and nothing else — 338px — and the
+   dead plate under the method falls to 80.8px.
+
+   The caption sits to the LEFT of the video and the video holds the
+   plate's right edge, so the reading order is unchanged: the figure is
+   still video-then-caption in the DOM, and the band is still bracketed. */
+.iaas-hero-media {
+  margin: 0;
+  min-width: 0;
+  grid-area: media;
+  justify-self: end;
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+  align-items: flex-end;
+  gap: 0.9rem;
+}
 .iaas-hero-media video {
   display: block;
   width: auto;
@@ -4187,24 +4332,86 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
   aspect-ratio: 480 / 860;
   object-fit: cover;
   background: var(--deep);
-  border: 1px solid var(--line);
+  /* The frame is an inset shadow, not a border: a border eats a pixel off
+     the picture and pushes it 1px inside the frame, which put the
+     picture's edge 1px off the caption's edge and the plate's edge —
+     two near misses in the 1-6px failure band. */
+  box-shadow: inset 0 0 0 1px var(--line);
+  flex: 0 0 auto;
 }
 .iaas-hero-media figcaption {
-  margin-top: 0.6rem;
+  margin-top: 0;
   font-size:var(--t-small);
   line-height: 1.45;
   color: var(--muted);
-  max-width: 15rem;
+  /* The caption takes the space the video leaves it — 200.2px beside a
+     188.5px video — and no more, so it can never outrun the video it
+     belongs to. */
+  flex: 1 1 12.3rem;
+  min-width: 0;
 }
-/* The caption's measure is the VIDEO's measure — 14.5rem is the width a
-   480×860 phone video occupies at the 26rem height it is capped at. Left
-   alone it took the site's 55ch prose cap instead (the rule below outranks
-   this one), so the caption ran 363px under a 189px video and overhung it
-   by 174px. The rule that is meant to bind here needs the specificity to
-   bind here. */
-body .view .iaas-hero-media figcaption { max-width: 14.5rem; }
+/* The caption's measure is the prose measure here, not the site's
+   55ch cap: 14.5rem under the video was the width a 480×860 phone video
+   occupies at the 26rem height it is capped at, and the rule that is
+   meant to bind here needs the specificity to bind here. */
+body .view .iaas-hero-media figcaption { max-width: min(70ch, 100%); }
 .iaas-hero-media figcaption a { color: var(--navy); font-weight: 700; }
 .iaas-hero-media figcaption a:hover { color: var(--red); }
+
+/* ── The band, measured against the plate ──────────────────────────────────
+   Three columns need 364 (the copy at its measure) + 182 (the narrowest
+   method column that keeps a label and a sentence legible) + 188.5 (the
+   video at its own aspect) + 52 (two gutters) = 786.5px of plate. Two
+   columns need 574px. Below that the band is one column.
+
+   These are container queries, not viewport queries: the plate is the
+   viewport minus a 242px rail, so a viewport query left the method
+   column 28.5px wide at a 901px viewport — the sentences wrapped to nine
+   lines and the label overflowed its column by 13.8px. */
+@container view (max-width: 76.9rem) {
+  /* The wide band needs room the caption can stand in: the media column
+     is 401.7px so the caption can hold 200.2px beside the video, and the
+     method column keeps 182.5px. That is 1000.2px of plate. Below it
+     the caption goes back under the video and the media column returns
+     to the video's own 188.5px. */
+  body .view .iaas-row-hero {
+    grid-template-columns: 28rem minmax(0, 28rem) 14.5rem;
+  }
+  body .view .iaas-hero-media {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+  }
+  body .view .iaas-hero-media figcaption {
+    margin-top: 0.6rem;
+    flex: 0 1 auto;
+    max-width: 14.5rem;
+  }
+}
+@container view (max-width: 60.5rem) {
+  body .view .iaas-row-hero {
+    grid-template-columns: minmax(0, 1fr) 14.5rem;
+    grid-template-areas:
+      "copy  media"
+      "steps media";
+  }
+  /* The copy's column is now the wide one, so the standfirst measures to
+     the column instead of leaving 182px of plate beside it. 70ch is
+     inside the 45-75ch band the house rule allows. */
+  body .view .iaas-hero-copy .lede { max-width: min(70ch, 100%); }
+}
+@container view (max-width: 44.2rem) {
+  body .view .iaas-row-hero {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "copy"
+      "steps"
+      "media";
+  }
+  body .view .iaas-method { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body .view .iaas-hero-media { justify-self: start; }
+  body .view .iaas-hero-copy .lede { max-width: var(--measure); }
+}
 
 /* ── Row 01: the featured pair ────────────────────────────────────────────── */
 .iaas-pair {
@@ -4346,7 +4553,6 @@ body .view .iaas-hero-media figcaption { max-width: 14.5rem; }
 }
 
 @media (max-width: 900px) {
-  .iaas-row-hero { grid-template-columns: minmax(0, 1fr); }
   .iaas-hero-media video { max-height: 22rem; }
   body .view .iaas-hero-media figcaption { max-width: 12.3rem; }
   .iaas-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -4355,7 +4561,7 @@ body .view .iaas-hero-media figcaption { max-width: 14.5rem; }
   .iaas-pair, .iaas-grid-3, .iaas-origins { grid-template-columns: minmax(0, 1fr); }
   .iaas-row-head { grid-template-columns: 2.25rem minmax(0, 1fr); gap: 0 0.8rem; }
   .iaas-row-num { font-size:var(--t-h3); }
-  .iaas-method li { grid-template-columns: minmax(0, 1fr); gap: 0.1rem; }
+  body .view .iaas-method li { gap: 0.1rem; }
   .iaas-facts { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 480px) {
@@ -4519,6 +4725,13 @@ body .view .iaas-hero-media figcaption { max-width: 14.5rem; }
 .iaas-origin-link,
 .review-note a,
 .essay-next-cta a { display: inline-flex; align-items: center; min-height: 44px; }
+/* "Open video ↗" is a standalone action, not a word in a sentence, so it
+   holds its own line the way the other action links do. Inline in the
+   caption's prose its 44px target inflated the line box to 44px and
+   pushed the last line of the caption 14px below the line above it: the
+   caption's leading measured 15.9px, 15.9px, 30px. On its own line the
+   prose keeps even leading and the action keeps the 44px floor. */
+.iaas-hero-media figcaption a { display: flex; width: fit-content; }
 .essay-toc-link { min-height: 44px; }
 /* An outbound link is an action, so it holds the 44px floor in BOTH
    directions. "2022 ↗" is 38px of text: tall enough to tap, too narrow to

@@ -16,6 +16,14 @@ export function undersizedTarget({ width, height }, minimum = 44) {
   return width < minimum - 1 / 64 || height < minimum - 1 / 64;
 }
 
+export function mediaCaptionFits({video, caption, figure, band}) {
+  const inside = (inner, outer) => inner.width > 0 && inner.height > 0 && inner.left >= outer.left - 1 && inner.right <= outer.right + 1 && inner.top >= outer.top - 1 && inner.bottom <= outer.bottom + 1;
+  if (!inside(caption, figure) || !inside(video, figure) || !inside(figure, band)) return false;
+  const beside = caption.right <= video.left + 1 || caption.left >= video.right - 1;
+  const underneath = caption.top >= video.bottom - 1;
+  return beside || (underneath && caption.left >= video.left - 1 && caption.right <= video.right + 1);
+}
+
 // Run in the page: count graphemes on actual rendered lines, not their average.
 export function longestHeadingLine(element) {
   const lines = new Map();

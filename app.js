@@ -206,6 +206,8 @@ function setTab(tab, push = true) {
   }
 
   renderTab(tab);
+  // A cached chart may have been resized while its section was hidden.
+  if (tab === "insights") requestAnimationFrame(drawInsightsCharts);
   // Compare only the first path segment so a #cities/{slug} sub-route survives a tab re-entry
   if (push && location.hash.split("/")[0] !== `#${tab}`) history.replaceState(null, "", `#${tab}`);
   window.dispatchEvent(new CustomEvent("ascn:tabchange", { detail: { tab } }));
@@ -556,9 +558,9 @@ function visibleCities() {
 function renderCityCards() {
   const list = visibleCities();
   $("#city-cards").innerHTML = list.map((c) => `
-    <button class="city-card${state.selectedCity && c.name === state.selectedCity.name ? " active" : ""}" data-city="${esc(c.name)}">
+    <div class="city-cell"><button class="city-card${state.selectedCity && c.name === state.selectedCity.name ? " active" : ""}" data-city="${esc(c.name)}">
       <b>${esc(c.name)}</b><span class="cc-country">${esc(c.country)}</span>
-      <span class="cc-meta">Joined ${esc(c.year)} · ${esc(c.pop)}</span></button>`).join("") ||
+      <span class="cc-meta">Joined ${esc(c.year)} · ${esc(c.pop)}</span></button></div>`).join("") ||
     `<p class="muted" style="padding:1rem 0">No cities match.</p>`;
   $$("#city-cards .city-card").forEach((b) => b.addEventListener("click", () => {
     const city = state.C.find((c) => c.name === b.dataset.city);
