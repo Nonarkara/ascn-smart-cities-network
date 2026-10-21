@@ -456,6 +456,9 @@ function render() {
   $("#archive-title").textContent = text.title;
   $("#archive-subtitle").textContent = text.subtitle;
   $("#archive-lede").textContent = state.doc ? phrase(state.doc.coverage) : "";
+  document.querySelectorAll("[data-archive-lang]").forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.archiveLang === state.lang));
+  });
   if (state.error) {
     $("#archive-status").hidden = false;
     $("#archive-status").textContent = state.error;
