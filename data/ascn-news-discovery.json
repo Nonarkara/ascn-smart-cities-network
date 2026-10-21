@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-21T04:22:24.864Z",
+  "checkedAt": "2026-10-21T16:49:43.813Z",
   "articles": [
     {
       "title": "ASEAN Smart Cities Network leads the region drive for smarter, more resilient cities",
@@ -655,7 +655,7 @@
       "title": "Vietnam bolsters cooperation with partners in ASEAN Smart Cities Network",
       "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxQMUZGRGRPM1gwVVFXQzJSUVNjQWNGZ1RDNVNGTFlpRzE0SFJXbndEcy1rSzVHVEN0aTdXaHJWUkluMmpNaVlDRFYyWUxNcno5NVNSSXVjX1B1dXgwWWMxS3BpeE1IX1JyTGlNVzBXVDBVcVQzZDZnX2oxdDNpLW9CcFppVHh1ZlF6WVJRZUpnTDQ0OHVnM1BxaDVrMnlsMzlWZnQtRURMU0VoazViY3Z0SkFUaklLZw?oc=5",
       "publisher": "Báo Cần Thơ",
-      "sourceId": "ascn-exact",
+      "sourceId": "ascn-variants",
       "publishedAt": "2021-08-30T07:00:00.000Z",
       "kind": "Unreviewed search match",
       "countries": [],
@@ -1348,15 +1348,15 @@
       "id": "ascn-exact",
       "section": "Exact network name",
       "url": "https://news.google.com/rss/search?q=%22ASEAN%20Smart%20Cities%20Network%22&hl=en-SG&gl=SG&ceid=SG%3Aen",
-      "checkedAt": "2026-10-21T04:22:24.864Z",
+      "checkedAt": "2026-10-21T16:49:43.813Z",
       "status": "ok",
-      "returned": 76
+      "returned": 68
     },
     {
       "id": "ascn-variants",
       "section": "Name and language variants",
       "url": "https://news.google.com/rss/search?q=%22ASEAN%20Smart%20Cities%20Network%22%20OR%20%22ASEAN%20Smart%20City%20Network%22%20OR%20%22Jaringan%20Kota%20Cerdas%20ASEAN%22%20OR%20%22%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%B7%E0%B8%AD%E0%B8%82%E0%B9%88%E0%B8%B2%E0%B8%A2%E0%B9%80%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%87%E0%B8%AD%E0%B8%B1%E0%B8%88%E0%B8%89%E0%B8%A3%E0%B8%B4%E0%B8%A2%E0%B8%B0%E0%B8%AD%E0%B8%B2%E0%B9%80%E0%B8%8B%E0%B8%B5%E0%B8%A2%E0%B8%99%22&hl=en-SG&gl=SG&ceid=SG%3Aen",
-      "checkedAt": "2026-10-21T04:22:24.864Z",
+      "checkedAt": "2026-10-21T16:49:43.813Z",
       "status": "ok",
       "returned": 33
     },
