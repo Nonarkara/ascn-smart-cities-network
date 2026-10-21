@@ -218,7 +218,12 @@
      face was 451px, which overshot it. */
   --page-sheet: 794px;
   --page-text: 605px;
-  --measure: 55ch;
+  /* Recalibrated for the vendored face. 55ch is the advance of the
+   digit ZERO: in Jost that is 429px of prose and 83 characters on a line,
+   eight over the 75 the anti-slop rule allows. The same ratio held in
+   Archivo, where 55ch was 398px and 77 characters. 46ch is 378px and
+   70 characters — inside the band, with room for a line of capitals. */
+  --measure: 46ch;
   /* 50ch of this face is ~410px — the A5 text block (148mm sheet less 20mm
      margins at 96dpi). Stated in ch so it still means the same number of
      characters if the body size ever moves, which is the whole reason the
@@ -1924,7 +1929,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
      circle with a light ring. Without the ring the 2026 cohort's swatch
      sat on the panel at 1.04:1 and the 2018 swatch at 1.99:1 — two of the
      four keys were invisible, and a key that cannot be seen is not a key. */
-  box-shadow: inset 0 0 0 1.5px var(--on-solid); }
+  box-shadow: inset 0 0 0 1.5px #ffffff; }
 
 .city-detail { border-top: 1px solid var(--line); padding-top: 0.9rem; min-height: 18rem; }
 .city-detail .cd-place { color: var(--muted); font-weight: 800; font-size:var(--t-micro); letter-spacing: 0.1em; text-transform: uppercase; }
@@ -1953,9 +1958,9 @@ input[type="search"] { min-width: min(16rem, 100%); }
    because the grid put it there. The plate is 1198px wide now that the rail
    is 242px, and five across is the same count the overview's strip uses. */
 .city-cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; border-top: 1px solid var(--line); }
-.city-card { text-align: left; border: 0; box-shadow: inset 0 -1px 0 var(--line-soft), inset -1px 0 0 var(--line-soft); background: transparent; cursor: pointer; padding: 0.85rem 0.9rem 0.9rem 0; }
+.city-card { text-align: left; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; border: 0; box-shadow: inset 0 -1px 0 var(--line-soft), inset -1px 0 0 var(--line-soft); background: transparent; cursor: pointer; padding: 0.85rem 0.9rem 0.9rem 0; }
 .city-card:hover { background: var(--surface); }
-.city-card.active { background: var(--surface); }
+.city-card.active { background: var(--surface); box-shadow: inset 0 -2px 0 var(--ocher); }
 .city-card b { display: block; font-size:var(--t-body); }
 .city-card .cc-country { color: var(--muted); font-size:var(--t-small); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
 .city-card .cc-meta { color: var(--ink-2); font-size:var(--t-small); margin-top: 0.3rem; }
@@ -3588,7 +3593,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
   text-transform: uppercase;
 }
 .paper-type--j { color: var(--ink); border: 1px solid var(--ink); }
-.paper-type--o { color: var(--amber); border: 1px solid rgba(148,96,18,0.5); }
+.paper-type--o { color: var(--amber); border: 1px solid var(--ocher); }
 .paper-year {
   font-size:var(--t-small);
   color: var(--muted);
@@ -3852,7 +3857,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 /* ── Essay executive summary ───────────────────────────────────────────── */
 .essay-exec-summary {
   background: var(--surface);
-  border-left: 3px solid var(--amber);
+  box-shadow: inset 3px 0 0 var(--amber);
   padding: 1.2rem 1.4rem;
   margin-bottom: 1.5rem;
 }
@@ -4118,7 +4123,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
      429px, leaving a 370px band of nothing between the list and the video,
      and the list's rule at the top of that band ran 345px past the four
      rules below it. The grid had put it there. */
-  grid-template-columns: minmax(0, 33rem) minmax(13rem, 15rem);
+  grid-template-columns: minmax(0, 33rem) minmax(13rem, 1fr);
   gap: 2rem;
   align-items: start;
   border-top: 0;
@@ -4170,7 +4175,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
   color: var(--ink-2);
   letter-spacing: 0.01em;
 }
-.iaas-hero-media { margin: 0; min-width: 0; }
+.iaas-hero-media { margin: 0; min-width: 0; justify-self: end; }
 .iaas-hero-media video {
   display: block;
   width: auto;
@@ -4340,7 +4345,7 @@ body .view .iaas-hero-media figcaption { max-width: 14.5rem; }
 @media (max-width: 900px) {
   .iaas-row-hero { grid-template-columns: minmax(0, 1fr); }
   .iaas-hero-media video { max-height: 22rem; }
-  .iaas-hero-media figcaption { max-width: 22rem; }
+  body .view .iaas-hero-media figcaption { max-width: 12.3rem; }
   .iaas-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 720px) {

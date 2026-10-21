@@ -78,9 +78,10 @@ function markerColor(year) {
   if (year >= 2023) return "#986f2d";
   return "#064f6e";
 }
-function bar(label, value, max, cls = "", suffix = "", wide = false) {
+function bar(label, value, max, cls = "", suffix = "", wide = false, color = "") {
   const w = max ? Math.max(2, (value / max) * 100) : 0;
-  return `<div class="bar-row${wide ? " wide-label" : ""}"><span>${esc(label)}</span><div class="bar-track"><div class="bar-fill ${cls}" style="width:${w}%"></div></div><strong>${fmt.format(value)}${suffix}</strong></div>`;
+  const fill = color ? ` style="width:${w}%;background:${color}"` : ` style="width:${w}%"`;
+  return `<div class="bar-row${wide ? " wide-label" : ""}"><span>${esc(label)}</span><div class="bar-track"><div class="bar-fill ${cls}"${fill}></div></div><strong>${fmt.format(value)}${suffix}</strong></div>`;
 }
 
 function countBy(list, key) {
@@ -753,7 +754,11 @@ function renderProjects() {
   $("#status-count").textContent = `${r.total_projects} projects`;
   const fe = Object.entries(r.focus_share);
   const fmax = Math.max(...fe.map(([, v]) => v));
-  $("#focus-bars").innerHTML = fe.map(([l, v]) => bar(l, v, fmax, l.includes("Built") ? "red" : "", "%", true)).join("");
+  $("#focus-bars").innerHTML = fe.map(([l, v]) => bar(l, v, fmax, "", "%", true, focusColor(l))).join("");
+  // A full bar here is the LARGEST focus area, not 100%. Say so, or the
+  // chart lies: "Civic & Social" reads as a full bar beside "25%".
+  const scaleNote = $("#focus-scale-note");
+  if (scaleNote) scaleNote.textContent = `latest cycle · longest bar = ${fmax}%`;
   $("#status-bars").innerHTML = [["Ongoing", r.status.ongoing, "green"], ["Completed", r.status.completed, ""], ["Planning", r.status.planning, "amber"]]
     .map(([l, v, cls]) => bar(l, v, r.total_projects, cls)).join("");
   const countries = [...new Set(state.C.map((c) => c.country))].sort();
