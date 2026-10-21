@@ -1,0 +1,192 @@
+{
+  "source": "Sanzo Wada, 'A Dictionary of Color Combinations' — 348 combinations. Data: Matt DesLauriers' MIT-licensed dictionary-of-colour-combinations, compiled from Dain W. Blodorn Kim's earlier work, credited in https://github.com/Nonarkara/palette (data/colors.json, MIT). The colour field itself is Sanzo Wada's.",
+  "note": "A 'step' is a value step of a credited colour — the same hue, taken lighter or darker so a surface, a rule or a second ink can be drawn from it. It is NOT a Wada colour and is never called one.",
+  "credited": {
+    "#009465": {
+      "name": "Dull Viridian Green",
+      "plate": 136
+    },
+    "#00b49b": {
+      "name": "Sea Green",
+      "plate": 17
+    },
+    "#051230": {
+      "name": "Deep Indigo",
+      "plate": 6
+    },
+    "#064f6e": {
+      "name": "Vandar Poel's Blue",
+      "plate": 151
+    },
+    "#1a7444": {
+      "name": "Diamine Green",
+      "plate": 38
+    },
+    "#437742": {
+      "name": "Cossack Green",
+      "plate": 5
+    },
+    "#5a82b3": {
+      "name": "Olympic Blue",
+      "plate": 44
+    },
+    "#78cdd0": {
+      "name": "Calamine BLue",
+      "plate": 20
+    },
+    "#986f2d": {
+      "name": "Orange Citrine",
+      "plate": 212
+    },
+    "#a2b0ad": {
+      "name": "Mineral Gray",
+      "plate": 11
+    },
+    "#a36aa5": {
+      "name": "Aconite Violet",
+      "plate": 43
+    },
+    "#ab2439": {
+      "name": "Pompeian Red",
+      "plate": 30
+    },
+    "#ae5224": {
+      "name": "Burnt Sienna",
+      "plate": 198
+    },
+    "#c27544": {
+      "name": "Cinnamon Rufous",
+      "plate": 8
+    },
+    "#cc1236": {
+      "name": "Carmine",
+      "plate": 39
+    },
+    "#da525d": {
+      "name": "Eugenia Red | B",
+      "plate": 17
+    },
+    "#f58e84": {
+      "name": "Coral Red",
+      "plate": 92
+    },
+    "#f5ecc2": {
+      "name": "Sulpher Yellow",
+      "plate": 151
+    },
+    "#f99d1b": {
+      "name": "Yellow Orange",
+      "plate": 151
+    },
+    "#ffffff": {
+      "name": "White",
+      "plate": 55
+    }
+  },
+  "steps": {
+    "#061014": {
+      "of": "#064f6e",
+      "note": "the deepest surface"
+    },
+    "#0a1a20": {
+      "of": "#064f6e",
+      "note": "the dark ground — Vandar Poel's Blue taken down"
+    },
+    "#0f3038": {
+      "of": "#064f6e",
+      "note": "the light theme's ink, and the map's ink"
+    },
+    "#12262f": {
+      "of": "#064f6e",
+      "note": "the panel"
+    },
+    "#173039": {
+      "of": "#064f6e",
+      "note": "the companion surface"
+    },
+    "#1b333c": {
+      "of": "#064f6e",
+      "note": "the raised surface"
+    },
+    "#4a626b": {
+      "of": "#064f6e",
+      "note": "the light theme's secondary ink"
+    },
+    "#4c707b": {
+      "of": "#064f6e",
+      "note": "the soft rule"
+    },
+    "#54696f": {
+      "of": "#064f6e",
+      "note": "the light theme's tertiary ink"
+    },
+    "#5a8089": {
+      "of": "#064f6e",
+      "note": "the rule"
+    },
+    "#6a909b": {
+      "of": "#064f6e",
+      "note": "the bright rule"
+    },
+    "#6e858b": {
+      "of": "#064f6e",
+      "note": "the light theme's data mark"
+    },
+    "#a2aa9e": {
+      "of": "#f5ecc2",
+      "note": "the light theme's bright rule"
+    },
+    "#a49e83": {
+      "of": "#f5ecc2",
+      "note": "the light theme's tertiary ink"
+    },
+    "#b4b8a6": {
+      "of": "#f5ecc2",
+      "note": "the light theme's rule"
+    },
+    "#c6c0a2": {
+      "of": "#f5ecc2",
+      "note": "the light theme's secondary ink"
+    },
+    "#cdd0bd": {
+      "of": "#f5ecc2",
+      "note": "the light theme's soft rule"
+    },
+    "#e7dcb8": {
+      "of": "#f5ecc2",
+      "note": "the light raised surface"
+    },
+    "#ebe0bf": {
+      "of": "#f5ecc2",
+      "note": "the light companion surface"
+    },
+    "#ece1c4": {
+      "of": "#f5ecc2",
+      "note": "the light deepest surface"
+    },
+    "#efe6c6": {
+      "of": "#f5ecc2",
+      "note": "the light panel"
+    },
+    "#f7f1dd": {
+      "of": "#f5ecc2",
+      "note": "the light theme's ground — Sulpher Yellow, not quite opaque"
+    },
+    "#7f8378": {
+      "of": "#f5ecc2",
+      "note": "the light theme's rule — a warm grey that clears 3:1 on the paper"
+    },
+    "#83877c": {
+      "of": "#f5ecc2",
+      "note": "the light theme's soft rule"
+    },
+    "#898d80": {
+      "of": "#f5ecc2",
+      "note": "the light theme's dim rule"
+    },
+    "#9d4a1f": {
+      "of": "#ae5224",
+      "note": "the light theme's ocher — Burnt Sienna one step deeper"
+    }
+  }
+}

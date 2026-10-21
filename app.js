@@ -28,14 +28,43 @@ const fmt = new Intl.NumberFormat("en-US");
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
+/* The six focus areas, in six Wada colours.
+
+   The old set was six desaturated pastels — #b0c1cd, #dda692, #9ac4a9,
+   #d6bd88, #b9acc8, #c3c4bd — which is a colour scheme for a chart nobody
+   looks at. These are credited Sanzo Wada colours, each cited by name and
+   plate, and each chosen by measurement rather than by eye:
+
+     every one clears 3:1 against the dark ground AND against the light
+     theme's chart surface (#efe6c6), so a series does not disappear when the
+     reader switches theme;
+
+     adjacent series in FOCUS_ORDER are at least 82 degrees apart in hue, so
+     no two touching areas of the stacked chart are hard to tell apart.
+
+   The set is Sanzo Wada's: six credited colours, each clear of 3:1 on the
+   dark ground and on the paper, and at least 74 degrees of hue apart from
+   its neighbour in FOCUS_ORDER so no two series can be mistaken. */
 const FOCUS_COLORS = {
-  "Civic & Social": "#b0c1cd",
-  "Built Infrastructure": "#dda692",
-  "Quality Environment": "#9ac4a9",
-  "Safety & Security": "#d6bd88",
-  "Industry & Innovation": "#b9acc8",
-  "Health & Well-Being": "#c3c4bd",
+  "Civic & Social": "#da525d",        // Eugenia Red | B — plate 17
+  "Built Infrastructure": "#5a82b3",  // Olympic Blue — plate 44
+  "Quality Environment": "#437742",   // Cossack Green — plate 5
+  "Safety & Security": "#986f2d",     // Orange Citrine — plate 212
+  "Industry & Innovation": "#a36aa5", // Aconite Violet — plate 43
+  "Health & Well-Being": "#009465",   // Dull Viridian Green — plate 136
 };
+
+/* The lookup is case-insensitive on purpose. The knowledge file spells the
+   focus area "Health & Well-being" and the palette key says "Health &
+   Well-Being": the old exact lookup missed, and two of the nine impact
+   dots fell back to the muted ink — the same grey for two different focus
+   areas, in a chart whose whole job is to say which focus area. */
+const FOCUS_BY_NAME = Object.fromEntries(
+  Object.entries(FOCUS_COLORS).map(([name, color]) => [name.trim().toLowerCase(), color]),
+);
+function focusColor(name, fallback = "var(--ink-3)") {
+  return FOCUS_BY_NAME[String(name || "").trim().toLowerCase()] || fallback;
+}
 
 function latestReport() { return state.data.reports[state.data.reports.length - 1]; }
 function usd(n) {
@@ -44,10 +73,10 @@ function usd(n) {
   return `$${fmt.format(n)}`;
 }
 function markerColor(year) {
-  if (year >= 2026) return "#101418";
-  if (year >= 2025) return "#b53a2e";
-  if (year >= 2023) return "#946012";
-  return "#183a5a";
+  if (year >= 2026) return "#051230";
+  if (year >= 2025) return "#cc1236";
+  if (year >= 2023) return "#986f2d";
+  return "#064f6e";
 }
 function bar(label, value, max, cls = "", suffix = "", wide = false) {
   const w = max ? Math.max(2, (value / max) * 100) : 0;
@@ -506,7 +535,7 @@ function projectsForCity(name) {
 function renderCitiesView() {
   const countries = [...new Set(state.C.map((c) => c.country))].sort();
   $("#city-country").insertAdjacentHTML("beforeend", countries.map((c) => `<option value="${esc(c)}">${esc(c)}</option>`).join(""));
-  $("#map-legend").innerHTML = [["#183a5a", "2018 founding"], ["#946012", "2023–24"], ["#b53a2e", "2025"], ["#101418", "2026"]]
+  $("#map-legend").innerHTML = [["#064f6e", "2018 founding"], ["#986f2d", "2023–24"], ["#cc1236", "2025"], ["#051230", "2026"]]
     .map(([col, lab]) => `<span><i style="background:${col}"></i>${lab}</span>`).join("");
   renderCityCards();
   const sub = (location.hash || "").split("/")[1];
@@ -955,7 +984,7 @@ function renderInsights() {
     const { sym, cls } = arrow(vals);
     const delta = vals[3] - vals[0];
     const deltaStr = delta > 0 ? `+${delta}pp` : delta < 0 ? `${delta}pp` : "flat";
-    const color = FOCUS_COLORS[name] || "#444";
+    const color = focusColor(name);
     const yLabels = vals.map((v, i) => `<span>${esc(String(v))}%</span>`).join("");
     // The plot is drawn to the cell's own width, and its points sit at the
     // centres of the same four columns the two label rows use. That is what
@@ -983,7 +1012,7 @@ function renderInsights() {
     const fgW = cTrajMax ? Math.max(2, (curr / cTrajMax) * 100) : 0;
     return `<div class="ig-traj-row${silent ? " ig-traj-silent-row" : ""}"><span class="ig-traj-country">${esc(country)}</span><div class="ig-traj-bars"><div class="ig-traj-track"><div class="ig-traj-bg" style="width:${bgW}%"></div><div class="ig-traj-fg${silent ? " silent" : ""}" style="width:${fgW}%"></div></div><span class="ig-traj-n${silent ? " traj-silent" : ""}">${silent ? "—" : curr}</span><span class="ig-traj-delta ${dCls}">${esc(dStr)}</span></div></div>`;
   }).join("");
-  $("#ig-country-traj").innerHTML = `<div class="ig-traj-legend"><span class="ig-traj-swatch ig-traj-swatch--base"></span>2022 baseline &nbsp;·&nbsp; <span class="ig-traj-swatch ig-traj-swatch--curr"></span>2025 (amber)</div><div class="ig-traj-wrap">${trajHtml}</div>`;
+  $("#ig-country-traj").innerHTML = `<div class="ig-traj-legend"><span class="ig-traj-swatch ig-traj-swatch--base"></span>2022 baseline &nbsp;·&nbsp; <span class="ig-traj-swatch ig-traj-swatch--curr"></span>2025 (ocher)</div><div class="ig-traj-wrap">${trajHtml}</div>`;
 
   // ── 4. Country specialisation (stacked bars) ─────────────────────────────
   const cFocus = {};
@@ -991,7 +1020,7 @@ function renderInsights() {
   const SHORT = { "Industry & Innovation": "Ind. & Innov.", "Quality Environment": "Quality Env.", "Built Infrastructure": "Built Infra.", "Health & Well-Being": "Health & W-B", "Safety & Security": "Safety & Sec.", "Civic & Social": "Civic & Social" };
   const specRows = Object.entries(cFocus).sort((a, b) => Object.values(b[1]).reduce((s, v) => s + v, 0) - Object.values(a[1]).reduce((s, v) => s + v, 0)).map(([country, foci]) => {
     const total = Object.values(foci).reduce((s, v) => s + v, 0);
-    const segs = Object.entries(foci).sort((a, b) => b[1] - a[1]).map(([fa, n]) => `<div class="ig-spec-seg" style="width:${(n / total * 100).toFixed(1)}%;background:${FOCUS_COLORS[fa] || "#888"}" title="${fa}: ${n} (${Math.round(n / total * 100)}%)"></div>`).join("");
+    const segs = Object.entries(foci).sort((a, b) => b[1] - a[1]).map(([fa, n]) => `<div class="ig-spec-seg" style="width:${(n / total * 100).toFixed(1)}%;background:${focusColor(fa)}" title="${fa}: ${n} (${Math.round(n / total * 100)}%)"></div>`).join("");
     const top = Object.entries(foci).sort((a, b) => b[1] - a[1])[0][0];
     return `<div class="ig-spec-row"><span class="ig-spec-country">${esc(country)}</span><div class="ig-spec-bar">${segs}</div><span class="ig-spec-top">${esc(SHORT[top] || top)}</span></div>`;
   }).join("");
@@ -1022,8 +1051,8 @@ function renderInsights() {
 
   // ── 7–9. Carry-forward panels ─────────────────────────────────────────────
   $("#ig-impact").innerHTML = state.K.citizen_impact.map((c) => {
-    const focusColor = FOCUS_COLORS[c.focus] || "var(--muted)";
-    const focusDot = c.focus ? `<span class="impact-dot" style="background:${focusColor}"></span>` : "";
+    const focus = focusColor(c.focus, "var(--muted)");
+    const focusDot = c.focus ? `<span class="impact-dot" style="background:${focus}"></span><span class="impact-focus">${esc(c.focus)}</span>` : "";
     const noteHtml = c.note ? `<em class="impact-note">${esc(c.note)}</em>` : "";
     return `<div class="impact-stat"><strong>${esc(c.metric)}</strong><span>${focusDot}${esc(c.project)}</span><em>${esc(c.city)}</em>${noteHtml}</div>`;
   }).join("");
@@ -1127,7 +1156,7 @@ function renderInsights() {
     const count = pillarCoverage[pid] || 0;
     const isGap = ascapGap && pid === ascapGap.pillar_id;
     const barW = isGap ? 0 : Math.max(1, (count / ascapMax) * 100);
-    const tags = (pillarFocusTags[pid] || []).map((f) => `<span class="ascap-cov-tag" style="border-color:${FOCUS_COLORS[f] || "var(--muted)"};color:${FOCUS_COLORS[f] || "var(--muted)"}">${esc(f)}</span>`).join("");
+    const tags = (pillarFocusTags[pid] || []).map((f) => `<span class="ascap-cov-tag" style="border-color:${focusColor(f, "var(--muted)")};color:${focusColor(f, "var(--muted)")}">${esc(f)}</span>`).join("");
     const countLabel = isGap
       ? `<span class="ascap-cov-gap-label">No coverage</span>`
       : `<strong>${count}</strong>`;
@@ -1157,12 +1186,12 @@ function renderInsights() {
       const total = s.completed + s.ongoing;
       const compPct = total ? Math.round((s.completed / total) * 100) : 0;
       const compW  = total ? Math.max(0, (s.completed / total) * 100) : 0;
-      const color  = FOCUS_COLORS[fa] || "var(--amber)";
+      const color  = focusColor(fa, "var(--ocher)");
       return `<div class="dg-row">
         <span class="dg-fa">${esc(fa)}</span>
         <div class="dg-track">
           <div class="dg-fill-comp" style="width:${compW}%;background:${color}"></div>
-          <div class="dg-fill-ong"  style="width:${100 - compW}%;opacity:.22;background:${color}"></div>
+          <div class="dg-fill-ong"  style="width:${100 - compW}%"></div>
         </div>
         <span class="dg-nums"><strong>${s.completed}</strong><em> done · ${s.ongoing} active</em></span>
         <span class="dg-rate ${compPct === 0 ? "dg-rate--zero" : ""}">${compPct}%</span>
@@ -1250,14 +1279,14 @@ function renderInsights() {
     let acc = 0;
     const divs = segs.map((s) => {
       const h = s.pct;
-      const style = `bottom:${acc}%;height:${h}%;background:${FOCUS_COLORS[s.fa]};width:100%;position:absolute;`;
+      const style = `bottom:${acc}%;height:${h}%;background:${focusColor(s.fa, "var(--ocher)")};width:100%;position:absolute;`;
       acc += h;
       return `<div class="stack-seg" style="${style}" title="${esc(s.fa)}: ${h}% (${y})"></div>`;
     }).join("");
-    const labels = segs.filter((s) => s.pct >= 10).map((s) => `<span style="color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4)">${s.pct}%</span>`).join("");
+    const labels = segs.filter((s) => s.pct >= 10).map((s) => `<span style="color:var(--on-solid);text-shadow:0 1px 2px rgba(0,0,0,.4)">${s.pct}%</span>`).join("");
     return `<div class="stack-col"><div class="stack-bars">${divs}</div><span class="stack-year">${y}</span></div>`;
   }).join("");
-  const focusLegend = FOCUS_ORDER.map((fa) => `<span class="ig-spec-leg"><span style="background:${FOCUS_COLORS[fa]}"></span>${esc(fa)}</span>`).join("");
+  const focusLegend = FOCUS_ORDER.map((fa) => `<span class="ig-spec-leg"><span style="background:${focusColor(fa)}"></span>${esc(fa)}</span>`).join("");
   $("#ig-focus-stack").innerHTML = `
     <div class="stack-wrap">${focusStack}</div>
     <div class="stack-legend">${focusLegend}</div>
@@ -1784,7 +1813,7 @@ function ensureContactsMap(popupFn) {
     })(city.country);
     const m = L.circleMarker([city.lat, city.lon], {
       radius: 7, color: "#fff", weight: 1.5,
-      fillColor: nr ? "#946012" : "#183a5a", fillOpacity: 0.9,
+      fillColor: nr ? "#986f2d" : "#064f6e", fillOpacity: 0.9,
     });
     m.bindTooltip(`<b>${esc(city.name)}</b> · ${esc(city.country)}`, { direction: "top", offset: [0, -4] });
     m.bindPopup(popupFn(city), { maxWidth: 280, maxHeight: 310, className: "cpop-wrap", autoPan: false });
@@ -2046,7 +2075,7 @@ function renderResearch() {
 </div>
 
 <div class="research-section">
-  <p class="research-section-label label" data-i18n="a.seven.themes.from.the.literature">SEVEN THEMES FROM THE LITERATURE</p>
+  <p class="research-section-label label" data-i18n="a.eight.themes.from.the.literature">EIGHT THEMES FROM THE LITERATURE</p>
   <div class="research-theme-grid">
     ${THEMES.map(t => `<article class="research-theme">
       <div class="research-theme-top">
@@ -2158,36 +2187,36 @@ function renderEssay() {
   /* ---- Governance diagram ---- */
   const govDiagram = `<figure class="essay-diagram" aria-label="ASCN governance structure">
   <svg viewBox="0 0 680 256" xmlns="http://www.w3.org/2000/svg">
-    <rect x="240" y="10" width="200" height="44" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
-    <text x="340" y="28" text-anchor="middle" font-size="11" font-family="'Source Sans 3',sans-serif" font-weight="700" fill="#1a1a1a">ASEAN SECRETARIAT</text>
-    <text x="340" y="43" text-anchor="middle" font-size="9.5" font-family="'Source Sans 3',sans-serif" fill="#666">Jakarta · Network coordinator</text>
-    <line x1="340" y1="54" x2="340" y2="80" stroke="#1a1a1a" stroke-width="1"/>
-    <line x1="340" y1="80" x2="170" y2="80" stroke="#1a1a1a" stroke-width="1"/>
-    <line x1="340" y1="80" x2="510" y2="80" stroke="#1a1a1a" stroke-width="1"/>
-    <line x1="170" y1="80" x2="170" y2="96" stroke="#1a1a1a" stroke-width="1"/>
-    <line x1="510" y1="80" x2="510" y2="96" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="80" y="96" width="180" height="52" fill="#fef9ed" stroke="#946012" stroke-width="1.5"/>
-    <text x="170" y="114" text-anchor="middle" font-size="9" font-family="'Source Sans 3',sans-serif" font-weight="700" letter-spacing="0.07em" fill="#92400e">SHEPHERD 2023–2027</text>
-    <text x="170" y="129" text-anchor="middle" font-size="11" font-family="'Source Sans 3',sans-serif" font-weight="700" fill="#1a1a1a">Indonesia</text>
-    <text x="170" y="142" text-anchor="middle" font-size="9.5" font-family="'Source Sans 3',sans-serif" fill="#666">Institutional continuity</text>
-    <rect x="420" y="96" width="180" height="52" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
-    <text x="510" y="114" text-anchor="middle" font-size="9" font-family="'Source Sans 3',sans-serif" font-weight="700" letter-spacing="0.07em" fill="#666">ANNUAL CHAIR</text>
-    <text x="510" y="129" text-anchor="middle" font-size="11" font-family="'Source Sans 3',sans-serif" font-weight="700" fill="#1a1a1a">Malaysia 2025</text>
-    <text x="510" y="142" text-anchor="middle" font-size="9.5" font-family="'Source Sans 3',sans-serif" fill="#666">Rotates annually</text>
-    <line x1="340" y1="148" x2="340" y2="172" stroke="#ccc" stroke-width="1" stroke-dasharray="4 3"/>
-    <text x="340" y="188" text-anchor="middle" font-size="9.5" font-family="'Source Sans 3',sans-serif" font-weight="700" letter-spacing="0.06em" fill="#1a1a1a">10 MEMBER STATES · 38 CITIES · 134 PROJECTS</text>
-    <line x1="30" y1="200" x2="650" y2="200" stroke="#e5e5e5" stroke-width="1"/>
-    <text x="50" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#666">Brunei</text>
-    <text x="104" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#666">Cambodia</text>
-    <text x="175" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#666">Indonesia</text>
-    <text x="248" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#666">Lao PDR</text>
-    <text x="305" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#666">Malaysia</text>
-    <text x="365" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#666">Myanmar</text>
-    <text x="418" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#666">Philippines</text>
-    <text x="492" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#666">Singapore</text>
-    <text x="554" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#666">Thailand</text>
-    <text x="610" y="216" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#666">Viet Nam</text>
-    <text x="340" y="244" text-anchor="middle" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#999">Plus Timor-Leste (newest member, city: Dili). Source: ASCN M&amp;E Reports 2022–2025.</text>
+    <rect x="240" y="10" width="200" height="44" fill="none" stroke="currentColor" stroke-width="1.5"/>
+    <text x="340" y="28" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">ASEAN SECRETARIAT</text>
+    <text x="340" y="43" text-anchor="middle" font-size="9.5" class="dg-muted" fill="currentColor">Jakarta · Network coordinator</text>
+    <line x1="340" y1="54" x2="340" y2="80" stroke="currentColor" stroke-width="1"/>
+    <line x1="340" y1="80" x2="170" y2="80" stroke="currentColor" stroke-width="1"/>
+    <line x1="340" y1="80" x2="510" y2="80" stroke="currentColor" stroke-width="1"/>
+    <line x1="170" y1="80" x2="170" y2="96" stroke="currentColor" stroke-width="1"/>
+    <line x1="510" y1="80" x2="510" y2="96" stroke="currentColor" stroke-width="1"/>
+    <rect x="80" y="96" width="180" height="52" class="dg-fill dg-accent" fill="currentColor" stroke="currentColor" stroke-width="1.5"/>
+    <text x="170" y="114" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="0.07em" class="dg-accent-text" fill="currentColor">SHEPHERD 2023–2027</text>
+    <text x="170" y="129" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">Indonesia</text>
+    <text x="170" y="142" text-anchor="middle" font-size="9.5" class="dg-muted" fill="currentColor">Institutional continuity</text>
+    <rect x="420" y="96" width="180" height="52" fill="none" stroke="currentColor" stroke-width="1.5"/>
+    <text x="510" y="114" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="0.07em" class="dg-muted" fill="currentColor">ANNUAL CHAIR</text>
+    <text x="510" y="129" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">Malaysia 2025</text>
+    <text x="510" y="142" text-anchor="middle" font-size="9.5" class="dg-muted" fill="currentColor">Rotates annually</text>
+    <line x1="340" y1="148" x2="340" y2="172" class="dg-rule" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3"/>
+    <text x="340" y="188" text-anchor="middle" font-size="9.5" font-weight="700" letter-spacing="0.06em" fill="currentColor">10 MEMBER STATES · 38 CITIES · 134 PROJECTS</text>
+    <line x1="30" y1="200" x2="650" y2="200" class="dg-hair" stroke="currentColor" stroke-width="1"/>
+    <text x="50" y="216" font-size="8.5" class="dg-muted" fill="currentColor">Brunei</text>
+    <text x="104" y="216" font-size="8.5" class="dg-muted" fill="currentColor">Cambodia</text>
+    <text x="175" y="216" font-size="8.5" class="dg-muted" fill="currentColor">Indonesia</text>
+    <text x="248" y="216" font-size="8.5" class="dg-muted" fill="currentColor">Lao PDR</text>
+    <text x="305" y="216" font-size="8.5" class="dg-muted" fill="currentColor">Malaysia</text>
+    <text x="365" y="216" font-size="8.5" class="dg-muted" fill="currentColor">Myanmar</text>
+    <text x="418" y="216" font-size="8.5" class="dg-muted" fill="currentColor">Philippines</text>
+    <text x="492" y="216" font-size="8.5" class="dg-muted" fill="currentColor">Singapore</text>
+    <text x="554" y="216" font-size="8.5" class="dg-muted" fill="currentColor">Thailand</text>
+    <text x="610" y="216" font-size="8.5" class="dg-muted" fill="currentColor">Viet Nam</text>
+    <text x="340" y="244" text-anchor="middle" font-size="8.5" class="dg-quiet" fill="currentColor">Plus Timor-Leste (newest member, city: Dili). Source: ASCN M&amp;E Reports 2022–2025.</text>
   </svg>
   <figcaption data-i18n="a.ascn.governance.the.secretariat">ASCN governance: the Secretariat coordinates, the Shepherd holds institutional memory, the Chair rotates annually.</figcaption>
 </figure>`;
@@ -2195,16 +2224,17 @@ function renderEssay() {
   /* ---- Focus area bar chart ---- */
   const focusDiagram = `<figure class="essay-diagram" aria-label="ASCN project distribution by focus area">
   <svg viewBox="0 0 580 248" xmlns="http://www.w3.org/2000/svg">
-    <text x="0" y="16" font-size="9.5" font-family="'Source Sans 3',sans-serif" font-weight="700" letter-spacing="0.07em" fill="#1a1a1a">FOCUS AREA DISTRIBUTION — 134 PROJECTS · M&amp;E CYCLE 4 (2025)</text>
-    <text x="0" y="32" font-size="9" font-family="'Source Sans 3',sans-serif" fill="#888">Approximate shares derived from ASCN M&amp;E reporting.</text>
+    <text x="0" y="16" font-size="9.5" font-weight="700" letter-spacing="0.07em" fill="currentColor">FOCUS AREA DISTRIBUTION — 134 PROJECTS · M&amp;E CYCLE 4 (2025)</text>
+    <text x="0" y="32" font-size="9" class="dg-muted" fill="currentColor">Approximate shares derived from ASCN M&amp;E reporting.</text>
     ${[["Smart Mobility",28,0],["Smart Living",26,28],["Smart Environment",22,56],["Smart Governance",18,84],["Smart Economy",12,112],["Smart People",8,140]].map(([label,pct,y])=>{
       const barW = Math.round(pct*4.0);
       const hi = pct>=26;
-      return `<text x="0" y="${52+y+11}" font-size="9.5" font-family="'Source Sans 3',sans-serif" fill="#444">${label}</text>
-      <rect x="142" y="${52+y}" width="${barW}" height="17" fill="${hi?"#946012":"#1a1a1a"}" opacity="${hi?1:0.75}"/>
-      <text x="${142+barW+6}" y="${52+y+12}" font-size="9" font-family="'Source Sans 3',sans-serif" fill="#888">${pct}%</text>`;
+      return `<text x="0" y="${52+y+11}" font-size="9.5" class="dg-label" fill="currentColor">${label}</text>
+      <rect x="142" y="${52+y}" width="${barW}" height="17" class="${hi?"dg-bar-hi":"dg-bar"}" opacity="${hi?1:0.75}"/>
+      <text x="${142+barW+6}" y="${52+y+12}" font-size="9" class="dg-muted" fill="currentColor">${pct}%</text>`;
     }).join("")}
-    <text x="0" y="226" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#999">Smart Mobility + Smart Living account for more than half of documented projects. Smart Governance and Smart People remain underrepresented relative to the framework's stated priorities.</text>
+    <text x="0" y="226" font-size="8.5" class="dg-quiet" fill="currentColor">Smart Mobility + Smart Living account for more than half of documented projects.</text>
+    <text x="0" y="238" font-size="8.5" class="dg-quiet" fill="currentColor">Smart Governance and Smart People remain underrepresented relative to the framework's stated priorities.</text>
   </svg>
   <figcaption data-i18n="a.project.distribution.reflects.ci">Project distribution reflects city demand, not network design. Mobility and living services are visible and fundable; governance-strengthening work — which underpins everything else — is harder to count and harder to fund.</figcaption>
 </figure>`;
@@ -2212,8 +2242,8 @@ function renderEssay() {
   /* ---- Timeline diagram ---- */
   const timelineDiagram = `<figure class="essay-diagram" aria-label="ASCN milestones 2018–2025">
   <svg viewBox="0 0 660 136" xmlns="http://www.w3.org/2000/svg">
-    <text x="0" y="16" font-size="9.5" font-family="'Source Sans 3',sans-serif" font-weight="700" letter-spacing="0.07em" fill="#1a1a1a">ASCN MILESTONES 2018–2025</text>
-    <line x1="20" y1="64" x2="640" y2="64" stroke="#1a1a1a" stroke-width="1.5"/>
+    <text x="0" y="16" font-size="9.5" font-weight="700" letter-spacing="0.07em" fill="currentColor">ASCN MILESTONES 2018–2025</text>
+    <line x1="20" y1="64" x2="640" y2="64" stroke="currentColor" stroke-width="1.5"/>
     ${[
       [20,"2018","Founded\n26 cities"],
       [112,"2019","Thailand\nchairs"],
@@ -2224,14 +2254,14 @@ function renderEssay() {
       [572,"2024","38 cities\nLao chairs"],
     ].map(([x,yr,note])=>{
       const hi = yr==="2018"||yr==="2023";
-      return `<circle cx="${x}" cy="64" r="${hi?6:4}" fill="${hi?"#946012":"#1a1a1a"}"/>
-      <text x="${x}" y="80" text-anchor="middle" font-size="8.5" font-family="'Source Sans 3',sans-serif" font-weight="700" fill="#1a1a1a">${yr}</text>
-      ${note.split("\n").map((l,i)=>`<text x="${x}" y="${92+i*12}" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="#666">${l}</text>`).join("")}`;
+      return `<circle cx="${x}" cy="64" r="${hi?6:4}" class="${hi?"dg-bar-hi":"dg-bar"}""/>
+      <text x="${x}" y="80" text-anchor="middle" font-size="8.5" font-weight="700" fill="currentColor">${yr}</text>
+      ${note.split("\n").map((l,i)=>`<text x="${x}" y="${92+i*12}" text-anchor="middle" font-size="7.5" class="dg-muted" fill="currentColor">${l}</text>`).join("")}`;
     }).join("")}
-    <text x="640" y="52" text-anchor="end" font-size="8" font-family="'Source Sans 3',sans-serif" fill="#946012" font-weight="700">2025 →</text>
-    <text x="640" y="80" text-anchor="end" font-size="8.5" font-family="'Source Sans 3',sans-serif" font-weight="700" fill="#1a1a1a">Malaysia</text>
-    <text x="640" y="92" text-anchor="end" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="#666">chairs</text>
-    <text x="0" y="124" font-size="8.5" font-family="'Source Sans 3',sans-serif" fill="#999">Four M&amp;E cycles. Eight annual meetings. Two Shepherds. The measurement framework has not kept pace with the network's growth.</text>
+    <text x="640" y="52" text-anchor="end" font-size="8" class="dg-accent-text" fill="currentColor" font-weight="700">2025 →</text>
+    <text x="640" y="80" text-anchor="end" font-size="8.5" font-weight="700" fill="currentColor">Malaysia</text>
+    <text x="640" y="92" text-anchor="end" font-size="7.5" class="dg-muted" fill="currentColor">chairs</text>
+    <text x="0" y="124" font-size="8.5" class="dg-quiet" fill="currentColor">Four M&amp;E cycles. Eight annual meetings. Two Shepherds. The measurement framework has not kept pace with the network's growth.</text>
   </svg>
   <figcaption data-i18n="a.seven.years.of.meetings.partners">Seven years of meetings, partnerships, and reports. The network has grown steadily; the accountability architecture has not.</figcaption>
 </figure>`;
@@ -2240,44 +2270,44 @@ function renderEssay() {
   const illus1_REMOVED = `<figure class="essay-illus-UNUSED">
   <svg viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg">
     <!-- Buildings -->
-    <rect x="0" y="80" width="58" height="110" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
-    <rect x="8" y="92" width="12" height="12" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="26" y="92" width="12" height="12" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="8" y="112" width="12" height="12" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="26" y="112" width="12" height="12" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="66" y="100" width="48" height="90" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
-    <rect x="122" y="55" width="68" height="135" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
-    <rect x="132" y="68" width="14" height="14" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="152" y="68" width="14" height="14" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="132" y="90" width="14" height="14" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="152" y="90" width="14" height="14" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="132" y="112" width="14" height="14" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="152" y="112" width="14" height="14" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="330" y="65" width="60" height="125" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
-    <rect x="340" y="78" width="12" height="12" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="358" y="78" width="12" height="12" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="340" y="98" width="12" height="12" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <rect x="358" y="98" width="12" height="12" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <line x1="0" y1="190" x2="400" y2="190" stroke="#1a1a1a" stroke-width="1.5"/>
+    <rect x="0" y="80" width="58" height="110" fill="none" stroke="currentColor" stroke-width="1.5"/>
+    <rect x="8" y="92" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="26" y="92" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="8" y="112" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="26" y="112" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="66" y="100" width="48" height="90" fill="none" stroke="currentColor" stroke-width="1.5"/>
+    <rect x="122" y="55" width="68" height="135" fill="none" stroke="currentColor" stroke-width="1.5"/>
+    <rect x="132" y="68" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="152" y="68" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="132" y="90" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="152" y="90" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="132" y="112" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="152" y="112" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="330" y="65" width="60" height="125" fill="none" stroke="currentColor" stroke-width="1.5"/>
+    <rect x="340" y="78" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="358" y="78" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="340" y="98" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="358" y="98" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1"/>
+    <line x1="0" y1="190" x2="400" y2="190" stroke="currentColor" stroke-width="1.5"/>
     <!-- Figure -->
-    <circle cx="250" cy="112" r="13" fill="white" stroke="#1a1a1a" stroke-width="2"/>
-    <circle cx="246" cy="111" r="1.5" fill="#1a1a1a"/>
-    <circle cx="254" cy="111" r="1.5" fill="#1a1a1a"/>
-    <path d="M246 116 Q250 119 254 116" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="250" y1="125" x2="250" y2="158" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="250" y1="134" x2="270" y2="144" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <rect x="270" y="139" width="17" height="22" rx="2" fill="white" stroke="#1a1a1a" stroke-width="1.5"/>
-    <rect x="273" y="143" width="11" height="13" fill="#946012" opacity="0.85"/>
-    <line x1="250" y1="134" x2="232" y2="147" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <line x1="250" y1="158" x2="242" y2="186" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <line x1="250" y1="158" x2="258" y2="186" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="250" cy="112" r="13" fill="white" stroke="currentColor" stroke-width="2"/>
+    <circle cx="246" cy="111" r="1.5" fill="currentColor"/>
+    <circle cx="254" cy="111" r="1.5" fill="currentColor"/>
+    <path d="M246 116 Q250 119 254 116" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="250" y1="125" x2="250" y2="158" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="250" y1="134" x2="270" y2="144" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <rect x="270" y="139" width="17" height="22" rx="2" fill="white" stroke="currentColor" stroke-width="1.5"/>
+    <rect x="273" y="143" width="11" height="13" class="dg-accent-fill" fill="currentColor" opacity="0.85"/>
+    <line x1="250" y1="134" x2="232" y2="147" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <line x1="250" y1="158" x2="242" y2="186" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <line x1="250" y1="158" x2="258" y2="186" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
     <!-- Data lines -->
-    <line x1="195" y1="82" x2="272" y2="146" stroke="#946012" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
-    <circle cx="195" cy="82" r="3" fill="#946012" opacity="0.7"/>
-    <line x1="159" y1="96" x2="272" y2="148" stroke="#1a1a1a" stroke-width="0.8" stroke-dasharray="4 3" opacity="0.35"/>
-    <circle cx="159" cy="96" r="2.5" fill="#1a1a1a" opacity="0.35"/>
-    <line x1="334" y1="90" x2="288" y2="148" stroke="#1a1a1a" stroke-width="0.8" stroke-dasharray="4 3" opacity="0.35"/>
-    <circle cx="334" cy="90" r="2.5" fill="#1a1a1a" opacity="0.35"/>
+    <line x1="195" y1="82" x2="272" y2="146" class="dg-accent" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+    <circle cx="195" cy="82" r="3" class="dg-accent-fill" fill="currentColor" opacity="0.7"/>
+    <line x1="159" y1="96" x2="272" y2="148" stroke="currentColor" stroke-width="0.8" stroke-dasharray="4 3" opacity="0.35"/>
+    <circle cx="159" cy="96" r="2.5" fill="currentColor" opacity="0.35"/>
+    <line x1="334" y1="90" x2="288" y2="148" stroke="currentColor" stroke-width="0.8" stroke-dasharray="4 3" opacity="0.35"/>
+    <circle cx="334" cy="90" r="2.5" fill="currentColor" opacity="0.35"/>
   </svg>
   <figcaption data-i18n="a.the.city.is.already.producing.da">The city is already producing data. The question is whether the people inside it can read that data — and act on it.</figcaption>
 </figure>`;
@@ -2285,75 +2315,75 @@ function renderEssay() {
   const illus2_REMOVED = `<figure class="essay-illus-UNUSED">
   <svg viewBox="0 0 500 190" xmlns="http://www.w3.org/2000/svg">
     <!-- Connection lines -->
-    <line x1="75" y1="72" x2="178" y2="62" stroke="#e5e5e5" stroke-width="1"/>
-    <line x1="75" y1="72" x2="248" y2="84" stroke="#e5e5e5" stroke-width="1"/>
-    <line x1="178" y1="62" x2="248" y2="84" stroke="#e5e5e5" stroke-width="1"/>
-    <line x1="248" y1="84" x2="318" y2="62" stroke="#e5e5e5" stroke-width="1"/>
-    <line x1="248" y1="84" x2="418" y2="72" stroke="#e5e5e5" stroke-width="1"/>
-    <line x1="318" y1="62" x2="418" y2="72" stroke="#e5e5e5" stroke-width="1"/>
-    <line x1="128" y1="128" x2="248" y2="84" stroke="#e5e5e5" stroke-width="1"/>
-    <line x1="368" y1="128" x2="248" y2="84" stroke="#e5e5e5" stroke-width="1"/>
-    <line x1="128" y1="128" x2="75" y2="72" stroke="#e5e5e5" stroke-width="1"/>
-    <line x1="368" y1="128" x2="418" y2="72" stroke="#e5e5e5" stroke-width="1"/>
-    <line x1="248" y1="84" x2="75" y2="72" stroke="#946012" stroke-width="1.5" opacity="0.5"/>
-    <line x1="248" y1="84" x2="418" y2="72" stroke="#946012" stroke-width="1.5" opacity="0.5"/>
+    <line x1="75" y1="72" x2="178" y2="62" class="dg-hair" stroke="currentColor" stroke-width="1"/>
+    <line x1="75" y1="72" x2="248" y2="84" class="dg-hair" stroke="currentColor" stroke-width="1"/>
+    <line x1="178" y1="62" x2="248" y2="84" class="dg-hair" stroke="currentColor" stroke-width="1"/>
+    <line x1="248" y1="84" x2="318" y2="62" class="dg-hair" stroke="currentColor" stroke-width="1"/>
+    <line x1="248" y1="84" x2="418" y2="72" class="dg-hair" stroke="currentColor" stroke-width="1"/>
+    <line x1="318" y1="62" x2="418" y2="72" class="dg-hair" stroke="currentColor" stroke-width="1"/>
+    <line x1="128" y1="128" x2="248" y2="84" class="dg-hair" stroke="currentColor" stroke-width="1"/>
+    <line x1="368" y1="128" x2="248" y2="84" class="dg-hair" stroke="currentColor" stroke-width="1"/>
+    <line x1="128" y1="128" x2="75" y2="72" class="dg-hair" stroke="currentColor" stroke-width="1"/>
+    <line x1="368" y1="128" x2="418" y2="72" class="dg-hair" stroke="currentColor" stroke-width="1"/>
+    <line x1="248" y1="84" x2="75" y2="72" class="dg-accent" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
+    <line x1="248" y1="84" x2="418" y2="72" class="dg-accent" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
     <!-- Helper macro: figure(cx,cy,label) — defined inline per figure -->
     <!-- BN -->
-    <circle cx="75" cy="60" r="10" fill="white" stroke="#1a1a1a" stroke-width="1.5"/>
-    <line x1="75" y1="70" x2="75" y2="94" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <line x1="75" y1="78" x2="65" y2="88" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="75" y1="78" x2="85" y2="88" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="75" y1="94" x2="69" y2="110" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="75" y1="94" x2="81" y2="110" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <text x="75" y="126" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="#888">Brunei</text>
+    <circle cx="75" cy="60" r="10" fill="white" stroke="currentColor" stroke-width="1.5"/>
+    <line x1="75" y1="70" x2="75" y2="94" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <line x1="75" y1="78" x2="65" y2="88" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="75" y1="78" x2="85" y2="88" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="75" y1="94" x2="69" y2="110" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="75" y1="94" x2="81" y2="110" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <text x="75" y="126" text-anchor="middle" font-size="7.5" class="dg-muted" fill="currentColor">Brunei</text>
     <!-- KH -->
-    <circle cx="178" cy="50" r="10" fill="white" stroke="#1a1a1a" stroke-width="1.5"/>
-    <line x1="178" y1="60" x2="178" y2="84" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <line x1="178" y1="68" x2="168" y2="78" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="178" y1="68" x2="188" y2="78" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="178" y1="84" x2="172" y2="100" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="178" y1="84" x2="184" y2="100" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <text x="178" y="116" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="#888">Cambodia</text>
+    <circle cx="178" cy="50" r="10" fill="white" stroke="currentColor" stroke-width="1.5"/>
+    <line x1="178" y1="60" x2="178" y2="84" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <line x1="178" y1="68" x2="168" y2="78" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="178" y1="68" x2="188" y2="78" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="178" y1="84" x2="172" y2="100" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="178" y1="84" x2="184" y2="100" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <text x="178" y="116" text-anchor="middle" font-size="7.5" class="dg-muted" fill="currentColor">Cambodia</text>
     <!-- ID lower left -->
-    <circle cx="128" cy="116" r="10" fill="white" stroke="#1a1a1a" stroke-width="1.5"/>
-    <line x1="128" y1="126" x2="128" y2="150" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <line x1="128" y1="134" x2="118" y2="144" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="128" y1="134" x2="138" y2="144" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="128" y1="150" x2="122" y2="166" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="128" y1="150" x2="134" y2="166" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <text x="128" y="182" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="#888">Indonesia</text>
+    <circle cx="128" cy="116" r="10" fill="white" stroke="currentColor" stroke-width="1.5"/>
+    <line x1="128" y1="126" x2="128" y2="150" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <line x1="128" y1="134" x2="118" y2="144" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="128" y1="134" x2="138" y2="144" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="128" y1="150" x2="122" y2="166" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="128" y1="150" x2="134" y2="166" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <text x="128" y="182" text-anchor="middle" font-size="7.5" class="dg-muted" fill="currentColor">Indonesia</text>
     <!-- Center: ASEAN Secretariat -->
-    <circle cx="248" cy="68" r="13" fill="#fef9ed" stroke="#946012" stroke-width="2"/>
-    <line x1="248" y1="81" x2="248" y2="108" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="248" y1="90" x2="236" y2="100" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <line x1="248" y1="90" x2="260" y2="100" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <line x1="248" y1="108" x2="241" y2="124" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <line x1="248" y1="108" x2="255" y2="124" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <text x="248" y="142" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="#b45309" font-weight="700">Secretariat</text>
+    <circle cx="248" cy="68" r="13" class="dg-fill dg-accent" fill="currentColor" stroke="currentColor" stroke-width="2"/>
+    <line x1="248" y1="81" x2="248" y2="108" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="248" y1="90" x2="236" y2="100" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <line x1="248" y1="90" x2="260" y2="100" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <line x1="248" y1="108" x2="241" y2="124" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <line x1="248" y1="108" x2="255" y2="124" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <text x="248" y="142" text-anchor="middle" font-size="7.5" class="dg-accent-text" fill="currentColor" font-weight="700">Secretariat</text>
     <!-- MY -->
-    <circle cx="318" cy="50" r="10" fill="white" stroke="#1a1a1a" stroke-width="1.5"/>
-    <line x1="318" y1="60" x2="318" y2="84" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <line x1="318" y1="68" x2="308" y2="78" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="318" y1="68" x2="328" y2="78" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="318" y1="84" x2="312" y2="100" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="318" y1="84" x2="324" y2="100" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <text x="318" y="116" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="#888">Malaysia</text>
+    <circle cx="318" cy="50" r="10" fill="white" stroke="currentColor" stroke-width="1.5"/>
+    <line x1="318" y1="60" x2="318" y2="84" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <line x1="318" y1="68" x2="308" y2="78" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="318" y1="68" x2="328" y2="78" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="318" y1="84" x2="312" y2="100" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="318" y1="84" x2="324" y2="100" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <text x="318" y="116" text-anchor="middle" font-size="7.5" class="dg-muted" fill="currentColor">Malaysia</text>
     <!-- PH lower right -->
-    <circle cx="368" cy="116" r="10" fill="white" stroke="#1a1a1a" stroke-width="1.5"/>
-    <line x1="368" y1="126" x2="368" y2="150" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <line x1="368" y1="134" x2="358" y2="144" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="368" y1="134" x2="378" y2="144" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="368" y1="150" x2="362" y2="166" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="368" y1="150" x2="374" y2="166" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <text x="368" y="182" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="#888">Philippines</text>
+    <circle cx="368" cy="116" r="10" fill="white" stroke="currentColor" stroke-width="1.5"/>
+    <line x1="368" y1="126" x2="368" y2="150" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <line x1="368" y1="134" x2="358" y2="144" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="368" y1="134" x2="378" y2="144" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="368" y1="150" x2="362" y2="166" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="368" y1="150" x2="374" y2="166" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <text x="368" y="182" text-anchor="middle" font-size="7.5" class="dg-muted" fill="currentColor">Philippines</text>
     <!-- TH+SG -->
-    <circle cx="418" cy="60" r="10" fill="white" stroke="#1a1a1a" stroke-width="1.5"/>
-    <line x1="418" y1="70" x2="418" y2="94" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
-    <line x1="418" y1="78" x2="408" y2="88" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="418" y1="78" x2="428" y2="88" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="418" y1="94" x2="412" y2="110" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="418" y1="94" x2="424" y2="110" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
-    <text x="418" y="126" text-anchor="middle" font-size="7.5" font-family="'Source Sans 3',sans-serif" fill="#888">Thailand · SG</text>
+    <circle cx="418" cy="60" r="10" fill="white" stroke="currentColor" stroke-width="1.5"/>
+    <line x1="418" y1="70" x2="418" y2="94" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <line x1="418" y1="78" x2="408" y2="88" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="418" y1="78" x2="428" y2="88" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="418" y1="94" x2="412" y2="110" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="418" y1="94" x2="424" y2="110" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <text x="418" y="126" text-anchor="middle" font-size="7.5" class="dg-muted" fill="currentColor">Thailand · SG</text>
   </svg>
   <figcaption data-i18n="a.ascn.connects.ten.member.states">ASCN connects ten member states through the ASEAN Secretariat. The network's value depends on what flows through those connections — not the connections themselves.</figcaption>
 </figure>`;

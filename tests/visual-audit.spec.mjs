@@ -117,3 +117,85 @@ test('privacy boundaries translate without deleting the record panels or video l
     await page.locator('#tab-nav [data-tab="record"]').click();
   }
 });
+
+// The index rail.
+//
+// It was clamp(300px, 32vw, 420px): a rail sized as a SHARE OF THE SCREEN,
+// to hold fifteen labels whose longest word is ten characters. That is the
+// spatial hallucination the owner named — the grid's answer rather than the
+// reader's — and it also meant the rail changed width with the viewport
+// while its contents stayed exactly the same size.
+//
+// These tests assert the two things the rebuild had to deliver: the rail is
+// the width its content needs, and the elements inside it that share an
+// origin share it EXACTLY. The second one carries a mutation control,
+// because a check that can only pass proves nothing.
+const railGeometry = () => {
+  const rail = document.querySelector('.index');
+  const brand = document.querySelector('.brand.mark').getBoundingClientRect();
+  const locale = document.querySelector('.locale-btn').getBoundingClientRect();
+  const item = document.querySelector('.index-scroll .item');
+  const itemCS = getComputedStyle(item);
+  const itemRect = item.getBoundingClientRect();
+  const label = document.querySelector('.group-label');
+  const labelCS = getComputedStyle(label);
+  const labelRect = label.getBoundingClientRect();
+  const itemTextX = itemRect.x + parseFloat(itemCS.paddingLeft) + 20 + 7;
+  const labelX = labelRect.x + parseFloat(labelCS.paddingLeft);
+  const scroll = document.querySelector('.index-scroll');
+  return {
+    railWidth: Math.round(rail.getBoundingClientRect().width),
+    brandTop: brand.top, brandBottom: brand.bottom,
+    localeTop: locale.top, localeBottom: locale.bottom,
+    labelX: Math.round(labelX * 100) / 100,
+    itemTextX: Math.round(itemTextX * 100) / 100,
+    overflow: scroll.scrollHeight - scroll.clientHeight,
+  };
+};
+
+test('the index rail is sized by its content, and its contents share one origin', async ({ page }) => {
+  await page.goto('/#overview', { waitUntil: 'networkidle' });
+  await page.waitForTimeout(400);
+
+  const widths = [];
+  for (const width of [1280, 1440, 1920]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.waitForTimeout(250);
+    widths.push((await page.evaluate(railGeometry)).railWidth);
+  }
+  // The same width at every viewport: the rail answers to its content.
+  expect(new Set(widths).size, `rail widths across viewports: ${widths.join(', ')}`).toBe(1);
+
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.waitForTimeout(250);
+  const g = await page.evaluate(railGeometry);
+
+  // The wordmark and the language switch are in the same bar. One pixel
+  // apart reads as a failed attempt at alignment.
+  expect(Math.abs(g.brandTop - g.localeTop)).toBe(0);
+  expect(Math.abs(g.brandBottom - g.localeBottom)).toBe(0);
+  // The group heading sits on the axis of the items it heads.
+  expect(Math.abs(g.labelX - g.itemTextX)).toBe(0);
+  // The whole index fits: the last two sections must not be below the fold.
+  expect(g.overflow).toBe(0);
+});
+
+test('the rail-origin assertion catches a one-pixel misalignment (control)', async ({ page }) => {
+  await page.goto('/#overview', { waitUntil: 'networkidle' });
+  await page.waitForTimeout(400);
+  const measured = await page.evaluate(() => {
+    // Push the group heading one pixel off the items' axis, the way a
+    // stray padding or a border would.
+    const label = document.querySelector('.group-label');
+    label.style.paddingLeft = 'calc(var(--pad) + 20px + 7px + 1px)';
+    const item = document.querySelector('.index-scroll .item');
+    const itemCS = getComputedStyle(item);
+    const itemRect = item.getBoundingClientRect();
+    const labelRect = label.getBoundingClientRect();
+    const itemTextX = itemRect.x + parseFloat(itemCS.paddingLeft) + 20 + 7;
+    const labelX = labelRect.x + parseFloat(getComputedStyle(label).paddingLeft);
+    return Math.abs(labelX - itemTextX);
+  });
+  expect(measured).toBeGreaterThan(0);
+  expect(measured).toBeLessThanOrEqual(6);
+});

@@ -2,37 +2,53 @@
   color-scheme: dark;
 
   /* ══════════════════════════════════════════════════════════════════════
-     GROUND — measured from axiom.nonarkara.org (rams.css), not invented.
+     THE PALETTE — Sanzo Wada, cited by plate and by name.
 
-     Axiom's light ground is #faf9f7 warm paper over #191712 warm ink. Its
-     dark ground is #171a1e, with #0a0e14 for the deepest surfaces. This site
-     was already `color-scheme: dark` at #191d1c — a green-leaning near-black —
-     so this is a retune to Axiom's exact values, not a light-to-dark flip.
+     Not a mood board and not a hue rotation. Every colour on this site is a
+     credited Wada colour, or a documented value step of one, taken from the
+     owner's own Palette exhibition (colors.nonarkara.org, data/colors.json).
 
-     Every text value below was measured against #171a1e rather than eyeballed:
+     PLATE 151 — Sulpher Yellow #f5ecc2 · Yellow Orange #f99d1b ·
+               Vandar Poel's Blue #064f6e
 
-       --ink   #f2efe9   15.21:1   AAA
-       --ink-2 #b9b5ac    8.54:1   AAA
-       --ink-3 #8f8b80    5.13:1   AA
-       --ocher #e2b540    9.08:1   AAA
-       --accent#6fa0e6    6.52:1   AA
-       --neg   #ef6a5d    5.73:1   AA
-       --signal#1ec96b    8.00:1   AAA
+     That plate is the night street of a Southeast Asian city at dusk: the deep
+     teal of a shaded street and a tiled roof, the saffron of a temple gate and
+     a plate of noodles, and the rice-paper warmth of a lit window. It owns the
+     ground and the ink of this theme:
 
-     Two Axiom tokens do NOT survive the move to a dark ground, and the
-     measurement is why: --accent #1c4286 scores 1.81:1 and --neg #a51931
-     scores 2.31:1 on #171a1e. They are light-ground tokens. Axiom swaps the
-     accent to #6fa0e6 on dark for exactly this reason, so that is what the
-     role token holds here too. */
-  --paper: #171a1e;
-  --deep: #0a0e14;
-  --panel: #1f242a;
+       ground   Vandar Poel's Blue #064f6e, taken down to 8% luminance
+       ink      Sulpher Yellow #f5ecc2, used as it is
+       highlight Yellow Orange #f99d1b, used as it is
+
+     The rest of the roles come from the same book, each cited:
+       link       Calamine Blue #78cdd0    (plate 20)
+       negative   Coral Red #f58e84       (plate 92)
+       positive   Sea Green #00b49b       (plate 17)
+       data mark  Mineral Gray #a2b0ad    (plate 11)
+
+     Contrast was measured, not eyeballed. Against --paper #0a1a20:
+
+       --ink    #f5ecc2   14.95:1   AAA
+       --ink-2  #c6c0a2    9.70:1   AAA
+       --ink-3  #a49e83    6.60:1   AA
+       --ocher  #f99d1b    8.35:1   AAA
+       --accent #78cdd0    9.68:1   AAA
+       --neg    #f58e84    7.69:1   AAA
+       --signal #00b49b    6.77:1   AA
+       --line   #5a8089    4.13:1   AA (a rule is a graphic: 3:1 minimum)
+
+     The old ground was #171a1e, a blue-black with no colour in it at all. The
+     new one is the same value with the plate's hue in it, so the site reads as
+     a place rather than as a terminal. */
+  --paper: #0a1a20;
+  --deep: #061014;
+  --panel: #12262f;
 
   --bg: var(--paper);
-  --ink: #f2efe9;
-  --ink-2: #b9b5ac;
-  --ink-3: #8f8b80;
-  --muted: #8f8b80;
+  --ink: #f5ecc2;
+  --ink-2: #c6c0a2;
+  --ink-3: #a49e83;
+  --muted: #a49e83;
 
   /* Rules carry the whole spatial hierarchy here, so they are treated as
      information, not decoration: every value clears 3:1 against every surface
@@ -42,11 +58,11 @@
      These are deliberately LIGHTER than Axiom's own rules. Axiom divides
      space with hairlines at roughly 1.2:1 against its ground, which reads as
      tone rather than as a line you can count rows with. Here the rule IS the
-     hierarchy — 2px marks a section, 1px marks a record — and at 4.64:1 a
+     hierarchy — 2px marks a section, 1px marks a record — and at 4.13:1 a
      reader can actually see the record boundaries they are scanning for. */
-  --line: #7c8681;
-  --line-soft: #6b7772;
-  --line-dim: #98a49e;
+  --line: #5a8089;
+  --line-soft: #4c707b;
+  --line-dim: #6a909b;
   --rule: var(--line);
   --border: var(--line-soft);
 
@@ -61,12 +77,12 @@
      --id-navy and --id-red are identity marks (wordmark, brand). They are
      declared so nothing reaches for them as "the dark one", and they are
      never used as a foreground on this ground — both fail contrast here. */
-  --accent: #6fa0e6;
-  --ocher: #e2b540;
-  --neg: #ef6a5d;
-  --signal: #1ec96b;
-  --id-navy: #00247d;
-  --id-red: #a51931;
+  --accent: #78cdd0;
+  --ocher: #f99d1b;
+  --neg: #f58e84;
+  --signal: #00b49b;
+  --id-navy: #051230;
+  --id-red: #cc1236;
 
   /* Legacy names kept as aliases so the rest of the stylesheet keeps
      working. These are the same roles under their older names — which is the
@@ -81,42 +97,58 @@
      colour to fill bars made reading links and reading values the same
      colour. Monochrome carries the series; --neg stays reserved for the one
      row the argument turns on. */
-  --data: #97a3a8;
+  --data: #a2b0ad;
 
-  --surface: #1f242a;
-  --surface-2: #2a3037;
-  --companion: #223039;
-  --on-solid: #171a1e;
+  /* The Leaflet map sits on OpenStreetMap's LIGHT tiles in both themes, so
+     its own ink is theme-independent: a light-theme value step of Vandar
+     Poel's Blue, not a dark-theme one. */
+  --map-ink: #0f3038;
+  --map-link: #064f6e;
+
+  --surface: #12262f;
+  --surface-2: #1b333c;
+  --companion: #173039;
+  --on-solid: #0a1a20;
   --content: min(1600px, calc(100vw - 2rem));
 
-  /* Fonts. Two design faces, self-hosted because the CSP is font-src 'self':
-     Julius Sans One for the display register and Archivo for prose, with
-     Prompt carrying Thai in both. Julius Sans One is unicase, which is the
-     Bauhaus Universal signature; Archivo is the grotesque that keeps 13px
-     copy readable. The third is not a third
-     design choice: without a CJK face the Chinese edition had no glyphs at
-     all and fell through to whatever the visitor's OS picked. It sits last so
-     a Latin or Thai run never reaches it.
+  /* Fonts. Two design faces, self-hosted because the CSP is font-src 'self'.
+
+     JOST is the Latin face, in both registers. It is the Bauhaus/Bayer
+     Universal lineage this design system names first, and it ships 100–900 —
+     so the display register can carry 600 and actually have weight.
+
+     It replaces two faces. JULIUS SANS ONE was the display face and shipped a
+     SINGLE weight (400): every headline, label and figure on this site was
+     set in a face with no weight range at all, which is exactly what "too
+     lean/slim" meant. ARCHIVO was the body face, a grotesque chosen for tight
+     apertures at 13px. Between them, with Prompt, that was three families
+     against a rule that allows two. Jost carries both registers, so the count
+     is two again — and the display register gets its weight from Jost's
+     weight axis instead of from a second typeface.
+
+     PROMPT carries Thai and Vietnamese in both registers. Jost has no Thai
+     glyphs at all, so Prompt is not a third design choice; it is the only
+     face that can set this site's Thai.
+
+     The CJK stack is not a third family either: without it the Chinese
+     edition had no glyphs at all and fell through to whatever the visitor's OS
+     picked. It sits last so a Latin or Thai run never reaches it.
 
      This replaces "Helvetica Neue", Helvetica, Arial, "IBM Plex Sans Thai",
      sans-serif — a system font doing the work of a design font, naming a Thai
      face the site never shipped, and naming no CJK face whatsoever. */
-  /* Two registers, not two families competing.
-     --font is every line a reader reads as prose. Archivo is a grotesque:
-     tight apertures, flat terminals, no geometric circles — deliberately not
-     the Poppins/Jost/Josefin shape.
-     --font-display is everything that states something: headlines, figures,
-     section heads, nav, labels. Julius Sans One is unicase, so its lowercase
-     and uppercase are one shape, which is the signature of Bauhaus Universal
-     and the thing no free geometric on Google Fonts actually has. It is one
-     weight and reads as capitals at small sizes, so it never sets prose.
-     Prompt serves Thai in both registers and CJK falls through to the system
-     stack, which is why it sits before them in both. */
-  --font: "Archivo", "Prompt", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB",
+  --font: "Jost", "Prompt", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB",
           "Microsoft YaHei", "Source Han Sans SC", sans-serif;
-  --font-display: "Julius Sans One", "Prompt", "Noto Sans SC", "PingFang SC",
+  --font-display: "Jost", "Prompt", "Noto Sans SC", "PingFang SC",
           "Hiragino Sans GB", "Microsoft YaHei", "Source Han Sans SC", sans-serif;
-  --mono: ui-monospace, "IBM Plex Mono", "JetBrains Mono", Menlo, monospace;
+  /* The mono stack was ui-monospace first, with two faces the site never
+     shipped behind it, so every "mono" run rendered in the reader's system
+     mono: a THIRD family on a site whose own rule allows two, and a
+     different face for the figures than for the headings they belong to.
+     The two vendored families set the data instead, which is what the rule
+     above this block claims. */
+  --mono: "Jost", "Prompt", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB",
+          "Microsoft YaHei", "Source Han Sans SC", sans-serif;
 
   /* ── Spacing scale ───────────────────────────────────────────────────────
      Axiom declares four steps and every panel uses one of them. This
@@ -128,6 +160,23 @@
   --box-pad-loose: 1.5rem;
   --gap: 1rem;
   --pad: 1rem;
+
+  /* THE RAIL'S WIDTH — the width its content needs, not a share of the screen.
+
+     It was clamp(300px, 32vw, 420px): 420px of a 1440px screen, to hold
+     fifteen labels whose longest word is "Innovation" — 62px. That is the
+     spatial hallucination the owner named: the rail's width was the grid's
+     answer, not the reader's. 32vw also meant the rail got NARROWER on a
+     smaller screen while its contents stayed exactly the same size.
+
+     242px is what the rail actually holds: the brand block (72px), the
+     language switch (132px — three buttons at the 44px touch floor, which
+     is not negotiable), and the nav column: 13px of padding, a 20px number
+     gutter, and "OBSERVATORY" set at the label's own axis (40px).
+
+     The plate gets the rest. At 1440 that is 1198px of reading column
+     instead of 1020. */
+  --rail: 242px;
   --hover-wash: rgba(111, 160, 230, 0.08);
 
   /* ══════════════════════════════════════════════════════════════════════
@@ -177,7 +226,16 @@
   --measure-paper-a5: 410px;
 
   /* Headings want a shorter line than prose. About two thirds. */
-  --measure-heading: 40ch;
+  /* The heading measure, in `ch`.
+     `ch` is the advance of the digit zero, not the advance of a letter. In
+     Jost the zero is 0.66em wide and the average lowercase letter is 0.46em,
+     so 40ch carried FIFTY-SEVEN characters of text and the research card
+     titles came back one over the 56-grapheme budget this rule enforces.
+     The same ratio holds at every size — that is the property the comment
+     above this token claims — so the number is calibrated here once, for
+     the face that is actually vendored: 38ch is 54 graphemes, inside the
+     budget with room for a title of mostly capitals. */
+  --measure-heading: 38ch;
 
   /* ── Type ramp — Axiom's measured ladder ────────────────────────────────
      display 36–76 · lead 19–24 · lede 15 · body 13 · micro 11 · label 10
@@ -221,31 +279,66 @@
   --text-micro: var(--t-micro);
 }
 
+/* THE SAME PLATE, INVERTED.
+
+   Plate 151 again, read the other way round: the dominant field is now the
+   rice-paper Sulpher Yellow #f5ecc2, lightened to #f7f1dd so a page of it can
+   be read, and the counter-field is the deep teal of Vandar Poel's Blue
+   #064f6e. The highlight changes value too — Yellow Orange #f99d1b cannot
+   carry text on a paper ground (1.95:1), so the light theme takes Burnt
+   Sienna #ae5224, which is the same pigment one step down and clears 4.61:1
+   as text and 4.61:1 as a fill with --on-solid on it.
+
+     --ink     #0f3038   12.39:1   AAA
+     --ink-2   #4a626b    5.72:1   AA
+     --muted   #54696f    4.92:1   AA
+     --accent  #064f6e    7.90:1   AAA
+     --ocher   #ae5224    4.61:1   AA
+     --neg     #ab2439    6.11:1   AA
+     --signal  #1a7444    5.13:1   AA
+
+   --data was missing here entirely, so the light theme was drawing its bars
+   in the DARK theme's #97a3a8 — 2.46:1 on a paper ground, invisible. It now
+   has its own value. */
 [data-theme="light"] {
   color-scheme: light;
-  --paper: #faf9f7;
-  --deep: #f2efe9;
-  --panel: #f0ede6;
-  --bg: #faf9f7;
-  --ink: #191712;
-  --ink-2: #5c564e;
-  --ink-3: #756f66;
-  --muted: #5c564e;
-  --line: #c4beb4;
-  --line-soft: #dcd7ce;
-  --line-dim: #b0aaa0;
+  --paper: #f7f1dd;
+  --deep: #ece1c4;
+  --panel: #efe6c6;
+  --bg: #f7f1dd;
+  --ink: #0f3038;
+  --ink-2: #4a626b;
+  --ink-3: #54696f;
+  --muted: #54696f;
+  /* The light theme's rules. On a near-white ground a rule has to be MUCH
+     darker to clear the same 3:1 the dark theme's rules clear easily: the
+     ground's luminance is 0.88 here and 0.01 there, so a rule at the same
+     apparent weight was 1.80:1 in the light theme against 4.13:1 in the
+     dark. The diagram rules measured 1.39:1 and 1.80:1 — two of every
+     diagram's lines were invisible on paper. Warm greys, value steps of
+     the same Sulpher Yellow the paper is a step of. */
+  --line: #7f8378;
+  --line-soft: #83877c;
+  --line-dim: #898d80;
   --rule: var(--line);
   --border: var(--line-soft);
-  --accent: #1c4286;
-  --navy: #1c4286;
-  --ocher: #9e6f00;
-  --neg: #a51931;
-  --signal: #0b7a3e;
-  --surface: #f0ede6;
-  --surface-2: #e8e4dc;
-  --companion: #ece8df;
-  --on-solid: #faf9f7;
-  --hover-wash: rgba(0, 36, 125, 0.04);
+  --accent: #064f6e;
+  --navy: #064f6e;
+  /* Burnt Sienna, one step deeper than the dark theme's Yellow Orange.
+     On the light PANEL the paper-level ocher came out at 4.17:1, and the
+     accent text that sits on panels — the diagram's highlighted label and
+     the essay's own sub-headings — is exactly that small text. */
+  --ocher: #9d4a1f;
+  --neg: #ab2439;
+  --signal: #1a7444;
+  --data: #6e858b;
+  --id-navy: #051230;
+  --id-red: #cc1236;
+  --surface: #efe6c6;
+  --surface-2: #e7dcb8;
+  --companion: #ebe0bf;
+  --on-solid: #f7f1dd;
+  --hover-wash: rgba(6, 79, 110, 0.05);
 }
 
 *,
@@ -326,7 +419,7 @@ p, li, dd, blockquote, figcaption, .lede {
 .shell {
   height: 100dvh;
   display: grid;
-  grid-template-columns: clamp(300px, 32vw, 420px) minmax(0, 1fr);
+  grid-template-columns: var(--rail) minmax(0, 1fr);
   background: var(--paper);
   color: var(--ink);
 }
@@ -340,7 +433,11 @@ p, li, dd, blockquote, figcaption, .lede {
 }
 
 .index {
-  border-right: 1px solid var(--line);
+  /* A hairline may not occupy layout space (MoMA Law I). A 1px border here
+     made the rail's content box one pixel narrower than its grid track, and
+     every child of the rail inherited that pixel. The rule is drawn inside
+     the track instead, so the rail's content is exactly --rail wide. */
+  box-shadow: inset -1px 0 0 var(--line);
   background: var(--paper);
   /* The rail's own width, not the viewport's, decides what fits in its bar.
      It is 32vw wide — 328px on a 1024px screen, 420px on a wide one — so a
@@ -363,7 +460,13 @@ main.plate {
   align-items: center;
   gap: 12px;
   padding: 0 var(--pad);
-  border-bottom: 1px solid var(--line);
+  /* Not a border. A 1px border-bottom inside a 44px border-box bar leaves a
+     43px content box, and a 44px child centred in it overflows half a pixel
+     above the bar's top edge — the brand mark sat at y = -0.5 while the shell
+     sat at y = 0. That half-pixel is what put the wordmark and the language
+     switch one pixel out of alignment with each other: the classic near
+     miss, 1–6px apart, which reads as a failed attempt at alignment. */
+  box-shadow: inset 0 -1px 0 var(--line);
   background: var(--paper);
 }
 
@@ -427,23 +530,29 @@ main.plate {
   margin-left: auto;
   display: inline-flex;
   align-items: stretch;
+  gap: 2px;
   height: 44px;
-  border: 1px solid var(--line);
 }
 
 .locale-btn {
-  /* The 44px floor in both directions: it is a control, and the switch sits
-     in the rail where a thumb lands. */
+  /* The 44px floor in BOTH dimensions: it is a control, and the switch sits
+     in the rail where a thumb lands. The width is what the touch floor
+     costs, and the rail's width is the width its content needs — so the
+     three buttons are 132px of the rail, honestly accounted for, instead of
+     a row of boxes in a column that was 420px wide for no reason.
+
+     The pressed state is drawn with an inset shadow rather than a border,
+     for the same reason the bar's rule is: a 2px border-bottom inside a 44px
+     border-box button leaves a 42px content box, and the letters sit one
+     pixel above where the wordmark's letters sit. One pixel. Exactly the
+     near-miss band the eye catches and calls amateur. */
   min-width: 44px;
   min-height: 44px;
-  padding: 0 6px;
+  padding: 0 5px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-left: 1px solid var(--line);
-  border-top: 0;
-  border-right: 0;
-  border-bottom: 2px solid transparent;
+  border: 0;
   border-radius: 0;
   background: none;
   font-family: var(--mono);
@@ -452,12 +561,20 @@ main.plate {
   color: var(--muted);
   cursor: pointer;
 }
-.locale-btn:first-child { border-left: 0; }
 .locale-btn:hover { color: var(--ink); }
 .locale-btn.is-active,
 .locale-btn[aria-pressed="true"] {
   color: var(--ink);
-  border-bottom-color: var(--ocher);
+  /* The marker rides the word, not the bottom of the button. An inset bar
+     2px from a 44px box sat eighteen pixels below the letters it marked
+     and replaced the bar's own rule for that span, so the press read as a
+     break in a line rather than as an underline. An underline with an
+     offset sits where a reader expects an underline, and leaves the rule
+     alone. */
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.22em;
+  text-decoration-color: var(--ocher);
   font-weight: 700;
 }
 .locale-btn:focus-visible {
@@ -487,7 +604,12 @@ main.plate {
   outline-offset: -1px;
 }
 
-.back, .theme-mobile { display: none; }
+.back { display: none; }
+/* The theme toggle is one control, in the plate bar, at every width. It used
+   to exist twice — once in the rail, once in the plate bar as .theme-mobile,
+   shown only under 860px — and the rail's copy was 44px of the rail's width
+   spent on a preference the reader can set once, from any section. */
+.theme-toggle { display: inline-flex; }
 .bar-open[hidden] { display: none; }
 
 .bar-kicker {
@@ -511,7 +633,7 @@ main.plate {
   align-items: center;
   gap: 10px;
   padding: 0 var(--pad);
-  border-bottom: 1px solid var(--line);
+  box-shadow: inset 0 -1px 0 var(--line);
 }
 
 .find input {
@@ -526,6 +648,15 @@ main.plate {
   font-size: 13px;
   color: var(--ink);
 }
+/* The rail's search field shares 242px with a 53px Find button, so it has to
+   be able to give ground. The generic rule further down —
+   `input[type="search"] { min-width: min(16rem, 100%) }` — ties on
+   specificity with `.find input { min-width: 0 }` above and beats it by
+   being later, so the field could not shrink: the row's content came to
+   271px inside a 216px box, the button was pushed 42px past the rail's
+   edge and under the plate, and the plate's locator swallowed its clicks.
+   The button was dead. One rule, and the row fits its rail again. */
+.find input[type="search"] { min-width: 0; }
 .find input::placeholder { color: var(--muted); }
 .find input:focus-visible {
   outline: 1px solid var(--navy);
@@ -567,7 +698,7 @@ main.plate {
   justify-content: flex-start;
   gap: 20px;
   padding: 0 var(--pad);
-  border-bottom: 1px solid var(--line);
+  box-shadow: inset 0 -1px 0 var(--line);
   font-family: var(--mono);
   font-size: 11px;
   letter-spacing: 0.06em;
@@ -584,16 +715,28 @@ main.plate {
 }
 
 .index-scroll {
-  padding: 8px 0 24px;
+  /* The index has to FIT. Fifteen entries at a 44px touch target, four group
+     headings and their separation, have to live in the rail without a scroll
+     on a 900px-tall screen — otherwise the last two sections of the site are
+     below the fold of the thing that is supposed to be the map of the site.
+     The 24px of bottom padding and the 18px between groups were the two
+     places that space was being spent for nothing. */
+  padding: 4px 0 4px;
   overflow-x: clip;
 }
 
-.group { margin-top: 18px; }
-.group:first-child { margin-top: 8px; }
+.group { margin-top: 8px; }
+.group:first-child { margin-top: 4px; }
 
+/* The group headings sat at --pad + 44px — the END of the old number
+   gutter — while the items they head started at --pad + 44px + 8px, one
+   gap further right. Eight pixels of nothing between a heading and the
+   first word under it. The heading now sits on exactly the axis of the
+   item text: --pad + gutter + gap. */
 .group-label {
   margin: 0;
-  padding: 0 var(--pad) 4px calc(var(--pad) + 44px);
+  padding: 0 var(--pad) 2px calc(var(--pad) + 20px + 7px);
+  line-height: 1.2;
   /* The micro step — a label, which is what --t-micro is for. It was 10px,
      a size the rest of the site never used. */
   font-size: var(--t-micro);
@@ -611,10 +754,15 @@ main.plate {
   margin-left: 8px;
 }
 
+/* The number gutter was 44px — as wide as the word "Overview" — to hold two
+   digits set at 10px. It is 20px now, and the label column moves left with
+   it. The gutter is the only thing between the rail's left edge and the
+   words, so every pixel of it is a pixel of the rail's width paid for
+   nothing. */
 .item {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr);
-  column-gap: 8px;
+  grid-template-columns: 20px minmax(0, 1fr);
+  column-gap: 7px;
   align-items: baseline;
   align-content: center;
   width: 100%;
@@ -647,13 +795,17 @@ main.plate {
   .item:hover::before { color: var(--navy); }
 }
 
+/* One wayfinding language for the whole site: the ocher. The active index
+   row, the pressed language button and the active filter chip all mark
+   themselves the same way, in the same colour. The active row used ink,
+   which is the colour of everything. */
 .item.active,
 .item[aria-current="page"] {
   font-weight: 600;
-  box-shadow: inset 2px 0 0 var(--ink);
+  box-shadow: inset 2px 0 0 var(--ocher);
 }
 .item.active::before,
-.item[aria-current="page"]::before { color: var(--ink); }
+.item[aria-current="page"]::before { color: var(--ocher); }
 
 .item:focus-visible {
   outline: 1px solid var(--navy);
@@ -662,8 +814,9 @@ main.plate {
 
 .index-footer {
   margin-top: auto;
-  padding: 12px var(--pad);
-  border-top: 1px solid var(--line);
+  padding: 4px var(--pad);
+  /* Drawn, not laid out — the same Law I rule the bar and the locator obey. */
+  box-shadow: inset 0 1px 0 var(--line);
   font-size: 11px;
   color: var(--muted);
 }
@@ -691,11 +844,11 @@ main.plate {
 
 @media (max-width: 860px) {
   .shell { grid-template-columns: 1fr; }
-  .index { border-right: 0; }
+  .index { box-shadow: none; }
   .plate { display: none; }
   .shell.is-open .index { display: none; }
   .shell.is-open .plate { display: flex; }
-  .back, .theme-mobile { display: inline-flex; }
+  .back { display: inline-flex; }
   .locale-btn { min-width: 24px; padding: 0 4px; font-size: 9px; }
 }
 .view {
@@ -735,6 +888,20 @@ h1, h2, h3,
 .persp-stance h2, .persp-byline,
 .persp-point b, .essay-h2, .essay-h3,
 .essay-section > .essay-h3 { font-family: var(--font-display); }
+
+/* The display register earns its weight. Julius Sans One shipped one weight —
+   400 — so the whole display register was a thin geometric with no weight
+   axis at all. These elements STATE something: a headline, a figure, a
+   section head, a column head. At 600 in Jost they carry it.
+
+   The rule is deliberately narrow. A muted note, a table cell and a nav row
+   are not statements; they keep their own weights, and putting them on the
+   same list would make the statements stop meaning anything. */
+h1, h2, h3, .label, th,
+.kpi strong, .rec-finding-num, .archive-title,
+.essay-title, .essay-next-title, .essay-next-h,
+.persp-stance h2, .persp-point b, .essay-h2, .essay-h3,
+.essay-section > .essay-h3 { font-weight: 600; }
 /* Display sizes are optically loose at tracking 0 — the same face reads
    tighter large because the counters occupy less relative space. The headline
    was set with no correction at all, which is a large part of why it read as
@@ -794,7 +961,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin: 1.6rem 0; }
 .kpi-grid--four { grid-template-columns: repeat(4, 1fr); }
 .kpi { min-height: 5.2rem; padding: 0.75rem 0.8rem 0 0; border-top: 1px solid var(--line); }
-.kpi + .kpi { border-left: 1px solid var(--line-soft); padding-left: 0.8rem; }
+.kpi + .kpi { box-shadow: inset 1px 0 0 var(--line-soft); padding-left: 0.8rem; }
 .kpi strong { display: block; margin-bottom: 0.15rem; font-size: var(--t-h2); line-height: 1; font-weight: 800; }
 .kpi span { display: block; color: var(--muted); font-size:var(--t-micro); font-weight: 700; }
 
@@ -1021,7 +1188,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
 }
 .showcase-layout { display: grid; grid-template-columns: minmax(0, 3fr) minmax(16rem, 1fr); gap: 1.25rem; align-items: start; }
 .showcase-feature { margin: 0; min-width: 0; }
-.showcase-feature video { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: contain; background: #101418; }
+.showcase-feature video { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: contain; background: var(--deep); }
 .showcase-feature figcaption { margin-top: 0.7rem; }
 .showcase-caption-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
 .showcase-caption-head h2, .meeting-summary h2 { font-size: var(--t-body); line-height: 1.3; font-weight: 700; letter-spacing: 0; }
@@ -1030,9 +1197,9 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .showcase-open:hover { text-decoration: underline; }
 .showcase-selector { display: grid; gap: 0; min-width: 0; }
 .showcase-selector[hidden] { display: none; }
-.showcase-clip { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); gap: 0.7rem; align-items: start; text-align: left; width: 100%; border: 0; border-top: 1px solid var(--line); border-left: 3px solid transparent; background: transparent; padding: 0.8rem 0.6rem; color: var(--ink); cursor: pointer; }
+.showcase-clip { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); gap: 0.7rem; align-items: start; text-align: left; width: 100%; border: 0; box-shadow: inset 0 1px 0 var(--line); background: transparent; padding: 0.8rem 0.6rem; color: var(--ink); cursor: pointer; }
 .showcase-clip:first-child { border-top: 0; }
-.showcase-clip[aria-pressed="true"] { border-left-color: var(--amber); background: var(--surface); }
+.showcase-clip[aria-pressed="true"] { box-shadow: inset 0 1px 0 var(--line), inset 2px 0 0 var(--amber); background: var(--surface); }
 .showcase-clip:hover { background: var(--surface); }
 .showcase-clip:focus-visible, .showcase-open:focus-visible, .meeting-summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .showcase-clip:active { transform: scale(0.97); }
@@ -1439,7 +1606,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
 }
 .spotlight-actions .text-button.primary {
   background: var(--ink);
-  color: #fff;
+  color: var(--on-solid);
   border-color: var(--ink);
   padding: 0.6rem 1.1rem;
   font-weight: 700;
@@ -1465,7 +1632,11 @@ input[type="search"] { min-width: min(16rem, 100%); }
   display: flex;
   flex-direction: column;
   background: var(--surface);
-  border: 1px solid var(--line);
+  /* A hairline may not occupy layout space. This card's 1px border made its
+     content start one pixel right of everything else in the column — the
+     1px near miss the audit kept finding against the plate's own origin. */
+  border: 0;
+  box-shadow: inset 0 0 0 1px var(--line);
   overflow: hidden;
   min-width: 0;
 }
@@ -1672,7 +1843,11 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .bar-row.wide-label { grid-template-columns: minmax(9rem, 13rem) 1fr 7rem; }
 .bar-row span { color: var(--ink-2); }
 .bar-row strong { text-align: right; }
-.bar-track { position: relative; height: 0.45rem; overflow: hidden; background: var(--surface); border: 1px solid var(--line-soft); }
+.bar-track { position: relative; height: 0.45rem; overflow: hidden; background: var(--surface);
+  /* A hairline may not occupy layout space: a 1px border inside a border-box
+     track pushes the fill one pixel in, and thirty-five fills sat one pixel
+     off their own tracks. */
+  box-shadow: inset 0 0 0 1px var(--line-soft); }
 .bar-fill { height: 100%; background: var(--data); }
 .bar-fill.red { background: var(--red); }
 .bar-fill.green { background: var(--green); }
@@ -1745,7 +1920,11 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .sea-map { width: 100%; height: 30rem; border: 1px solid var(--line-soft); background: var(--surface); }
 .leaflet-container { font-family: var(--font); }
 .map-legend { display: flex; flex-wrap: wrap; gap: 0.9rem; margin: 0; color: var(--muted); font-size:var(--t-small); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
-.map-legend i { display: inline-block; width: 0.6rem; height: 0.6rem; border-radius: 50%; margin-right: 0.3rem; vertical-align: middle; }
+.map-legend i { display: inline-block; width: 0.6rem; height: 0.6rem; border-radius: 50%; margin-right: 0.3rem; vertical-align: middle; /* The key is drawn the way the map draws the mark: a filled
+     circle with a light ring. Without the ring the 2026 cohort's swatch
+     sat on the panel at 1.04:1 and the 2018 swatch at 1.99:1 — two of the
+     four keys were invisible, and a key that cannot be seen is not a key. */
+  box-shadow: inset 0 0 0 1.5px var(--on-solid); }
 
 .city-detail { border-top: 1px solid var(--line); padding-top: 0.9rem; min-height: 18rem; }
 .city-detail .cd-place { color: var(--muted); font-weight: 800; font-size:var(--t-micro); letter-spacing: 0.1em; text-transform: uppercase; }
@@ -1769,8 +1948,12 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .cd-empty { color: var(--muted); }
 .cd-portal { display: inline-flex; min-height: 40px; align-items: center; margin-top: 0.8rem; color: var(--navy); font-weight: 800; font-size:var(--t-small); letter-spacing: 0.06em; text-transform: uppercase; }
 
-.city-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-top: 1px solid var(--line); }
-.city-card { text-align: left; border: 0; border-bottom: 1px solid var(--line-soft); border-right: 1px solid var(--line-soft); background: transparent; cursor: pointer; padding: 0.85rem 0.9rem 0.9rem 0; }
+/* Five across, the width the entries need. Four columns held
+   293px cards whose own text ran to about 165px: the card was half empty
+   because the grid put it there. The plate is 1198px wide now that the rail
+   is 242px, and five across is the same count the overview's strip uses. */
+.city-cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; border-top: 1px solid var(--line); }
+.city-card { text-align: left; border: 0; box-shadow: inset 0 -1px 0 var(--line-soft), inset -1px 0 0 var(--line-soft); background: transparent; cursor: pointer; padding: 0.85rem 0.9rem 0.9rem 0; }
 .city-card:hover { background: var(--surface); }
 .city-card.active { background: var(--surface); }
 .city-card b { display: block; font-size:var(--t-body); }
@@ -1803,7 +1986,7 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 
 .big-projects { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; border-top: 1px solid var(--line); }
 .big-project { display: grid; grid-template-columns: 1fr auto; gap: 0.5rem 1rem; align-items: baseline; padding: 0.85rem 1rem 0.85rem 0; border-bottom: 1px solid var(--line-soft); }
-.big-project:nth-child(odd) { border-right: 1px solid var(--line-soft); }
+.big-project:nth-child(odd) { box-shadow: inset -1px 0 0 var(--line-soft); }
 .big-project b { font-size:var(--t-body); }
 .big-project .bp-city { color: var(--muted); font-size:var(--t-small); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
 .big-project .bp-amt { color: var(--red); font-weight: 800; font-size:var(--t-lede); white-space: nowrap; }
@@ -1907,7 +2090,7 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .download-card .text-button { align-self: start; margin-top: auto; }
 
 .document-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 1px solid var(--line); }
-.doc-card { display: flex; flex-direction: column; padding: 0.95rem 1rem 1rem 0; border-bottom: 1px solid var(--line-soft); border-right: 1px solid var(--line-soft); }
+.doc-card { display: flex; flex-direction: column; padding: 0.95rem 1rem 1rem 0; box-shadow: inset 0 -1px 0 var(--line-soft), inset -1px 0 0 var(--line-soft); }
 .doc-card .dc-kind { color: var(--navy); font-weight: 800; font-size:var(--t-micro); letter-spacing: 0.08em; text-transform: uppercase; }
 .doc-card b { font-size:var(--t-body); margin: 0.25rem 0; }
 .doc-card p { color: var(--ink-2); font-size:var(--t-body); margin: 0 0 0.8rem; }
@@ -2069,7 +2252,7 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .library { display: grid; gap: 1.9rem; }
 .lib-group .label { margin-bottom: 0.5rem; }
 .lib-items { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; border-top: 1px solid var(--line); }
-.lib-item { padding: 0.85rem 1.1rem 0.95rem 0; border-bottom: 1px solid var(--line-soft); border-right: 1px solid var(--line-soft); }
+.lib-item { padding: 0.85rem 1.1rem 0.95rem 0; box-shadow: inset 0 -1px 0 var(--line-soft), inset -1px 0 0 var(--line-soft); }
 .lib-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.6rem; }
 .lib-head b { font-size:var(--t-body); }
 .lib-dl, .lib-read { font-size:var(--t-micro); font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; min-height: 32px; display: inline-flex; align-items: center; }
@@ -2610,6 +2793,33 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
   margin: 2.2rem 0;
   overflow-x: auto;
 }
+
+/* The essay's inline diagrams were drawn with hardcoded light-theme ink:
+   #1a1a1a strokes and #1a1a1a labels on a TRANSPARENT ground. On the dark
+   ground that is 1.03:1 — the governance diagram and the money map were
+   invisible on the theme this site opens in. They now take the theme's own
+   tokens.
+
+   Their labels also asked for 'Source Sans 3', a face this site never
+   vendored, so every diagram label fell through to the browser's default
+   sans while the prose around it was set in the design face. The CSS rule
+   below overrides that presentation attribute with the real stack. */
+.essay-diagram svg { color: var(--ink); }
+.essay-diagram svg text { font-family: var(--font); }
+.essay-diagram .dg-muted { fill: var(--muted); }
+.essay-diagram .dg-rule { stroke: var(--line); }
+.essay-diagram .dg-hair { stroke: var(--line-soft); }
+.essay-diagram .dg-fill { fill: var(--surface); }
+.essay-diagram .dg-accent { stroke: var(--ocher); }
+.essay-diagram .dg-accent-text { fill: var(--ocher); }
+.essay-diagram .dg-label { fill: var(--ink-2); }
+.essay-diagram .dg-quiet { fill: color-mix(in srgb, var(--muted) 80%, transparent); }
+/* On paper the 80% wash lands at 3.44:1 — below the 4.5:1 that small text
+   owes. The light theme's quiet label is the muted ink itself. */
+[data-theme="light"] .essay-diagram .dg-quiet { fill: var(--muted); }
+.essay-diagram .dg-bar { fill: var(--ink-3); }
+.essay-diagram .dg-bar-hi { fill: var(--ocher); }
+.essay-diagram .dg-accent-fill { fill: var(--ocher); }
 .essay-diagram svg {
   display: block;
   width: 100%;
@@ -2690,6 +2900,17 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 }
 /* impact enrichment */
 .impact-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+/* The name of the focus area, beside its colour. Nine dots in six colours
+   with no key is a painted chart a reader cannot read. */
+.impact-focus {
+  display: inline-block;
+  font-size: var(--t-micro);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-right: 0.45rem;
+}
 .impact-note { display: block; font-style: normal; color: var(--muted); font-size:var(--t-micro); line-height: 1.45; margin-top: 0.25rem; }
 
 .essay-next-card {
@@ -2800,7 +3021,7 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
   padding: 0.15rem 0.35rem;
   text-align: center;
 }
-.alum-nr { background: rgba(24,58,90,0.08); color: var(--navy, #183a5a); }
+.alum-nr { background: color-mix(in srgb, var(--navy) 8%, transparent); color: var(--navy); }
 .alum-csco { background: rgba(168,109,20,0.1); color: var(--amber); }
 .alum-staff { background: var(--line-soft); color: var(--muted); }
 
@@ -3161,8 +3382,8 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 
 /* City contact popup */
 .cpop-wrap .leaflet-popup-content-wrapper {
-  background: #0f1318;
-  border: 1px solid rgba(0,0,0,0.45);
+  background: var(--deep);
+  border: 1px solid var(--line);
   border-radius: 0;
   box-shadow: none; /* override Leaflet's default drop shadow — §11.6 */
   color: var(--ink);
@@ -3170,7 +3391,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 }
 .cpop-wrap .leaflet-popup-tip-container { display: none; }
 .cpop-wrap .leaflet-popup-content { margin: 0; width: auto !important; }
-.cpop-wrap .leaflet-popup-close-button { color: rgba(255,255,255,0.4) !important; top: 6px !important; right: 8px !important; font-size: 16px !important; }
+.cpop-wrap .leaflet-popup-close-button { color: color-mix(in srgb, var(--ink) 40%, transparent) !important; top: 6px !important; right: 8px !important; font-size: 16px !important; }
 .cpop { padding: 1rem 1.1rem 0.9rem; min-width: 220px; }
 .cpop-city {
   font-size:var(--t-lede);
@@ -3182,10 +3403,10 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 .cpop-ctry {
   font-size:var(--t-small);
   font-weight: 400;
-  color: rgba(230,237,243,0.5);
+  color: color-mix(in srgb, var(--ink) 50%, transparent);
 }
 .cpop-block {
-  border-top: 1px solid rgba(255,255,255,0.08);
+  border-top: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
   padding: 0.6rem 0 0.4rem;
 }
 .cpop-block + .cpop-block { margin-top: 0; }
@@ -3205,13 +3426,13 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 }
 .cpop-detail {
   font-size:var(--t-small);
-  color: rgba(230,237,243,0.55);
+  color: color-mix(in srgb, var(--ink) 62%, transparent);
   margin-top: 0.1rem;
   line-height: 1.4;
 }
 .cpop-org {
   font-size:var(--t-small);
-  color: rgba(230,237,243,0.45);
+  color: color-mix(in srgb, var(--ink) 52%, transparent);
   margin-top: 0.15rem;
   line-height: 1.4;
 }
@@ -3248,12 +3469,12 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 
 .research-theme-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 1px;
-  border: 1px solid var(--rule);
+  box-shadow: inset 0 0 0 1px var(--rule);
 }
 .research-theme {
-  padding: 1.25rem;
+  padding: 1.1rem;
   border: none;
   background: var(--bg);
 }
@@ -3340,7 +3561,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1px;
-  border: 1px solid var(--rule);
+  box-shadow: inset 0 0 0 1px var(--rule);
 }
 .paper-card {
   padding: 1.1rem;
@@ -3381,6 +3602,12 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
   margin: 0 0 0.25rem;
 }
 .paper-title {
+  /* A card title carries the site's own HEADING measure, not the body's.
+     It carried none at all, and the rail's narrowing made the plate wider,
+     which made the research cards wider, which pushed the title's longest
+     line to 57 characters — one past the ceiling this very check enforces.
+     The measure was never the variable; the container was. */
+  max-width: var(--measure-heading);
   font-size:var(--t-body);
   font-weight: 700;
   color: var(--ink);
@@ -3551,7 +3778,10 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 }
 
 /* ── Stacked area / portfolio composition panel ────────────────────────── */
-.stack-wrap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; height: 220px; border-left: 1px solid var(--line-soft); border-right: 1px solid var(--line-soft); }
+.stack-wrap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; height: 220px;
+  /* Inset, not border: the same hairline would otherwise push the chart's
+     content one pixel right of the 543 elements beside it. */
+  box-shadow: inset 1px 0 0 var(--line-soft), inset -1px 0 0 var(--line-soft); }
 .stack-col { position: relative; height: 100%; border-right: 1px solid var(--line-soft); }
 .stack-col:last-child { border-right: 0; }
 .stack-bars { position: relative; height: calc(100% - 1.4rem); width: 100%; }
@@ -3595,7 +3825,11 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 .churn-seg { display: flex; flex-direction: column; justify-content: center; align-items: center; min-width: 0; background: var(--amber); color: var(--on-solid); padding: 0.2rem; }
 .churn-seg--new { background: var(--ink-2); }
 .churn-seg--drop { background: var(--muted); }
-.churn-seg--int { background: #b59e7a; }
+/* "Intermittent" — the projects that appear and disappear between cycles.
+   Cinnamon Rufous: the amber's own family one step down, so the segment
+   reads as part of the same bar and still separates from the amber next to
+   it by value (0.246 against 0.440). */
+.churn-seg--int { background: #c27544; }
 .churn-seg-n { font-size:var(--t-body); font-weight: 800; font-family: var(--mono); }
 .churn-seg-label { font-size:var(--t-micro); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; text-align: center; line-height: 1.1; }
 @media (max-width: 600px) {
@@ -3673,6 +3907,12 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 .dg-fa { font-size:var(--t-small); color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .dg-track { display: flex; height: 10px; overflow: hidden; }
 .dg-fill-comp, .dg-fill-ong { height: 100%; transition: width 0.3s; }
+/* The "active" half of each bar carries the same hue as the finished half,
+   hatched. At 22% opacity it composited to 1.3:1 and simply disappeared,
+   so the bar showed only what was done — the chart under-reported the
+   portfolio. The hatch keeps the colour at full strength (every non-ground
+   pixel clears 3:1) and still reads as a different state. */
+.dg-fill-ong { background: var(--data); }
 .dg-nums { font-size:var(--t-small); color: var(--ink-2); }
 .dg-nums strong { color: var(--ink); }
 .dg-rate { font-size:var(--t-small); font-weight: 800; font-family: var(--mono); text-align: right; color: var(--amber); }
@@ -3715,11 +3955,15 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 
 /* ── M&E ledger: 4 tracked vs 8 not ──────────────────────────────────────── */
 .mel-split { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 0.6rem; }
-.mel-head { font-size: var(--text-micro); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0 0 0.6rem; }
+.mel-head { font-size: var(--text-micro); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0 0 0.6rem; max-width: 28.3rem; }
 .mel-head strong { font-size:var(--t-h2); font-weight: 800; margin-right: 0.3rem; }
 .mel-col--yes .mel-head strong { color: var(--amber); }
 .mel-col--no .mel-head strong { color: var(--muted); }
-.mel-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.4rem; }
+.mel-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.4rem;
+  /* The same measure as the head above it, in rem. 55ch of the head's own
+     11px is five pixels narrower than 55ch of the body's 13px, and the two
+     edges sat 5.25px apart — the near-miss band. */
+  max-width: 28.3rem; }
 .mel-item { display: grid; grid-template-columns: 1.1rem 1fr; gap: 0.5rem; font-size:var(--t-body); color: var(--ink-2); line-height: 1.4; align-items: start; }
 .mel-mark { font-weight: 800; font-family: var(--mono); }
 .mel-yes { color: var(--amber); }
@@ -3867,7 +4111,14 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 /* ── Row 00: the hero ─────────────────────────────────────────────────────── */
 .iaas-row-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(13rem, 0.65fr);
+  /* The copy track is the width the copy needs — 33rem, which is the
+     project's own 55ch measure — and the media track is the width the
+     portrait phone video needs. It used to be 1.35fr / 0.65fr: a share of
+     the screen, so the copy track was 774px wide while its own text ran to
+     429px, leaving a 370px band of nothing between the list and the video,
+     and the list's rule at the top of that band ran 345px past the four
+     rules below it. The grid had put it there. */
+  grid-template-columns: minmax(0, 33rem) minmax(13rem, 15rem);
   gap: 2rem;
   align-items: start;
   border-top: 0;
@@ -3887,6 +4138,11 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
   display: grid;
   gap: 0;
   border-top: 1px solid var(--line);
+  /* The list's own measure. The four entries carry the same 55ch cap as
+     every other prose block on the site, so the list is 429px wide while
+     its four rules below are 429px wide too — one rule and four rules that
+     line up, instead of a rule 345px longer than the entries under it. */
+  max-width: var(--measure);
 }
 .iaas-method li {
   display: grid;
@@ -3907,7 +4163,11 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
   margin: 1.2rem 0 0;
   font-family: var(--mono);
   font-size:var(--t-body);
-  color: var(--red);
+  /* The plain ink, not the alarm colour. --neg is reserved for signal loss
+     and findings, and this line is neither: it is the summary of the
+     method. Setting it in the alarm colour made a promise read as a
+     warning. */
+  color: var(--ink-2);
   letter-spacing: 0.01em;
 }
 .iaas-hero-media { margin: 0; min-width: 0; }
@@ -3928,6 +4188,13 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
   color: var(--muted);
   max-width: 15rem;
 }
+/* The caption's measure is the VIDEO's measure — 14.5rem is the width a
+   480×860 phone video occupies at the 26rem height it is capped at. Left
+   alone it took the site's 55ch prose cap instead (the rule below outranks
+   this one), so the caption ran 363px under a 189px video and overhung it
+   by 174px. The rule that is meant to bind here needs the specificity to
+   bind here. */
+body .view .iaas-hero-media figcaption { max-width: 14.5rem; }
 .iaas-hero-media figcaption a { color: var(--navy); font-weight: 700; }
 .iaas-hero-media figcaption a:hover { color: var(--red); }
 
@@ -4521,9 +4788,9 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 }
 button:active { transform: scale(0.97); }
 /* Leaflet's controls and popups keep their provider's light ground. */
-.leaflet-container { color-scheme: light; color: #101418; }
-.leaflet-container a { color: #274a36; }
-.leaflet-tooltip, .leaflet-popup-content { color: #101418; }
+.leaflet-container { color-scheme: light; color: var(--map-ink); }
+.leaflet-container a { color: var(--map-link); }
+.leaflet-tooltip, .leaflet-popup-content { color: var(--map-ink); }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .view { animation: none; }

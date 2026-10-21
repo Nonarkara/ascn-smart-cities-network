@@ -164,6 +164,12 @@ const COPY = {
 const state = { doc: null, lang: "en", type: "all", year: "all", outcome: "all", query: "", error: "" };
 
 function initialLang() {
+  // The site has ONE language at a time. The archive used to keep a switch
+  // of its own, so the header could say ZH while the archive was still
+  // English and its own EN button was still pressed: a half-translated
+  // page. It now follows the site's own switch.
+  const global = document.documentElement.lang;
+  if (LANGS.includes(global)) return global;
   try {
     const saved = sessionStorage.getItem("ascn-archive-lang");
     if (LANGS.includes(saved)) return saved;
@@ -450,9 +456,6 @@ function render() {
   $("#archive-title").textContent = text.title;
   $("#archive-subtitle").textContent = text.subtitle;
   $("#archive-lede").textContent = state.doc ? phrase(state.doc.coverage) : "";
-  document.querySelectorAll("[data-archive-lang]").forEach((button) => {
-    button.setAttribute("aria-pressed", String(button.dataset.archiveLang === state.lang));
-  });
   if (state.error) {
     $("#archive-status").hidden = false;
     $("#archive-status").textContent = state.error;
@@ -484,6 +487,15 @@ async function init() {
   view.addEventListener("click", (event) => {
     const button = event.target.closest("[data-archive-lang]");
     if (button) setLang(button.dataset.archiveLang);
+  });
+  /* The site's own switch carries the archive with it. The archive keeps a
+     switch of its own for the reader who wants the published sources in
+     another language without moving the rest of the site — but it must not
+     be left behind: a header saying ZH above an archive still in English is
+     a half-translated page. */
+  document.addEventListener("ascn:lang", (event) => {
+    const lang = event.detail && event.detail.lang;
+    if (LANGS.includes(lang) && lang !== state.lang) setLang(lang);
   });
   for (const [id, key] of [["#archive-type", "type"], ["#archive-year", "year"], ["#archive-outcome", "outcome"]]) {
     $(id).addEventListener("change", (event) => { state[key] = event.target.value; renderTable(state.doc?.items || []); });

@@ -1291,6 +1291,7 @@ try {
   const ledgerBad = { ink: [], panel: [], dupes: [], measure: [] };
   for (const width of [1024, 1440]) {
     const { page } = await newPage({ width, height: width === 390 ? 844 : 900 });
+    await page.addInitScript(`window.longestHeadingLine = ${longestHeadingLine.toString()}`);
     for (const target of LEDGER) {
       await page.goto(`${BASE}/#${target.route}`, { waitUntil: "domcontentloaded" });
       await page.waitForTimeout(700);
@@ -1357,23 +1358,31 @@ try {
     // shared a row with the label and the count.
     await page.goto(`${BASE}/#archive`, { waitUntil: "domcontentloaded" });
     await page.waitForTimeout(900);
+    // The REAL number of characters on the longest rendered line.
+    //
+    // This used to divide the line's pixel width by the width of a "0" and
+    // call the result "characters". That is a proxy for a measurement, and it
+    // is typeface-sensitive: a geometric face whose zero is a wide circle
+    // reports fewer characters on the same physical line than a grotesque
+    // does, so swapping Archivo for Jost made this check fail by two
+    // characters without a single word on the page changing how it wrapped.
+    // The heading sweep already fixed this class of bug for headings by
+    // counting the graphemes the browser actually put on each line; this
+    // check now measures the same way.
+    //
+    // It also takes the LONGEST line of the LONGEST title, not the first
+    // rect of the first item — the first title in the list can be a short
+    // one that happens to wrap into two tidy lines, and reading only that
+    // one told you about the list's luckiest entry, not its worst.
     const chars = await page.evaluate(() => {
-      const item = document.querySelector(".archive-outcome-titles li");
-      if (!item) return null;
-      const range = document.createRange();
-      range.selectNodeContents(item);
-      const line = range.getClientRects()[0];
-      if (!line) return null;
-      // Characters per rendered line: the line's own width in ch units.
-      const probe = document.createElement("span");
-      probe.style.cssText = "position:absolute;visibility:hidden;white-space:pre";
-      probe.textContent = "0".repeat(100);
-      item.appendChild(probe);
-      const ch = probe.getBoundingClientRect().width / 100;
-      probe.remove();
-      return { chars: Math.round(line.width / ch), ch };
+      let best = 0;
+      for (const li of document.querySelectorAll(".archive-outcome-titles li")) {
+        const n = window.longestHeadingLine(li);
+        if (n > best) best = n;
+      }
+      return best || null;
     });
-    if (chars && chars.chars < 45) ledgerBad.measure.push(`${width}/outcome title: ${chars.chars} characters a line`);
+    if (chars && chars < 45) ledgerBad.measure.push(`${width}/outcome title: ${chars} characters a line`);
     await page.close();
   }
   ok("no section leaves its content stranded", ledgerBad.ink.length === 0,
@@ -1547,6 +1556,234 @@ try {
     // Fallbacks are legal: var(--x, value) resolves even if --x is undefined.
     && !new RegExp(`var\\(\\s*${t}\\s*,`).test(css));
   ok("every referenced token is defined", unresolved.length === 0, unresolved.join(" "));
+}
+
+/* ── The shell's geometry: one origin, and a rail sized by its content ────── */
+{
+  // MoMA Law VII: two edges are the SAME (delta 0) or CLEARLY DIFFERENT
+  // (delta > 6px). A delta of 1–6px reads as a failed attempt at alignment,
+  // and it is the band the eye catches and calls amateur.
+  //
+  // The shell had three of them and every one was a hairline occupying
+  // layout space: the rail's bar carried a 1px border-bottom inside a 44px
+  // border-box, so its 43px content box centred a 44px wordmark half a
+  // pixel proud of the shell's top edge — and the language switch, whose
+  // buttons carried a 2px transparent border-bottom, sat one pixel ABOVE
+  // the wordmark's letters in the same bar. One pixel. The exact thing the
+  // owner photographed.
+  //
+  // Every rule that draws a hairline now draws it with a shadow, so it
+  // costs no layout space and two elements that share an origin stay on it.
+  const NEAR_MISS = 6;
+  const isNearMiss = (delta) => delta > 0 && delta <= NEAR_MISS;
+
+  for (const width of [1440, 1024]) {
+    const { page } = await newPage({ width, height: 900 });
+    await page.goto(`${BASE}/#overview`, { waitUntil: "networkidle" });
+    await page.waitForTimeout(500);
+
+    const pairs = await page.evaluate(() => {
+      const box = (sel) => {
+        const el = document.querySelector(sel);
+        if (!el) return null;
+        const r = el.getBoundingClientRect();
+        return { top: r.top, bottom: r.bottom, left: r.left, right: r.right, x: r.x, width: r.width };
+      };
+      const item = document.querySelector(".index-scroll .item");
+      const itemBox = item ? item.getBoundingClientRect() : null;
+      const itemTextX = itemBox
+        ? itemBox.x + parseFloat(getComputedStyle(item).paddingLeft) + 20 + 7
+        : null;
+      const label = document.querySelector(".group-label");
+      const labelX = label
+        ? label.getBoundingClientRect().x + parseFloat(getComputedStyle(label).paddingLeft)
+        : null;
+      const kicker = box("#barKicker");
+      const first = document.querySelector("#main-content .view .label, #main-content .view h1");
+      const firstBox = first ? first.getBoundingClientRect() : null;
+      return {
+        brand: box(".brand.mark"),
+        locale: box(".locale-btn"),
+        itemTextX,
+        labelX,
+        kickerLeft: kicker ? kicker.left : null,
+        contentLeft: firstBox ? firstBox.left : null,
+      };
+    });
+
+    const deltas = [];
+    const delta = (labelText, a, b) => {
+      if (a == null || b == null) return;
+      const d = Math.abs(a - b);
+      if (isNearMiss(d)) deltas.push(`${labelText} Δ${Math.round(d * 100) / 100}px`);
+    };
+    delta("wordmark vs language switch (top)", pairs.brand?.top, pairs.locale?.top);
+    delta("wordmark vs language switch (bottom)", pairs.brand?.bottom, pairs.locale?.bottom);
+    delta("group heading vs its first item", pairs.labelX, pairs.itemTextX);
+    delta("plate kicker vs the plate's first line", pairs.kickerLeft, pairs.contentLeft);
+    ok(`the shell's edges share one origin (${width}px)`, deltas.length === 0,
+      deltas.slice(0, 4).join(" | ") || "every compared pair is exactly aligned");
+    await page.close();
+  }
+
+  // Control: the comparison has to be able to fail. A delta of one pixel is
+  // the whole point of the rule, so the predicate must reject it.
+  ok("the near-miss comparison can fail (control)", isNearMiss(1) && !isNearMiss(0) && !isNearMiss(7));
+
+  /* The rail's width is the width its content needs, not a share of the
+     screen. It was clamp(300px, 32vw, 420px) — 32vw is the grid's answer,
+     and it meant the rail changed width with the viewport while its
+     contents stayed exactly the same size. */
+  {
+    const widths = [];
+    for (const width of [1280, 1440, 1920]) {
+      const { page } = await newPage({ width, height: 900 });
+      await page.goto(`${BASE}/#overview`, { waitUntil: "networkidle" });
+      await page.waitForTimeout(400);
+      const rail = await page.evaluate(() => {
+        const el = document.querySelector(".index");
+        const r = el.getBoundingClientRect();
+        return { width: Math.round(r.width), viewport: window.innerWidth };
+      });
+      widths.push(rail);
+      await page.close();
+    }
+    const same = widths.every((w) => w.width === widths[0].width);
+    ok("the rail's width does not scale with the viewport", same,
+      widths.map((w) => `${w.viewport}px→${w.width}px`).join(" "));
+  }
+
+  /* The index has to FIT. Fifteen entries at a 44px touch target, four
+     group headings and their separation, have to live in the rail without a
+     scroll — otherwise the last two sections of the site sit below the fold
+     of the thing that is supposed to be the map of the site. */
+  {
+    const bad = [];
+    for (const height of [900, 1080]) {
+      const { page } = await newPage({ width: 1440, height });
+      await page.goto(`${BASE}/#overview`, { waitUntil: "networkidle" });
+      await page.waitForTimeout(400);
+      const overflow = await page.evaluate(() => {
+        const s = document.querySelector(".index-scroll");
+        return s.scrollHeight - s.clientHeight;
+      });
+      if (overflow > 0) bad.push(`${height}px: ${overflow}px of scroll`);
+      await page.close();
+    }
+    ok("the whole index fits the rail without a scroll", bad.length === 0,
+      bad.join(" | ") || "15 entries fit at 900px and 1080px");
+  }
+
+  /* The rail's CONTENTS have to fit the rail, sideways as well as down.
+     The search row's intrinsic content was 284px inside a 242px rail: the
+     Find button was pushed under the plate, the plate's locator took its
+     clicks, and the button was dead. A vertical fit check cannot see that. */
+  {
+    const { page } = await newPage({ width: 1440, height: 900 });
+    await page.goto(`${BASE}/#overview`, { waitUntil: "networkidle" });
+    await page.waitForTimeout(400);
+    const fit = await page.evaluate(() => {
+      const rail = document.querySelector(".index");
+      const rr = rail.getBoundingClientRect();
+      const strays = [...rail.querySelectorAll("*")].filter((el) => {
+        const r = el.getBoundingClientRect();
+        return r.width > 0 && (r.right > rr.right + 0.5 || r.left < rr.left - 0.5);
+      }).map((el) => `${el.tagName}.${String(el.className).split(" ")[0]}`);
+      const btn = document.querySelector("#finder-open");
+      const br = btn.getBoundingClientRect();
+      const top = document.elementFromPoint(br.left + br.width / 2, br.top + br.height / 2);
+      return {
+        scrollW: rail.scrollWidth, clientW: rail.clientWidth,
+        strays: strays.slice(0, 4),
+        covered: !(btn === top || btn.contains(top)),
+        coveredBy: top ? (top.id || String(top.className).split(" ")[0]) : "nothing",
+      };
+    });
+    ok("the rail's contents fit inside the rail", fit.scrollW <= fit.clientW && fit.strays.length === 0,
+      fit.scrollW > fit.clientW ? `scroll ${fit.scrollW} > ${fit.clientW}` : fit.strays.join(" | ") || `fits ${fit.clientW}px`);
+    ok("the rail's Find button is the topmost thing where it is drawn", !fit.covered,
+      fit.covered ? `covered by ${fit.coveredBy}` : "clickable");
+    await page.close();
+  }
+
+  /* The innovation hero: the list's rule is the width of the items under
+     it, and the caption belongs to the video it sits beneath. */
+  {
+    const { page } = await newPage({ width: 1440, height: 900 });
+    await page.goto(`${BASE}/#innovation`, { waitUntil: "networkidle" });
+    await page.waitForTimeout(400);
+    const hero = await page.evaluate(() => {
+      const w = (sel) => {
+        const el = document.querySelector(sel);
+        return el ? Math.round(el.getBoundingClientRect().width) : null;
+      };
+      return { ol: w(".iaas-method"), li: w(".iaas-method li"), video: w(".iaas-hero-media video"), cap: w(".iaas-hero-media figcaption") };
+    });
+    ok("the method list's rule is the width of its own items", hero.ol != null && Math.abs(hero.ol - hero.li) <= 1,
+      `list ${hero.ol}px vs items ${hero.li}px`);
+    ok("the caption does not outrun the video it belongs to", hero.cap != null && hero.video != null && hero.cap <= hero.video + 2,
+      `caption ${hero.cap}px vs video ${hero.video}px`);
+    await page.close();
+  }
+
+  /* A rule is a graphic: 3:1 minimum. The light theme's ground is nearly
+     white, so its rules have to be far darker to clear the same bar the
+     dark theme clears easily — they were at 1.80:1 and 1.39:1, and the
+     diagram's own lines were invisible on paper. */
+  {
+    const { page } = await newPage({ width: 1440, height: 900 });
+    await page.goto(`${BASE}/#overview`, { waitUntil: "networkidle" });
+    const report = await page.evaluate(() => {
+      const lum = (rgb) => {
+        const [r, g, b] = String(rgb).match(/[\d.]+/g).map(Number).slice(0, 3).map((v) => {
+          const c = v / 255;
+          return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+        });
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      };
+      const ratio = (a, b) => {
+        const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m);
+        return Math.round(((x + 0.05) / (y + 0.05)) * 100) / 100;
+      };
+      const out = {};
+      for (const theme of ["dark", "light"]) {
+        if (theme === "light") document.documentElement.setAttribute("data-theme", "light");
+        else document.documentElement.removeAttribute("data-theme");
+        const s = getComputedStyle(document.documentElement);
+        out[theme] = {
+          line: ratio(s.getPropertyValue("--line"), s.getPropertyValue("--paper")),
+          soft: ratio(s.getPropertyValue("--line-soft"), s.getPropertyValue("--paper")),
+          ocher: ratio(s.getPropertyValue("--ocher"), s.getPropertyValue("--panel")),
+        };
+      }
+      document.documentElement.removeAttribute("data-theme");
+      return out;
+    });
+    const bad = [];
+    for (const [theme, v] of Object.entries(report)) {
+      if (v.line < 3) bad.push(`${theme} --line ${v.line}:1`);
+      if (v.soft < 3) bad.push(`${theme} --line-soft ${v.soft}:1`);
+      if (v.ocher < 4.5) bad.push(`${theme} --ocher on panel ${v.ocher}:1`);
+    }
+    ok("a rule is a graphic: 3:1 in both themes", bad.length === 0,
+      bad.join(" | ") || `dark rule ${report.dark.line}:1 / light rule ${report.light.line}:1, ocher on panel ${report.light.ocher}:1`);
+    await page.close();
+  }
+
+  /* The display register must have weight. Julius Sans One shipped a single
+     weight (400): every headline, label and figure on this site was set in
+     a face with no weight range at all. */
+  {
+    const { page } = await newPage({ width: 1440, height: 900 });
+    await page.goto(`${BASE}/#overview`, { waitUntil: "networkidle" });
+    await page.waitForTimeout(400);
+    const weight = await page.evaluate(() => {
+      const h1 = document.querySelector("h1");
+      return h1 ? Number(getComputedStyle(h1).fontWeight) : 0;
+    });
+    ok("the display register carries weight", weight >= 600, `h1 at ${weight}`);
+    await page.close();
+  }
 }
 
 completed = true;
