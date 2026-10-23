@@ -126,14 +126,25 @@ test('privacy boundaries translate without deleting the record panels or video l
 // reader's — and it also meant the rail changed width with the viewport
 // while its contents stayed exactly the same size.
 //
-// These tests assert the two things the rebuild had to deliver: the rail is
-// the width its content needs, and the elements inside it that share an
-// origin share it EXACTLY. The second one carries a mutation control,
-// because a check that can only pass proves nothing.
+// The next answer, 242px, was still the grid's answer. Measured on the
+// served page, the rail's header row needed 240.5px to hold the wordmark
+// (66.5px) and the language switch (136px: three buttons at the 44px touch
+// floor), while the INDEX — the thing the rail exists to hold — needed
+// 148.7px. The switch is a site-wide preference, exactly like the theme
+// toggle, which this house had already moved into the plate's header for
+// precisely this reason. It is now beside the theme toggle, and the rail is
+// 196px: the width its index needs.
+//
+// These tests assert the three things the rebuild has to deliver: the rail
+// is the width its content needs, the wordmark's box does not change with
+// the viewport, and the elements that share an origin share it EXACTLY.
+// The last one carries a mutation control, because a check that can only
+// pass proves nothing.
 const railGeometry = () => {
   const rail = document.querySelector('.index');
   const brand = document.querySelector('.brand.mark').getBoundingClientRect();
-  const locale = document.querySelector('.locale-btn').getBoundingClientRect();
+  const locale = document.querySelector('.locale').getBoundingClientRect();
+  const theme = document.querySelector('.theme-toggle').getBoundingClientRect();
   const item = document.querySelector('.index-scroll .item');
   const itemCS = getComputedStyle(item);
   const itemRect = item.getBoundingClientRect();
@@ -143,10 +154,37 @@ const railGeometry = () => {
   const itemTextX = itemRect.x + parseFloat(itemCS.paddingLeft) + 20 + 7;
   const labelX = labelRect.x + parseFloat(labelCS.paddingLeft);
   const scroll = document.querySelector('.index-scroll');
+  // The masthead's lockup, the search control under it, and the band's label.
+  // A rail answers to its content, so the three must end on one pixel.
+  const finder = document.querySelector('.finder-open').getBoundingClientRect();
+  const tagline = document.querySelector('.brand.mark i');
+  const kicker = document.querySelector('.bar-kicker');
+  const kickerBox = kicker.getBoundingClientRect();
+  const kickerRange = document.createRange();
+  kickerRange.selectNodeContents(kicker);
+  const kickerInk = Math.max(...[...kickerRange.getClientRects()].map((r) => r.width));
+  // The chrome's right edge and the reading column's right edge.
+  const bar = document.querySelector('.plate-bar');
+  const barKids = [...bar.children].filter(
+    (el) => getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().width > 0,
+  );
+  const lastControl = barKids[barKids.length - 1].getBoundingClientRect();
+  const main = document.querySelector('#main-content');
+  const mainCS = getComputedStyle(main);
+  const mainRect = main.getBoundingClientRect();
   return {
     railWidth: Math.round(rail.getBoundingClientRect().width),
-    brandTop: brand.top, brandBottom: brand.bottom,
+    brandWidth: Math.round(brand.width * 100) / 100,
+    brandRight: Math.round(brand.right * 100) / 100,
+    finderRight: Math.round(finder.right * 100) / 100,
+    taglineShown: getComputedStyle(tagline).display !== 'none',
+    kickerBoxWidth: Math.round(kickerBox.width * 100) / 100,
+    kickerInkWidth: Math.round(kickerInk * 100) / 100,
+    lastControlRight: Math.round(lastControl.right * 100) / 100,
+    contentTextRight:
+      Math.round((mainRect.right - parseFloat(mainCS.paddingRight)) * 100) / 100,
     localeTop: locale.top, localeBottom: locale.bottom,
+    themeTop: theme.top, themeBottom: theme.bottom,
     labelX: Math.round(labelX * 100) / 100,
     itemTextX: Math.round(itemTextX * 100) / 100,
     overflow: scroll.scrollHeight - scroll.clientHeight,
@@ -158,26 +196,106 @@ test('the index rail is sized by its content, and its contents share one origin'
   await page.waitForTimeout(400);
 
   const widths = [];
+  const brands = [];
   for (const width of [1280, 1440, 1920]) {
     await page.setViewportSize({ width, height: 900 });
     await page.waitForTimeout(250);
-    widths.push((await page.evaluate(railGeometry)).railWidth);
+    const g = await page.evaluate(railGeometry);
+    widths.push(g.railWidth);
+    brands.push(g.brandWidth);
   }
   // The same width at every viewport: the rail answers to its content.
   expect(new Set(widths).size, `rail widths across viewports: ${widths.join(', ')}`).toBe(1);
+  // And the wordmark inside it does not change size with the viewport either.
+  // Two rules left over from the old page header used to grow it, which made
+  // the rail's wordmark box 66.5px above 1100px and 170px below it — a rail
+  // that does not move with the viewport cannot have a part of it that does.
+  expect(new Set(brands).size, `wordmark widths across viewports: ${brands.join(', ')}`).toBe(1);
 
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.waitForTimeout(250);
   const g = await page.evaluate(railGeometry);
 
-  // The wordmark and the language switch are in the same bar. One pixel
+  // The language switch and the theme toggle are in the same bar. One pixel
   // apart reads as a failed attempt at alignment.
-  expect(Math.abs(g.brandTop - g.localeTop)).toBe(0);
-  expect(Math.abs(g.brandBottom - g.localeBottom)).toBe(0);
+  expect(Math.abs(g.localeTop - g.themeTop)).toBe(0);
+  expect(Math.abs(g.localeBottom - g.themeBottom)).toBe(0);
   // The group heading sits on the axis of the items it heads.
   expect(Math.abs(g.labelX - g.itemTextX)).toBe(0);
   // The whole index fits: the last two sections must not be below the fold.
   expect(g.overflow).toBe(0);
+
+  // The masthead carries the site's name. The tagline used to be dropped
+  // by a container query whose reason had died with the language switch,
+  // which left a 170px band holding a 66.5px wordmark — the owner's
+  // complaint about a big bar for a small piece of information, one scale
+  // down. The lockup is back, so the band is full.
+  expect(g.taglineShown).toBe(true);
+  // The wordmark's lockup and the search control under it end on the same
+  // origin inside the rail. The lockup is 176.84px wide — the width the
+  // type gives it — and the rail's content box is 177px (203 minus 26), so
+  // the lockup ends 0.16px before the button that is flush to the box.
+  // That is under a fifth of a pixel, and the house's near-miss band starts
+  // at 1px; the rail's width stays an integer so its hairline lands on a
+  // whole pixel. The two must not drift apart.
+  expect(Math.abs(g.brandRight - g.finderRight)).toBeLessThan(0.5);
+  // The header's label is a label, not a spacer. It was an 885.84px flex
+  // box for 152.23px of ink (5.82x) and the review measured every variant
+  // of the old cap putting the last control on the same pixel — so the
+  // spacer bought nothing and the box now fits its text.
+  expect(Math.abs(g.kickerBoxWidth - g.kickerInkWidth)).toBeLessThan(1);
+});
+
+test('the chrome and the reading column share one right origin, wide and narrow', async ({ page }) => {
+  await page.goto('/#overview', { waitUntil: 'networkidle' });
+  await page.waitForTimeout(400);
+  // 2103px is the width the owner photographed: the plate is wider than
+  // the 1600px reading column, so the chrome had 137px of its own right
+  // edge to end on. Two origins on one screen.
+  for (const width of [1440, 2103]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.waitForTimeout(250);
+    const g = await page.evaluate(railGeometry);
+    expect(
+      Math.abs(g.lastControlRight - g.contentTextRight),
+      `chrome ${g.lastControlRight} vs column ${g.contentTextRight} at ${width}`,
+    ).toBe(0);
+  }
+});
+
+test('the masthead-origin assertion catches a broken lockup (control)', async ({ page }) => {
+  await page.goto('/#overview', { waitUntil: 'networkidle' });
+  await page.waitForTimeout(400);
+  const measured = await page.evaluate(() => {
+    // Drop the tagline, the way the old container query did: the lockup
+    // shrinks, and the masthead stops ending on the search control's pixel.
+    document.querySelector('.brand.mark i').style.display = 'none';
+    const brand = document.querySelector('.brand.mark').getBoundingClientRect();
+    const finder = document.querySelector('.finder-open').getBoundingClientRect();
+    return Math.abs(brand.right - finder.right);
+  });
+  expect(measured).toBeGreaterThan(0);
+});
+
+test('the chrome-origin assertion catches a one-pixel chrome shift (control)', async ({ page }) => {
+  await page.goto('/#overview', { waitUntil: 'networkidle' });
+  await page.waitForTimeout(400);
+  await page.setViewportSize({ width: 2103, height: 900 });
+  await page.waitForTimeout(250);
+  const measured = await page.evaluate(() => {
+    document.querySelector('.theme-toggle').style.marginRight = '1px';
+    const bar = document.querySelector('.plate-bar');
+    const kids = [...bar.children].filter(
+      (el) => getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().width > 0,
+    );
+    const last = kids[kids.length - 1].getBoundingClientRect();
+    const main = document.querySelector('#main-content');
+    const cs = getComputedStyle(main);
+    const right = main.getBoundingClientRect().right - parseFloat(cs.paddingRight);
+    return Math.abs(last.right - right);
+  });
+  expect(measured).toBeGreaterThan(0);
+  expect(measured).toBeLessThanOrEqual(6);
 });
 
 test('the rail-origin assertion catches a one-pixel misalignment (control)', async ({ page }) => {
@@ -195,6 +313,22 @@ test('the rail-origin assertion catches a one-pixel misalignment (control)', asy
     const itemTextX = itemRect.x + parseFloat(itemCS.paddingLeft) + 20 + 7;
     const labelX = labelRect.x + parseFloat(getComputedStyle(label).paddingLeft);
     return Math.abs(labelX - itemTextX);
+  });
+  expect(measured).toBeGreaterThan(0);
+  expect(measured).toBeLessThanOrEqual(6);
+});
+
+test('the header-origin assertion catches a one-pixel misalignment (control)', async ({ page }) => {
+  await page.goto('/#overview', { waitUntil: 'networkidle' });
+  await page.waitForTimeout(400);
+  const measured = await page.evaluate(() => {
+    // Push the theme toggle one pixel down inside the plate's header, the way
+    // a stray margin or a border would.
+    const theme = document.querySelector('.theme-toggle');
+    theme.style.marginTop = '1px';
+    const locale = document.querySelector('.locale').getBoundingClientRect();
+    const t = document.querySelector('.theme-toggle').getBoundingClientRect();
+    return Math.abs(t.top - locale.top);
   });
   expect(measured).toBeGreaterThan(0);
   expect(measured).toBeLessThanOrEqual(6);

@@ -110,6 +110,16 @@
   --companion: #173039;
   --on-solid: #0a1a20;
   --content: min(1600px, calc(100vw - 2rem));
+  /* The chrome's inner gutter.
+     The reading column is centred inside the plate, so on a wide screen the
+     plate is wider than the column: at 2103px the plate is 1900px and the
+     column is 1600px, 150px in on each side. The chrome bands used to keep
+     the plate's own 13px padding, so the header's last control ended on
+     the pane's edge while the content below it ended 137px to the left —
+     two right origins on one screen. This puts the chrome on the column's
+     edges. Below the column's cap it resolves to the 13px gutter, so
+     nothing moves on an ordinary screen. */
+  --gutter: calc((100% - min(100%, var(--content))) / 2 + var(--pad));
 
   /* Fonts. Two design faces, self-hosted because the CSP is font-src 'self'.
 
@@ -169,14 +179,42 @@
      answer, not the reader's. 32vw also meant the rail got NARROWER on a
      smaller screen while its contents stayed exactly the same size.
 
-     242px is what the rail actually holds: the brand block (72px), the
-     language switch (132px — three buttons at the 44px touch floor, which
-     is not negotiable), and the nav column: 13px of padding, a 20px number
-     gutter, and "OBSERVATORY" set at the label's own axis (40px).
+     242px was the next answer, and it was still the grid's answer. Measured
+     on the served page, the rail's own header row needed 240.5px — the word
+     mark (66.5px) plus the language switch (136px: three buttons at the 44px
+     touch floor) plus 26px of padding — while the INDEX, the thing the rail
+     exists to hold, needed 148.7px for its widest group heading. The rail
+     was sized by its chrome and was already 0.5px from not fitting itself.
 
-     The plate gets the rest. At 1440 that is 1198px of reading column
-     instead of 1020. */
-  --rail: 242px;
+     The language switch is a site-wide preference, exactly like the theme
+     toggle, which this house moved out of the rail for precisely this reason:
+     "44px of the rail's width spent on a preference the reader can set once,
+     from any section." The switch was 136px of the rail — more than half of
+     it — for a control that is not part of the index. It now sits in the
+     plate's header beside the theme toggle, so the two global controls are
+     one band and the rail is left with the brand, the search field, the
+     index and the disclosure.
+
+     196px was the next answer, and it left the rail's own masthead hollow:
+     the header band was 170px wide and held a 66.5px wordmark, with the
+     tagline — "Independent Review", the site's name — dropped to `display:
+     none` by a container query whose stated reason had died with the switch.
+     That is the owner's complaint one scale down (a band for a little
+     information) and it measured: 103.5px of the 170px box empty (60.9%),
+     the mark at 39% of its box, 2.55x the house's ruled band.
+
+     The tagline belongs in a masthead and it fits. At the type it already
+     had, the lockup is 176.84px wide — the ASEAN mark (20.8) + the gap
+     (6.5) + "Independent Review" (149.55) — and the Thai (113.48px) and
+     Chinese (76.58px) lockups are narrower, so English governs. 176.84 + 26
+     (the rail's padding) = 202.84, so the rail is 203px: the wordmark's
+     right edge lands 13.16px from the rail's hairline, the same margin the
+     search row's button keeps, and the wordmark's box is 1.00x its ink.
+
+     The index still fits inside it (its widest group heading is 148.7px)
+     and the search field still shows "Find in index..." whole. The plate
+     gets the rest — at 1440, 1211px of reading column instead of 1020. */
+  --rail: 203px;
   --hover-wash: rgba(111, 160, 230, 0.08);
 
   /* ══════════════════════════════════════════════════════════════════════
@@ -477,6 +515,7 @@ main.plate {
 
 .plate-bar {
   gap: 16px;
+  padding-inline: var(--gutter);
 }
 
 .brand.mark {
@@ -513,16 +552,21 @@ main.plate {
   height: 1.6rem;
 }
 
-/* The wordmark's tagline is the first thing to go when the rail narrows:
-   the brand, the language switch and the theme button all have to fit inside
-   the rail, and the rail is 32vw wide. It sits here, after the rule it
-   overrides, because a container query at the same specificity still loses to
-   a later plain rule. */
-@container rail (max-width: 380px) {
+/* The wordmark's tagline is the first thing to go when the rail narrows —
+   but only when it cannot fit. It used to be hidden at 380px, because the
+   brand, the language switch and the theme button all had to fit inside a
+   32vw rail. The switch and the theme are gone from the rail, so that
+   reason died with them and the threshold was the only thing left standing.
+   The lockup needs 176.84px of ink plus 26px of padding — 202.84px of rail
+   — so the tagline is dropped only below that, and it shows on every width
+   the rail actually has. It sits here, after the rule it overrides, because
+   a container query at the same specificity still loses to a later plain
+   rule. */
+@container rail (max-width: 202.84px) {
   .brand.mark i { display: none; }
 }
 
-/* The language switch in the index rail.
+/* The language switch.
    Two implementations of this control used to exist — `.lang-switch`/`.lang-btn`
    from the old page header and `.locale`/`.locale-btn` from the rail — and the
    markup carried BOTH class names on the same three buttons, so the two
@@ -530,7 +574,14 @@ main.plate {
    the new one filled the pressed button with the ink colour. Both applied, so
    the active language drew as ink-coloured text on an ink-coloured ground: a
    white box with nothing in it. One implementation now, and the pressed state
-   is the ocher underline the design language reserves for wayfinding. */
+   is the ocher underline the design language reserves for wayfinding.
+
+   The switch itself moved out of the index rail and into the plate's header,
+   beside the theme toggle. It is a site-wide preference — the same kind of
+   thing as the theme — and it was 136px of the rail's width, more than half
+   of it, spent on a control that is not part of the index. Two global
+   preferences in two different bars was one preference in two places; now
+   they are one band, and the rail holds only the index. */
 .locale {
   margin-left: auto;
   display: inline-flex;
@@ -539,12 +590,33 @@ main.plate {
   height: 44px;
 }
 
+/* On a phone the plate's header has five things in it and room for four.
+   The kicker is the one that goes: the locator row directly under the bar
+   already names the section — "01 OVERVIEW · 38 CITIES · 134 PROJECTS" — so
+   the kicker's "ASCN · Overview" is the second copy of it in the same band.
+   Left in, it is not truncated so much as shredded: 27.9px of a label, three
+   letters and an ellipsis, which is worse than saying nothing. Everything
+   that survives — the way back, the language, the official site, the theme —
+   does something the reader cannot get anywhere else on the page.
+
+   The official site is the second thing that goes, and it is the one that
+   can: the switch needs its three buttons at the 44px touch floor, and the
+   link is the only control in this bar that duplicates something already on
+   the page — the rail's disclosure carries the same address, and on a phone
+   the rail is one tap away. What is left is the way back, the language and
+   the theme: three things, all of them things the reader cannot do
+   elsewhere. */
+@media (max-width: 600px) {
+  .plate-bar .bar-kicker { display: none; }
+  .plate-bar .bar-open { display: none; }
+}
+
 .locale-btn {
-  /* The 44px floor in BOTH dimensions: it is a control, and the switch sits
-     in the rail where a thumb lands. The width is what the touch floor
-     costs, and the rail's width is the width its content needs — so the
-     three buttons are 132px of the rail, honestly accounted for, instead of
-     a row of boxes in a column that was 420px wide for no reason.
+  /* The 44px floor in BOTH dimensions: it is a control, and a thumb has to
+     land on it. The width is what the touch floor costs — 132px for the
+     three of them — and it is why the switch could not stay in the rail: the
+     rail's width is the width its INDEX needs, and the index does not need a
+     language switch.
 
      The pressed state is drawn with an inset shadow rather than a border,
      for the same reason the bar's rule is: a 2px border-bottom inside a 44px
@@ -619,7 +691,21 @@ main.plate {
 
 .bar-kicker {
   margin: 0;
-  flex: 1;
+  /* The label is the band's label, not a paragraph, and it is sized to its
+     own text: `flex: 0 1 auto` with the prose measure still in force gives
+     it a 152.23px box for 152.23px of ink.
+
+     An earlier version of this rule was `flex: 1` with `max-width: none`,
+     and the comment beside it claimed that the prose cap was what pushed
+     the header's controls into the middle of the bar. It was not: the
+     controls are held to the right edge by the language group's
+     `margin-left: auto`, and the old cap moved nothing by 0.00px — the
+     review measured five variants and every one of them put the last
+     control on the same pixel. What `flex: 1` did do was turn the label
+     into an 885.84px spacer for 152.23px of ink: a 5.82x box, worse than
+     the house's loosest unruled tolerance (3.27x). The label now takes
+     the band it is in and nothing more. */
+  flex: 0 1 auto;
   min-width: 0;
   font-family: var(--mono);
   font-size: 11px;
@@ -661,7 +747,22 @@ main.plate {
    271px inside a 216px box, the button was pushed 42px past the rail's
    edge and under the plate, and the plate's locator swallowed its clicks.
    The button was dead. One rule, and the row fits its rail again. */
-.find input[type="search"] { min-width: 0; }
+.find input[type="search"] {
+  /* One rule, two corrections. The generic rule further down —
+     `select, input[type="search"] { border: 1px solid var(--line-soft) }` —
+     ties on specificity with `.find input { border: 0 }` above and beats it
+     by being later, so the house's own "a hairline may not occupy layout
+     space" was being broken by the field's own frame: the field drew a 1px
+     border, and its text sat at x = 22.45 while every other origin in the
+     rail is 13. A hairline that draws and then pushes the text is two
+     mistakes. This selector is specific enough to win on specificity
+     rather than on order, so the frame is gone and the text starts on the
+     rail's margin with the wordmark and the disclosure. */
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
 .find input::placeholder { color: var(--muted); }
 .find input:focus-visible {
   outline: 1px solid var(--navy);
@@ -702,7 +803,7 @@ main.plate {
   align-items: center;
   justify-content: flex-start;
   gap: 20px;
-  padding: 0 var(--pad);
+  padding: 0 var(--gutter);
   box-shadow: inset 0 -1px 0 var(--line);
   font-family: var(--mono);
   font-size: 11px;
@@ -854,7 +955,12 @@ main.plate {
   .shell.is-open .index { display: none; }
   .shell.is-open .plate { display: flex; }
   .back { display: inline-flex; }
-  .locale-btn { min-width: 24px; padding: 0 4px; font-size: 9px; }
+  /* The language switch used to be squeezed to 24px wide here, to fit three
+     buttons into the rail's search row. It is not in the rail any more: it
+     is a control in the plate's header, with room for the 44px touch floor
+     it always had in every other dimension. The squeeze was a rail-fitting
+     hack and it left three 24x44 targets on a phone — narrower than the
+     floor, in the one dimension the floor is a floor. */
 }
 .view {
   padding: clamp(1.4rem, 3vw, 2.4rem) 0 clamp(2rem, 4vw, 3.2rem);
@@ -1198,7 +1304,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .showcase-caption-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
 .showcase-caption-head h2, .meeting-summary h2 { font-size: var(--t-body); line-height: 1.3; font-weight: 700; letter-spacing: 0; }
 .showcase-feature figcaption p { margin: 0.3rem 0 0; color: var(--ink-2); font-size:var(--t-body); max-width: 48rem; }
-.showcase-open, .meeting-summary-link { display: inline-flex; align-items: center; min-height: 44px; flex-shrink: 0; font-size:var(--t-body); font-weight: 700; }
+.showcase-open { display: inline-flex; align-items: center; min-height: 44px; flex-shrink: 0; font-size:var(--t-body); font-weight: 700; }
 .showcase-open:hover { text-decoration: underline; }
 .showcase-selector { display: grid; gap: 0; min-width: 0; }
 .showcase-selector[hidden] { display: none; }
@@ -1213,11 +1319,27 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .showcase-clip-meta { font-size:var(--t-small); color: var(--muted); font-variant-numeric: tabular-nums; }
 .showcase-clip strong { font-size:var(--t-body); line-height: 1.3; }
 .showcase-clip-description { font-size:var(--t-body); color: var(--ink-2); line-height: 1.45; }
-.meeting-summary { display: grid; grid-template-columns: 10rem minmax(0, 1fr) auto; gap: 1.2rem; align-items: center; margin-top: 1.7rem; padding: 1rem 0; border-top: 2px solid var(--ink); border-bottom: 1px solid var(--line); }
-.meeting-summary img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
-.meeting-summary .label { color: var(--muted); letter-spacing: 0; }
-.meeting-summary p:not(.label) { margin: 0.3rem 0 0; max-width: 48rem; color: var(--ink-2); font-size:var(--t-body); }
-.meeting-summary:hover .meeting-summary-link { text-decoration: underline; }
+.meeting-summary {
+  /* One child, one column.
+     This band used to hold an image, a copy block and a "Read the full
+     record ↗" link, and the grid still asked for those three columns
+     after the private meeting records came out: the copy fell into the
+     10rem image column and wrapped over five lines while two empty
+     columns stood beside it, in a 1211px band. The band now takes the
+     width of what it actually holds — `width: fit-content` — so the rules
+     frame the sentence instead of straddling 720px of nothing. */
+  display: grid;
+  width: fit-content;
+  max-width: 100%;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  margin-top: 1.7rem;
+  padding: 1rem 0;
+  border-top: 2px solid var(--ink);
+  border-bottom: 1px solid var(--line);
+}
+.meeting-summary-copy { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 1.2rem; }
+.meeting-summary-copy > span { color: var(--ink-2); }
 .overview-intro { margin-top: 1.7rem; }
 .overview-intro h2 { font-size:var(--t-h2); line-height: 1.15; letter-spacing: 0; margin-bottom: 0.6rem; }
 .overview-intro .lede { max-width: 52rem; }
@@ -1796,8 +1918,6 @@ input[type="search"] { min-width: min(16rem, 100%); }
   .showcase-selector { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .showcase-clip { grid-template-columns: minmax(0, 1fr); padding: 0.6rem; border-top: 0; }
   .showcase-clip-description { display: none; }
-  .meeting-summary { grid-template-columns: 7rem minmax(0, 1fr); gap: 0.6rem 1rem; }
-  .meeting-summary-link { grid-column: 2; }
 }
 
 @media (max-width: 480px) {
@@ -1813,9 +1933,6 @@ input[type="search"] { min-width: min(16rem, 100%); }
   .showcase-clip { padding: 0.45rem; gap: 0.45rem; }
   .showcase-clip-meta { font-size:var(--t-small); }
   .showcase-caption-head { flex-wrap: wrap; gap: 0; }
-  .meeting-summary { grid-template-columns: minmax(0, 1fr); }
-  .meeting-summary img { display: none; }
-  .meeting-summary-link { grid-column: 1; }
 }
 
 .record { max-width: 40rem; }
@@ -2017,22 +2134,32 @@ input[type="search"] { min-width: min(16rem, 100%); }
 /* Wide enough for all three across — 131 + 128 + 117 and three gutters
    is 411px, so the threshold is 422px — the entry becomes a row across
    the width, with the name at the left, the country in the middle and
-   the membership at the right. This is the form the stretched closing
-   row takes, and it is the only form in which a 586px cell is not
-   mostly empty. The right-hand rule goes with it: the closing row is
-   one band across the wall, not a row of cells. */
+   the membership at the right. This is the form a stretched closing row
+   takes, and it is the only form in which a 586px cell is not mostly
+   empty.
+
+   The vertical rule STAYS. It used to go with the wide form, on the
+   reasoning that the closing row is "one band across the wall, not a row
+   of cells" — and that made the wall change its grammar with the
+   viewport: above 422px of cell the closing row was a band with the two
+   cities' facts run together in one line ("Ho Chi Minh City … Joined
+   2018 · 9M+ Dili … Joined 2026 · ~280,000", with nothing to say where
+   one city ended), and below it the same two cities were two cells with
+   a rule between them. The same content, two different readings, decided
+   by a width. Now the rule is constant: every cell in the wall is
+   separated from its neighbour by a hairline at every width, and the
+   wide form only changes how the cell's own three facts are arranged
+   inside it. */
 @container city (min-width: 32.5rem) {
   .city-card {
     grid-template-columns: max-content max-content max-content;
     justify-content: space-between;
     align-items: baseline;
     column-gap: 0.9rem;
-    box-shadow: inset 0 -1px 0 var(--line-soft);
   }
   .city-card b { grid-column: 1; grid-row: 1; }
   .city-card .cc-country { grid-column: 2; grid-row: 1; }
   .city-card .cc-meta { grid-column: 3; grid-row: 1; }
-  .city-card.active { box-shadow: inset 0 -1px 0 var(--line-soft), inset 0 -2px 0 var(--ocher); }
 }
 .city-card b { display: block; font-size:var(--t-body); }
 .city-card .cc-country { color: var(--muted); font-size:var(--t-small); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
@@ -4223,10 +4350,32 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 
      The evidence column grows instead: the video holds the plate's right
      edge at every width, and the caption beside it takes the slack up to
-     70ch — the top of the house's reading band. Past that the slack is
-     the gutter between the method and the evidence, which is a space
-     between two groups rather than a hole inside one. */
-  grid-template-columns: 28rem minmax(0, 28rem) minmax(30.9rem, 1fr);
+     70ch — the top of the house's reading band.
+
+     The copy column grows WITH it, at 0.75 of the evidence's rate. That
+     ratio is the whole fix. The evidence column is 1fr, so it kept
+     absorbing the plate's slack while its content could not: the caption
+     stops at 70ch, so from a viewport of 1675 the track kept opening and
+     the figure kept standing still — 93.14px of dead track and a 232.86px
+     gap between the method's last word and the caption's first word, at
+     2103, the width the owner photographs. A track that grows while its
+     content cannot is an invented space, and the copy was the column with
+     room to use it: its lede was pinned to the 46ch prose measure inside
+     a 364px column while the plate had 1574px to give away.
+
+     At 0.75fr the copy takes 496.3px of the 1158px the plate has to spare
+     at 2103 and the evidence takes the rest — 661.7px, which the figure
+     fills exactly, because the figure's own width is 700.86px and the
+     track never exceeds it. The dead track is 0.00px at every width from
+     1411 to 2103, the gap between the method and the caption holds at
+     101.19px (the method column's own 75.19px of slack plus the 26px
+     gutter) instead of opening to 232.86px, and the 1440 composition is
+     unchanged to the pixel: 364 / 364 / 431, the caption 230.67px.
+
+     The lede takes the copy column it is given — up to 40rem, the cap it
+     always declared. 46.7ch at 1440, 63.6ch at 2103: inside the house's
+     45-75ch band at every width. */
+  grid-template-columns: minmax(28rem, 0.75fr) minmax(0, 28rem) minmax(30.9rem, 1fr);
   grid-template-areas: "copy steps media";
   gap: 2rem;
   align-items: start;
@@ -4240,7 +4389,16 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
   line-height: 1.1;
   margin: 0.2rem 0 0.7rem;
 }
-.iaas-hero-copy .lede { max-width: 40rem; }
+body .view .iaas-hero-copy .lede {
+  /* The lede takes the copy column it is given, up to the cap it always
+     declared. The plain rule lost to the house's prose measure —
+     `body .view :is(p, li, ...)` — so the column it was placed in was
+     364px wide and the lede stood at 358.8px inside it, while the plate
+     gave 1574px to a row whose evidence column was still opening for
+     content that could not use it. The selector has to outrank the house
+     cap, the same way the routes list does. */
+  max-width: 40rem;
+}
 .iaas-method {
   /* The method: what the band claims, stated in four lines, in the middle
      where the claim sits next to the evidence it rests on. */
@@ -4368,24 +4526,47 @@ body .view .iaas-hero-media figcaption { max-width: min(70ch, 100%); }
    viewport minus a 242px rail, so a viewport query left the method
    column 28.5px wide at a 901px viewport — the sentences wrapped to nine
    lines and the label overflowed its column by 13.8px. */
-@container view (max-width: 76.9rem) {
-  /* The wide band needs room the caption can stand in: the media column
-     is 401.7px so the caption can hold 200.2px beside the video, and the
-     method column keeps 182.5px. That is 1000.2px of plate. Below it
-     the caption goes back under the video and the media column returns
-     to the video's own 188.5px. */
+@container view (max-width: 90.9rem) {
+  /* The caption stands beside the video once the evidence column is wide
+     enough to hold it: 188.5 (the video) + 13 (the gutter) + 188.5 (the
+     caption at the width it has today) = 390px, and the evidence column
+     reaches 390px at a 1181.7px plate. Below that the caption goes back
+     under the video and the band is the video and its caption stacked.
+
+     The method column does not move at that boundary — it is 364px on
+     both sides of it, because the evidence column is the one that grows
+     (it takes the plate's slack as 1fr) and the method column only ever
+     shrinks, from 364px down to the 182.5px that keeps a label and a
+     sentence legible. */
   body .view .iaas-row-hero {
-    grid-template-columns: 28rem minmax(0, 28rem) 14.5rem;
+    grid-template-columns: 28rem minmax(0, 28rem) minmax(14.5rem, 1fr);
   }
   body .view .iaas-hero-media {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: flex-end;
     gap: 0;
   }
   body .view .iaas-hero-media figcaption {
     margin-top: 0.6rem;
     flex: 0 1 auto;
-    max-width: 14.5rem;
+    /* The caption takes the evidence column's slack, under the video.
+       It used to be capped at 14.5rem here, which was the width of the
+       video — so the evidence TRACK could grow (it is 1fr) while the
+       caption could not, and the difference fell on the floor as a hole:
+       the track opened from 188.5px to 401.7px across viewport 1191-1403
+       while the media element stayed at 188.64px, a dead track of up to
+       212.36px between the method column and the video, snapping shut
+       again the moment the caption moved beside it. A track that grows
+       while its content cannot is an invented space: the grid made room
+       and nothing moved into it.
+
+       So the caption is allowed to take the track it is in. At 1300 the
+       track is 298px and the caption becomes 298px — 47 characters, inside
+       the house's 45-75ch band — and the gap between the method's text and
+       the caption's text falls to the 26px gutter it should have been all
+       along. The video keeps the plate's right edge at every width, which
+       is the one thing the evidence column must never give up. */
+    max-width: min(70ch, 100%);
   }
 }
 @container view (max-width: 60.5rem) {
@@ -4753,7 +4934,11 @@ body .view .iaas-hero-media figcaption { max-width: min(70ch, 100%); }
      of every phone screen. Direction goes back to row, the strip takes the
      full width beneath, and the band is two rows again. */
   .site-nav { flex-direction: row; flex-wrap: wrap; row-gap: 0; gap: 0.5rem; align-items: center; }
-  .brand { flex: 1 1 auto; }
+  /* The old header's brand grew to fill its row. That header is gone, and the
+     only .brand left is the rail's wordmark — so the rule was sizing the
+     rail's wordmark box to the viewport: 66.5px of brand above 1100px and
+     170px below it, for a box that holds the same 66.5px of ink. A rail that
+     does not change with the viewport cannot have a part of it that does. */
   .site-nav nav { order: 3; flex: 1 0 100%; }
 }
 
@@ -4794,9 +4979,41 @@ body .view .iaas-hero-media figcaption { max-width: min(70ch, 100%); }
 }
 
 /* ── The bridge to Innovation ─────────────────────────────────────────────── */
-.rec-bridge { border-top: 2px solid var(--red); }
-.rec-bridge h2 { font-size: var(--t-h2); margin: 0 0 0.6rem; }
-.rec-bridge p { max-width: 52rem; margin: 0 0 1.1rem; color: var(--ink-2); }
+/* The bridge is the Record view's last row, and it was the only section on
+   the site whose content stopped short of its own width: the paragraph
+   carried the global prose measure (358.8px) inside a 1211px row, so the
+   text reached 48% of it and the right half of a red rule stood over
+   nothing. Every other row on the site fills its width. So this one does
+   too: the heading takes the left column and the paragraph and the action
+   take the right, and the paragraph runs to 75ch — the top of the house's
+   45-75ch band, and inside the A4 text block the graphics audit enforces. */
+.rec-bridge {
+  border-top: 2px solid var(--red);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0 3rem;
+  align-items: start;
+}
+.rec-bridge h2 { grid-column: 1; justify-self: start; font-size: var(--t-h2); margin: 0; }
+body .view .rec-bridge p {
+  grid-column: 2;
+  margin: 0 0 1.1rem;
+  color: var(--ink-2);
+  /* The rule that says 75ch has to outrank the house's prose measure.
+     `body .view :is(p, li, ...)` is (0,1,2) and a plain `.rec-bridge p`
+     is (0,1,1), so the declared cap never applied: the paragraph stood
+     at 358.8px — 46ch — inside a 767.5px column at 2103, 408.7px of the
+     column empty, and the row's ink reached 0.7403 of its own width
+     while every other top-level section reached 1.0000. The routes list
+     already carries this fix; the bridge did not. */
+  max-width: 75ch;
+}
+.rec-bridge .text-button { grid-column: 2; justify-self: start; }
+
+@media (max-width: 720px) {
+  .rec-bridge { grid-template-columns: minmax(0, 1fr); gap: 0.9rem; }
+  .rec-bridge h2, .rec-bridge p, .rec-bridge .text-button { grid-column: 1; }
+}
 
 @media (max-width: 900px) {
   .rec-finding-grid { grid-template-columns: minmax(0, 1fr); }
@@ -5610,16 +5827,47 @@ body .view .archive-limits.col-flow > p { max-width: none; }
 
 /* Public evidence first. One question wins; three routes explain the next action.
    Inspired by Axiom X's index, without reproducing its institutional identity. */
-.evidence-opening { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(16rem, 1fr); gap: clamp(1.2rem, 4vw, 4rem); align-items: end; margin-bottom: 2.5rem; }
-.evidence-opening h1 { max-width: 15ch; margin: .4rem 0 1rem; font-size: var(--t-figure); line-height: 1; }
+.evidence-opening { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(16rem, 22rem); gap: clamp(1.2rem, 4vw, 4rem); align-items: end; margin-bottom: 2.5rem; }
+.evidence-opening h1 {
+  max-width: 15ch;
+  margin: .4rem 0 1rem;
+  font-size: var(--t-figure);
+  line-height: 1;
+  /* The headline is sized to its own words, not to the column it happens
+     to sit in. It was 958.74px wide in a 1574px band on the live site
+     because a grid item stretches by default, and 838.1px of it was the
+     headline. The air to its right is the gutter between the headline and
+     the routes; the box claiming to be 958.74px was the grid's claim, not
+     the page's. */
+  justify-self: start;
+}
 .evidence-opening .lede { max-width: 53ch; color: var(--ink-2); }
 .evidence-routes { list-style: none; padding: 0; margin: 0; width: 100%; }
-.evidence-routes li { max-width: none; border-top: 1px solid var(--line-soft); }
+/* The three routes reach the content's right edge. The prose measure —
+   `body .view :is(p, li, ...)` — outranked the plain rule below it, so the
+   list was pinned to 358.8px inside a 563.26px column and its three rules
+   stopped 204.9px short of the edge the rest of the page ends on: two
+   right origins on one screen. This selector wins on specificity. */
+body .view .evidence-routes li { max-width: none; }
+.evidence-routes li { border-top: 1px solid var(--line-soft); }
 .evidence-routes a { display: grid; grid-template-columns: 2rem minmax(0,1fr) 1rem; gap: .5rem; padding: .9rem 0; align-items: baseline; min-height: 44px; }
 .evidence-routes a:hover strong { color: var(--amber); }
 .evidence-routes a > span { color: var(--muted); font-size: var(--t-micro); }
 .showcase-heading { background: transparent; padding: .7rem 0 1rem; border-top: 2px solid var(--line); max-width: none; }
-#innovation-heading { font-size: var(--t-lead); max-width: none; line-height: 1.15; }
+#innovation-heading {
+  font-size: var(--t-lead);
+  max-width: none;
+  line-height: 1.15;
+  /* Sized to its own words. The title is 237.1px of ink; the column it
+     sits in is 1168.3px, because the video below it is that wide. A grid
+     item stretches by default, so the title's box claimed the video's
+     width and the 947.5px between the title and the standfirst read as
+     two unrelated islands. The air is a gutter between the title and the
+     standfirst and always was; the box claiming to be 1168.3px was the
+     grid's claim, not the page's. The standfirst keeps its column, so its
+     left edge is still the clip selector's left edge. */
+  justify-self: start;
+}
 .site-notice { text-align: left; }
 .site-notice summary { cursor: pointer; color: var(--ink-2); }
 .site-notice > div { max-width: 65ch; padding: .5rem 0; }
@@ -5653,7 +5901,6 @@ body .view .archive-limits.col-flow > p { max-width: none; }
 .overview-intro h2 { font-size: var(--t-lead); line-height: 1.15; }
 @media (min-width: 721px) and (max-width: 1100px) {
   .site-nav { flex-direction: row; flex-wrap: wrap; align-items: center; gap: .3rem .7rem; }
-  .brand { flex: 1 1 auto; }
   .finder-open { order: 2; }
   .site-nav nav { order: 3; flex: 1 0 100%; }
 }

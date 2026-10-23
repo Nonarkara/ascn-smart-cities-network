@@ -1577,6 +1577,15 @@ try {
   //
   // Every rule that draws a hairline now draws it with a shadow, so it
   // costs no layout space and two elements that share an origin stay on it.
+  //
+  // The language switch has since moved out of the rail and into the plate's
+  // header, beside the theme toggle — it is a site-wide preference, and it
+  // was 136px of the rail's width for a control that is not part of the
+  // index. So the pair that shares an origin in the header is the switch and
+  // the toggle: both 44px tall, both centred in the same 44px bar, and a
+  // pixel between them would read as a failed attempt at alignment. The
+  // wordmark now stands alone in the rail's bar, and the check that guards
+  // it is the one that says the rail does not change with the viewport.
   const NEAR_MISS = 6;
   const isNearMiss = (delta) => delta > 0 && delta <= NEAR_MISS;
 
@@ -1606,7 +1615,8 @@ try {
       const firstBox = first ? first.getBoundingClientRect() : null;
       return {
         brand: box(".brand.mark"),
-        locale: box(".locale-btn"),
+        locale: box(".locale"),
+        theme: box(".theme-toggle"),
         itemTextX,
         labelX,
         kickerLeft: kicker ? kicker.left : null,
@@ -1620,8 +1630,8 @@ try {
       const d = Math.abs(a - b);
       if (isNearMiss(d)) deltas.push(`${labelText} Δ${Math.round(d * 100) / 100}px`);
     };
-    delta("wordmark vs language switch (top)", pairs.brand?.top, pairs.locale?.top);
-    delta("wordmark vs language switch (bottom)", pairs.brand?.bottom, pairs.locale?.bottom);
+    delta("language switch vs theme toggle (top)", pairs.locale?.top, pairs.theme?.top);
+    delta("language switch vs theme toggle (bottom)", pairs.locale?.bottom, pairs.theme?.bottom);
     delta("group heading vs its first item", pairs.labelX, pairs.itemTextX);
     delta("plate kicker vs the plate's first line", pairs.kickerLeft, pairs.contentLeft);
     ok(`the shell's edges share one origin (${width}px)`, deltas.length === 0,

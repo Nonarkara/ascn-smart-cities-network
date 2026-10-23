@@ -30,3 +30,6 @@ ascn-emails-text.jsonl
 
 # Mailbox-derived metadata remains local; redaction does not establish public provenance.
 data/ascn-correspondence.json
+
+# MSH audit output: screenshots and the JSON record are local evidence, never build assets.
+artifacts/
