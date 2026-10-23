@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-21T16:49:43.813Z",
+  "checkedAt": "2026-10-23T18:16:02.445Z",
   "articles": [
     {
       "title": "ASEAN Smart Cities Network leads the region drive for smarter, more resilient cities",
@@ -635,7 +635,7 @@
       "title": "DILG showcases Cebu City's BRT project at ASEAN Smart Cities meet",
       "url": "https://news.google.com/rss/articles/CBMixgFBVV95cUxQN3FDd1FvSFJPRW5ldXJzWS1feGh3M1ZjVFQ2WEx0c255eHk1VWRDT05aRmxyWXdHdWYxOE4yaEtFMElDTVdPRFVFNjFWd2JGVVJ6TVp3UU1lMUNmVEo1SFl2bVFDelpOT3h0ejFkNjNnRUZwQ3hSY0ctQ0pMYnI5RWlqa1ZJZzlkaHB6YThFeFZSWEt5Y1FkUnhvbXJIUUJFYlIwdElYRkhQTzlZbmxXbEMxNTV2T2hOX2IwMXlZeFRCWEJBSVHSAcwBQVVfeXFMUFc2d2NBa0g0TFdPaEhBS01VQW1fQ0FXMGRtSlFndWRNd09Tcm9IU2NQRWVNMWFzVkJzbS1lUjAzOF9sbFpCY3plZXg0ZlF4RXZreVhRelYzTzlUUmZmYW1vV0pNUElfWDN6WDZlMnJRRjVWZUhrSFBmWFVLbTB0ZUVjWTFhaHpRTFlvcUNGTGxsbHlCcGtONjBEQm5GRlRVOTgzYVl1ZER6cHIzQUFHMGFLREFBaUE3Q1hBMEFXak8yOElVVG1ic0w2S29Z?oc=5",
       "publisher": "Philstar.com",
-      "sourceId": "ascn-exact",
+      "sourceId": "ascn-variants",
       "publishedAt": "2021-09-06T07:00:00.000Z",
       "kind": "Unreviewed search match",
       "countries": [],
@@ -655,7 +655,7 @@
       "title": "Vietnam bolsters cooperation with partners in ASEAN Smart Cities Network",
       "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxQMUZGRGRPM1gwVVFXQzJSUVNjQWNGZ1RDNVNGTFlpRzE0SFJXbndEcy1rSzVHVEN0aTdXaHJWUkluMmpNaVlDRFYyWUxNcno5NVNSSXVjX1B1dXgwWWMxS3BpeE1IX1JyTGlNVzBXVDBVcVQzZDZnX2oxdDNpLW9CcFppVHh1ZlF6WVJRZUpnTDQ0OHVnM1BxaDVrMnlsMzlWZnQtRURMU0VoazViY3Z0SkFUaklLZw?oc=5",
       "publisher": "Báo Cần Thơ",
-      "sourceId": "ascn-variants",
+      "sourceId": "ascn-exact",
       "publishedAt": "2021-08-30T07:00:00.000Z",
       "kind": "Unreviewed search match",
       "countries": [],
@@ -665,7 +665,7 @@
       "title": "PP City Hall holds talk on setting up Smart Bus Station",
       "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxQaHc5X1U1ejM1VTNMWTVRZkNfRVk0eTZ3Vl91U2ItZHVJaU91ZVBVbDB3TWRFVzV0cTQ3QXczenRoaEhhZldaY3Y4NHNIMXpPQ1dVSUROdk5JSVNvLW0zZmt5OFBzUmFxNnpFcTNKVGd0cDFFcVluRjhsTFN5ZHlULV9TU2RKTkZad01SanUzX050S2pyYk5LZmRn?oc=5",
       "publisher": "Khmer Times",
-      "sourceId": "ascn-exact",
+      "sourceId": "ascn-variants",
       "publishedAt": "2021-08-10T07:00:00.000Z",
       "kind": "Unreviewed search match",
       "countries": [],
@@ -815,7 +815,7 @@
       "title": "COVID–19 gives the advantage to Vietnam leading ASEAN toward a Smart City Vision",
       "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxOdkpaelRxU21QNjhhakRsYkM1SjBjdnBpQW55TjlXNDVUSGZ0anNoOGlZeU80bnNaMmJ5VVpUaDNlWTY4ME5ZNXNlbEpEUlcwQ0dSekwtODFmS3BsbzFURHRMYlFuZGg2ZzcyU3diU0hTdk0wTEcxMHRPaGNMX0dXM2sxMmQ2ekZXOWM4YW9mdmlqenJBRGptb1RSTVNZMHZWTWM0cmN4akw3bDdTYmc?oc=5",
       "publisher": "Construction & Property News",
-      "sourceId": "ascn-exact",
+      "sourceId": "ascn-variants",
       "publishedAt": "2020-05-31T07:00:00.000Z",
       "kind": "Unreviewed search match",
       "countries": [],
@@ -1105,7 +1105,7 @@
       "title": "Smart City Spotlight: Danang",
       "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTFB0TU5JVGY0WHJ1Mll5anBXWGFjUFRtTzZRcWx2TU1xc2loLVNNb1llSTVPR1BiRVBxeENtendIdkl5ODV1ZDBuOUk4VXRuT0J1aV93aVRRYk5jWmdoRE5lWFRua2FyZDZ6RG5BcdIBckFVX3lxTFA2dlhRVnhmcjZsNDRWc3VPMUlGbHpEbFdjdVJTN2twNFZHRndrT3d1Ui1hRS1vZmFDalN4cUR5a1JWVW9oS2wtYldILVNCSUE2ekM0YXVIQnRWMUZFN19XVVR4UjdJRkNvcXM2MlZORUJDZw?oc=5",
       "publisher": "The ASEAN Post",
-      "sourceId": "ascn-exact",
+      "sourceId": "ascn-variants",
       "publishedAt": "2018-09-21T07:00:00.000Z",
       "kind": "Unreviewed search match",
       "countries": [],
@@ -1142,9 +1142,9 @@
       "topics": []
     },
     {
-      "title": "The ASEAN Smart Cities Network-Innovation for a resilient future",
-      "url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxOX2UtV2lYOHBraUtMWlZ0SWFVR0RQSHVUTDlRUUFlZ2tqQWJ5QXBSb3lNdThhLWEtZTZsNC1mQWZVRzZKZllKSFFocmhtM25Zd2RabkJmYnRNbnY3cUhZQzl5a1Vnb2RnMU8yMlJjeXRXVzFnRVV5WmRFUW1SWG54Zi1CZVBOM1FDQ1ZDZ1UwVVFZaE8x?oc=5",
-      "publisher": "Phnom Penh Post",
+      "title": "THE ASEAN SMART CITIES NETWORK – INNOVATING FOR A RESILIENT FUTURE",
+      "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxOZVFFRlMtdml4Q1gyVkRhRm5Ba0g5OFZ4ZUJMdVJiUGNSSUE5WFRUTDFQSHdwV3BGTXphU2dzXzlPQW1Wd0pUZTNYWENkMmMtUThDY01SVGJVdnJyZ0hxOFNGQ0YwZUJGYnAtaVlHQUxGbU5hb2FuTTNiMG40SXczM0lpNURRbDE3ZldZUHhLZzNKMXhJNTRzVGhvWEZTbHJaLTNn?oc=5",
+      "publisher": "Khmer Times",
       "sourceId": "ascn-exact",
       "publishedAt": "2018-08-09T07:00:00.000Z",
       "kind": "Unreviewed search match",
@@ -1152,9 +1152,9 @@
       "topics": []
     },
     {
-      "title": "THE ASEAN SMART CITIES NETWORK – INNOVATING FOR A RESILIENT FUTURE",
-      "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxOZVFFRlMtdml4Q1gyVkRhRm5Ba0g5OFZ4ZUJMdVJiUGNSSUE5WFRUTDFQSHdwV3BGTXphU2dzXzlPQW1Wd0pUZTNYWENkMmMtUThDY01SVGJVdnJyZ0hxOFNGQ0YwZUJGYnAtaVlHQUxGbU5hb2FuTTNiMG40SXczM0lpNURRbDE3ZldZUHhLZzNKMXhJNTRzVGhvWEZTbHJaLTNn?oc=5",
-      "publisher": "Khmer Times",
+      "title": "The ASEAN Smart Cities Network-Innovation for a resilient future",
+      "url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxOX2UtV2lYOHBraUtMWlZ0SWFVR0RQSHVUTDlRUUFlZ2tqQWJ5QXBSb3lNdThhLWEtZTZsNC1mQWZVRzZKZllKSFFocmhtM25Zd2RabkJmYnRNbnY3cUhZQzl5a1Vnb2RnMU8yMlJjeXRXVzFnRVV5WmRFUW1SWG54Zi1CZVBOM1FDQ1ZDZ1UwVVFZaE8x?oc=5",
+      "publisher": "Phnom Penh Post",
       "sourceId": "ascn-exact",
       "publishedAt": "2018-08-09T07:00:00.000Z",
       "kind": "Unreviewed search match",
@@ -1175,8 +1175,18 @@
       "title": "Smart City Spotlight: Manila",
       "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5SaWtvdUZ5ajdyTmFOZTF3YUM3QU5xOEN1TXFsOEsxai1CX1JKOTVhaXpTUW56TExZM3FieFJuVXlfWkxya1Exb1JYWXl0M0F6YlhCM1pQWjBNSV9iSWp4QmluS0FWaFhWcEVIcNIBckFVX3lxTFAwdV9KaFo4Z25OTmJxQ2JROWdnWC0taUtfd2wxOFBhdmQ1dThEcng1ei1qMUl0NUF1eWx2UFIzTllVZWcxdWIzSUNYQUVPMEZFcFVLY3lPaV9Nb1l5R0s1bHdVVS1ralNtbmdrRF9SM295dw?oc=5",
       "publisher": "The ASEAN Post",
-      "sourceId": "ascn-exact",
+      "sourceId": "ascn-variants",
       "publishedAt": "2018-06-03T07:00:00.000Z",
+      "kind": "Unreviewed search match",
+      "countries": [],
+      "topics": []
+    },
+    {
+      "title": "Connecting Smart Cities in ASEAN with Taiwan’s New Southbound Policy",
+      "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxOaEpiWDREUXJ4cUxTWXh1RmlQaW9GNXJOMWFkTktwQlZJS3lrOWFXMFFCNXVuQmNuaHh4dkRFX3czZXA3MWN1aDdiZTR2a21BMFh4dEd4V2NjNHRLSlFDN3J6MzlTYVpFT0xhcjUtMGw4amhMSnc4U05iXzlDOWpoUXhqSnp1bnJhSkRtQzJnVHlrajBZZ0o0bFdxWVZEM3M0UDUw?oc=5",
+      "publisher": "Global Taiwan Institute",
+      "sourceId": "ascn-exact",
+      "publishedAt": "2018-05-30T07:00:00.000Z",
       "kind": "Unreviewed search match",
       "countries": [],
       "topics": []
@@ -1348,15 +1358,15 @@
       "id": "ascn-exact",
       "section": "Exact network name",
       "url": "https://news.google.com/rss/search?q=%22ASEAN%20Smart%20Cities%20Network%22&hl=en-SG&gl=SG&ceid=SG%3Aen",
-      "checkedAt": "2026-10-21T16:49:43.813Z",
+      "checkedAt": "2026-10-23T18:16:02.445Z",
       "status": "ok",
-      "returned": 68
+      "returned": 37
     },
     {
       "id": "ascn-variants",
       "section": "Name and language variants",
       "url": "https://news.google.com/rss/search?q=%22ASEAN%20Smart%20Cities%20Network%22%20OR%20%22ASEAN%20Smart%20City%20Network%22%20OR%20%22Jaringan%20Kota%20Cerdas%20ASEAN%22%20OR%20%22%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%B7%E0%B8%AD%E0%B8%82%E0%B9%88%E0%B8%B2%E0%B8%A2%E0%B9%80%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%87%E0%B8%AD%E0%B8%B1%E0%B8%88%E0%B8%89%E0%B8%A3%E0%B8%B4%E0%B8%A2%E0%B8%B0%E0%B8%AD%E0%B8%B2%E0%B9%80%E0%B8%8B%E0%B8%B5%E0%B8%A2%E0%B8%99%22&hl=en-SG&gl=SG&ceid=SG%3Aen",
-      "checkedAt": "2026-10-21T16:49:43.813Z",
+      "checkedAt": "2026-10-23T18:16:02.445Z",
       "status": "ok",
       "returned": 33
     },
