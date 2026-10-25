@@ -520,6 +520,10 @@ main.plate {
 
 .brand.mark {
   display: inline-flex;
+  /* Share the rail's content edge with Find. Font rasterizers differ by a
+     few pixels; the control stays on its axis without growing on phones. */
+  width: calc(var(--rail) - var(--pad) - var(--pad));
+  max-width: 100%;
   align-items: center;
   gap: 0.5rem;
   font-size: var(--t-body);

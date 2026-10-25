@@ -267,14 +267,14 @@ test('the masthead-origin assertion catches a broken lockup (control)', async ({
   await page.goto('/#overview', { waitUntil: 'networkidle' });
   await page.waitForTimeout(400);
   const measured = await page.evaluate(() => {
-    // Drop the tagline, the way the old container query did: the lockup
-    // shrinks, and the masthead stops ending on the search control's pixel.
-    document.querySelector('.brand.mark i').style.display = 'none';
+    // A one-pixel shift must still fail after normalizing the control box
+    // across font rasterizers. Tagline visibility is checked separately.
+    document.querySelector('.brand.mark').style.transform = 'translateX(1px)';
     const brand = document.querySelector('.brand.mark').getBoundingClientRect();
     const finder = document.querySelector('.finder-open').getBoundingClientRect();
     return Math.abs(brand.right - finder.right);
   });
-  expect(measured).toBeGreaterThan(0);
+  expect(measured).toBeGreaterThan(0.5);
 });
 
 test('the chrome-origin assertion catches a one-pixel chrome shift (control)', async ({ page }) => {
