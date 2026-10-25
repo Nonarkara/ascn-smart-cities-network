@@ -796,9 +796,18 @@ main.plate {
   border: 1px solid var(--line-soft);
 }
 
+/* The locator is the route line: where you are, and where the reading goes
+   next. It is the only part of the chrome that is on screen in every view,
+   so it is the only place the next destination can be stated without the
+   reader scrolling to the end of a view to find it.
+
+   The strip carries a control now, so it holds a control: 44px, and the
+   link inside it is 44px tall. The number stays quiet and the destination
+   name carries the ink — the same order the index rail uses, so the two
+   never disagree about which word is the destination. */
 .locator {
-  height: 40px;
-  flex: 0 0 40px;
+  height: 44px;
+  flex: 0 0 44px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -812,6 +821,24 @@ main.plate {
   color: var(--muted);
   background: var(--paper);
 }
+.locator-next {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 44px;
+  white-space: nowrap;
+  color: var(--muted);
+  text-decoration: none;
+}
+.locator-next-arrow { color: var(--muted); }
+.locator-next-name { color: var(--ink); }
+.locator-next:hover .locator-next-name,
+.locator-next:focus-visible .locator-next-name {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.locator-next:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
 
 .index-scroll, .plate-scroll {
   flex: 1;
@@ -829,6 +856,8 @@ main.plate {
      places that space was being spent for nothing. */
   padding: 4px 0 4px;
   overflow-x: clip;
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted) var(--paper);
 }
 
 .group { margin-top: 8px; }
@@ -1071,7 +1100,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
 /* ---------- KPI strip ---------- */
 .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin: 1.6rem 0; }
 .kpi-grid--four { grid-template-columns: repeat(4, 1fr); }
-.kpi { min-height: 5.2rem; padding: 0.75rem 0.8rem 0 0; border-top: 1px solid var(--line); }
+.kpi { padding: 0.75rem 0.8rem; border-top: 1px solid var(--line); }
 .kpi + .kpi { box-shadow: inset 1px 0 0 var(--line-soft); padding-left: 0.8rem; }
 .kpi strong { display: block; margin-bottom: 0.15rem; font-size: var(--t-h2); line-height: 1; font-weight: 800; }
 .kpi span { display: block; color: var(--muted); font-size:var(--t-micro); font-weight: 700; }
@@ -1120,7 +1149,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .news-controls input, .news-controls select { width: 100%; min-width: 0; font-size:var(--t-body); border: 1px solid var(--line-dim); }
 .news-icon-button { display: grid; place-items: center; width: 44px; height: 44px; flex-shrink: 0; border: 1px solid var(--line-dim); background: var(--bg); cursor: pointer; font-size:var(--t-h2); }
 .news-icon-button:disabled { opacity: 0.45; cursor: default; }
-.news-topics { display: flex; gap: 0.3rem 1rem; flex-wrap: wrap; border-bottom: 1px solid var(--line); }
+.news-topics { display: flex; width: fit-content; max-width: 100%; gap: 0.3rem 1rem; flex-wrap: wrap; border-bottom: 1px solid var(--line); }
 .news-topics button { padding: 0.6rem 0; min-height: 44px; min-width: 44px; border: 0; border-bottom: 3px solid transparent; background: transparent; cursor: pointer; color: var(--muted); font-size:var(--t-body); }
 .news-topics button[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--amber); font-weight: 700; }
 .news-feed-status { display: flex; justify-content: space-between; gap: 1rem; padding: 0.75rem 0; font-size:var(--t-small); color: var(--muted); }
@@ -1152,8 +1181,35 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .review-verdict h2, .review-section h2, .review-band-head h2, .review-baseline h2, .review-record h2 { font-size:var(--t-h2); line-height: 1.25; letter-spacing: 0; }
 .review-head p, .review-verdict p, .review-baseline p, .review-record p, .review-method p, .review-followup p, .review-mandate p, .review-project-links { font-size:var(--t-body); }
 .review-head .label, .review-note, .review-record .review-note, .review-followup .review-note, .review-baseline .review-note { font-size:var(--t-small); color: var(--muted); }
-.review-tabs { display: flex; flex-wrap: wrap; gap: 0 1.4rem; border-bottom: 2px solid var(--ink); margin-bottom: 1rem; }
-.review-tabs a { min-height: 44px; padding: 0.6rem 0; font-size:var(--t-body); border-bottom: 3px solid transparent; }
+/* ── News: the four sub-view tabs ──────────────────────────────────────────
+   This strip was a full-width flex row whose 2px rule ran 1211px under
+   386px of tab labels — a rule 3.14x the text it divided, and 825px of it
+   ruled nothing at all. It is now a closed band: a grid sized to its labels,
+   so the rule ends exactly where the last tab ends.
+
+   The column count is stated rather than left to a wrap, because four items
+   divide by four, two or one and by nothing else. The flex wrap did the
+   third thing: at 390px it put three tabs on the first row and stranded
+   "Regional news" alone on the second, which is the orphan the house's own
+   grid law forbids — the eye reads that hole before it reads the tabs.
+
+   `justify-self: start` keeps the active tab's amber underline hugging its
+   own label instead of stretching across its cell. */
+.review-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, max-content);
+  gap: 0 1.4rem;
+  border-bottom: 2px solid var(--ink);
+  margin-bottom: 1rem;
+  width: fit-content;
+  max-width: 100%;
+}
+.review-tabs a { min-height: 44px; padding: 0.6rem 0; font-size:var(--t-body); border-bottom: 3px solid transparent; justify-self: start; }
+@media (max-width: 480px) {
+  /* Two columns: the other divisor of four. The four-column strip needs
+     379px of content, which a 390px phone does not have. */
+  .review-tabs { grid-template-columns: repeat(2, max-content); }
+}
 .review-tabs a[aria-current] { border-bottom-color: var(--amber); font-weight: 700; }
 .review-controls { display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: end; }
 .review-controls[hidden] { display: none; }
@@ -1184,6 +1240,50 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .review-mandate h3, .review-followup h3 { font-size:var(--t-body); letter-spacing: 0; }
 .review-mandate p, .review-followup p { margin: 0.4rem 0; max-width: 55rem; }
 .review-mandate a { display: block; min-height: 44px; padding: 0.5rem 0; font-size:var(--t-body); max-width: 55rem; text-decoration: underline; text-underline-offset: 3px; }
+/* ── News: the six open questions ─────────────────────────────────────────
+   These were six stacked rows, each carrying a 1px rule that ran 1211px
+   under 359px of text, in a column with 852px of nothing to their right.
+   The rule claimed a table row that was never there.
+
+   They are now a grid of peers: three across at the top of the page, two in
+   the middle band, one on a phone. Six divides by three, by two and by one,
+   so no row is ever left with an orphan.
+
+   The measure inside a card is the CARD, not the page: the global prose cap
+   (`body .view :is(p, ...)`) is 46ch, and a 46ch paragraph inside a 511px
+   column left 152px of the column empty under the card's own rule. So the
+   cap comes off these paragraphs and the COLUMN sets the measure instead.
+
+   The column count is chosen by the width of the view, not by the width of
+   the window, and it is chosen so the column never falls below the house's
+   45ch floor. Three columns need 352px each plus two gutters — 1096px of
+   view. Below that, two columns, which need 726px. Below that, one. The
+   first version of this grid counted columns by viewport and cut to three
+   at 1200px of window: that is 971px of view, so each column came out
+   310.66px — 39.83 characters, under the floor — and the same six cards
+   fell from 60.93ch to 39.83ch across a single pixel of window.
+
+   The measure now reads 45.3ch at the two-column threshold and 45.2ch at
+   the three-column threshold, and climbs to 68.7ch at two across and
+   65.6ch at three across. The jumps at the two thresholds are the grid
+   changing its column count, and both sides of each jump are inside the
+   45-75ch band.
+
+   On a phone there is one column and the text stops at the page measure, so
+   the card's rule ends with its text instead of running the width of the
+   column. */
+#review-followups { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 1.5rem; }
+body .view .review-followup p,
+body .view .review-followup .review-note { max-width: 75ch; }
+@container view (min-width: 726px) {
+  #review-followups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@container view (min-width: 1096px) {
+  #review-followups { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@container view (max-width: 725px) {
+  body .view .review-followup { max-width: var(--measure); }
+}
 .review-followup { padding: 0.8rem 0; border-bottom: 1px solid var(--line); }
 .review-table-wrap { width: 100%; overflow-x: auto; margin-top: 1rem; }
 .review-city-table { min-width: 650px; width: 100%; border-collapse: collapse; font-size:var(--t-body); }
@@ -1198,7 +1298,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .review-record .news-story-meta > span { max-width: 100%; overflow-wrap: anywhere; }
 .review-record h2 a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .review-record p { margin: 0.7rem 0; }
-.review-record-detail { border-left: 3px solid var(--amber); padding-left: 1rem; }
+.review-record-detail { width: fit-content; max-width: 100%; border-left: 3px solid var(--amber); padding-left: 1rem; }
 .review-record-detail a { text-decoration: underline; text-underline-offset: 3px; }
 .review-project-links { padding-left: 1.2rem; }
 .review-project-links li { margin: 0.5rem 0; }
@@ -1844,6 +1944,15 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .pipeline-card.callout {
   background: color-mix(in srgb, var(--navy) 5%, var(--bg));
   border-color: color-mix(in srgb, var(--navy) 25%, transparent);
+  /* The band takes the width of what it holds. This panel is the closing
+     call on the innovation view and it held 384.5px of words inside a
+     bordered, filled 1546px frame — 75% of the panel empty, past the
+     house's 3.27x ceiling for an unruled block from a viewport of 1525px.
+     The grid made room and nothing moved into it, the same defect the
+     hero band above it had. A closing statement is a band, not a
+     billboard: it closes around its own words. */
+  width: fit-content;
+  max-width: 100%;
 }
 .pipeline-card.coming-soon {
   border-style: dashed;
@@ -1937,6 +2046,10 @@ input[type="search"] { min-width: min(16rem, 100%); }
 
 .record { max-width: 40rem; }
 .record h1 { margin-bottom: 0.7rem; }
+#view-ascn9 h1 { font-size: var(--t-page-sm); line-height: 1.08; }
+.record-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; width: fit-content; max-width: 100%; }
+/* These are adjacent choices, not a prose line capped by the body measure. */
+body .view p.record-actions { max-width: 100%; }
 .record > p { margin: 0 0 1em; color: var(--ink-2); }
 .record > p.label { margin: 1.6rem 0 0.7rem; color: var(--navy); }
 .record > p.label:first-child { margin-top: 0; }
@@ -2184,6 +2297,16 @@ table { width: 100%; min-width: 42rem; border-collapse: collapse; }
 th, td { padding: 0.6rem 0.5rem 0.6rem 0; border-bottom: 1px solid var(--line-soft); text-align: left; vertical-align: top; }
 th { position: sticky; top: 0; z-index: 2; background: var(--bg); color: var(--muted); }
 td { color: var(--ink-2); font-size:var(--t-body); }
+/* Project descriptions earn the largest column. Intrinsic table sizing let
+   one long incoming title take space from city, focus and status labels.
+   The table owns horizontal scrolling on phones; the page never does. */
+.project-evidence-table { table-layout: fixed; min-width: 58rem; }
+.project-evidence-table .project-city { width: 15%; }
+.project-evidence-table .project-country { width: 14%; }
+.project-evidence-table .project-name { width: 42%; }
+.project-evidence-table .project-focus { width: 17%; }
+.project-evidence-table .project-status { width: 12%; }
+.project-evidence-table td { overflow-wrap: anywhere; }
 .status-pill { font-weight: 700; }
 .status-pill.ongoing { color: var(--green); }
 .status-pill.completed { color: var(--navy); }
@@ -2488,7 +2611,11 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .cc-head { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
 .cc-country { font-size:var(--t-body); font-weight: 700; color: var(--ink); }
 .cc-badge { font-size:var(--t-micro); font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--amber); border: 1px solid var(--amber); padding: 0.1rem 0.4rem; }
-.cc-inst { font-size:var(--t-small); color: var(--ink-2); text-decoration: none; border-bottom: 1px solid var(--line); line-height: 1.4; }
+/* The contact card is a grid, so this link was a grid item and stretched to
+   the cell: its underline ran 321-385px under 85-262px of institution name,
+   a rule up to 4.5x the text it underlined. `justify-self: start` lets the
+   link keep the width of its own words. */
+.cc-inst { font-size:var(--t-small); color: var(--ink-2); text-decoration: none; border-bottom: 1px solid var(--line); line-height: 1.4; justify-self: start; }
 .cc-inst:hover { color: var(--amber); border-color: var(--amber); }
 .cc-note { font-size:var(--t-small); color: var(--muted); line-height: 1.55; margin: 0; }
 
@@ -2621,18 +2748,15 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 /* ---------- Footer ---------- */
 .site-footer { margin-top: 2rem; padding: 2rem 0 2.5rem; border-top: 1px solid var(--line-soft); }
 .footer-content { width: 100%; max-width: var(--content); margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr auto; gap: 1rem; align-items: start; }
-/* The footer's five blocks in three columns put the two fine-print notes in
-   the first column alone, so everything to their right was empty: 603px of
-   the plate, 61% of it, from the second row down. The notes now take the
-   first two columns and the logos the third, and the row above them ends
-   with the logos' own height. */
+/* Each note owns a cell. A later all-column span used to place both notes
+   over the same row, hiding the translation limit under the source note. */
 .footer-fine { grid-column: 1; grid-row: 2; }
 .footer-sourcelang { grid-column: 2; grid-row: 2; }
-.footer-logos { grid-column: 3; grid-row: 2; }
+.footer-logos { grid-column: 3; grid-row: 1 / span 2; }
 .footer-content p { color: var(--ink-2); }
 .footer-logos { display: flex; align-items: center; gap: 0.8rem; }
 .footer-logos img { width: auto; max-width: 7rem; max-height: 2.4rem; }
-.footer-fine { grid-column: 1 / -1; color: var(--muted); font-size:var(--t-small); }
+.footer-fine { color: var(--muted); font-size:var(--t-small); }
 
 button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible {
   outline: 2px solid rgba(24, 58, 90, 0.4);
@@ -2682,7 +2806,10 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 .lib-results { display: grid; gap: 0; }
 .lib-entry { display: grid; grid-template-columns: 5.5rem 1fr auto; gap: 0.5rem 1rem; padding: 0.95rem 0; border-top: 1px solid var(--line-soft); align-items: start; }
 .lib-entry:first-child { border-top: 0; }
-.le-badge { font-size:var(--t-micro); font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; padding: 0.2rem 0.4rem; border: 1px solid currentColor; white-space: nowrap; align-self: start; margin-top: 0.18rem; }
+/* The library entry is a grid, so this badge was a grid item and stretched
+   to the column: a 351px box around 56px of ink. The badge keeps its own
+   width. */
+.le-badge { font-size:var(--t-micro); font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; padding: 0.2rem 0.4rem; border: 1px solid currentColor; white-space: nowrap; align-self: start; justify-self: start; margin-top: 0.18rem; }
 .le-badge.official { color: var(--navy); }
 .le-badge.academic { color: var(--red); }
 .le-badge.report { color: var(--green); }
@@ -2705,7 +2832,9 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
   .site-nav nav::-webkit-scrollbar { display: none; }
   .hero, .overview-grid, .history-grid, .cities-layout, .partners-split,
   .analytics-grid, .framework-grid, .gov-grid, .focus-detail, .info-grid,
-  .footer-content, .dq-grid { grid-template-columns: 1fr; }
+  .dq-grid { grid-template-columns: 1fr; }
+  .footer-content { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .footer-logos { grid-column: 1 / -1; grid-row: 3; }
   .lib-entry { grid-template-columns: 4.5rem 1fr; }
   .le-actions { display: none; }
   .kpi-grid { grid-template-columns: repeat(3, 1fr); }
@@ -2743,7 +2872,9 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 @media (max-width: 520px) {
   .kpi-grid, .kpi-grid--four, .meetings-grid, .partner-cards, .download-grid,
   .document-grid { grid-template-columns: 1fr; }
-  .kpi + .kpi { border-left: 0; padding-left: 0; }
+  .kpi-grid--four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kpi + .kpi { border-left: 0; box-shadow: none; padding-left: 0.8rem; }
+  .kpi-grid--four .kpi:nth-child(odd) { padding-left: 0; }
   .bar-row, .bar-row.wide-label { grid-template-columns: 1fr; gap: 0.25rem; }
   .bar-row strong { text-align: left; }
   .dq-cycle { grid-template-columns: 3.2rem 1fr; }
@@ -2757,17 +2888,119 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
   .le-badge { align-self: auto; }
   .lib-type-chips { gap: 0.3rem; }
   .donut-wrap { flex-direction: column; align-items: flex-start; }
-  .moments-strip { grid-template-columns: 1fr; }
-  .moment-card { flex-direction: row; border-right: 0; border-bottom: 1px solid var(--border); }
-  .moment-card figure { width: 120px; flex-shrink: 0; aspect-ratio: 1; }
-  .moment-body { border-top: 0; border-left: 1px solid var(--border); }
+}
+
+/* ── The path: where to go next ──────────────────────────────────────────────
+   A closed band at the end of every view, carrying the two views a reader
+   should travel to next. It is closed on purpose: two signposts cannot fill
+   a 1211px column, and a full-width band holding 600px of directions is the
+   same defect the callout and the bridge had — the grid made room and
+   nothing moved into it. The band's rule frames the directions instead of
+   straddling nothing. */
+.path-band {
+  margin-top: 3rem;
+  padding-top: 1.1rem;
+  border-top: 2px solid var(--ink);
+  width: fit-content;
+  max-width: 100%;
+}
+.path-kicker {
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin: 0 0 0.9rem;
+  /* The house's prose measure caps every paragraph, and the kicker is a
+     paragraph: its box was 334.97px for 32.94px of ink — 10.17x, over the
+     3.27x the house allows an unruled block. It is a label in a closed band,
+     so it is sized to its own words. */
+  width: fit-content;
+  max-width: 100%;
+}
+.path-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 2rem;
+}
+/* The house's prose measure caps every list item. A signpost is not a
+   paragraph, and the cap would cut the band in half — so this selector
+   has to outrank `body .view :is(p, li, ...)`. */
+body .view .path-steps li { max-width: none; }
+.path-step {
+  display: grid;
+  grid-template-columns: 2.1rem minmax(0, 1fr);
+  gap: 0 0.7rem;
+  align-items: baseline;
+  padding: 0.8rem 0;
+  border-top: 1px solid var(--line-soft);
+  min-height: 44px;
+  text-decoration: none;
+  color: inherit;
+}
+/* The order in the band is: the destination first, then the number that
+   places it, then what it is about.
+
+   The number used to lead — 24px, weight 800, and the only saturated colour
+   in the band — so that the two numerals were the only marks legible when
+   the band was squinted, and the destination names dissolved. The same
+   "02" is 10px and muted in the index rail; a token cannot be the loudest
+   thing in one place and the quietest in the next. It is quiet here too,
+   and the destination name carries the size. */
+.path-num {
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+.path-name {
+  display: block;
+  /* The destination name is a heading, so it takes the heading step of the
+     house's ladder (--t-lead, 19-24px). It does not get a size of its own:
+     every clamp lives on the ladder, and a second ladder is the drift the
+     ladder exists to stop. */
+  font-size: var(--t-lead);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.path-meta {
+  display: block;
+  font-size: var(--t-small);
+  color: var(--ink-2);
+  line-height: 1.4;
+}
+/* The accent means one thing in a band: this is where the reading goes.
+   Hovering used to move it onto the name while at rest it sat on the
+   number, so the same colour meant two different things in the same
+   hundred pixels. Now the rule that divides the steps takes it. */
+.path-step:hover { border-top-color: var(--amber); }
+.path-step:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+/* Below 44rem of view the two signposts cannot sit side by side without
+   wrapping their descriptions into two lines each, so they stack. */
+@container view (max-width: 44rem) {
+  .path-steps { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ── History: UNDP founding quote ── */
+/* The quote is a pull-quote: a 2px amber rule down its left, meant to bracket
+   the words beside it. It was 1574px wide holding 400px of ink — a bracket
+   3.94x the thing it bracketed. The rule now stops at the quote: the block is
+   capped at the measure plus its own padding, so the text fills the rule. */
 .history-quote {
   border-left: 2px solid var(--amber);
   padding: 1.1rem 1.5rem;
   margin: 2rem 0 0;
+  max-width: calc(var(--measure) + 3rem);
 }
 .history-quote blockquote {
   margin: 0 0 0.6rem;
@@ -2847,11 +3080,26 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
   margin-top: 0.1rem;
 }
 
+/* The five moments cannot hold a five-across strip below 1100px: a caption
+   squeezed into a fifth of the column drops under the house's 45ch prose
+   measure, and five cards in three columns leaves a hole in the last row.
+   Below 1100 the strip becomes a list — the photograph beside its words — so
+   every caption gets the column's full measure and every card earns its row. */
 @media (max-width: 1100px) {
-  .moments-strip { grid-template-columns: repeat(3, 1fr); }
-  .moment-card:nth-child(3) { border-right: 0; }
-  .moment-card:nth-child(4),
-  .moment-card:nth-child(5) { border-top: 1px solid var(--border); }
+  .moments-strip { grid-template-columns: 1fr; }
+  .moment-card { flex-direction: row; border-right: 0; border-bottom: 1px solid var(--border); }
+  .moment-card:last-child { border-bottom: 0; }
+  .moment-card figure { flex: 1 1 52%; min-width: 0; height: 11rem; aspect-ratio: auto; }
+  .moment-body { flex: 1 1 48%; border-top: 0; border-left: 1px solid var(--border); }
+}
+@media (max-width: 520px) {
+  /* The phone card takes the desktop's shape — photograph above its words —
+     so the caption gets the column's full width. A 120px photo beside the
+     text left it 27 characters wide inside a 319px column: a squeeze the
+     column itself did not ask for. */
+  .moment-card { flex-direction: column; }
+  .moment-card figure { flex: 0 0 auto; height: auto; aspect-ratio: 4 / 3; }
+  .moment-body { border-left: 0; border-top: 1px solid var(--border); }
 }
 
 /* ---------- Overview integrity note ---------- */
@@ -3208,7 +3456,10 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 }
 .alum-row {
   display: grid;
-  grid-template-columns: 1fr 0.55fr 1.6fr 0.25fr;
+  /* The last track is the role badge's, and it is sized by its content
+     (auto). At 0.25fr it held 112.88px for a 43.06px badge, so the row's
+     own rule ran 70px past the last thing on it. */
+  grid-template-columns: 1fr 0.55fr 1.6fr auto;
   gap: 0 1rem;
   align-items: center;
   padding: 0.55rem 0;
@@ -3225,6 +3476,11 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
   text-transform: uppercase;
   padding: 0.15rem 0.35rem;
   text-align: center;
+  /* The badge is a grid item in the fourth column of the alumni row, so it
+     stretched to that column: a filled 112.88px rectangle around 33.97px of
+     ink — 3.32x the words it holds. `justify-self: start` keeps the fill on
+     the label. */
+  justify-self: start;
 }
 .alum-nr { background: color-mix(in srgb, var(--navy) 8%, transparent); color: var(--navy); }
 .alum-csco { background: rgba(168,109,20,0.1); color: var(--amber); }
@@ -3339,10 +3595,15 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
   .ig-momentum-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .ig-stat-card:nth-child(2) { border-right: 0; }
   .ig-spark-grid { grid-template-columns: 1fr; }
-  .ig-traj-row, .ig-spec-row { grid-template-columns: 100px 1fr; }
+  /* .ig-traj-row and .ig-traj-delta are NOT reset here: the flexible label
+     column and the wrappable delta added on 2026-10-18 (styles.css:5912) are
+     the current intent for narrow screens, and they already sit later in the
+     cascade. The old fixed 100px column was dead code that the audit proved
+     never ran. .ig-spec-row keeps the two-column drop — it has no later
+     override, so this rule is live. */
+  .ig-spec-row { grid-template-columns: 100px 1fr; }
   .ig-traj-bars { min-width: 0; gap: 0.35rem; }
   .ig-traj-n { min-width: 1rem; }
-  .ig-traj-delta { min-width: 2.3rem; }
   .ig-spec-top { display: none; }
 }
 
@@ -4268,11 +4529,11 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
    section titles — the widest empty space on the page, inside a border, which
    makes it read as a container for nothing. Two columns let the box be as wide
    as its contents instead of the viewport. */
+.essay-toc-h { font-size: var(--text-micro); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0 0 0.5rem; }
+.essay-toc ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.25rem; }
 @media (min-width: 860px) {
   .essay-toc ol { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 2.5rem; }
 }
-.essay-toc-h { font-size: var(--text-micro); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0 0 0.5rem; }
-.essay-toc ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.25rem; }
 .essay-toc-link { background: none; border: none; padding: 0.2rem 0; font: inherit; font-size:var(--t-body); color: var(--ink-2); cursor: pointer; text-align: left; line-height: 1.4; }
 .essay-toc-link:hover { color: var(--amber); }
 .essay-section { scroll-margin-top: 84px; }
@@ -4298,6 +4559,19 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
   border-top: 2px solid var(--ink);
   min-width: 0;
 }
+/* The closing row holds one closed callout and nothing else. Left at full
+   width, the section's own rule ran 1211px above 387px of content and the
+   section left three quarters of its width stranded. Closed, the rule
+   matches what stands on it — the same grammar as the path band. */
+.iaas-row-contact {
+  width: fit-content;
+  max-width: 100%;
+}
+/* A label inside a closed band is sized to its own words. The band is held
+   open by the callout under the label, and the label's own box was 359px
+   for 93px of ink — 3.86x, the same defect the plate bar's kicker had and
+   the same rule that fixed it: a label is not a spacer. */
+body .view .iaas-row-contact .label { width: fit-content; }
 .iaas-row-head {
   display: grid;
   grid-template-columns: 3.25rem minmax(0, 1fr);
@@ -4349,31 +4623,39 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
      method and the video. The grid put it there.
 
      The evidence column grows instead: the video holds the plate's right
-     edge at every width, and the caption beside it takes the slack up to
+     edge at every width, and the caption under it takes the slack up to
      70ch — the top of the house's reading band.
 
      The copy column grows WITH it, at 0.75 of the evidence's rate. That
      ratio is the whole fix. The evidence column is 1fr, so it kept
      absorbing the plate's slack while its content could not: the caption
      stops at 70ch, so from a viewport of 1675 the track kept opening and
-     the figure kept standing still — 93.14px of dead track and a 232.86px
-     gap between the method's last word and the caption's first word, at
-     2103, the width the owner photographs. A track that grows while its
-     content cannot is an invented space, and the copy was the column with
-     room to use it: its lede was pinned to the 46ch prose measure inside
-     a 364px column while the plate had 1574px to give away.
+     the figure kept standing still — 93.14px of dead track, and a gap
+     between the method's last line and the caption's first word that
+     opened to 322.48px at 2103 (157.67px measured from the method
+     column's own edge), the width the owner photographs. A track that
+     grows while its content cannot is an invented space, and the copy was
+     the column with room to use it: its lede was pinned to the 46ch prose
+     measure inside a 364px column while the plate had 1574px to give away.
 
      At 0.75fr the copy takes 496.3px of the 1158px the plate has to spare
      at 2103 and the evidence takes the rest — 661.7px, which the figure
      fills exactly, because the figure's own width is 700.86px and the
      track never exceeds it. The dead track is 0.00px at every width from
-     1411 to 2103, the gap between the method and the caption holds at
-     101.19px (the method column's own 75.19px of slack plus the 26px
-     gutter) instead of opening to 232.86px, and the 1440 composition is
-     unchanged to the pixel: 364 / 364 / 431, the caption 230.67px.
+     1411 to 2103, and the 1440 composition is unchanged to the pixel:
+     364 / 364 / 431.
+
+     The gap between the method column and the caption is the 26px gutter
+     and nothing else. (This figure was 101.19px here, and review three
+     found it does not reproduce: the 101.19 came from an understated
+     slack figure — 75.19px — when the method column's own slack measures
+     164.81px. Measured from the method's LAST rendered line the gap is
+     190.81px; measured from the method column's edge it is 26.00px. The
+     second is the number that governs: a gutter separates two blocks, and
+     a half-empty column is not a gutter.)
 
      The lede takes the copy column it is given — up to 40rem, the cap it
-     always declared. 46.7ch at 1440, 63.6ch at 2103: inside the house's
+     always declared. 46.5ch at 1440, 62.4ch at 2103: inside the house's
      45-75ch band at every width. */
   grid-template-columns: minmax(28rem, 0.75fr) minmax(0, 28rem) minmax(30.9rem, 1fr);
   grid-template-areas: "copy steps media";
@@ -4460,34 +4742,46 @@ body .view .iaas-method li {
    step strip used to end on — so the band no longer stops short of the
    page it is printed on.
 
-   The caption stands at the video's foot, not under it. Under the video it
-   added 92px to the band, and the band's height IS the height of the dead
-   plate under the text: with the caption underneath, the band was 437.6px
-   tall while the tallest text column ended at 236.4px, leaving 201.17px of
-   empty plate under the method and 260.23px under the copy. Beside the
-   video the band is the video's height and nothing else — 338px — and the
-   dead plate under the method falls to 80.8px.
+   The caption stands UNDER the picture. It was beside it, and beside it
+   the caption took the leftover width of a column the picture had already
+   filled at its own height: 230.67px of caption beside a 188.64px video in
+   a 431px track at 1440 — 34.95 characters, where the house asks for 45 —
+   and at 2103 the column was so much wider than the caption could use that
+   the space it could not use fell ABOVE it as a 461x262px hole. The
+   picture is a 480x860 portrait, so a column wider than the picture is
+   only ever filled by the caption beside it, and that hole is the defect.
+   Under the picture the caption gets the whole track: 431px at 1440, or
+   65.74 characters, inside the house's 45-75ch band, and nothing is left
+   over. The picture takes the track's width and its own height, cropped to
+   fit, so it still holds the plate's right edge at every width — the one
+   thing the evidence column must never give up.
 
-   The caption sits to the LEFT of the video and the video holds the
-   plate's right edge, so the reading order is unchanged: the figure is
-   still video-then-caption in the DOM, and the band is still bracketed. */
-.iaas-hero-media {
+   What the stacking costs is the band's height: the band is 421.67px at
+   1440 and at 2103, and the copy column carries 157.23px of content in it,
+   so 264.44px of plate sits under the copy and 169.61px under the method.
+   That is 2.68x the copy column's ink, inside the 3.27x the house allows
+   an unruled block, and every arrangement that closed it was measured and
+   rejected: beside the video the band falls to 338px but the caption drops
+   to 34.95 characters and the hole appears; a shorter video letterboxes a
+   portrait into a strip; a narrower copy column puts the lede under its own
+   cap. This is a recorded composition call, not a clean pass — see
+   AUDIT-2026-10-24.md. */
+body .view .iaas-hero-media {
   margin: 0;
   min-width: 0;
   grid-area: media;
-  justify-self: end;
+  justify-self: stretch;
   display: flex;
-  flex-direction: row-reverse;
-  justify-content: flex-start;
-  align-items: flex-end;
-  gap: 0.9rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.6rem;
 }
-.iaas-hero-media video {
+body .view .iaas-hero-media video {
   display: block;
-  width: auto;
+  width: 100%;
   max-width: 100%;
+  height: 26rem;
   max-height: 26rem;
-  aspect-ratio: 480 / 860;
   object-fit: cover;
   background: var(--deep);
   /* The frame is an inset shadow, not a border: a border eats a pixel off
@@ -4497,91 +4791,69 @@ body .view .iaas-method li {
   box-shadow: inset 0 0 0 1px var(--line);
   flex: 0 0 auto;
 }
-.iaas-hero-media figcaption {
+body .view .iaas-hero-media figcaption {
   margin-top: 0;
   font-size:var(--t-small);
   line-height: 1.45;
   color: var(--muted);
-  /* The caption takes the space the video leaves it — 200.2px beside a
-     188.5px video — and no more, so it can never outrun the video it
-     belongs to. */
-  flex: 1 1 12.3rem;
-  min-width: 0;
+  /* The caption stands under the picture, not beside it.
+     Beside the picture it was given the leftover width of a column that the
+     picture had already filled at its own height — 230.67px of caption
+     beside a 188.64px video in a 431px track at 1440, which is 34.95
+     characters where the house asks for 45 — and because the row was
+     bottom-aligned, the space the caption could not use fell ABOVE it as
+     a 230x246px hole, and at 2103 as a 461x262px one. The picture is a
+     480x860 portrait, so a column wider than the picture is only ever
+     filled by the caption beside it.
+     Under the picture the caption gets the whole track: 431px at 1440, or
+     65.4 characters, inside the house's 45-75ch band, and the hole is
+     gone because nothing is left over. The picture takes the track's
+     width and its own height, cropped to fit, so it still holds the
+     plate's right edge at every width — the one thing the evidence
+     column must never give up. */
+  flex: 0 0 auto;
+  max-width: min(70ch, 100%);
 }
-/* The caption's measure is the prose measure here, not the site's
-   55ch cap: 14.5rem under the video was the width a 480×860 phone video
-   occupies at the 26rem height it is capped at, and the rule that is
-   meant to bind here needs the specificity to bind here. */
-body .view .iaas-hero-media figcaption { max-width: min(70ch, 100%); }
 .iaas-hero-media figcaption a { color: var(--navy); font-weight: 700; }
 .iaas-hero-media figcaption a:hover { color: var(--red); }
 
 /* ── The band, measured against the plate ──────────────────────────────────
    Three columns need 364 (the copy at its measure) + 182 (the narrowest
-   method column that keeps a label and a sentence legible) + 188.5 (the
-   video at its own aspect) + 52 (two gutters) = 786.5px of plate. Two
-   columns need 574px. Below that the band is one column.
+   method column that keeps a label and a sentence legible) + 299 (the
+   narrowest evidence column that keeps 45 characters of caption legible)
+   + 52 (two gutters) = 897px of plate. Two columns need 650px. Below that
+   the band is one column.
 
    These are container queries, not viewport queries: the plate is the
    viewport minus a 242px rail, so a viewport query left the method
    column 28.5px wide at a 901px viewport — the sentences wrapped to nine
    lines and the label overflowed its column by 13.8px. */
 @container view (max-width: 90.9rem) {
-  /* The caption stands beside the video once the evidence column is wide
-     enough to hold it: 188.5 (the video) + 13 (the gutter) + 188.5 (the
-     caption at the width it has today) = 390px, and the evidence column
-     reaches 390px at a 1181.7px plate. Below that the caption goes back
-     under the video and the band is the video and its caption stacked.
-
-     The method column does not move at that boundary — it is 364px on
-     both sides of it, because the evidence column is the one that grows
-     (it takes the plate's slack as 1fr) and the method column only ever
-     shrinks, from 364px down to the 182.5px that keeps a label and a
-     sentence legible. */
+  /* Three columns still fit, but the method column can no longer hold a
+     sentence and the evidence column can no longer hold a caption. The
+     method is given the 14rem (182.5px) that keeps a label and its line
+     legible and the evidence the 23rem (299px) that keeps 45 characters of
+     caption legible. */
   body .view .iaas-row-hero {
-    grid-template-columns: 28rem minmax(0, 28rem) minmax(14.5rem, 1fr);
+    grid-template-columns: minmax(28rem, 0.75fr) minmax(14rem, 28rem) minmax(23rem, 1fr);
   }
-  body .view .iaas-hero-media {
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0;
-  }
-  body .view .iaas-hero-media figcaption {
-    margin-top: 0.6rem;
-    flex: 0 1 auto;
-    /* The caption takes the evidence column's slack, under the video.
-       It used to be capped at 14.5rem here, which was the width of the
-       video — so the evidence TRACK could grow (it is 1fr) while the
-       caption could not, and the difference fell on the floor as a hole:
-       the track opened from 188.5px to 401.7px across viewport 1191-1403
-       while the media element stayed at 188.64px, a dead track of up to
-       212.36px between the method column and the video, snapping shut
-       again the moment the caption moved beside it. A track that grows
-       while its content cannot is an invented space: the grid made room
-       and nothing moved into it.
-
-       So the caption is allowed to take the track it is in. At 1300 the
-       track is 298px and the caption becomes 298px — 47 characters, inside
-       the house's 45-75ch band — and the gap between the method's text and
-       the caption's text falls to the 26px gutter it should have been all
-       along. The video keeps the plate's right edge at every width, which
-       is the one thing the evidence column must never give up. */
-    max-width: min(70ch, 100%);
-  }
+  body .view .iaas-hero-copy .lede { max-width: min(70ch, 100%); }
+  body .view .iaas-hero-media video { height: 24rem; }
 }
-@container view (max-width: 60.5rem) {
+@container view (max-width: 67rem) {
+  /* Below 871px of view the three columns cannot both hold their measure,
+     so the band becomes two: the claim and its four steps on the left, the
+     picture and its caption on the right. */
   body .view .iaas-row-hero {
-    grid-template-columns: minmax(0, 1fr) 14.5rem;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     grid-template-areas:
       "copy  media"
       "steps media";
   }
-  /* The copy's column is now the wide one, so the standfirst measures to
-     the column instead of leaving 182px of plate beside it. 70ch is
-     inside the 45-75ch band the house rule allows. */
   body .view .iaas-hero-copy .lede { max-width: min(70ch, 100%); }
+  body .view .iaas-hero-media video { height: 22rem; }
 }
-@container view (max-width: 44.2rem) {
+@container view (max-width: 48rem) {
   body .view .iaas-row-hero {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
@@ -4590,8 +4862,9 @@ body .view .iaas-hero-media figcaption { max-width: min(70ch, 100%); }
       "media";
   }
   body .view .iaas-method { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  body .view .iaas-hero-media { justify-self: start; }
+  body .view .iaas-hero-media { justify-self: stretch; }
   body .view .iaas-hero-copy .lede { max-width: var(--measure); }
+  body .view .iaas-hero-media video { height: 18rem; }
 }
 
 /* ── Row 01: the featured pair ────────────────────────────────────────────── */
@@ -4678,6 +4951,11 @@ body .view .iaas-hero-media figcaption { max-width: min(70ch, 100%); }
   font-weight: 700;
   color: var(--navy);
   align-self: flex-start;
+  /* The 44px floor is in BOTH dimensions. The rule below set the height
+     only, and the link's own width — "Open ↗" — measured 42.75px, so a
+     thumb had 1.25px less than the floor to land on. Fourteen of these on
+     the Innovation view, at every width. */
+  min-width: 44px;
 }
 .iaas-card-link:hover { color: var(--red); text-decoration: underline; }
 .iaas-card .th-title { font-size:var(--t-body); color: var(--muted); font-weight: 400; }
@@ -4734,8 +5012,6 @@ body .view .iaas-hero-media figcaption { max-width: min(70ch, 100%); }
 }
 
 @media (max-width: 900px) {
-  .iaas-hero-media video { max-height: 22rem; }
-  body .view .iaas-hero-media figcaption { max-width: 12.3rem; }
   .iaas-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 720px) {
@@ -4990,14 +5266,27 @@ body .view .iaas-hero-media figcaption { max-width: min(70ch, 100%); }
 .rec-bridge {
   border-top: 2px solid var(--red);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 0 3rem;
+  /* One column, and the width of what it holds.
+     The two-column split put the heading in a 767.5px column it filled to
+     232.33px and the paragraph in the other, 574.17px of empty plate
+     away at 2103 — the reader's eye crossed half a page of nothing to
+     bind a label to the sentence it headed, and the row's own ink-reach
+     metric could not see it, because the ink reached BOTH edges. The
+     rule that said "every other row on the site fills its width" was the
+     grid's answer, and MSH names that as a failed answer.
+     So the bridge closes: the heading sits above the paragraph it heads,
+     the band takes the width of the paragraph's own 75ch measure, and
+     the rule frames the statement instead of straddling 574px of
+     nothing. The same closed band the meeting summary already uses. */
+  width: fit-content;
+  max-width: 100%;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.9rem;
   align-items: start;
 }
-.rec-bridge h2 { grid-column: 1; justify-self: start; font-size: var(--t-h2); margin: 0; }
+.rec-bridge h2 { justify-self: start; font-size: var(--t-h2); margin: 0; }
 body .view .rec-bridge p {
-  grid-column: 2;
-  margin: 0 0 1.1rem;
+  margin: 0 0 0.4rem;
   color: var(--ink-2);
   /* The rule that says 75ch has to outrank the house's prose measure.
      `body .view :is(p, li, ...)` is (0,1,2) and a plain `.rec-bridge p`
@@ -5008,12 +5297,7 @@ body .view .rec-bridge p {
      already carries this fix; the bridge did not. */
   max-width: 75ch;
 }
-.rec-bridge .text-button { grid-column: 2; justify-self: start; }
-
-@media (max-width: 720px) {
-  .rec-bridge { grid-template-columns: minmax(0, 1fr); gap: 0.9rem; }
-  .rec-bridge h2, .rec-bridge p, .rec-bridge .text-button { grid-column: 1; }
-}
+.rec-bridge .text-button { justify-self: start; }
 
 @media (max-width: 900px) {
   .rec-finding-grid { grid-template-columns: minmax(0, 1fr); }
@@ -5823,7 +6107,11 @@ body .view .archive-limits.col-flow > p { max-width: none; }
   }
 }
 
-.footer-sourcelang { max-width: 62ch; color: var(--ink-3); border-top: 1px solid var(--line); padding-top: 0.75rem; margin-top: 1rem; }
+.footer-sourcelang { max-width: var(--measure); color: var(--ink-3); }
+@media (max-width: 600px) {
+  .footer-content { grid-template-columns: minmax(0, 1fr); }
+  .footer-content > * { grid-column: auto; grid-row: auto; }
+}
 
 /* Public evidence first. One question wins; three routes explain the next action.
    Inspired by Axiom X's index, without reproducing its institutional identity. */

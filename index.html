@@ -45,7 +45,7 @@
           <button id="finder-open" class="finder-open" type="button" aria-haspopup="dialog" aria-controls="finder" title="Deep search across cities &amp; projects (/)"><span data-i18n="find.open">Find</span> <kbd>/</kbd></button>
         </div>
 
-        <nav class="index-scroll" id="tab-nav" aria-label="Contents">
+        <nav class="index-scroll" id="tab-nav" aria-label="Contents" tabindex="0">
           <section class="group">
             <div class="group-label">Intelligence <span>4</span></div>
             <a href="#overview" data-tab="overview" class="item active" aria-current="page" data-num="01" data-i18n="nav.overview">Overview</a>
@@ -90,7 +90,7 @@
       <main class="plate" id="platePane">
         <header class="bar plate-bar">
           <button type="button" class="text-btn back" id="backBtn" aria-label="Back to index">Index</button>
-          <p class="bar-kicker" id="barKicker">ASCN · Overview</p>
+          <p class="bar-kicker" id="barKicker"><span id="barKickerSubject">Scope and method</span></p>
           <div class="locale" role="group" data-i18n-attr="aria-label" data-i18n="lang.switch" aria-label="Change language">
             <button type="button" class="locale-btn is-active" data-lang-set="en" aria-pressed="true">EN</button>
             <button type="button" class="locale-btn" data-lang-set="th" aria-pressed="false">TH</button>
@@ -102,7 +102,12 @@
 
         <div class="locator" id="locator">
           <span id="locatorNum">01</span>
-          <span id="locatorMeta">Overview · 38 Cities · 134 Projects</span>
+          <span id="locatorMeta">Overview</span>
+          <a class="locator-next" id="locatorNext" href="#innovation" data-tab="innovation">
+            <span class="locator-next-arrow" aria-hidden="true">→</span>
+            <span class="locator-next-num">02</span>
+            <span class="locator-next-name">Innovation</span>
+          </a>
         </div>
 
         <div class="plate-scroll" id="plate" tabindex="-1">
@@ -605,7 +610,7 @@
         </section>
 
         <!-- CONTACT -->
-        <section class="iaas-row" aria-labelledby="iaas-contact-heading">
+        <section class="iaas-row iaas-row-contact" aria-labelledby="iaas-contact-heading">
           <div class="pipeline-card callout">
             <div class="pipeline-content">
               <p class="label">Partner With Us</p>
@@ -1053,10 +1058,10 @@
       </section>
 
       <!-- ASCN 9 RECORD -->
-      <section class="view" id="view-ascn9" data-view="ascn9" hidden>
-        <a href="#overview" data-tab="overview" class="record-back">← Back to overview</a>
-        <header class="section-head"><p class="label">Public record</p><h1>Published evidence comes first</h1><p class="lede">The meeting draft and briefing images are held privately until public publication can be verified.</p></header>
-        <p><a class="text-button" href="#data" data-tab="data">Read published reports</a> <a class="text-button" href="#news/archive">Browse sourced evidence</a></p>
+      <section class="view record" id="view-ascn9" data-view="ascn9" hidden>
+        <a href="#overview" data-tab="overview" class="record-back" data-i18n="meeting.back">← Back to overview</a>
+        <header class="section-head"><p class="label" data-i18n="meeting.scope">Public record</p><h1 data-i18n="meeting.title">9th annual meeting</h1><p class="lede" data-i18n="meeting.limit">The meeting draft and briefing images are held privately until public publication can be verified.</p></header>
+        <p class="record-actions"><a class="text-button" href="#data" data-tab="data" data-i18n="meeting.reports">Read published reports</a><a class="text-button" href="#news/archive" data-i18n="meeting.evidence">Browse sourced evidence</a></p>
       </section>
 
       <!-- HISTORY -->
@@ -1154,9 +1159,10 @@
         </div>
         <article class="table-panel">
           <div class="panel-head"><h3>Project evidence table</h3><span id="project-count" class="muted"></span></div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>City</th><th>Country</th><th>Project</th><th>Focus</th><th>Status</th></tr></thead>
+          <div class="table-wrap" tabindex="0" role="region" aria-label="Project evidence table; scroll to read all columns">
+            <table class="project-evidence-table">
+              <colgroup><col class="project-city"><col class="project-country"><col class="project-name"><col class="project-focus"><col class="project-status"></colgroup>
+              <thead><tr><th scope="col">City</th><th scope="col">Country</th><th scope="col">Project</th><th scope="col">Focus</th><th scope="col">Status</th></tr></thead>
               <tbody id="project-table"></tbody>
             </table>
           </div>
@@ -1354,7 +1360,7 @@
           <h3>Everything we read — official docs, academic papers, reports, research</h3>
         </div>
         <div class="lib-search-bar">
-          <input type="search" id="lib-search" placeholder="Search all 62 sources…" aria-label="Search the knowledge library" />
+          <input type="search" id="lib-search" placeholder="Search sources…" aria-label="Search the knowledge library" />
           <div class="lib-type-chips" id="lib-type-chips" role="group" aria-label="Filter by source type">
             <button class="lib-chip active" data-type="all" type="button">All <span id="lib-count"></span></button>
             <button class="lib-chip" data-type="official" type="button">Official</button>
@@ -1428,7 +1434,7 @@
 
         <footer class="site-footer">
           <div class="footer-content">
-            <p data-i18n-html="footer.depa">This platform is developed by the <strong>Digital Economy Promotion Agency (DEPA)</strong> and the <strong>Smart City Thailand Office</strong>, under the Ministry of Digital Economy and Society of Thailand — a contribution to the ASEAN Smart Cities Network.</p>
+            <p data-i18n-html="footer.depa">An independent observatory by <strong>Non Arkaraprasertkul</strong>. His work with DEPA and Smart City Thailand is author context; this site is not an official ASEAN or government publication.</p>
             <p data-i18n="essa.a.space.to.share.learn.and.build">A space to share, learn, and build. The data behind it is synthesized from official ASEAN documents and released as open data for everyone.</p>
             <div class="footer-logos">
               <img src="logos/depa.png" alt="Digital Economy Promotion Agency (DEPA)" />
@@ -1436,7 +1442,7 @@
               <img src="logos/smart-city-thailand.svg" alt="Smart City Thailand Office" />
             </div>
             <p class="footer-fine" data-i18n="essa.built.from.asean.source.document">Built from published ASEAN source documents. An independent review; not an official ASEAN publication.</p>
-            <p class="footer-fine footer-sourcelang" data-i18n="note.source.language">Everything on this site that we wrote is translated. Headlines, document titles, organisation and project names, and email subject lines are not: they appear exactly as they were issued, in their original language.</p>
+            <p class="footer-fine footer-sourcelang" data-i18n="note.source.language">Thai and Chinese translations are incomplete. Source headlines, document titles, organisation and project names retain their published wording.</p>
           </div>
         </footer>
       </div><!-- /#main-content -->

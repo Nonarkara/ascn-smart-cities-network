@@ -63,7 +63,7 @@ test("loads no video on arrival; all selections decode, play, and pause on navig
 
   await page.locator(".meeting-summary").click();
   await expect(page.locator("#view-ascn9")).toBeVisible();
-  await expect(page.locator("#view-ascn9 h1")).toHaveText("Published evidence comes first");
+  await expect(page.locator("#view-ascn9 h1")).toHaveText("9th annual meeting");
   await expect(page.locator(".record-photo")).toHaveCount(0);
   await expect(page.locator("#view-ascn9")).toContainText("held privately");
   await expect.poll(() => player.evaluate((video) => video.paused)).toBe(true);
@@ -89,7 +89,9 @@ for (const width of [1280, 768, 390, 375]) {
   test(`overview fits at ${width}px with visible posters and a working meeting link`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: width >= 768 ? 900 : 844 });
     await page.goto("/#overview");
-    await expect(page.locator("#kpi-grid .kpi").first()).toContainText("38");
+    // Initial data loading can outlast the 5s assertion default on a busy
+    // local Pages simulator; the trace must still show the correct content.
+    await expect(page.locator("#kpi-grid .kpi").first()).toContainText("38", { timeout: 15000 });
     await expect(page.locator(".showcase-clip")).toHaveCount(3);
     await expect.poll(() => page.locator(".showcase-clip img").evaluateAll((images) =>
       images.every((image) => image.complete && image.naturalWidth > 0))).toBe(true);
@@ -106,3 +108,21 @@ for (const width of [1280, 768, 390, 375]) {
     await expect(page.locator("#view-ascn9")).toBeVisible();
   });
 }
+
+test('innovation playback pauses on internal navigation and direct hash changes', async ({ page }) => {
+  test.setTimeout(90000);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/#innovation');
+  await expect(page.locator('#view-innovation .path-band')).toHaveCount(1);
+  const player = page.locator('#iaas-hero-video');
+  await expect.poll(() => player.evaluate((video) => video.paused)).toBe(true);
+  await player.evaluate(async (video) => { video.muted = true; await video.play(); });
+  await expect.poll(() => player.evaluate((video) => video.currentTime)).toBeGreaterThan(0);
+  await page.locator('#locatorNext').click();
+  await expect(page.locator('#view-record')).toBeVisible();
+  await expect.poll(() => player.evaluate((video) => video.paused)).toBe(true);
+  await page.goto('/#innovation');
+  await player.evaluate(async (video) => { video.muted = true; await video.play(); });
+  await page.goto('/#overview');
+  await expect.poll(() => player.evaluate((video) => video.paused)).toBe(true);
+});

@@ -118,7 +118,7 @@ npm run check
 npm run dev
 ```
 
-`npm run check` validates the committed JSON and builds `dist/`. `npm run dev` serves that snapshot with Wrangler Pages (`npx wrangler pages dev dist`). Open the URL Wrangler prints (typically `http://127.0.0.1:8788`).
+`npm run check` validates the committed JSON and builds `dist/`. `npm run check:release` also runs browser flows, incoming-data stress tests, strict spatial checks and all-view captures. See [RELEASE.md](RELEASE.md) for the release and data-update procedure. `npm run dev` serves that snapshot with Wrangler Pages (`npx wrangler pages dev dist`). Open the URL Wrangler prints (typically `http://127.0.0.1:8788`).
 
 Useful scripts:
 
@@ -128,7 +128,8 @@ Useful scripts:
 | `npm run build` | Copy deployable files to `dist/` |
 | `npm run extract:data` | Rebuild `data/ascn-v2-data.json` from local PDFs |
 | `npm run build:archive` | Rebuild `data/ascn-archive.json` from the inbox export and `public/records.csv` |
-| `npm run deploy` | Build and publish `dist/` to Cloudflare Pages |
+| `npm run check:release` | Validate, build, test flows and data growth, audit spatial geometry and capture every view |
+| `npm run deploy` | Run the release gate, publish `dist/`, verify live bytes and private-path denial |
 
 The Archive tab reads `data/ascn-archive.json` only. `npm run build:archive` requires `ASCN_ARCHIVE_DIR` to be set to the folder holding `records.json` (there is no default — the source lives outside this repository), merges `public/records.csv` when that file is present, and reads `public/round2/` when that folder exists. A scrape-schema CSV joins the record list. `tied-aid.csv`, `programmes.csv` and `funding-by-donor.csv` are read by their own columns: general aid statistics stay labelled general, overlapping programmes fold into the existing row, and a conflicting donor figure is reported instead of replacing a headline total. Matching public rows fold into the inbox record instead of appearing twice. Funding totals add only cited amounts. Borderline and non-public rows are left out. The build refuses to write the file if the result contains an email address, a phone number, raw email text, or a mailbox thread id. Do not commit the inbox export, and do not copy source PDFs into the repo.
 
@@ -226,7 +227,7 @@ ignored folders and is never a release asset.
 ### Design release checks
 
 `npm run check:design` enforces objective anti-slop rules as part of `check`.
-`npm run audit:visual` captures all 15 views at 1440/1024/390px; run it against a
+`npm run audit:visual` captures all 19 routes (including News subviews and the annual-meeting sheet) at 1440/1024/390px; run it against a
 local preview or set `ASCN_TEST_URL`. A second reviewer must inspect the actual
 screenshots. The Find button (or `/` outside a text field) searches cities,
 latest-cycle projects and public sources; Escape closes it and restores focus.

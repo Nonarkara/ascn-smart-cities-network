@@ -71,6 +71,14 @@ function renderBaseline() {
 
 function render() {
   if (!state.archive) return;
+  // Report loading and route events can both enrich the current selection.
+  // Preserve the reader's open evidence and keyboard position through either.
+  const archive = $("#review-archive");
+  const opened = [...archive.querySelectorAll('details[open]')].map((el) => el.closest('[id]').id);
+  const focusables = 'summary,a,button,input,select,textarea,[tabindex]';
+  const active = document.activeElement;
+  const focusedRecord = archive.contains(active) ? active.closest('.review-record[id]') : null;
+  const focusedIndex = focusedRecord ? [...focusedRecord.querySelectorAll(focusables)].indexOf(active) : -1;
   const rows = filterRecords(state.archive.records, state.filters);
   const summary = summarizeEvidence(rows, Number(state.archive.reviewedAt.slice(0, 4)));
   const all = summarizeEvidence(state.archive.records);
@@ -96,6 +104,8 @@ function render() {
   $("#review-cities").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => { state.filters.city = button.dataset.reviewCity; $("#review-city").value = state.filters.city; state.page = 0; render(); }));
   state.page = Math.min(state.page, Math.max(0, Math.ceil(rows.length / pageSize) - 1));
   $("#review-archive").innerHTML = rows.slice(state.page * pageSize, (state.page + 1) * pageSize).map(record).join("") || '<p class="review-empty">No evidence matches. Reset or broaden the filters.</p>';
+  for (const id of opened) { const el = document.getElementById(id)?.querySelector('details'); if (el) el.open = true; }
+  if (focusedIndex >= 0) document.getElementById(focusedRecord.id)?.querySelectorAll(focusables)[focusedIndex]?.focus({ preventScroll: true });
   pagination("#review-pagination", state.page, rows.length, (page) => { state.page = page; render(); $("#review-archive").scrollIntoView(); });
   $("#review-method").innerHTML = `<p>${esc(state.archive.scope)}</p><p>Sources checked ${showDate(state.archive.reviewedAt)}. Search routes: ${esc(state.archive.queries.join("; "))}.</p><p>Commitment = an intention or pledge; Cooperation = a meeting or partnership; Implementation = work in progress; Output = a delivered asset, service reach or published product; Outcome = a measured change with explicit comparison; Scrutiny = attributed research or critique. These are review classifications, not official project statuses.</p><p>Multiple records can cover one event. The distinct-event count uses curated topic/event keys, not an estimate of all activity. Source type does not guarantee accuracy or independence; implementing partners and official releases can be interested parties. Indexed-text records have partial access. Unknown publication dates are not invented.</p><p>Discovery matches are never promoted automatically. An editor must check the source, identify the claim and limits, link a real city/project, and commit a reviewed record. No article bodies or publisher images are republished; summaries and interpretations are this platform's.</p><p>News does not establish ASCN's causal contribution. Absence of news is not absence of activity. Outcome measures, audited financing and service records are needed for a stronger performance verdict.</p>`;
   renderBaseline();

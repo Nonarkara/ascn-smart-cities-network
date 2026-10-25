@@ -12,6 +12,18 @@ export function shorterMeasure(heading, body) {
   return value(heading) > 0 && value(heading) < value(body);
 }
 
+// Run in the browser. A hidden view has computed styles but contributes no
+// rendered type; counting it made a compact notice fail another page's ramp.
+export function renderedTypeSizes() {
+  const sizes = new Set();
+  for (const el of document.querySelectorAll('body *')) {
+    const style = getComputedStyle(el);
+    if (el.getClientRects().length && style.visibility !== 'hidden' &&
+        el.children.length === 0 && el.textContent.trim() && style.fontSize) sizes.add(style.fontSize);
+  }
+  return [...sizes];
+}
+
 export function undersizedTarget({ width, height }, minimum = 44) {
   return width < minimum - 1 / 64 || height < minimum - 1 / 64;
 }

@@ -47,6 +47,7 @@ const outDir = process.env.ASCN_SH_OUT || `artifacts/sh/${label}`;
 // exactly the width the owner photographs, and at 1440 the band was
 // clean. An instrument that stops at 1440 cannot see it.
 const VIEWPORTS = [
+  { width: 360, height: 800 },
   { width: 390, height: 844 },
   { width: 1024, height: 768 },
   { width: 1440, height: 900 },
@@ -56,7 +57,8 @@ const VIEWPORTS = [
 
 const VIEWS = [
   'overview', 'cities', 'record', 'archive', 'projects', 'innovation',
-  'news', 'history', 'framework', 'partners', 'contacts', 'insights',
+  'news', 'news/archive', 'news/discovery', 'news/regional', 'ascn9',
+  'history', 'framework', 'partners', 'contacts', 'insights',
   'data', 'research', 'essay',
 ];
 
@@ -71,10 +73,16 @@ const STRANDED_FLOOR = 0.75;
 // A track that stands more than this much wider than the item placed in it
 // is a hole, not a margin. Below 1px it is rounding.
 const TRACK_SLACK = 6;
+// A rule under a row of prose may run at most this much longer than the
+// text it divides. The house's own ruled rows keep the rule within
+// 1.06-1.26x their ink; a hairline under 197-289px of text in a 567px
+// column is an empty table cell, which reads as a failed attempt at a table
+// rather than as a list.
+const RULE_BAND = 1.26;
 
-async function measure(page, inkCeiling, strandedFloor, trackSlack) {
+async function measure(page, inkCeiling, strandedFloor, trackSlack, ruleBand) {
   return page.evaluate(
-    ({ inkCeiling, strandedFloor, trackSlack }) => {
+    ({ inkCeiling, strandedFloor, trackSlack, ruleBand }) => {
       const q = (s) => document.querySelector(s);
       const qa = (s) => [...document.querySelectorAll(s)];
       const r = (e) => {
@@ -156,8 +164,62 @@ async function measure(page, inkCeiling, strandedFloor, trackSlack) {
       // claim; it is simply as wide as the column allows.
       const inflated = [];
       const stranded = [];
-      const scope = view ? [view, ...view.querySelectorAll(':scope > *')] : [];
-      for (const el of scope) {
+      // ── F3: the scope was too narrow to see the bleed. ────────────────────
+      // The old scope was the view and its direct children, so a panel one
+      // level down — the innovation view's closing callout, a bordered and
+      // filled 1546px frame holding 384.5px of words — was never judged,
+      // and an independent review counted 160 framed blocks on the news
+      // view alone that this instrument could not see.
+      //
+      // Two scopes, on purpose. The top-level scope judges a box that
+      // IS the claim: the view's own sections, and the grid items
+      // stretched across a track. That test was calibrated against the
+      // house's own lists, where a step is a statement that takes the
+      // column it is given, and widening it to every descendant flags
+      // every ordinary card cell. The deep scope is for the two new
+      // tests below, which look for a FRAME — a visible box around
+      // content — and for a rule running past the text it divides.
+      const topScope = view ? [view, ...view.querySelectorAll(':scope > *')] : [];
+      const deepScope = view ? [view, ...view.querySelectorAll('*')] : [];
+
+      // A DATA CELL is not a stretched box. A column width in a data table
+      // is a data decision, and the house's own words say so: "table cells
+      // (TH/TD) — a column width in a data table is a data decision, not a
+      // stretched box." A matrix built from divs is the same thing, so a
+      // cell in a grid of three or more columns counts as data too.
+      const isDataCell = (el) => {
+        if (el.closest('table')) return true;
+        for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) {
+          const d = getComputedStyle(p).display;
+          if (d.includes('grid')) {
+            const tracks = getComputedStyle(p).gridTemplateColumns.split(' ').filter((s) => s && s !== 'none').length;
+            if (tracks >= 3) return true;
+          }
+        }
+        return false;
+      };
+      // A DATA MARK is a box whose width IS the data: a bar's fill, a
+      // segment of a stacked bar. Its own box is its content, the way a
+      // canvas is its content.
+      const isDataMark = (el) => {
+        if (el.hasAttribute('style') && /width\s*:\s*[\d.]+%/.test(el.getAttribute('style'))) return true;
+        return !!el.querySelector('[style*="width"]');
+      };
+      // A FRAME closes a box around its content: a fill, or a border on a
+      // side that encloses. A lone rule above a heading is a section
+      // divider; a rule under a table's row is that table's own rule. A
+      // frame is a claim, and a claim is judged.
+      const frameSides = (cs) => {
+        const w = ['Top', 'Right', 'Bottom', 'Left'].map((k) => parseFloat(cs['border' + k + 'Width']) || 0);
+        const names = ['Top', 'Right', 'Bottom', 'Left'].filter((k, i) => w[i] > 0);
+        const fills = cs.backgroundColor && cs.backgroundColor !== 'rgba(0, 0, 0, 0)' && cs.backgroundColor !== 'transparent';
+        if (fills) return 'fill';
+        if (names.includes('Left') || names.includes('Right')) return 'side';
+        if (names.includes('Top') && names.includes('Bottom')) return 'box';
+        return null;
+      };
+
+      for (const el of topScope) {
         const b = r(el);
         if (b.w < 60) continue;
         const i = ink(el);
@@ -182,10 +244,119 @@ async function measure(page, inkCeiling, strandedFloor, trackSlack) {
           );
         }
       }
+
       out.inflated = inflated.slice(0, 8);
       out.stranded = stranded.slice(0, 8);
       if (inflated.length) failures.push(inflated.length + ' box(es) inflated past ' + inkCeiling + 'x their ink');
       if (stranded.length) failures.push(stranded.length + ' section(s) leave their content stranded');
+
+      // The frame: a visible box around content that holds far less than it
+      // claims. This is the class the old scope could not see.
+      const frames = [];
+      for (const el of deepScope) {
+        if (el === view) continue;
+        const b = r(el);
+        if (b.w < 200) continue;
+        if (isCanvas(el) || isDataCell(el) || isDataMark(el)) continue;
+        const cs = getComputedStyle(el);
+        const kind = frameSides(cs);
+        if (!kind) continue;
+        const i = ink(el);
+        if (!i) continue;
+        const inkW = i.r - i.l;
+        if (inkW < 40) continue;
+        const ratio = b.w / inkW;
+        if (ratio > inkCeiling) {
+          frames.push(
+            el.tagName + '.' + String(el.className).slice(0, 40) + ' ' + Math.round(b.w) +
+              'px ' + kind + ' for ' + Math.round(inkW) + 'px of ink (' + ratio.toFixed(2) + 'x)',
+          );
+        }
+      }
+      out.frames = frames.slice(0, 8);
+      if (frames.length) failures.push(frames.length + ' frame(s) holding less than they claim');
+
+      // The rule under prose: the house's own rejected pattern. A hairline
+      // under 197-289px of text in a 567px column is an empty table cell —
+      // the rule ran 279-371px past the sentence it headed, and read as a
+      // failed attempt at a table rather than as a list. A rule under a
+      // DATA row is that table's own rule, and a data decision.
+      const proseRules = [];
+      for (const el of deepScope) {
+        if (el === view) continue;
+        const b = r(el);
+        if (b.w < 200) continue;
+        if (isCanvas(el) || isDataCell(el) || isDataMark(el)) continue;
+        const cs = getComputedStyle(el);
+        const bottom = parseFloat(cs.borderBottomWidth) || 0;
+        if (bottom <= 0) continue;
+        const top = parseFloat(cs.borderTopWidth) || 0;
+        const right = parseFloat(cs.borderRightWidth) || 0;
+        const left = parseFloat(cs.borderLeftWidth) || 0;
+        if (top || right || left) continue; // a box, not a rule under a row
+        if (cs.display.includes('grid')) continue; // a matrix row is data
+        const i = ink(el);
+        if (!i) continue;
+        const inkW = i.r - i.l;
+        if (inkW < 40) continue;
+        const ratio = b.w / inkW;
+        if (ratio > ruleBand) {
+          proseRules.push(
+            el.tagName + '.' + String(el.className).slice(0, 40) + ' rule ' + Math.round(b.w) +
+              'px under ' + Math.round(inkW) + 'px of text (' + ratio.toFixed(2) + 'x)',
+          );
+        }
+      }
+      out.proseRules = proseRules.slice(0, 8);
+      if (proseRules.length) failures.push(proseRules.length + ' rule(s) running past the text they divide');
+
+      // The closed band that opens inside itself. A band sized to its own
+      // content (`width: fit-content`) has said: this is as wide as what I
+      // hold. A child that then stretches past its own words has reopened
+      // the band inside it.
+      //
+      // This is the class the instrument could not see. The path band's
+      // kicker was a 334.97px box for 32.94px of ink — 10.17x — and none of
+      // the four checks above could reach it: the stretched-item check only
+      // fires on grid and flex items, the stranded check only on SECTIONs,
+      // the frame check needs a border on two sides, and the prose-rule
+      // check skips anything with a top border. A green light that does not
+      // cover the element the round introduced is not a green light.
+      const closedBands = [];
+      for (const sheet of document.styleSheets) {
+        let rules;
+        try { rules = sheet.cssRules; } catch { continue; }
+        for (const rule of rules) {
+          if (!rule.style || !rule.selectorText) continue;
+          if (!/fit-content/.test(rule.style.getPropertyValue('width') || '')) continue;
+          for (const el of document.querySelectorAll(rule.selectorText)) closedBands.push(el);
+        }
+      }
+      const bandSlack = [];
+      const TEXT_BLOCK = 'p,li,h1,h2,h3,h4,h5,h6,figcaption,blockquote,dd,dt';
+      for (const band of closedBands) {
+        if (!band.isConnected) continue;
+        const bb = r(band);
+        if (bb.w < 60) continue;
+        for (const el of [band, ...band.querySelectorAll(TEXT_BLOCK)]) {
+          const b = r(el);
+          if (b.w < 40) continue;
+          if (isCanvas(el) || isDataCell(el) || isDataMark(el)) continue;
+          const i = ink(el);
+          if (!i) continue;
+          const inkW = i.r - i.l;
+          if (inkW < 20) continue;
+          const ratio = b.w / inkW;
+          if (ratio > inkCeiling) {
+            bandSlack.push(
+              el.tagName + '.' + String(el.className).slice(0, 40) + ' ' + Math.round(b.w) +
+                'px inside a closed band for ' + Math.round(inkW) + 'px of ink (' + ratio.toFixed(2) + 'x)',
+            );
+          }
+        }
+      }
+      out.bandSlack = bandSlack.slice(0, 8);
+      if (bandSlack.length) failures.push(bandSlack.length + ' block(s) stretched inside a closed band');
 
       // The dead track: a grid track that is wider than the item standing
       // in it, with the item set to the track's END. The leftover sits
@@ -301,7 +472,7 @@ async function measure(page, inkCeiling, strandedFloor, trackSlack) {
 
       return { ...out, failures };
     },
-    { inkCeiling, strandedFloor, trackSlack },
+    { inkCeiling, strandedFloor, trackSlack, ruleBand: RULE_BAND },
   );
 }
 
@@ -312,9 +483,13 @@ try {
   for (const vp of VIEWPORTS) {
     const ctx = await browser.newContext({ viewport: { width: vp.width, height: vp.height } });
     const page = await ctx.newPage();
+    // Geometry is reviewed against the shipped snapshot. Live-feed success
+    // and failure have separate browser flow tests.
+    await page.route('**/api/{news,ascn-news}', (route) => route.fulfill({ status: 503, json: {} }));
     const errors = [];
     page.on('pageerror', (e) => errors.push(String(e.message)));
     for (const view of VIEWS) {
+      const surface = view.split('/')[0];
       await page.setViewportSize({ width: vp.width, height: vp.height });
       await page.goto(`${base}/#${view}`, { waitUntil: 'domcontentloaded' });
       // The router unhides the requested section. A same-document navigation
@@ -327,12 +502,32 @@ try {
         return !!el && !el.hidden;
       };
       try {
-        await page.waitForFunction(shown, view, { timeout: 8000 });
+        await page.waitForFunction(shown, surface, { timeout: 8000 });
       } catch {
         await page.reload({ waitUntil: 'domcontentloaded' });
-        await page.waitForFunction(shown, view, { timeout: 20000 });
+        await page.waitForFunction(shown, surface, { timeout: 20000 });
       }
       await page.evaluate(() => document.fonts.ready);
+      if (view === 'overview') await page.locator('#kpi-grid .kpi').first().waitFor({ state: 'attached' });
+      if (surface === 'news') await page.locator(`#news-panel-${view.split('/')[1] || 'review'}`).waitFor();
+      // Markers without a basemap are not a verified map. Wait for visible
+      // tiles, just as the visual capture does; record a failure on outage.
+      let mapFailure = null;
+      if (['cities', 'contacts'].includes(view)) {
+        const selector = view === 'cities' ? '#sea-map' : '#contacts-map';
+        try {
+          await page.waitForFunction((sel) => {
+            const map = document.querySelector(sel);
+            if (!map || map.querySelectorAll('.leaflet-interactive').length === 0) return false;
+            const box = map.getBoundingClientRect();
+            const tiles = [...map.querySelectorAll('.leaflet-tile')].filter((tile) => {
+              const b = tile.getBoundingClientRect();
+              return b.right > box.left && b.left < box.right && b.bottom > box.top && b.top < box.bottom;
+            });
+            return tiles.length > 0 && tiles.every((tile) => tile.complete && tile.naturalWidth === 256);
+          }, selector, { timeout: 20000 });
+        } catch { mapFailure = `${selector}: geographic tiles or markers not ready`; }
+      }
       await page.evaluate(() => {
         const p = document.querySelector('#plate');
         if (p) p.scrollTop = 0;
@@ -344,15 +539,16 @@ try {
       m.width = vp.width;
       m.height = vp.height;
       m.errors = errors.slice();
+      if (mapFailure) m.failures.push(mapFailure);
       if (errors.length) m.failures.push(errors.length + ' page error(s)');
       // The surface measured must be the surface requested. A measurement
       // of a different view is not a pass; it is a measurement of the wrong
       // thing, and the record must say so.
-      if (m.measuredView !== `view-${view}`) {
-        m.failures.push(`measured ${m.measuredView || 'nothing'}, asked for view-${view}`);
+      if (m.measuredView !== `view-${surface}`) {
+        m.failures.push(`measured ${m.measuredView || 'nothing'}, asked for view-${surface}`);
       }
       await page.screenshot({
-        path: `${outDir}/${view}-${vp.width}.png`,
+        path: `${outDir}/${view.replaceAll('/', '-')}-${vp.width}.png`,
         animations: 'disabled',
       });
       report.push(m);

@@ -2,7 +2,7 @@ import { chromium, devices } from "@playwright/test";
 import { createHash } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
-import { outsidePalette, shorterMeasure, longestHeadingLine, mediaCaptionFits } from "./visual-audit-rules.mjs";
+import { outsidePalette, shorterMeasure, longestHeadingLine, mediaCaptionFits, renderedTypeSizes } from "./visual-audit-rules.mjs";
 
 const BASE = process.env.ASCN_TEST_URL || "http://127.0.0.1:4187";
 const fetch = (input, options = {}) => globalThis.fetch(input, { ...options, signal: options.signal || AbortSignal.timeout(20000) });
@@ -1503,12 +1503,9 @@ try {
     await page.goto(`${BASE}/#${tab}`, { waitUntil: "networkidle" });
     await page.waitForTimeout(700);
     const style = await page.evaluate(() => {
-      const sizes = new Set();
       let gradients = 0, blurred = 0, rounded = 0;
       for (const el of document.querySelectorAll("body *")) {
         const s = getComputedStyle(el);
-        // Some elements expose no resolved font-size; "" is not a size.
-        if (el.children.length === 0 && (el.textContent || "").trim() && s.fontSize) sizes.add(s.fontSize);
         if (/gradient/.test(s.backgroundImage)) gradients++;
         if (/blur\(/.test(s.backdropFilter)) blurred++;
         // Sharp edges means no rounded *corners*. A border-radius:50% on a
@@ -1519,8 +1516,9 @@ try {
         const isCircle = s.borderTopLeftRadius.includes("50%") && square.width < 40 && square.height < 40;
         if (r > 0 && !isCircle && !el.closest(".leaflet-container")) rounded++;
       }
-      return { sizes: sizes.size, gradients, blurred, rounded };
+      return { gradients, blurred, rounded };
     });
+    style.sizes = (await page.evaluate(renderedTypeSizes)).length;
     if (tab === "record") {
       ok("the type ramp stays collapsed (≤6 rendered sizes)", style.sizes <= 6, `${style.sizes} sizes`);
     }

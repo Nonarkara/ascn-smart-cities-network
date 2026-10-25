@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { longestHeadingLine } from '../scripts/visual-audit-rules.mjs';
+import { longestHeadingLine, renderedTypeSizes } from '../scripts/visual-audit-rules.mjs';
 
 // The twins strip. It used to be one row per twin: a 779px picture with the
 // copy beside it, which the owner rejected as "very big on one side and a
@@ -332,4 +332,21 @@ test('the header-origin assertion catches a one-pixel misalignment (control)', a
   });
   expect(measured).toBeGreaterThan(0);
   expect(measured).toBeLessThanOrEqual(6);
+});
+
+test('type audit ignores hidden pages and still detects an extra visible size', async ({ page }) => {
+  await page.goto('/#record');
+  await expect(page.locator('#rec-stack-chart .rec-col').first()).toBeAttached();
+  const before = await page.evaluate(renderedTypeSizes);
+  await page.addStyleTag({ content: '#view-ascn9 h1 { font-size: 99px; }' });
+  expect(await page.evaluate(renderedTypeSizes)).toEqual(before);
+  await page.locator('#view-record').evaluate((view) => {
+    const control = document.createElement('p');
+    control.textContent = 'Visible type control';
+    control.style.fontSize = '99px';
+    view.appendChild(control);
+  });
+  const after = await page.evaluate(renderedTypeSizes);
+  expect(after).toContain('99px');
+  expect(after.length).toBe(before.length + 1);
 });

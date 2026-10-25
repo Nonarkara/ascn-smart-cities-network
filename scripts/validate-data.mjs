@@ -129,6 +129,13 @@ const missingStats = citiesDoc.cities.filter((city) => !statCities.has(city.name
 if (missingStats.length) warn(warnings, `Missing merged population/stat rows for: ${missingStats.join(", ")}.`);
 
 if (!knowledge.summary || !knowledge.framework || !knowledge.ascap) fail(errors, "Knowledge file must include summary, framework, and ascap.");
+if (knowledge.summary) {
+  const latest = engine.reports.at(-1);
+  const expected = { cities: citiesDoc.cities.length, countries: countrySet.size, projects: latest.total_projects, ...latest.status };
+  for (const [key, value] of Object.entries(expected)) {
+    if (knowledge.summary[key] !== value) fail(errors, `Knowledge summary.${key} (${knowledge.summary[key]}) disagrees with the public roster/latest report (${value}); review the summary with the new data.`);
+  }
+}
 if (!Array.isArray(knowledge.citizen_impact) || knowledge.citizen_impact.length < 1) warn(warnings, "No citizen impact examples found.");
 
 const libraryEntries = Array.isArray(library.entries) ? library.entries : [];

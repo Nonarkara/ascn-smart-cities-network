@@ -1,7 +1,7 @@
 # ASCN independent observatory
 
 Follow current owner instructions and the shared memory protocol. Before UI
-work, apply anti-slop-design and read DESIGN-ANTI-SLOP.md. Preserve the maps,
+work, apply anti-slop-design and read DESIGN-ANTI-SLOP.md and DESIGN-MSH.md. Preserve the maps,
 videos, research, charts and publicly sourced content. The owner requires that
 only public material be public: private mail, internal drafts and redacted
 snippets stay local. A public URL does not authenticate private-derived prose.
@@ -22,3 +22,8 @@ Publication guard: every build validates the completed artifact, and the standar
 Use these gates for every release; never treat provider success or a healthy
 home page as proof of privacy. Historical Git cleanup still requires the owner's
 separate approval; safety work does not authorize a rewrite or force-push.
+
+MSH is a standing design law: geometry must serve reading and action. Run
+`npm run audit:spatial` at the documented viewports, inspect the screenshots,
+and record chrome cost, task visibility, hierarchy, preservation and remaining
+findings. A numerical pass alone is not a visual pass. Keep screenshots local.

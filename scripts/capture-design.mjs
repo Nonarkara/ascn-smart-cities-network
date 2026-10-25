@@ -2,6 +2,7 @@ import { chromium } from '@playwright/test';
 import { mkdir, writeFile } from 'node:fs/promises';
 const browser=await chromium.launch({channel:process.env.PLAYWRIGHT_CHANNEL || undefined});
 const page=await browser.newPage();
+await page.route('**/api/{news,ascn-news}', (route) => route.fulfill({status:503,json:{}}));
 const base=process.env.ASCN_TEST_URL || 'http://127.0.0.1:4187';
 const output=process.env.ASCN_SCREENSHOTS || '.tmp/audit-after';
 await mkdir(output,{recursive:true});
@@ -11,10 +12,11 @@ try {
     await page.setViewportSize({width,height:950});
     await page.goto(`${base}/#overview`);
     await page.locator('#kpi-grid .kpi').first().waitFor({state:'attached'});
-    for(const tab of ['overview','cities','record','archive','projects','innovation','news','history','framework','partners','contacts','insights','data','research','essay']) {
+    for(const tab of ['overview','cities','record','archive','projects','innovation','news','news/archive','news/discovery','news/regional','ascn9','history','framework','partners','contacts','insights','data','research','essay']) {
       // On phones the index is hidden while a section is open.
       await page.goto(`${base}/#${tab}`, {waitUntil:'domcontentloaded'});
-      await page.locator(`#view-${tab}`).waitFor();
+      await page.locator(`#view-${tab.split('/')[0]}`).waitFor();
+      if(tab.split('/')[0]==='news') await page.locator(`#news-panel-${tab.split('/')[1] || 'review'}`).waitFor();
       await page.evaluate(()=>document.fonts.ready);
       if(['cities','contacts'].includes(tab)) {
         const map=tab==='cities'?'#sea-map':'#contacts-map';
@@ -26,7 +28,14 @@ try {
         },map,{timeout:20000});
       }
       await page.evaluate(()=>{document.querySelector('#plate').scrollTop=0;scrollTo({top:0,behavior:'instant'});});
-      await page.screenshot({path:`${output}/${tab}-${width}.png`,animations:'disabled'});
+      await page.screenshot({path:`${output}/${tab.replaceAll('/', '-')}-${width}.png`,animations:'disabled'});
+      if(tab==='news/archive') {
+        const details=page.locator('#review-archive details').first();
+        await details.waitFor({state:'attached'});
+        await details.evaluate(el=>{el.open=true;});
+        await details.locator('..').screenshot({path:`${output}/news-archive-expanded-${width}.png`,animations:'disabled'});
+        await details.evaluate(el=>{el.open=false;});
+      }
       const metrics=await page.evaluate(()=>{
         const plate=document.querySelector('#plate');
         return {overflow:document.documentElement.scrollWidth>innerWidth || plate.scrollWidth>plate.clientWidth+1,headerHeight:document.querySelector('.plate-bar').getBoundingClientRect().height};
@@ -37,4 +46,4 @@ try {
 } finally { await browser.close(); }
 await writeFile(`${output}/layout.json`,JSON.stringify(report,null,2)+'\n');
 if(report.some(row=>row.overflow)) throw new Error('Document overflow: '+JSON.stringify(report.filter(row=>row.overflow)));
-console.log(`Saved ${report.length} screenshots at 1440/1024/390; no document overflow. Maps waited for visible loaded tiles and all 38 markers. Independent visual review remains required.`);
+console.log(`Saved ${report.length} view screenshots and 3 expanded evidence records at 1440/1024/390; no document overflow. Maps waited for visible loaded tiles and all 38 markers. Independent visual review remains required.`);

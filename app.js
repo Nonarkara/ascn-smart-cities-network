@@ -1,5 +1,5 @@
 import { escapeHtml as esc, safeUrl, csvCell, validateDataset } from "./lib/security.mjs";
-import { applyLang, initLang, currentLang, tx, LANGS } from "./lib/i18n.mjs";
+import { applyLang, initLang, currentLang, tx, t, LANGS } from "./lib/i18n.mjs";
 
 /* ============================================================
    ASCN Open Platform — tabbed living observatory
@@ -148,34 +148,40 @@ function svgLine(points, w = 280, h = 90) {
   return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true"><path d="${area}" fill="var(--amber)" opacity="0.1" /><polyline points="${ptStr.join(" ")}" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linejoin="round" />${dots}${labels}</svg>`;
 }
 
-/* ---------------- Routing ---------------- */
+/* ---------------- Routing ----------------
+   The number each view wears in the index. The copy that goes with it — the
+   view's name and the one line that says what the view is about — lives in
+   the dictionary (lib/i18n.mjs), because it is said in the rail, in the
+   locator, in the plate bar's strapline and in the path band, and a string
+   that is said in four places has to exist in one place. */
 const TAB_META = {
-  overview: { num: "01", kicker: "ASCN · Overview", meta: "Overview · 38 Cities · 134 Projects" },
-  innovation: { num: "02", kicker: "ASCN · Demonstrations", meta: "Innovation-as-a-Service · Digital Twins" },
-  record: { num: "03", kicker: "ASCN · The Record", meta: "The Record · Public Reporting" },
-  news: { num: "04", kicker: "ASCN · News", meta: "Regional Dispatches · Live Wire" },
+  overview: { num: "01" },
+  innovation: { num: "02" },
+  record: { num: "03" },
+  news: { num: "04" },
   // The 9th annual meeting record is a sheet opened from a button on the
   // Overview — and it says so itself: its own back link reads "← Back to
   // overview". So it belongs to the Overview, and it wears the Overview's
   // number and lights the Overview's row. It used to borrow News's number
   // and highlight nothing at all, which left the index blank while you were
   // still reading inside it and the number pointing somewhere else.
-  ascn9: { num: "01", parent: "overview", kicker: "ASCN · 9th Annual Meeting", meta: "Luang Prabang · 2026 Meeting Record" },
-  history: { num: "05", kicker: "ASCN · Timeline", meta: "Chronology 2018–2026 · 10 Annual Meetings" },
-  cities: { num: "06", kicker: "ASCN · Cities", meta: "38 Cities · Interactive Atlas & Profiles" },
-  projects: { num: "07", kicker: "ASCN · Projects", meta: "134 Projects · 378 Action Appendix Rows" },
-  framework: { num: "08", kicker: "ASCN · Framework", meta: "6 Strategic Focus Areas · 32 Action Outlines" },
-  partners: { num: "09", kicker: "ASCN · External Partners", meta: "Dialogue Partners & Multilateral Financing" },
-  contacts: { num: "10", kicker: "ASCN · National Focal Points", meta: "Chief Smart City Officers & Coordinators" },
-  insights: { num: "11", kicker: "ASCN · Synthesis", meta: "Cross-Cutting Analysis & Benchmarks" },
-  data: { num: "12", kicker: "ASCN · Library", meta: "62 Sourced Documents · Reference Archive" },
-  archive: { num: "13", kicker: "ASCN · Public Evidence", meta: "40 Sourced Items · Provenance Ledger" },
-  research: { num: "14", kicker: "ASCN · Research", meta: "Monographs, Working Papers & Datasets" },
-  essay: { num: "15", kicker: "ASCN · Independent Review", meta: "Critical Assessment & Performance Analysis" },
+  ascn9: { num: "01", parent: "overview" },
+  history: { num: "05" },
+  cities: { num: "06" },
+  projects: { num: "07" },
+  framework: { num: "08" },
+  partners: { num: "09" },
+  contacts: { num: "10" },
+  insights: { num: "11" },
+  data: { num: "12" },
+  archive: { num: "13" },
+  research: { num: "14" },
+  essay: { num: "15" },
 };
 
 function setTab(tab, push = true) {
   if (!TABS.includes(tab)) tab = "overview";
+  const changingTab = state.tab !== tab;
   state.tab = tab;
   $$(".view").forEach((v) => { v.hidden = v.dataset.view !== tab; });
 
@@ -191,25 +197,47 @@ function setTab(tab, push = true) {
 
   const numEl = $("#locatorNum");
   const metaEl = $("#locatorMeta");
-  const kickerEl = $("#barKicker");
+  const kickerEl = $("#barKickerSubject");
   if (numEl) numEl.textContent = meta.num;
-  if (metaEl) metaEl.textContent = meta.meta;
-  if (kickerEl) kickerEl.textContent = meta.kicker;
+  // The locator is the route line: the number and the name of the view the
+  // reader is in. It used to carry the name AND a run of figures — "Overview
+  // · 38 Cities · 134 Projects" — and those figures were the view's own
+  // headline, said twice on one screen: the h1 under it read "38 cities.
+  // What changed?" and a stat pair further down read 38 and 134. The
+  // strapline above the strip now says what the view is ABOUT, so the strip
+  // says where you are and the bar says what this is, and neither of them
+  // repeats the other.
+  //
+  // The key is set as well as the text, so that a later language switch
+  // re-renders this line.
+  if (metaEl) {
+    metaEl.dataset.i18n = `nav.${tab}`;
+    metaEl.textContent = t(metaEl.dataset.i18n);
+  }
+  if (kickerEl) {
+    kickerEl.dataset.i18n = `meta.${tab}`;
+    kickerEl.textContent = t(kickerEl.dataset.i18n);
+  }
 
   const plate = $("#plate");
-  if (plate) plate.scrollTop = 0;
+  if (plate && (changingTab || push)) plate.scrollTop = 0;
 
   const shell = $("#shell");
   if (shell && window.matchMedia("(max-width: 860px)").matches) {
+    const opening = !shell.classList.contains("is-open");
     shell.classList.add("is-open");
-    if (plate) plate.focus();
+    if (plate && (changingTab || opening)) plate.focus();
   }
 
   renderTab(tab);
+  // The path is mounted after the view's content is built, so a static view
+  // and a data-built view end the same way.
+  mountPathBand(tab);
+  mountLocatorNext(tab);
   // A cached chart may have been resized while its section was hidden.
   if (tab === "insights") requestAnimationFrame(drawInsightsCharts);
   // Compare only the first path segment so a #cities/{slug} sub-route survives a tab re-entry
-  if (push && location.hash.split("/")[0] !== `#${tab}`) history.replaceState(null, "", `#${tab}`);
+  if (push && location.hash.split("/")[0] !== `#${tab}`) history.pushState(null, "", `#${tab}`);
   window.dispatchEvent(new CustomEvent("ascn:tabchange", { detail: { tab } }));
   window.scrollTo({ top: 0, behavior: "instant" });
 }
@@ -240,6 +268,109 @@ function renderTab(tab) {
   state.rendered.add(tab);
 }
 
+/* ---------------- The path ----------------
+   Ten of the fifteen views carried no link to any other view at all: the
+   site communicated a catalogue, not a route. The index numbers the views
+   01-15 and the locator says which one you are in, so the order was
+   always there — it was just never stated as a next step.
+
+   This states it. At the end of every view: the two views a reader should
+   travel to next, in the order the index numbers them, each with the
+   number it wears in the rail so the band and the index agree.
+
+   The order is the rail's own: Intelligence (overview, innovation, record,
+   news), Observatory (history, cities, projects, framework), Network
+   (partners, contacts, insights), Knowledge (library, archive, research,
+   essay). The ASCN 9 sheet is a drill-down of the Overview, so it reads
+   from the Overview's position. The last two views wrap back to the
+   first: the reading order is a circuit, and a reader who has finished
+   the essay is better served by the overview than by nothing.
+
+   Mounted here rather than in the fifteen render functions, so that a
+   static view and a data-built view get the same band, and so that the
+   band is removed and rebuilt when the reader moves. */
+const PATH_ORDER = TABS.filter((x) => x !== "ascn9");
+
+function mountPathBand(tab) {
+  const view = document.querySelector(`.view[data-view="${tab}"]`);
+  if (!view) return;
+  const old = view.querySelector(".path-band");
+  if (old) old.remove();
+
+  const meta = TAB_META[tab] || TAB_META.overview;
+  const from = PATH_ORDER.indexOf(meta.parent || tab);
+  if (from < 0) return;
+
+  const band = document.createElement("nav");
+  band.className = "path-band";
+  band.setAttribute("data-i18n", "path.continue");
+  band.setAttribute("data-i18n-attr", "aria-label");
+
+  const kicker = document.createElement("p");
+  kicker.className = "path-kicker";
+  kicker.setAttribute("data-i18n", "path.next");
+  band.appendChild(kicker);
+
+  const list = document.createElement("ol");
+  list.className = "path-steps";
+  for (let k = 1; k <= 2; k++) {
+    const step = PATH_ORDER[(from + k) % PATH_ORDER.length];
+    const m = TAB_META[step];
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.className = "path-step";
+    a.href = `#${step}`;
+    a.dataset.tab = step;
+    a.innerHTML =
+      `<span class="path-num">${esc(m.num)}</span>` +
+      `<span class="path-body">` +
+      `<span class="path-name" data-i18n="nav.${step}">${esc(t(`nav.${step}`))}</span>` +
+      `<span class="path-meta" data-i18n="meta.${step}">${esc(t(`meta.${step}`))}</span>` +
+      `</span>`;
+    li.appendChild(a);
+    list.appendChild(li);
+  }
+  band.appendChild(list);
+  view.appendChild(band);
+  // The language is applied here as well as by the observer, so the band is
+  // never a half-translated frame on the way in.
+  applyLang(currentLang(), { root: band });
+}
+
+/* ---------------- The next step, in the strip ----------------
+   The path band at the end of a view states the two destinations a reader
+   should travel to, with what each one is about — but it is at the END,
+   and on the long views that is four to twenty-five screens down. The strip
+   under the plate bar is the only part of the chrome that is on screen in
+   every view, so it carries the immediate next step: one click from any
+   view to the next one in the reading order, without finding the index.
+
+   The order is the rail's own (PATH_ORDER), so the strip and the index
+   never disagree, and the last two views wrap back to the first: the
+   reading order is a circuit. The ASCN 9 sheet is a drill-down of the
+   Overview, so it reads from the Overview's position. */
+function mountLocatorNext(tab) {
+  const link = $("#locatorNext");
+  if (!link) return;
+  const meta = TAB_META[tab] || TAB_META.overview;
+  const from = PATH_ORDER.indexOf(meta.parent || tab);
+  if (from < 0) return;
+  const next = PATH_ORDER[(from + 1) % PATH_ORDER.length];
+  const m = TAB_META[next];
+  link.href = `#${next}`;
+  link.dataset.tab = next;
+  const numEl = link.querySelector(".locator-next-num");
+  const nameEl = link.querySelector(".locator-next-name");
+  if (numEl) numEl.textContent = m.num;
+  if (nameEl) {
+    nameEl.dataset.i18n = `nav.${next}`;
+    nameEl.textContent = t(nameEl.dataset.i18n);
+  }
+  // The language is applied here as well as by the observer, so the link is
+  // never a half-translated frame on the way in.
+  applyLang(currentLang(), { root: link });
+}
+
 /* ---------------- Innovation ---------------- */
 function renderInnovation() {
   // Static content in view-innovation is rendered from HTML and styled via CSS.
@@ -248,15 +379,17 @@ function renderInnovation() {
   // arrival: it stays on preload="none" until the tab is actually opened.
   const video = document.getElementById("iaas-hero-video");
   if (!video) return;
+  if (!video.dataset.navigationPause) {
+    const pauseOnLeave = () => { if (state.tab !== "innovation") video.pause(); };
+    window.addEventListener("hashchange", pauseOnLeave);
+    window.addEventListener("ascn:tabchange", pauseOnLeave);
+    video.dataset.navigationPause = "true";
+  }
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
   if (reduced.matches) return; // poster alone; never force motion on request.
   // preload="none" means nothing is fetched yet — play() is what pulls it in,
   // so the request happens here, on tab open, and never on arrival.
-  video.play().catch(() => {});
-  // Stop the loop when the visitor leaves the tab, so nothing plays in the background.
-  window.addEventListener("hashchange", () => {
-    if (state.tab !== "innovation" && !video.paused) video.pause();
-  });
+  video.play().then(() => { if (state.tab !== "innovation") video.pause(); }).catch(() => {});
 }
 
 /* ---------------- Twin previews ----------------
@@ -537,15 +670,18 @@ function projectsForCity(name) {
 
 function renderCitiesView() {
   const countries = [...new Set(state.C.map((c) => c.country))].sort();
-  $("#city-country").insertAdjacentHTML("beforeend", countries.map((c) => `<option value="${esc(c)}">${esc(c)}</option>`).join(""));
+  const countryFilter = $("#city-country");
+  countryFilter.length = 1;
+  countryFilter.insertAdjacentHTML("beforeend", countries.map((c) => `<option value="${esc(c)}">${esc(c)}</option>`).join(""));
+  countryFilter.value = state.cityCountry;
   $("#map-legend").innerHTML = [["#064f6e", "2018 founding"], ["#986f2d", "2023–24"], ["#cc1236", "2025"], ["#051230", "2026"]]
     .map(([col, lab]) => `<span><i style="background:${col}"></i>${lab}</span>`).join("");
   renderCityCards();
   const sub = (location.hash || "").split("/")[1];
   const routed = sub && state.C.find((c) => citySlug(c.name) === sub);
   selectCity(routed || state.C.find((c) => c.name === "Bangkok") || state.C[0]);
-  $("#city-search").addEventListener("input", (e) => { state.citySearch = e.target.value; renderCityCards(); });
-  $("#city-country").addEventListener("change", (e) => { state.cityCountry = e.target.value; renderCityCards(); syncMarkers(); });
+  $("#city-search").oninput = (e) => { state.citySearch = e.target.value; renderCityCards(); };
+  countryFilter.onchange = (e) => { state.cityCountry = e.target.value; renderCityCards(); syncMarkers(); };
 }
 
 function visibleCities() {
@@ -764,14 +900,21 @@ function renderProjects() {
   $("#status-bars").innerHTML = [["Ongoing", r.status.ongoing, "green"], ["Completed", r.status.completed, ""], ["Planning", r.status.planning, "amber"]]
     .map(([l, v, cls]) => bar(l, v, r.total_projects, cls)).join("");
   const countries = [...new Set(state.C.map((c) => c.country))].sort();
-  $("#country-filter").insertAdjacentHTML("beforeend", countries.map((c) => `<option value="${esc(c)}">${esc(c)}</option>`).join(""));
-  $("#focus-filter").insertAdjacentHTML("beforeend", Object.keys(r.focus_share).map((f) => `<option value="${esc(f)}">${esc(f)}</option>`).join(""));
+  const countryFilter = $("#country-filter"), focusFilter = $("#focus-filter");
+  // Rebuilding a view after a language change must not append the choices or
+  // register another handler. Keep the user's current selection as well.
+  countryFilter.length = 1;
+  focusFilter.length = 1;
+  countryFilter.insertAdjacentHTML("beforeend", countries.map((c) => `<option value="${esc(c)}">${esc(c)}</option>`).join(""));
+  focusFilter.insertAdjacentHTML("beforeend", Object.keys(r.focus_share).map((f) => `<option value="${esc(f)}">${esc(f)}</option>`).join(""));
+  countryFilter.value = state.country;
+  focusFilter.value = state.focus;
   $("#big-projects").innerHTML = state.K.financing.big_projects.map((p) => `
     <div class="big-project"><div><b>${esc(p.project)}</b><div class="bp-city">${esc(p.city)}</div><div class="bp-fund">${esc(p.funders)}</div></div><div class="bp-amt">${usd(p.investment_usd)}</div></div>`).join("");
-  $("#search-filter").addEventListener("input", (e) => { state.search = e.target.value; renderProjectTables(); });
-  $("#country-filter").addEventListener("change", (e) => { state.country = e.target.value; renderProjectTables(); });
-  $("#focus-filter").addEventListener("change", (e) => { state.focus = e.target.value; renderProjectTables(); });
-  $("#export-csv").addEventListener("click", () => downloadBlob("ascn-projects-filtered.csv", projectsCsv(filteredProjects()), "text/csv"));
+  $("#search-filter").oninput = (e) => { state.search = e.target.value; renderProjectTables(); };
+  countryFilter.onchange = (e) => { state.country = e.target.value; renderProjectTables(); };
+  focusFilter.onchange = (e) => { state.focus = e.target.value; renderProjectTables(); };
+  $("#export-csv").onclick = () => downloadBlob("ascn-projects-filtered.csv", projectsCsv(filteredProjects()), "text/csv");
   renderProjectTables();
 }
 
@@ -788,7 +931,7 @@ function renderProjectTables() {
   const cmax = Math.max(...top.map((t) => t[1]), 1);
   $("#city-load").innerHTML = top.map(([c, n]) => bar(c, n, cmax, "red")).join("") || `<p class="muted">No rows.</p>`;
   $("#project-count").textContent = `${rows.length} rows`;
-  $("#project-table").innerHTML = rows.slice(0, 200).map((p) => `
+  $("#project-table").innerHTML = rows.map((p) => `
     <tr><td>${esc(p.city)}</td><td>${esc(p.country)}</td><td>${esc(p.project)}</td><td>${esc(p.focus_area)}</td><td>${statusPill(p.status)}</td></tr>`).join("");
 }
 
@@ -1469,11 +1612,11 @@ function renderInsights() {
 
 /* ---------------- Open Data / Library ---------------- */
 function renderOpenData() {
-  $("#data-lede").textContent = "Everything behind this platform is open. Download the structured datasets, read the source documents, and search the full knowledge base — 62 sources, each with what we took from it.";
+  $("#data-lede").textContent = t("library.scope");
 
   const downloads = [
-    ["Project evidence (CSV)", "378 appendix rows across four M&E cycles: city, country, project, focus area, status.", () => downloadBlob("ascn-projects.csv", projectsCsv(state.data.projects, true), "text/csv")],
-    ["City profiles (CSV)", "38 member cities: country, join year, population, coordinates, flagship projects.", () => downloadBlob("ascn-cities.csv", citiesCsv(), "text/csv")],
+    ["Project evidence (CSV)", t("library.projects").replace("{rows}", state.data.projects.length).replace("{cycles}", state.data.reports.length), () => downloadBlob("ascn-projects.csv", projectsCsv(state.data.projects, true), "text/csv")],
+    ["City profiles (CSV)", t("library.cities").replace("{cities}", state.C.length), () => downloadBlob("ascn-cities.csv", citiesCsv(), "text/csv")],
     ["Full dataset (JSON)", "The complete knowledge layer, city profiles, and project engine in one bundle.", () => downloadBlob("ascn-open-dataset.json", JSON.stringify({ knowledge: state.K, cities: state.C, engine: state.data }, null, 2), "application/json")],
   ];
   $("#dataset-downloads").innerHTML = downloads.map(([t, d], i) => `
@@ -1489,7 +1632,7 @@ function renderOpenData() {
 
   const m = state.data.metadata || {};
   const methods = [
-    ["Source model", "Structured JSON and source URLs are committed; raw PDFs are served from the build, not stored in git."],
+    ["Source model", t("library.publication")],
     ["Freshness", `Engine generated ${m.generated_at || "—"}. Knowledge layer synthesized ${state.K.meta.research_date} from official documents.`],
     ["Counts", "Network KPIs use figures stated in report text. Appendix rows are extracted from PDF tables — treat row-level counts as indicative."],
     ["The honest limit", "ASCN M&E counts projects, not outcomes. This platform surfaces the official record faithfully; it does not invent metrics the network does not yet collect."],
@@ -1499,12 +1642,12 @@ function renderOpenData() {
 
   // Searchable library
   renderLibrary();
-  $("#lib-search").addEventListener("input", (e) => { state.libSearch = e.target.value; renderLibrary(); });
-  $$("#lib-type-chips .lib-chip").forEach((btn) => btn.addEventListener("click", () => {
+  $("#lib-search").oninput = (e) => { state.libSearch = e.target.value; renderLibrary(); };
+  $$("#lib-type-chips .lib-chip").forEach((btn) => { btn.onclick = () => {
     state.libType = btn.dataset.type;
     $$("#lib-type-chips .lib-chip").forEach((b) => b.classList.toggle("active", b === btn));
     renderLibrary();
-  }));
+  }; });
 }
 
 function renderLibrary() {
