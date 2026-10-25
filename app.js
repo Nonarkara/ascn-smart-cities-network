@@ -287,15 +287,19 @@ function renderTab(tab) {
    the essay is better served by the overview than by nothing.
 
    Mounted here rather than in the fifteen render functions, so that a
-   static view and a data-built view get the same band, and so that the
-   band is removed and rebuilt when the reader moves. */
+   static view and a data-built view get the same band. Retain its nodes when
+   loading finishes so an already focused destination remains usable. */
 const PATH_ORDER = TABS.filter((x) => x !== "ascn9");
 
 function mountPathBand(tab) {
   const view = document.querySelector(`.view[data-view="${tab}"]`);
   if (!view) return;
   const old = view.querySelector(".path-band");
-  if (old) old.remove();
+  if (old) {
+    if (view.lastElementChild !== old) view.appendChild(old);
+    applyLang(currentLang(), { root: old });
+    return;
+  }
 
   const meta = TAB_META[tab] || TAB_META.overview;
   const from = PATH_ORDER.indexOf(meta.parent || tab);

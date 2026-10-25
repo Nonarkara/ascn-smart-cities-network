@@ -46,3 +46,23 @@ test('the visible route works by keyboard, wraps, and preserves browser back', a
   await expect(page.locator('#view-essay')).toBeVisible();
   await expect(next).toHaveAttribute('href','#overview');
 });
+
+test('finishing data loading retains the focused onward link', async ({ page }) => {
+  const { readFile } = await import('node:fs/promises');
+  const engine = JSON.parse(await readFile(new URL('../data/ascn-v2-data.json', import.meta.url)));
+  let release;
+  const ready = new Promise((resolve) => { release = resolve; });
+  await page.route('**/data/ascn-v2-data.json*', async (route) => {
+    await ready;
+    await route.fulfill({ json: engine });
+  });
+  await page.goto('/#overview');
+  const next = page.locator('#view-overview .path-step').first();
+  await expect(next).toBeVisible();
+  await next.focus();
+  release();
+  await expect(page.locator('#kpi-grid .kpi')).toHaveCount(5);
+  await expect(next).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#view-innovation')).toBeVisible();
+});
