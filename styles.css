@@ -2839,9 +2839,9 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .essay-pull cite { display: block; margin-top: 0.5rem; font-size:var(--t-small); font-style: normal; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
 .essay-refs { width: fit-content; max-width: 100%; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--line); }
 .essay-refs .label { margin-bottom: 1rem; }
-.essay-ref-grid { display: grid; grid-template-columns: minmax(0, 54ch); column-gap: 2rem; width: fit-content; max-width: 100%; }
+.essay-ref-grid { display: grid; grid-template-columns: minmax(0, 52ch); column-gap: 2rem; width: fit-content; max-width: 100%; }
 @container view (min-width: 58rem) {
-  .essay-ref-grid { grid-template-columns: repeat(2, minmax(0, 54ch)); }
+  .essay-ref-grid { grid-template-columns: repeat(2, minmax(0, 52ch)); }
 }
 .essay-ref-item > div { min-width: 0; overflow-wrap: anywhere; }
 .essay-ref-item { display: grid; grid-template-columns: 2.4rem minmax(0, 1fr); gap: 0.5rem 0.75rem; padding: 0.85rem 0; border-top: 1px solid var(--line-soft); align-items: start; font-size:var(--t-body); line-height: 1.55; color: var(--ink-2); }

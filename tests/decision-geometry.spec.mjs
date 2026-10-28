@@ -185,7 +185,7 @@ test('all 26 Essay citations keep readable rendered lines and reject full-width 
   await page.evaluate(()=>document.fonts.ready);
   for(const width of [390,1024,1440,2103]){
     await page.setViewportSize({width,height:900});
-    for(const citation of await citations.all()) expect(await citation.evaluate(longestHeadingLine)).toBeLessThanOrEqual(75);
+    for(const [index,citation] of (await citations.all()).entries()) expect(await citation.evaluate(longestHeadingLine), `citation ${index+1} at ${width}px`).toBeLessThanOrEqual(75);
   }
   await page.setViewportSize({width:1440,height:900});
   await page.addStyleTag({content:'.essay-refs,.essay-ref-grid {width:100% !important;max-width:none !important;}.essay-ref-grid {grid-template-columns:minmax(0,1fr) !important;}'});
