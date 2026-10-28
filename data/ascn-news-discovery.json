@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-25T07:39:28.297Z",
+  "checkedAt": "2026-10-28T08:58:51.368Z",
   "articles": [
     {
       "title": "ASEAN Smart Cities Network leads the region drive for smarter, more resilient cities",
@@ -372,6 +372,16 @@
       "topics": []
     },
     {
+      "title": "Chiang Mai, Khon Kaen, Rayong join ASEAN Smart Cities Network",
+      "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOODVrYmFTNU9pX25jVXUtSGFvenFXMGZ1b2RNSjk2SWFGdGZOSV9YbWRxcnJlSDFJMG1VY1V1V29RMXY4cTN3VFZpWDhyTWdYeWRiRTRQbU9TV1c5dldrRUdZVWJaQU9yRlpVaENfNGxWUXFRVWRmbEhPcG1lV0c1M2xqTDYtZllfVlN2TnMxRWdLMmZyT2wxVlN1VFFBMnFnQzZxQUNSTWZGeTA?oc=5",
+      "publisher": "Pattaya Mail",
+      "sourceId": "ascn-variants",
+      "publishedAt": "2023-07-29T07:00:00.000Z",
+      "kind": "Unreviewed search match",
+      "countries": [],
+      "topics": []
+    },
+    {
       "title": "ERC slashes power tariff by 5.3% for Sep to Dec",
       "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxPWUpLdkdWa3htc1h2dU5XN0tXYmphcHJKRnNJU01Sam1OaEtsdTR6MG1OSlBUYmlDNEZBaVpaVUNyUXZqZ3UxeTgyYmo1QldqSktFLXVNM3JOdm9TYWlNZXB6X2J2WG5Da0poQWZXd2tJcUZMek94cWkxZ3RMU1BOX1RUMlR6WlBrQlNOc0YyRHlUc3ZUdHdsd1Bn?oc=5",
       "publisher": "Pattaya Mail",
@@ -647,6 +657,16 @@
       "publisher": "Philstar.com",
       "sourceId": "ascn-exact",
       "publishedAt": "2021-09-06T07:00:00.000Z",
+      "kind": "Unreviewed search match",
+      "countries": [],
+      "topics": []
+    },
+    {
+      "title": "The Philippine government has expressed its commitment to finish its six smart city projects during the 4th ASEAN Smart Cities Network (ASCN) Annual Meeting held virtually on Monday, according to the Department of the Interior and Local Gov",
+      "url": "https://news.google.com/rss/articles/CBMi3wFBVV95cUxORV9ZeFNMQk9YQ0YtbVA1dVF2Zl9WMEVvUHhhWjJDR1BHVUoxQTdWdmNDb05Hbl9oUUY0YnFOSlJjd2RkeDU0OE4tQWRYZWt3SUVGak1QcUtTLUhrZFdDeEFHVWFPVFlGLTNkeFdyS01aeTdOdmxTWHdnTC1udERQRFVoeldsaW1DSXN1aE1CV3E2SFdsQWNPNS1uWUc2eFM1TlNUSUpJNmhtdDVTRFNOckMxU3BxWURaYjdkdVl5Ri12UXNIM1l0YTNtQXR4dUlWLXBGNGdoVlVRWDZrWDhZ?oc=5",
+      "publisher": "Facebook",
+      "sourceId": "ascn-exact",
+      "publishedAt": "2021-09-01T07:00:00.000Z",
       "kind": "Unreviewed search match",
       "countries": [],
       "topics": []
@@ -1408,17 +1428,17 @@
       "id": "ascn-exact",
       "section": "Exact network name",
       "url": "https://news.google.com/rss/search?q=%22ASEAN%20Smart%20Cities%20Network%22&hl=en-SG&gl=SG&ceid=SG%3Aen",
-      "checkedAt": "2026-10-25T07:39:28.297Z",
+      "checkedAt": "2026-10-28T08:58:51.368Z",
       "status": "ok",
-      "returned": 70
+      "returned": 37
     },
     {
       "id": "ascn-variants",
       "section": "Name and language variants",
       "url": "https://news.google.com/rss/search?q=%22ASEAN%20Smart%20Cities%20Network%22%20OR%20%22ASEAN%20Smart%20City%20Network%22%20OR%20%22Jaringan%20Kota%20Cerdas%20ASEAN%22%20OR%20%22%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%B7%E0%B8%AD%E0%B8%82%E0%B9%88%E0%B8%B2%E0%B8%A2%E0%B9%80%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%87%E0%B8%AD%E0%B8%B1%E0%B8%88%E0%B8%89%E0%B8%A3%E0%B8%B4%E0%B8%A2%E0%B8%B0%E0%B8%AD%E0%B8%B2%E0%B9%80%E0%B8%8B%E0%B8%B5%E0%B8%A2%E0%B8%99%22&hl=en-SG&gl=SG&ceid=SG%3Aen",
-      "checkedAt": "2026-10-25T07:39:28.297Z",
+      "checkedAt": "2026-10-28T08:58:51.368Z",
       "status": "ok",
-      "returned": 33
+      "returned": 20
     },
     {
       "id": "ascn-history-2018",
