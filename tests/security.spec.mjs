@@ -55,20 +55,12 @@ test("map tooltips render hostile city text as text instead of HTML", async ({ p
   const markers = page.locator("#sea-map .leaflet-interactive");
   await expect(markers).toHaveCount(38);
 
-  // Leaflet attaches the tooltip on mouseover of the layer's own SVG node. One
-  // forced hover races the map's own re-render: the layer can be replaced
-  // between locating it and moving the pointer there, and the pointer then
-  // lands on nothing while the assertion below still runs. That is the flake —
-  // the assertion was checking that a hover was dispatched, not that a
-  // tooltip opened. Retry until a tooltip is actually visible.
-  //
-  // The retry is scoped to ANY tooltip on purpose. Scoping it to the hostile
-  // string conflates two failures: when the tooltip really is unescaped, the
-  // payload becomes an element, that text is gone, and the retry reports
-  // "Expected: visible" instead of naming the XSS. Keep the flakiness fix and
-  // the security assertion as separate concerns.
+  // Test escaping on the intended SVG layer. Coordinate hover can hit an
+  // overlapping neighbour, whose tooltip then satisfies an ANY-tooltip wait.
+  // Map rendering and city selection are covered separately; this check must
+  // not confuse the neighbouring layer with the injected city.
   await expect(async () => {
-    await markers.first().hover({ force: true });
+    await markers.first().dispatchEvent("mouseover");
     await expect(page.locator(".leaflet-tooltip").first()).toBeVisible({ timeout: 1_000 });
   }).toPass({ timeout: 20_000 });
 
