@@ -1,4 +1,4 @@
-import { escapeHtml as esc, safeUrl, csvCell, validateDataset } from "./lib/security.mjs";
+import { escapeHtml as esc, safeUrl, csvCell, validateDataset, bindSeparators } from "./lib/security.mjs";
 import { applyLang, initLang, currentLang, tx, t, LANGS } from "./lib/i18n.mjs";
 
 /* ============================================================
@@ -370,6 +370,22 @@ function mountLocatorNext(tab) {
     nameEl.dataset.i18n = `nav.${next}`;
     nameEl.textContent = t(nameEl.dataset.i18n);
   }
+  // The cue's accessible name says what it is, not just what it is called.
+  // "02 Innovation" read alone is a number and a name with no relation
+  // between them; on a phone, where the index rail is not rendered, this is
+  // the only sentence in the chrome that tells a screen-reader user that
+  // the thing is the NEXT step and not the current one. It is set here
+  // rather than in the dictionary because it is built from the view's own
+  // name, which changes with the route.
+  //
+  // The ORDINAL is in the name too, and that is a rule rather than a
+  // preference: WCAG 2.5.3 (Label in Name) asks that the accessible name
+  // contain the text the reader can see, and the cue shows "02 Innovation".
+  // An independent review caught the name dropping the "02" — the spoken
+  // "Next: Innovation" against the visible "02 Innovation". The number is
+  // also the house's own address for a view, and on the cue it is the
+  // position in the reading circuit, so it is worth saying.
+  link.setAttribute("aria-label", `${t("path.next")}: ${m.num} ${t(`nav.${next}`)}`);
   // The language is applied here as well as by the observer, so the link is
   // never a half-translated frame on the way in.
   applyLang(currentLang(), { root: link });
@@ -533,7 +549,7 @@ function renderOverview() {
   const fa = [...state.K.framework.focus_areas].sort((a, b) => b.share - a.share);
   const max = Math.max(...fa.map((f) => f.share));
   $("#focus-mini").innerHTML = fa.map((f) => bar(f.name, f.share, max, f.name.includes("Built") ? "red" : "", "%")).join("");
-  $("#glance-note").innerHTML = `<strong>Established</strong>${esc(s.established)} · ${esc(s.established_event)}.<br><strong>Framework</strong>${esc(s.framework_adopted)}.<br><strong>Mission</strong>${esc(s.mission)}`;
+  $("#glance-note").innerHTML = `<strong>Established</strong>${esc(s.established)}\u00A0· ${esc(s.established_event)}.<br><strong>Framework</strong>${esc(s.framework_adopted)}.<br><strong>Mission</strong>${esc(s.mission)}`;
   renderPerspective();
 }
 
@@ -553,7 +569,7 @@ function renderPerspective() {
     </div>
     <div class="persp-article">
       <p class="persp-byline">${esc(p.author)}</p>
-      <p class="persp-role">${esc(p.role)} · ${esc(p.credentials)}</p>
+      <p class="persp-role">${esc(p.role)}\u00A0· ${esc(p.credentials)}</p>
       <ol class="persp-points">${p.points.map((pt, i) => `<li class="persp-point"><span class="persp-n">${String(i + 1).padStart(2, "0")}</span><p><b>${esc(tx(pt.h))}</b> ${esc(tx(pt.t))}</p></li>`).join("")}</ol>
       <blockquote class="persp-quote">
         <p>${esc(tx(p.pull_quote))}</p>
@@ -604,7 +620,7 @@ function renderHistory() {
     const q = h.clc_quote;
     $("#history-quote").innerHTML = `
       <blockquote>${esc(q.text)}</blockquote>
-      <cite><b>${esc(q.attribution)}</b> · ${esc(q.role)}<br><span class="quote-source">${esc(q.source)}</span></cite>`;
+      <cite><b>${esc(q.attribution)}</b>\u00A0· ${esc(q.role)}<br><span class="quote-source">${esc(q.source)}</span></cite>`;
   }
 
   if (h.moments) {
@@ -1208,7 +1224,7 @@ function renderInsights() {
     const focus = focusColor(c.focus, "var(--muted)");
     const focusDot = c.focus ? `<span class="impact-dot" style="background:${focus}"></span><span class="impact-focus">${esc(c.focus)}</span>` : "";
     const noteHtml = c.note ? `<em class="impact-note">${esc(c.note)}</em>` : "";
-    return `<div class="impact-stat"><strong>${esc(c.metric)}</strong><span>${focusDot}${esc(c.project)}</span><em>${esc(c.city)}</em>${noteHtml}</div>`;
+    return `<div class="impact-stat"><strong>${esc(bindSeparators(c.metric))}</strong><span>${focusDot}${esc(c.project)}</span><em>${esc(c.city)}</em>${noteHtml}</div>`;
   }).join("");
   const investments = [...state.K.financing.big_projects].sort((a, b) => b.investment_usd - a.investment_usd);
   const invMax = investments[0]?.investment_usd || 1;
@@ -1262,7 +1278,7 @@ function renderInsights() {
   const cellIcon = (v) => v === 1 ? `<span class="me-yes">✓</span>` : v === 0.5 ? `<span class="me-partial">~</span>` : `<span class="me-no">✗</span>`;
   const meHead = ME_SYSTEMS.map((s) => `<th class="${s.name === "ASCN" ? "me-ascn-col" : ""}">${esc(s.name)}</th>`).join("");
   const meRows = ME_FEATURES.map((f) => `<tr><td class="me-feature">${esc(f)}</td>${ME_SYSTEMS.map((s, i) => `<td class="me-cell${s.name === "ASCN" ? " me-ascn-col" : ""}">${cellIcon(s.vals[ME_FEATURES.indexOf(f)])}</td>`).join("")}</tr>`).join("");
-  $("#ig-compare").innerHTML = `<table class="me-table"><thead><tr><th></th>${meHead}</tr></thead><tbody>${meRows}</tbody></table><p class="ig-note" data-i18n="a.source.ascn.dim05.md.11.6.yes.pa">Source: ascn_dim05.md §11.6. ✓ = yes · ~ = partial · ✗ = no</p>`;
+  $("#ig-compare").innerHTML = `<table class="me-table"><thead><tr><th></th>${meHead}</tr></thead><tbody>${meRows}</tbody></table><p class="ig-note" data-i18n="a.source.ascn.dim05.md.11.6.yes.pa">Source: ascn_dim05.md §11.6. ✓ = yes\u00A0· ~ = partial\u00A0· ✗ = no</p>`;
 
   // ── IMD Smart City Index 2024 — ASEAN cities ────────────────────────────
   // Source: IMD World Competitiveness Center, ascn_dim05.md §7.1
@@ -1679,7 +1695,7 @@ function renderLibrary() {
       <span class="le-badge ${esc(e.type)}">${esc(e.type)}</span>
       <div class="le-body">
         <div class="le-title">${esc(e.title)}</div>
-        <div class="le-meta">${esc(e.source)}${e.year ? ` · ${esc(e.year)}` : ""}${e.category ? ` · ${esc(e.category)}` : ""}</div>
+        <div class="le-meta">${esc(e.source)}${e.year ? `\u00A0· ${esc(e.year)}` : ""}${e.category ? `\u00A0· ${esc(e.category)}` : ""}</div>
         <p class="le-takeaway">${esc(e.takeaway)}</p>
       </div>
       <div class="le-actions">${actions.join("")}</div>
@@ -1729,6 +1745,12 @@ function wireNav() {
       // too. Anything already rendered from data keeps its own text.
       const tab = state.tab;
       if (tab && state.rendered.has(tab)) { state.rendered.delete(tab); renderTab(tab); }
+      // The route line's cue carries a built name — "Next: Innovation" —
+      // so it is written in code rather than looked up in the dictionary,
+      // and it has to be written again when the language changes. The two
+      // visible parts of the strip carry a data-i18n key and are re-applied
+      // by applyLang above; this one is not.
+      if (tab) mountLocatorNext(tab);
       document.dispatchEvent(new CustomEvent("ascn:lang", { detail: { lang } }));
     });
   });
@@ -1917,7 +1939,7 @@ function renderContacts() {
 
       <div class="contacts-map-wrap">
         <div id="contacts-map" class="contacts-map"></div>
-        <p class="contacts-map-hint" data-i18n="a.click.a.city.marker.to.view.cont">Click a city marker to view contacts · Scroll to zoom</p>
+        <p class="contacts-map-hint" data-i18n="a.click.a.city.marker.to.view.cont">Click a city marker to view contacts\u00A0· Scroll to zoom</p>
       </div>
 
       <div class="contacts-grid-wrap">
@@ -2264,7 +2286,7 @@ function renderResearch() {
       </div>
       <p class="paper-author">${p.author}</p>
       <h4 class="paper-title">${p.title}</h4>
-      <p class="paper-venue">${p.venue}</p>
+      <p class="paper-venue">${bindSeparators(p.venue)}</p>
       <p class="paper-summary">${p.summary}</p>
       <div class="paper-themes">${p.themes.map(th => `<span class="paper-theme-tag">${th}</span>`).join("")}</div>
     </article>`).join("")}
@@ -2548,7 +2570,7 @@ function renderEssay() {
     <span class="essay-series-label">${tx("ASCN Essays")}</span>
     <span class="essay-series-sep">·</span>
     <span class="essay-series-num">No. 1</span>
-    <span class="essay-series-date">${tx("June 2026 · seven years of the author’s participation, 2019–2026")}</span>
+    <span class="essay-series-date">${tx("June 2026\u00A0· seven years of the author’s participation, 2019–2026")}</span>
     <span class="essay-series-time">${tx("20 min read")}</span>
   </div>
 
@@ -2560,7 +2582,7 @@ function renderEssay() {
       <img src="Photos/author-bio.jpg" alt="Non Arkaraprasertkul" class="bio-thumb" />
       <div class="bio-summary-text">
         <strong>Non Arkaraprasertkul, PhD</strong>
-        <span>Senior Expert in Smart City Promotion · DEPA Thailand · ASEAN Smart Cities Network since 2019</span>
+        <span>Senior Expert in Smart City Promotion\u00A0· DEPA Thailand\u00A0· ASEAN Smart Cities Network since 2019</span>
       </div>
       <span class="bio-expand-hint">${tx("About the author")}</span>
     </summary>
@@ -2574,10 +2596,10 @@ function renderEssay() {
         <p data-i18n="a.he.has.worked.within.the.asean.s">He has worked within the ASEAN Smart Cities Network as Senior Expert in Smart City Promotion at Thailand's Digital Economy Promotion Agency (DEPA), under the Ministry of Digital Economy and Society, since 2019 — across seven annual meetings and four M&amp;E cycles. He has spoken on smart city governance at Tomorrow.City Shanghai, GITEX Ai Asia Singapore, and the Smart City Summit Taipei. This essay draws on seven years of direct participation in the network's meetings, data, and debates.</p>
         <ul class="bio-credentials">
           <li data-i18n="a.phd.anthropology.harvard.univers">PhD, Anthropology, Harvard University</li>
-          <li data-i18n="a.shanghai.fieldwork.fellowships.h">Shanghai fieldwork fellowships — Harvard-Yenching Institute · Fairbank Center for Chinese Studies · Cora Du Bois Anthropology Fellowship</li>
+          <li data-i18n="a.shanghai.fieldwork.fellowships.h">Shanghai fieldwork fellowships — Harvard-Yenching Institute\u00A0· Fairbank Center for Chinese Studies\u00A0· Cora Du Bois Anthropology Fellowship</li>
           <li data-i18n="a.senior.expert.in.smart.city.prom">Senior Expert in Smart City Promotion, Digital Economy Promotion Agency (DEPA), Thailand</li>
           <li data-i18n="a.asean.smart.cities.network.depa">ASEAN Smart Cities Network — DEPA Senior Expert / Thailand staff contact since 2019</li>
-          <li data-i18n="a.seven.ascn.annual.meetings.four">Seven ASCN Annual Meetings · Four M&amp;E cycles</li>
+          <li data-i18n="a.seven.ascn.annual.meetings.four">Seven ASCN Annual Meetings\u00A0· Four M&amp;E cycles</li>
         </ul>
       </div>
     </div>
@@ -2800,7 +2822,7 @@ function renderEssay() {
   <summary class="author-summary">
     <span class="author-summary-label">About the author</span>
     <span class="author-summary-name">Non Arkaraprasertkul, PhD</span>
-    <span class="author-summary-role">${tx("Architect · Urban Anthropologist · Senior Expert, DEPA Thailand · National Representative, ASCN")}</span>
+    <span class="author-summary-role">${tx("Architect\u00A0· Urban Anthropologist\u00A0· Senior Expert, DEPA Thailand\u00A0· National Representative, ASCN")}</span>
     <span class="author-toggle-icon" aria-hidden="true"></span>
   </summary>
 

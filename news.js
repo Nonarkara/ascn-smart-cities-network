@@ -11,7 +11,7 @@ function story(article, compact = false) {
   return `<article class="news-story${compact ? " news-story--compact" : ""}">
     <div class="news-story-meta"><span>${esc(article.publisher)}</span><time${article.publishedAt ? ` datetime="${esc(article.publishedAt)}"` : ""}>${esc(showDate(article.publishedAt))}</time>${article.kind && article.kind !== "Report" ? `<span>${esc(article.kind)}</span>` : ""}</div>
     <h2><a href="${esc(safeUrl(article.url))}" target="_blank" rel="noopener noreferrer">${esc(article.title)} <span aria-hidden="true">↗</span></a></h2>
-    <p class="news-story-tags">${esc(location)}${compact ? "" : ` · ${esc(article.topics.join(" · "))}`}</p>
+    <p class="news-story-tags">${esc(location)}${compact ? "" : `\u00A0· ${esc(article.topics.join("\u00A0· "))}`}</p>
   </article>`;
 }
 

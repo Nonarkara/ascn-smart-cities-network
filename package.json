@@ -28,7 +28,8 @@
     "check:publication": "node scripts/verify-publication.mjs",
     "verify:live": "node scripts/verify-publication.mjs --live",
     "audit:spatial": "node scripts/audit-sh.mjs",
-    "check:release": "node scripts/check-release.mjs"
+    "check:release": "node scripts/check-release.mjs",
+    "audit:reading": "node scripts/capture-reading-path.mjs"
   },
   "devDependencies": {
     "@fontsource/archivo": "^5.3.0",

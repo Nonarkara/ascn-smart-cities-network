@@ -80,8 +80,7 @@
 
         <footer class="index-footer">
           <details class="site-notice"><summary data-i18n="intro.disclosure">Independent review · About this site</summary><div>
-            Independent observatory · Built by <strong>Non Arkaraprasertkul</strong> — Senior Expert, Smart City Promotion, DEPA · ASCN staff contact since 2019.
-            &nbsp;·&nbsp; Official site: <a href="https://ascn.depa.or.th" target="_blank" rel="noopener">ascn.depa.or.th</a>
+            Independent observatory&nbsp;· Built by <strong>Non Arkaraprasertkul</strong> — Senior Expert, Smart City Promotion, DEPA&nbsp;· ASCN staff contact since 2019.&nbsp;· Official site: <a href="https://ascn.depa.or.th" target="_blank" rel="noopener">ascn.depa.or.th</a>
           </div></details>
         </footer>
       </aside>
@@ -100,11 +99,27 @@
           <button type="button" class="text-btn theme-toggle" id="themeBtn2" aria-label="Toggle theme">Light</button>
         </header>
 
-        <div class="locator" id="locator">
-          <span id="locatorNum">01</span>
-          <span id="locatorMeta">Overview</span>
-          <a class="locator-next" id="locatorNext" href="#innovation" data-tab="innovation">
-            <span class="locator-next-arrow" aria-hidden="true">→</span>
+        <!-- The route line. One unit, anchored to the reading column's left
+             edge: where you are, then the step the reading takes next.
+
+             The two facts used to sit at opposite ends of the strip, 1005px
+             apart at 1440, and the gap between them was the container's
+             spare room rather than anything the reader could use — the eye
+             had to cross a metre of nothing to pair "you are here" with
+             "go here next". They are one line now.
+
+             The chevron is a drawn path, not a glyph: Jost's arrow has a
+             negative left side bearing, so its ink starts 2px before its
+             own box and the focus ring landed on top of it. The link also
+             carries 6px of side padding, so the inset ring has somewhere
+             to sit that is neither the chevron nor the last letter. -->
+        <div class="locator" id="locator" role="group" aria-label="Reading position" data-i18n="locator.label" data-i18n-attr="aria-label">
+          <span class="locator-here" id="locatorHere" aria-current="page">
+            <span id="locatorNum">01</span>
+            <span id="locatorMeta">Overview</span>
+          </span>
+          <a class="locator-next" id="locatorNext" href="#innovation" data-tab="innovation" aria-label="Next: 02 Innovation">
+            <svg class="locator-next-arrow" width="9" height="9" viewBox="0 0 9 9" aria-hidden="true" focusable="false"><path d="M2.4 1.3 6.5 4.5 2.4 7.7" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"/></svg>
             <span class="locator-next-num">02</span>
             <span class="locator-next-name">Innovation</span>
           </a>
@@ -115,7 +130,7 @@
       <!-- OVERVIEW -->
       <section class="view" id="view-overview" data-view="overview">
         <section class="evidence-opening" aria-labelledby="observatory-heading">
-          <div><p class="label" data-i18n="intro.kicker">ASEAN Smart Cities Network · Independent observatory</p>
+          <div><p class="label" data-i18n="intro.kicker">ASEAN Smart Cities Network&nbsp;· Independent observatory</p>
           <h1 id="observatory-heading" data-i18n="intro.title">38 cities. What changed?</h1>
           <p class="lede" data-i18n="intro.lede">Follow a city, inspect the project record, or test a claim against its source. Published evidence sets the limits of every finding.</p></div>
           <ol class="evidence-routes" aria-label="Start exploring">
@@ -148,15 +163,15 @@
             <div id="showcase-selector" class="showcase-selector" role="group" aria-label="Choose a demonstration" hidden>
               <button type="button" class="showcase-clip" data-video="flood-field" aria-pressed="true" aria-controls="showcase-player">
                 <img src="media/showcase/flood-field.jpg" width="640" height="360" alt="" />
-                <span class="showcase-clip-copy"><span class="showcase-clip-meta">01 · Field demonstration · 4:34</span><strong>Flood intelligence in the field</strong><span class="showcase-clip-description">A tablet-based flood dashboard demonstrated on a flooded street, connecting conditions on the ground with mapped data.</span></span>
+                <span class="showcase-clip-copy"><span class="showcase-clip-meta">01&nbsp;· Field demonstration&nbsp;· 4:34</span><strong>Flood intelligence in the field</strong><span class="showcase-clip-description">A tablet-based flood dashboard demonstrated on a flooded street, connecting conditions on the ground with mapped data.</span></span>
               </button>
               <button type="button" class="showcase-clip" data-video="city-operations" aria-pressed="false" aria-controls="showcase-player">
                 <img src="media/showcase/city-operations.jpg" width="1280" height="720" alt="" />
-                <span class="showcase-clip-copy"><span class="showcase-clip-meta">02 · Operations desk · 7:21</span><strong>City operations on one screen</strong><span class="showcase-clip-description">Maps, camera feeds, and dashboards brought together in a multi-screen city operations setup.</span></span>
+                <span class="showcase-clip-copy"><span class="showcase-clip-meta">02&nbsp;· Operations desk&nbsp;· 7:21</span><strong>City operations on one screen</strong><span class="showcase-clip-description">Maps, camera feeds, and dashboards brought together in a multi-screen city operations setup.</span></span>
               </button>
               <button type="button" class="showcase-clip" data-video="flood-analysis" aria-pressed="false" aria-controls="showcase-player">
                 <img src="media/showcase/flood-analysis.jpg" width="1280" height="720" alt="" />
-                <span class="showcase-clip-copy"><span class="showcase-clip-meta">03 · Maps &amp; modelling · 7:24</span><strong>From flood data to decisions</strong><span class="showcase-clip-description">A walkthrough of flood maps, a Bangkok flood simulation, and analysis alongside the data.</span></span>
+                <span class="showcase-clip-copy"><span class="showcase-clip-meta">03&nbsp;· Maps &amp; modelling&nbsp;· 7:24</span><strong>From flood data to decisions</strong><span class="showcase-clip-description">A walkthrough of flood maps, a Bangkok flood simulation, and analysis alongside the data.</span></span>
               </button>
             </div>
           </div>
@@ -187,7 +202,7 @@
         <section class="twins-showcase" aria-labelledby="twins-heading">
           <div class="twins-header">
             <div class="twins-header-main">
-              <p class="label" data-i18n="over.ascn.operational.intelligence.ap">ASCN Operational Intelligence · Applied Digital Twins</p>
+              <p class="label" data-i18n="over.ascn.operational.intelligence.ap">ASCN Operational Intelligence&nbsp;· Applied Digital Twins</p>
               <h2 id="twins-heading" data-i18n="h.twins">From static reports to living cities: 5 operational digital twins</h2>
             </div>
             <div class="twins-explainer">
@@ -784,7 +799,7 @@
                 <tr>
                   <th scope="row">Korea — ASPP <span class="rec-note">ASEAN-Korea Cooperation Fund</span></th>
                   <td class="rec-figure">Not stated</td>
-                  <td>Regional · training and Master's scholarships</td>
+                  <td>Regional&nbsp;· training and Master's scholarships</td>
                   <td><span class="rec-tag rec-tag-un">Undisclosed</span></td>
                 </tr>
                 <tr>
@@ -1011,7 +1026,7 @@
           <section class="review-section"><h2 data-i18n="h.coverage-establishes">What the coverage establishes</h2><div id="review-stage-chart"></div><p class="review-note" data-i18n="news.counts.describe.this.archive.not">Counts describe this archive, not all ASCN activity. A source can establish an output without demonstrating an outcome.</p></section>
           <section class="review-section"><h2 data-i18n="h.coverage-time">Coverage over time</h2><div id="review-timeline"></div><p class="review-note" data-i18n="news.records.by.publication.year.or.c">Records by publication year, or context year when the publication date is unknown. Missing coverage is not inactivity.</p></section>
           <section class="review-section"><h2 data-i18n="h.three-objectives">Against ASCN's three objectives</h2><div id="review-mandates"></div></section>
-          <section class="review-section"><h2 data-i18n="h.open-questions">Questions the record leaves open</h2><div id="review-followups"></div></section>
+          <section class="review-section review-section--questions"><h2 data-i18n="h.open-questions">Questions the record leaves open</h2><div id="review-followups"></div></section>
           <section class="review-section"><h2 data-i18n="h.city-gaps">City evidence gaps</h2><p class="review-note" data-i18n="news.only.explicit.city.specific.evid">Only explicit city-specific evidence counts here. Hosting a regional meeting does not count as local project delivery. Project rows come from the latest available official cycle; absent rows are not zero projects.</p><div class="review-table-wrap"><table class="review-city-table"><thead><tr><th>City</th><th>Evidence records</th><th>Delivery records</th><th>Outcome records</th><th>Project rows</th></tr></thead><tbody id="review-cities"></tbody></table></div></section>
         </div>
         <div id="news-panel-archive" data-news-panel="archive" hidden>

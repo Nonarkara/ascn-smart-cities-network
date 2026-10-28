@@ -79,8 +79,13 @@ const TRACK_SLACK = 6;
 // column is an empty table cell, which reads as a failed attempt at a table
 // rather than as a list.
 const RULE_BAND = 1.26;
+// The News view's city filter, and the three states a reader can reach with
+// it: one question, two questions, three questions. The grid's column
+// count follows the item count, so these are the three shapes the section
+// can take.
+const FILTERED_CITY_STATES = ['Siem Reap', 'Phnom Penh', 'Jakarta'];
 
-async function measure(page, inkCeiling, strandedFloor, trackSlack, ruleBand) {
+async function measure(page, inkCeiling, strandedFloor, trackSlack) {
   return page.evaluate(
     ({ inkCeiling, strandedFloor, trackSlack, ruleBand }) => {
       const q = (s) => document.querySelector(s);
@@ -476,13 +481,14 @@ async function measure(page, inkCeiling, strandedFloor, trackSlack, ruleBand) {
   );
 }
 
-const browser = await chromium.launch({ channel: process.env.PLAYWRIGHT_CHANNEL || undefined });
 await mkdir(outDir, { recursive: true });
 const report = [];
-try {
-  for (const vp of VIEWPORTS) {
-    const ctx = await browser.newContext({ viewport: { width: vp.width, height: vp.height } });
-    const page = await ctx.newPage();
+await writeFile(`${outDir}/sh.json`, '[]\n');
+// Isolate viewports; retain failed measurements instead of reporting them green.
+for (const vp of VIEWPORTS) {
+  let browser = await chromium.launch({ channel: process.env.PLAYWRIGHT_CHANNEL || undefined });
+  let ctx = await browser.newContext({ viewport: { width: vp.width, height: vp.height } });
+  let page = await ctx.newPage();
     // Geometry is reviewed against the shipped snapshot. Live-feed success
     // and failure have separate browser flow tests.
     await page.route('**/api/{news,ascn-news}', (route) => route.fulfill({ status: 503, json: {} }));
@@ -490,6 +496,7 @@ try {
     page.on('pageerror', (e) => errors.push(String(e.message)));
     for (const view of VIEWS) {
       const surface = view.split('/')[0];
+      try {
       await page.setViewportSize({ width: vp.width, height: vp.height });
       await page.goto(`${base}/#${view}`, { waitUntil: 'domcontentloaded' });
       // The router unhides the requested section. A same-document navigation
@@ -552,11 +559,66 @@ try {
         animations: 'disabled',
       });
       report.push(m);
+      // THE FILTERED STATES ARE MEASURED TOO.
+      //
+      // The instrument measured every view in its DEFAULT state, and the
+      // News view's open-questions grid changes shape with the city filter:
+      // a filter that leaves one question produced a section 1211px wide
+      // holding 586px of text, with its rule running 625px into nothing —
+      // the "failed table" pattern the instrument exists to reject, in a
+      // state the instrument never looked at. A gate that only measures
+      // what the page shows on arrival cannot see what a reader reaches by
+      // using the page.
+      //
+      // These three filters are the reachable extremes: one question, two
+      // questions, three questions. They are measured with the same checks,
+      // at every viewport, and they carry their own label in the report.
+      if (view === 'news') {
+        for (const [index, city] of FILTERED_CITY_STATES.entries()) {
+          await page.selectOption('#review-city', city);
+          await page.waitForFunction(({ city, count }) => document.querySelector('#review-city')?.value === city && document.querySelector('#review-followups')?.dataset.count === String(count), { city, count: index + 1 });
+          await page.waitForTimeout(700);
+          const fm = await measure(page, INK_CEILING, STRANDED_FLOOR, TRACK_SLACK);
+          fm.view = `${view}?city=${city}`;
+          fm.width = vp.width;
+          fm.height = vp.height;
+          fm.errors = errors.slice();
+          if (errors.length) fm.failures.push(errors.length + ' page error(s)');
+          if (!await page.locator('#news-panel-review').isVisible()) fm.failures.push('review panel not visible');
+          await page.locator('.review-section--questions').screenshot({ path: `${outDir}/news-questions-${index + 1}-${vp.width}.png`, animations: 'disabled' });
+          if (fm.measuredView !== `view-${surface}`) {
+            fm.failures.push(`measured ${fm.measuredView || 'nothing'}, asked for view-${surface}`);
+          }
+          report.push(fm);
+          await page.selectOption('#review-city', 'all');
+          await page.waitForTimeout(400);
+        }
+      }
+      } catch (error) {
+        // The browser was killed, or the page refused to settle. Either way
+        // this view is UNMEASURED, and an unmeasured view is not a pass.
+        report.push({
+          view, width: vp.width, height: vp.height,
+          chrome: { topPx: 0, topPct: 0, railPx: 0, railPctOfWidth: 0 },
+          task: { headingInFirstScreen: false },
+          errors: [String(error && error.message ? error.message : error)],
+          failures: [`view not measured: ${String(error && error.message ? error.message : error).slice(0, 120)}`],
+        });
+        // Relaunch for subsequent views; the failed case remains a failure.
+        try {
+          await browser.close();
+        } catch { /* the browser is already gone */ }
+        browser = await chromium.launch({ channel: process.env.PLAYWRIGHT_CHANNEL || undefined });
+        ctx = await browser.newContext({ viewport: { width: vp.width, height: vp.height } });
+        page = await ctx.newPage();
+        await page.route('**/api/{news,ascn-news}', (route) => route.fulfill({ status: 503, json: {} }));
+        page.on('pageerror', (e) => errors.push(String(e.message)));
+
+      }
     }
-    await ctx.close();
-  }
-} finally {
-  await browser.close();
+    await writeFile(`${outDir}/sh.json`, JSON.stringify(report, null, 2) + '\n');
+    await ctx.close().catch(() => {});
+    await browser.close().catch(() => {});
 }
 
 await writeFile(`${outDir}/sh.json`, JSON.stringify(report, null, 2) + '\n');
