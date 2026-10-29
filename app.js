@@ -1,5 +1,5 @@
 import { escapeHtml as esc, safeUrl, csvCell, validateDataset, bindSeparators } from "./lib/security.mjs";
-import { applyLang, initLang, currentLang, tx, t, LANGS } from "./lib/i18n.mjs";
+import { applyLang, initLang, currentLang, tx, fill as fillText, t, LANGS } from "./lib/i18n.mjs";
 
 /* ============================================================
    ASCN Open Platform — tabbed living observatory
@@ -544,8 +544,8 @@ function renderOverview() {
   ];
   $("#kpi-grid").innerHTML = kpis.map(([v, l, n]) => `<article class="kpi"><strong>${fmt.format(v)}</strong><span>${l} — ${n}</span></article>`).join("");
   $("#gap-headline").textContent = "The performance question no official report asks.";
-  $("#gap-body").textContent = s.the_gap;
-  $("#evidence-status").textContent = `${state.data.reports.length} M&E reports · ${state.data.projects.length} appendix rows · ${state.K.documents.length} source documents.`;
+  $("#gap-body").textContent = tx(s.the_gap);
+  $("#evidence-status").textContent = fillText("{reports} M&E reports · {rows} appendix rows · {documents} source documents.", { reports: state.data.reports.length, rows: state.data.projects.length, documents: state.K.documents.length });
   const fa = [...state.K.framework.focus_areas].sort((a, b) => b.share - a.share);
   const max = Math.max(...fa.map((f) => f.share));
   $("#focus-mini").innerHTML = fa.map((f) => bar(f.name, f.share, max, f.name.includes("Built") ? "red" : "", "%")).join("");
@@ -593,14 +593,14 @@ function renderPerspective() {
 function renderHistory() {
   const h = state.K.history;
   $("#history-timeline").innerHTML = h.milestones.map((m) => `
-    <div class="timeline-item"><time>${esc(m.year)}</time><div><h3>${esc(m.title)}</h3><p>${esc(m.text)}</p></div></div>`).join("");
+    <div class="timeline-item"><time>${esc(m.year)}</time><div><h3>${esc(tx(m.title))}</h3><p>${esc(tx(m.text))}</p></div></div>`).join("");
   const maxTotal = Math.max(...h.membership_evolution.map((e) => e.total));
   $("#growth-bars").innerHTML = h.membership_evolution.map((e) => bar(`${e.year}`, e.total, maxTotal, "", "")).join("");
   const chairs = state.K.governance.chairs.map((c) => `
-    <div class="chair-row"><b>${esc(c.year)}</b><span>${esc(c.chair)} chair${c.note ? `<em>${esc(c.note)}</em>` : ""}</span></div>`).join("");
+    <div class="chair-row"><b>${esc(c.year)}</b><span>${esc(c.chair)} ${esc(tx("chair"))}${c.note ? `<em>${esc(tx(c.note))}</em>` : ""}</span></div>`).join("");
   const sheps = state.K.governance.shepherds.map((s) => `
-    <div class="chair-row"><b>${esc(s.term)}</b><span>${esc(s.country)} — Shepherd<em>${esc(s.note)}</em></span></div>`).join("");
-  $("#chair-roster").innerHTML = chairs + `<div class="chair-row"><b>Shepherd</b><span class="muted" style="text-transform:none;letter-spacing:0">Multi-year continuity role</span></div>` + sheps;
+    <div class="chair-row"><b>${esc(s.term)}</b><span>${esc(s.country)} — ${esc(tx("Shepherd"))}<em>${esc(tx(s.note))}</em></span></div>`).join("");
+  $("#chair-roster").innerHTML = chairs + `<div class="chair-row"><b>${esc(tx("Shepherd"))}</b><span class="muted" style="text-transform:none;letter-spacing:0">${esc(tx("Multi-year continuity role"))}</span></div>` + sheps;
 
   // Chair-rotation ribbon: one cell per year + spanning shepherd bars beneath
   const ribbonCells = state.K.governance.chairs.map((c) => {
@@ -657,14 +657,14 @@ function ascapHtml() {
     const feeds = pillarFocusMap[pid] || [];
     const isGap = pid === gapPillar;
     const feedHtml = feeds.length
-      ? feeds.map((f) => `<span class="ascap-feed">${esc(f.focus)} <em>${esc(f.projects)}p</em></span>`).join("")
-      : `<span class="ascap-feed ascap-feed--gap">No current portfolio coverage</span>`;
-    return `<div class="ascap-pillar${isGap ? " ascap-pillar--gap" : ""}"><span class="num">P${pid}</span><b>${esc(p)}</b><div class="ascap-feeds">${feedHtml}</div></div>`;
+      ? feeds.map((f) => `<span class="ascap-feed">${esc(tx(f.focus))} <em>${esc(f.projects)}p</em></span>`).join("")
+      : `<span class="ascap-feed ascap-feed--gap">${esc(tx("No current portfolio coverage"))}</span>`;
+    return `<div class="ascap-pillar${isGap ? " ascap-pillar--gap" : ""}"><span class="num">P${pid}</span><b>${esc(tx(p))}</b><div class="ascap-feeds">${feedHtml}</div></div>`;
   }).join("");
 
   let alignNote = "";
   if (a.coverage_gap) {
-    alignNote = `<p class="ig-note" style="margin-top:1rem"><b>Coverage gap — ${esc(a.coverage_gap.name)}:</b> ${esc(a.coverage_gap.note)}</p>`;
+    alignNote = `<p class="ig-note" style="margin-top:1rem"><b>${esc(fillText("Coverage gap — {pillar}:", { pillar: tx(a.coverage_gap.name) }))}</b> ${esc(tx(a.coverage_gap.note))}</p>`;
   }
 
   // The two notes sit in a column of their own beside the title, not in a
@@ -958,20 +958,20 @@ function renderProjectTables() {
 /* ---------------- Framework ---------------- */
 function renderFramework() {
   const f = state.K.framework, g = state.K.governance;
-  $("#framework-status").textContent = f.status;
+  $("#framework-status").textContent = tx(f.status);
   // The heading already names the block. The helper used to add a second
   // label under it — "THREE STRATEGIC OUTCOMES" immediately followed by
   // "OUTCOMES", 7.8px apart, in the same column — so three blocks carried
   // six labels, and the one blue accent in the view landed on the word that
   // said least. A number that repeats its own title is not a hierarchy.
-  const block = (items) => `<ul class="fw-list">${items.map((i) => `<li><b>${esc(i)}</b></li>`).join("")}</ul>`;
-  $("#fw-outcomes").innerHTML = `<h3>Three strategic outcomes</h3>` + block(f.strategic_outcomes);
-  $("#fw-systems").innerHTML = `<h3>Two urban systems</h3>` + block(f.urban_systems);
-  $("#fw-enablers").innerHTML = `<h3>Two enablers</h3>` + block(f.enablers);
+  const block = (items) => `<ul class="fw-list">${items.map((i) => `<li><b>${esc(tx(i))}</b></li>`).join("")}</ul>`;
+  $("#fw-outcomes").innerHTML = `<h3>${esc(tx("Three strategic outcomes"))}</h3>` + block(f.strategic_outcomes);
+  $("#fw-systems").innerHTML = `<h3>${esc(tx("Two urban systems"))}</h3>` + block(f.urban_systems);
+  $("#fw-enablers").innerHTML = `<h3>${esc(tx("Two enablers"))}</h3>` + block(f.enablers);
   const fmax = Math.max(...f.focus_areas.map((a) => a.share));
   $("#focus-detail").innerHTML = f.focus_areas.map((a) => `
     <div class="focus-item"><div class="fi-head"><b>${esc(a.name)}</b><span class="fi-share">${esc(a.share)}%</span></div>
-      <p>${esc(a.blurb)}</p><div class="bar-track"><div class="bar-fill${a.name.includes("Built") ? " red" : ""}" style="width:${(a.share / fmax) * 100}%"></div></div></div>`).join("");
+      <p>${esc(tx(a.blurb))}</p><div class="bar-track"><div class="bar-fill${a.name.includes("Built") ? " red" : ""}" style="width:${(a.share / fmax) * 100}%"></div></div></div>`).join("");
   $("#gov-grid").innerHTML = `
     <article class="gov-card"><h3>Leadership model</h3><p>${esc(g.model)}</p></article>
     <article class="gov-card"><h3>Decisions &amp; legal status</h3><p>${esc(g.decision_making)}</p><p class="muted" style="text-transform:none;letter-spacing:0;margin-top:0.5rem">Reporting: ${esc(g.reporting_chain)}</p></article>
@@ -1011,7 +1011,7 @@ function renderFramework() {
       <b class="cap-name">${esc(c.name)}</b>
       <span class="cap-by">${c.by}</span>
       <p class="cap-desc">${tx(c.desc)}</p>
-      <span class="cap-stat">${c.stat}</span>
+      <span class="cap-stat">${esc(tx(c.stat))}</span>
     </article>`).join("")}</div>
     <p class="ig-note col-flow" data-i18n="a.capacity.building.is.where.ascn">Capacity building is where ASCN's softer value sits: not projects delivered, but officials trained to deliver them. These programmes run through dialogue partners rather than a central ASCN budget. Source: ASCN partnership &amp; M&amp;E documents.</p>`;
 }
@@ -1019,16 +1019,16 @@ function renderFramework() {
 /* ---------------- Partners ---------------- */
 function renderPartners() {
   $("#partner-cards").innerHTML = state.K.partnerships.map((p) => `
-    <article class="partner-card"><div class="pc-head"><b>${esc(p.partner)}</b><span class="pc-prog">${esc(p.programme)}</span></div>
-      <div class="pc-budget">${esc(p.budget)}</div><div class="pc-cov">${esc(p.coverage)}</div><p>${esc(p.note)}</p></article>`).join("");
+    <article class="partner-card"><div class="pc-head"><b>${esc(p.partner)}</b><span class="pc-prog">${esc(tx(p.programme))}</span></div>
+      <div class="pc-budget">${esc(tx(p.budget))}</div><div class="pc-cov">${esc(tx(p.coverage))}</div><p>${esc(tx(p.note))}</p></article>`).join("");
   $("#multi-list").innerHTML = state.K.multilateral_partners.map((m) => `
-    <div class="def-row"><b>${esc(m.org)}</b><span>${esc(m.role)} — </span><em>${esc(m.activity)}</em></div>`).join("");
+    <div class="def-row"><b>${esc(m.org)}</b><span>${esc(tx(m.role))} — </span><em>${esc(tx(m.activity))}</em></div>`).join("");
   const f = state.K.financing;
   $("#finance-block").innerHTML = `
-    <div class="finance-stat">${esc(f.scale_note)}</div>
-    <div class="finance-stat"><b>Financing Toolkit.</b> ${esc(f.toolkit)}</div>
-    <div class="finance-stat"><b>Blended finance.</b> ${esc(f.blended)}</div>
-    <div class="finance-stat"><b>Open challenges.</b> ${esc(f.challenges.join(" "))}</div>`;
+    <div class="finance-stat">${esc(tx(f.scale_note))}</div>
+    <div class="finance-stat"><b>${esc(tx("Financing Toolkit."))}</b> ${esc(tx(f.toolkit))}</div>
+    <div class="finance-stat"><b>${esc(tx("Blended finance."))}</b> ${esc(tx(f.blended))}</div>
+    <div class="finance-stat"><b>${esc(tx("Open challenges."))}</b> ${esc(f.challenges.map((c) => tx(c)).join(" "))}</div>`;
 
   // ── Programme networks ────────────────────────────────────────────────────
   const PROGRAMMES = [
@@ -1064,10 +1064,10 @@ function renderPartners() {
         <div><b>${esc(p.name)}</b><span class="prog-country">${esc(p.country)}</span></div>
         <a class="prog-link" href="${p.url}" target="_blank" rel="noopener">↗</a>
       </div>
-      <p class="prog-tagline">${esc(p.tagline)}</p>
+      <p class="prog-tagline">${esc(tx(p.tagline))}</p>
       <p class="prog-desc">${tx(p.desc)}</p>
       <div class="prog-cities">${p.cities.map((c) => `<span>${esc(c)}</span>`).join("")}</div>
-      <div class="prog-stat">${esc(p.stat)}</div>
+      <div class="prog-stat">${esc(tx(p.stat))}</div>
     </article>`).join("");
 
   // ── Smart City Financing Toolkit ──────────────────────────────────────────
@@ -1216,14 +1216,14 @@ function renderInsights() {
     { icon: "↑", cls: "sig-note", flag: "Myanmar: steady growth after the 2021 coup", body: "Myanmar's documented projects increased every single cycle: 11 (2022), 12 (2023), 13 (2024), 14 (2025). ASEAN's non-interference principle kept the network intact; the data shows Myanmar among the more active contributors during a period when most international engagement with Naypyidaw was suspended or constrained." },
     { icon: "△", cls: "sig-gap", flag: "13 projects reported but not in the appendix", body: "The 2025 report declares 134 total projects. The appendix — the row-by-row evidence table from which this platform's data is drawn — contains 121 entries. Thirteen projects have no individual record. Without an appendix entry, a project cannot be cross-referenced against prior cycles or independently verified." },
   ];
-  $("#ig-signals").innerHTML = `<div class="ig-signals-grid">${signals.map((s) => `<div class="ig-signal-card ${s.cls}"><div class="ig-sig-icon">${s.icon}</div><strong>${esc(s.flag)}</strong><p>${esc(s.body)}</p></div>`).join("")}</div>`;
+  $("#ig-signals").innerHTML = `<div class="ig-signals-grid">${signals.map((s) => `<div class="ig-signal-card ${s.cls}"><div class="ig-sig-icon">${s.icon}</div><strong>${esc(tx(s.flag))}</strong><p>${esc(tx(s.body))}</p></div>`).join("")}</div>`;
   renderDataQuality();
 
   // ── 7–9. Carry-forward panels ─────────────────────────────────────────────
   $("#ig-impact").innerHTML = state.K.citizen_impact.map((c) => {
     const focus = focusColor(c.focus, "var(--muted)");
     const focusDot = c.focus ? `<span class="impact-dot" style="background:${focus}"></span><span class="impact-focus">${esc(c.focus)}</span>` : "";
-    const noteHtml = c.note ? `<em class="impact-note">${esc(c.note)}</em>` : "";
+    const noteHtml = c.note ? `<em class="impact-note">${esc(tx(c.note))}</em>` : "";
     return `<div class="impact-stat"><strong>${esc(bindSeparators(c.metric))}</strong><span>${focusDot}${esc(c.project)}</span><em>${esc(c.city)}</em>${noteHtml}</div>`;
   }).join("");
   const investments = [...state.K.financing.big_projects].sort((a, b) => b.investment_usd - a.investment_usd);
@@ -1328,7 +1328,7 @@ function renderInsights() {
     const barW = isGap ? 0 : Math.max(1, (count / ascapMax) * 100);
     const tags = (pillarFocusTags[pid] || []).map((f) => `<span class="ascap-cov-tag" style="border-color:${focusColor(f, "var(--muted)")};color:${focusColor(f, "var(--muted)")}">${esc(f)}</span>`).join("");
     const countLabel = isGap
-      ? `<span class="ascap-cov-gap-label">No coverage</span>`
+      ? `<span class="ascap-cov-gap-label">${esc(tx("No coverage"))}</span>`
       : `<strong>${count}</strong>`;
     return `<div class="ascap-cov-row${isGap ? " ascap-cov-row--gap" : ""}">
       <span class="ascap-cov-pid">P${pid}</span>
@@ -1542,20 +1542,20 @@ function renderInsights() {
   // ── What ASCN measures vs doesn't — the 4-vs-8 ledger ─────────────────────
   // Source: state.K.me_gap (ascn_dim05.md, ascn_insight.md Insight 1)
   const meGap = state.K.me_gap;
-  const trackedLi = meGap.tracked.map((t) => `<li class="mel-item"><span class="mel-mark mel-yes">✓</span>${esc(t)}</li>`).join("");
-  const missingLi = meGap.not_tracked.map((t) => `<li class="mel-item"><span class="mel-mark mel-no">✗</span>${esc(t)}</li>`).join("");
+  const trackedLi = meGap.tracked.map((t) => `<li class="mel-item"><span class="mel-mark mel-yes">✓</span>${esc(tx(t))}</li>`).join("");
+  const missingLi = meGap.not_tracked.map((t) => `<li class="mel-item"><span class="mel-mark mel-no">✗</span>${esc(tx(t))}</li>`).join("");
   $("#ig-me-ledger").innerHTML = `
     <div class="mel-split">
       <div class="mel-col mel-col--yes"><p class="mel-head" data-i18n="a.4.things.ascn.tracks"><strong>4</strong> things ASCN tracks</p><ul class="mel-list">${trackedLi}</ul></div>
       <div class="mel-col mel-col--no"><p class="mel-head" data-i18n="a.8.things.it.doesn.t"><strong>8</strong> things it doesn't</p><ul class="mel-list">${missingLi}</ul></div>
     </div>
-    <p class="ig-note">${esc(meGap.method)} Source: ASCN M&amp;E Reports 2022–2025; ascn_dim05.md.</p>`;
+    <p class="ig-note">${esc(tx(meGap.method))} ${esc(tx("Source: ASCN M&E Reports 2022–2025; ascn_dim05.md."))}</p>`;
 
   // ── ASCN in global context — vs India / EU / China ───────────────────────
   // Source: state.K.comparative (ascn_dim10.md, ascn_insight.md Insight 3)
   const comp = state.K.comparative;
   const gcHead = `<tr><th>Dimension</th><th class="me-ascn-col">ASCN</th><th>India</th><th>EU</th><th>China</th></tr>`;
-  const gcRows = comp.map((d) => `<tr><td class="me-feature">${esc(d.dimension)}</td><td class="me-cell me-ascn-col">${esc(d.ascn)}</td><td class="me-cell">${esc(d.india)}</td><td class="me-cell">${esc(d.eu)}</td><td class="me-cell">${esc(d.china)}</td></tr>`).join("");
+  const gcRows = comp.map((d) => `<tr><td class="me-feature">${esc(tx(d.dimension))}</td><td class="me-cell me-ascn-col">${esc(tx(d.ascn))}</td><td class="me-cell">${esc(tx(d.india))}</td><td class="me-cell">${esc(tx(d.eu))}</td><td class="me-cell">${esc(tx(d.china))}</td></tr>`).join("");
   $("#ig-global-context").innerHTML = `<table class="me-table gc-table"><thead>${gcHead}</thead><tbody>${gcRows}</tbody></table>
     <p class="ig-note" data-i18n="a.ascn.coordinates.38.cities.with">ASCN coordinates 38 cities with no central funding pool; China's smart-city market alone is ~USD 1.1 trillion. The gap is not a failing but a different model — voluntary, people-centric, non-binding — yet it sets the scale of what the network can and can't do. Source: ascn_dim10.md; ascn_insight.md Insight 3.</p>`;
 
@@ -1637,14 +1637,14 @@ function renderOpenData() {
   const downloads = [
     ["Project evidence (CSV)", t("library.projects").replace("{rows}", state.data.projects.length).replace("{cycles}", state.data.reports.length), () => downloadBlob("ascn-projects.csv", projectsCsv(state.data.projects, true), "text/csv")],
     ["City profiles (CSV)", t("library.cities").replace("{cities}", state.C.length), () => downloadBlob("ascn-cities.csv", citiesCsv(), "text/csv")],
-    ["Full dataset (JSON)", "The complete knowledge layer, city profiles, and project engine in one bundle.", () => downloadBlob("ascn-open-dataset.json", JSON.stringify({ knowledge: state.K, cities: state.C, engine: state.data }, null, 2), "application/json")],
+    ["Full dataset (JSON)", tx("The complete knowledge layer, city profiles, and project engine in one bundle."), () => downloadBlob("ascn-open-dataset.json", JSON.stringify({ knowledge: state.K, cities: state.C, engine: state.data }, null, 2), "application/json")],
   ];
   $("#dataset-downloads").innerHTML = downloads.map(([t, d], i) => `
     <article class="download-card"><b>${esc(t)}</b><p>${esc(d)}</p><button class="text-button" type="button" data-dl="${i}">Download</button></article>`).join("");
   $$("#dataset-downloads [data-dl]").forEach((b) => b.addEventListener("click", () => downloads[Number(b.dataset.dl)][2]()));
 
   $("#document-grid").innerHTML = state.K.documents.map((d) => `
-    <article class="doc-card"><span class="dc-kind">${esc(d.kind)} · ${esc(d.year)}</span><b>${esc(d.title)}</b><p>${esc(d.note)}</p>
+    <article class="doc-card"><span class="dc-kind">${esc(tx(d.kind))} · ${esc(d.year)}</span><b>${esc(d.title)}</b><p>${esc(tx(d.note))}</p>
       <div class="dc-foot"><span class="dc-size">${esc(d.size || "PDF")}</span><a class="dc-dl" href="${d.file ? `docs/${encodeURIComponent(d.file)}` : esc(safeUrl(d.url))}" ${d.file ? "download" : 'target="_blank" rel="noopener noreferrer"'}>${d.file ? "Download ↓" : "Official source ↗"}</a></div></article>`).join("");
 
   $("#source-list").innerHTML = state.K.data_sources.map((s) => `
@@ -1696,7 +1696,7 @@ function renderLibrary() {
       <div class="le-body">
         <div class="le-title">${esc(e.title)}</div>
         <div class="le-meta">${esc(e.source)}${e.year ? `\u00A0· ${esc(e.year)}` : ""}${e.category ? `\u00A0· ${esc(e.category)}` : ""}</div>
-        <p class="le-takeaway">${esc(e.takeaway)}</p>
+        <p class="le-takeaway">${esc(tx(e.takeaway))}</p>
       </div>
       <div class="le-actions">${actions.join("")}</div>
     </div>`;
@@ -2067,9 +2067,9 @@ function renderAlumni() {
     <div class="alum-section">
       <div class="alum-header">
         <div>
-          <p class="label">ASCN Alumni</p>
-          <h3 class="alum-title-h">Former officials, no longer on the active roster</h3>
-          <p class="alum-lede">These individuals served in official ASCN roles — as National Representatives, Chief Smart City Officers, or staff contacts — and appeared in previous versions of the ASCN Contact List (October 2024 – March 2026). They are not present in the current roster (April 2026). Their affiliation was real and time-bound. Any current claims of active ASCN involvement by or on behalf of these individuals should be verified against <a href="https://asean.org/body/asean-smart-cities-network/" target="_blank" rel="noopener">asean.org</a>.</p>
+          <p class="label">${esc(tx("ASCN Alumni"))}</p>
+          <h3 class="alum-title-h">${esc(tx("Former officials, no longer on the active roster"))}</h3>
+          <p class="alum-lede">${esc(tx("These individuals served in official ASCN roles — as National Representatives, Chief Smart City Officers, or staff contacts — and appeared in previous versions of the ASCN Contact List (October 2024 – March 2026). They are not present in the current roster (April 2026). Their affiliation was real and time-bound. Any current claims of active ASCN involvement by or on behalf of these individuals should be verified against"))} <a href="https://asean.org/body/asean-smart-cities-network/" target="_blank" rel="noopener">asean.org</a>.</p>
         </div>
         <div class="alum-controls">
           <input class="alum-search-input" id="${id}" type="search" placeholder="Search by name, country, or organization…" aria-label="Search alumni" />
@@ -2258,7 +2258,7 @@ function renderResearch() {
         <span class="research-theme-n">${t.n}</span>
         <span class="research-theme-label">${tx(t.label)}</span>
       </div>
-      <h3 class="research-theme-h">${t.heading}</h3>
+      <h3 class="research-theme-h">${esc(tx(t.heading))}</h3>
       <p class="research-theme-body">${tx(t.body)}</p>
       <div class="research-theme-tags">${t.tags.map(tag => `<span class="research-tag">${tag}</span>`).join("")}</div>
     </article>`).join("")}
@@ -2266,17 +2266,17 @@ function renderResearch() {
 </div>
 
 <div class="research-section">
-  <p class="research-section-label label">FREQUENTLY ASKED</p>
+  <p class="research-section-label label">${esc(tx("FREQUENTLY ASKED"))}</p>
   <div class="faq-list">
     ${FAQ.map(item => `<details class="faq-item">
-      <summary class="faq-q">${item.q}</summary>
-      <p class="faq-a">${item.a}</p>
+      <summary class="faq-q">${esc(tx(item.q))}</summary>
+      <p class="faq-a">${esc(tx(item.a))}</p>
     </details>`).join("")}
   </div>
 </div>
 
 <div class="research-section">
-  <p class="research-section-label label">BIBLIOGRAPHY — 14 DOCUMENTS</p>
+  <p class="research-section-label label">${esc(tx("BIBLIOGRAPHY — 14 DOCUMENTS"))}</p>
   <div class="paper-grid">
     ${PAPERS.map(p => `<article class="paper-card">
       <div class="paper-meta-row">
@@ -2287,7 +2287,7 @@ function renderResearch() {
       <p class="paper-author">${p.author}</p>
       <h4 class="paper-title">${p.title}</h4>
       <p class="paper-venue">${bindSeparators(p.venue)}</p>
-      <p class="paper-summary">${p.summary}</p>
+      <p class="paper-summary">${esc(tx(p.summary))}</p>
       <div class="paper-themes">${p.themes.map(th => `<span class="paper-theme-tag">${th}</span>`).join("")}</div>
     </article>`).join("")}
   </div>

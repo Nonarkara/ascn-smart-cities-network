@@ -1,4 +1,5 @@
 import { escapeHtml as esc, safeUrl, csvCell, validateDataset } from "./lib/security.mjs";
+import { tx, fill } from "./lib/i18n.mjs";
 import { REVIEW_STAGES, REVIEW_MANDATES, SOURCE_TYPES, validateArchive, filterRecords, summarizeEvidence, cityEvidence, linkProjects, discoveryInbox } from "./lib/ascn-review.mjs";
 import { validateDiscovery, mergeDiscovery } from "./lib/ascn-discovery.mjs";
 
@@ -37,36 +38,40 @@ function bars(rows, key, label) {
 
 function pagination(selector, page, length, change) {
   const pages = Math.max(1, Math.ceil(length / pageSize));
-  $(selector).innerHTML = `<button type="button" data-page="${page - 1}" aria-label="Previous page" title="Previous page" ${page === 0 ? "disabled" : ""}>←</button><span>Page ${page + 1} of ${pages}\u00A0· ${length} records</span><button type="button" data-page="${page + 1}" aria-label="Next page" title="Next page" ${page + 1 >= pages ? "disabled" : ""}>→</button>`;
+  $(selector).innerHTML = `<button type="button" data-page="${page - 1}" aria-label="${esc(tx("Previous page"))}" title="${esc(tx("Previous page"))}" ${page === 0 ? "disabled" : ""}>←</button><span>${esc(fill("Page {n} of {m}\u00A0· {k} records", { n: page + 1, m: pages, k: length }))}</span><button type="button" data-page="${page + 1}" aria-label="${esc(tx("Next page"))}" title="${esc(tx("Next page"))}" ${page + 1 >= pages ? "disabled" : ""}>→</button>`;
   $(selector).querySelectorAll("button").forEach((button) => button.addEventListener("click", () => change(Number(button.dataset.page))));
 }
 
 function record(row) {
   const year = state.engine?.reports.at(-1)?.year;
   const links = year ? linkProjects(row, state.engine.projects, year) : [];
+  // Publisher, headline, city and project names are the source's own wording
+  // and stay as issued. Everything the platform says about them — the stage
+  // it assigned, the review's reading, what evidence is still missing — is
+  // authored prose, and it is translated.
   return `<article class="review-record" id="evidence-${esc(row.id)}">
-    <div class="news-story-meta"><span>${esc(row.publisher)}</span><span>${esc(row.sourceType)}</span><span>${esc(row.stage)}</span><span>${esc(row.language)}</span></div>
+    <div class="news-story-meta"><span>${esc(row.publisher)}</span><span>${esc(tx(row.sourceType))}</span><span>${esc(tx(row.stage))}</span><span>${esc(row.language)}</span></div>
     <h2>${external(row.url, row.title)}</h2>
-    <p class="review-note">${esc(showDate(row.publishedAt))}${!row.publishedAt ? `\u00A0· ${row.year} context` : ""}\u00A0· ${esc(row.access)}\u00A0· reviewed ${showDate(state.archive.reviewedAt)}</p>
-    <p>${esc(row.claim)}</p>
-    <details><summary>Analysis &amp; follow-up</summary><div class="review-record-detail">
-      <p><strong>Review interpretation.</strong> ${esc(row.analysis)}</p><p><strong>Evidence needed.</strong> ${esc(row.followUp)}</p>
-      ${row.metrics.map((metric) => `<p class="review-reported"><strong>${format.format(metric.value)} ${esc(metric.unit)}</strong>\u00A0· ${esc(metric.label)}\u00A0· as of ${esc(metric.asOf)}\u00A0· source-reported, not audited</p>`).join("")}
-      ${row.cities.length ? `<p>City evidence: ${row.cities.map((city) => `<a href="#cities/${slug(city)}">${esc(city)}</a>`).join(", ")}</p>` : "<p>Network-level evidence; not assigned to every member city.</p>"}
-      ${links.length ? `<ul class="review-project-links">${links.map((link) => `<li>${esc(link.city)}\u00A0· ${esc(link.project)}: ${link.row ? `${esc(link.row.status)} in ${year} ${external(`${state.engine.reports.at(-1).url}#page=${link.row.source_page}`, `M&E appendix, PDF page ${link.row.source_page}`)}` : `no exact linked row in the ${year} extracted register`}</li>`).join("")}</ul>` : ""}
-      <p class="review-note">ASCN objective: ${esc(row.mandates.join("\u00A0· "))}</p>
+    <p class="review-note">${esc(showDate(row.publishedAt))}${!row.publishedAt ? `\u00A0· ${esc(fill("{year} context", { year: row.year }))}` : ""}\u00A0· ${esc(tx(row.access))}\u00A0· ${esc(fill("reviewed {date}", { date: showDate(state.archive.reviewedAt) }))}</p>
+    <p>${esc(tx(row.claim))}</p>
+    <details><summary>${esc(tx("Analysis & follow-up"))}</summary><div class="review-record-detail">
+      <p><strong>${esc(tx("Review interpretation."))}</strong> ${esc(tx(row.analysis))}</p><p><strong>${esc(tx("Evidence needed."))}</strong> ${esc(tx(row.followUp))}</p>
+      ${row.metrics.map((metric) => `<p class="review-reported"><strong>${format.format(metric.value)} ${esc(tx(metric.unit))}</strong>\u00A0· ${esc(tx(metric.label))}\u00A0· ${esc(fill("as of {date}", { date: metric.asOf }))}\u00A0· ${esc(tx("source-reported, not audited"))}</p>`).join("")}
+      ${row.cities.length ? `<p>${esc(tx("City evidence:"))} ${row.cities.map((city) => `<a href="#cities/${slug(city)}">${esc(city)}</a>`).join(", ")}</p>` : `<p>${esc(tx("Network-level evidence; not assigned to every member city."))}</p>`}
+      ${links.length ? `<ul class="review-project-links">${links.map((link) => `<li>${esc(link.city)}\u00A0· ${esc(link.project)}: ${link.row ? `${esc(tx(link.row.status))} ${esc(fill("in {year}", { year }))} ${external(`${state.engine.reports.at(-1).url}#page=${link.row.source_page}`, fill("M&E appendix, PDF page {page}", { page: link.row.source_page }))}` : esc(fill("no exact linked row in the {year} extracted register", { year }))}</li>`).join("")}</ul>` : ""}
+      <p class="review-note">${esc(tx("ASCN objective:"))} ${esc(row.mandates.map((mandate) => tx(mandate)).join("\u00A0· "))}</p>
     </div></details>
   </article>`;
 }
 
 function renderBaseline() {
   const reports = state.engine?.reports;
-  if (!reports) { $("#review-baseline").innerHTML = '<p class="review-note">Official project comparison unavailable. News evidence remains readable; no status figures are inferred from headlines.</p>'; return; }
+  if (!reports) { $("#review-baseline").innerHTML = `<p class="review-note">${esc(tx("Official project comparison unavailable. News evidence remains readable; no status figures are inferred from headlines."))}</p>`; return; }
   const latest = reports.at(-1);
   const maximum = Math.max(...reports.map((report) => report.total_projects));
-  $("#review-baseline").innerHTML = `<h2>Official portfolio baseline</h2><p>${latest.total_projects} projects at ${showDate(latest.as_of)}: ${latest.status.completed} completed, ${latest.status.ongoing} ongoing, ${latest.status.planning} planning.</p>
-    <div class="review-bars" role="img" aria-label="Official project totals by reporting year">${reports.map((report) => `<div class="review-bar-row"><span>${report.year}</span><span class="review-bar-track"><span style="width:${report.total_projects / maximum * 100}%"></span></span><strong>${report.total_projects}</strong></div>`).join("")}</div>
-    <p class="review-note">Official M&E status, not independently audited impact. ${reports.map((report) => external(report.url, String(report.year))).join("\u00A0· ")}. The news archive never overwrites these figures.</p>`;
+  $("#review-baseline").innerHTML = `<h2>${esc(tx("Official portfolio baseline"))}</h2><p>${esc(fill(tx("{projects} projects at {date}: {completed} completed, {ongoing} ongoing, {planning} planning."), { projects: latest.total_projects, date: showDate(latest.as_of), completed: latest.status.completed, ongoing: latest.status.ongoing, planning: latest.status.planning }))}</p>
+    <div class="review-bars" role="img" aria-label="${esc(tx("Official project totals by reporting year"))}">${reports.map((report) => `<div class="review-bar-row"><span>${report.year}</span><span class="review-bar-track"><span style="width:${report.total_projects / maximum * 100}%"></span></span><strong>${report.total_projects}</strong></div>`).join("")}</div>
+    <p class="review-note">${esc(tx("Official M&E status, not independently audited impact."))} ${reports.map((report) => external(report.url, String(report.year))).join("\u00A0· ")}. ${esc(tx("The news archive never overwrites these figures."))}</p>`;
 }
 
 function render() {
@@ -86,35 +91,35 @@ function render() {
   const matrix = cityEvidence(rows, state.cities, state.engine?.projects, year);
   const shownCities = matrix.filter((city) => state.filters.city === "all" || city.name === state.filters.city);
   const gapCount = shownCities.filter((city) => !city.delivery).length;
-  $("#review-status").textContent = `${rows.length} of ${all.records} reviewed records\u00A0· ${summary.events} distinct topics/events\u00A0· reviewed ${showDate(state.archive.reviewedAt)}`;
-  $("#review-verdict").innerHTML = `<h2>${!rows.length ? "No evidence matches this selection" : summary.outcomeEvents ? "Outcome claims need their comparison evidence" : "Activity is documented. Citizen impact remains an evidence gap."}</h2>
-    <p>${summary.records} records across ${summary.events} distinct topics/events in this selection. ${summary.outcomeEvents} events have a reviewed outcome comparison; that is a limit of this archive, not proof that cities produced no benefits.</p>
-    <dl class="review-measures"><div><dt>City-specific evidence</dt><dd>${summary.cityCount}</dd></div><div><dt>Selected cities without delivery coverage</dt><dd>${gapCount} / ${shownCities.length}</dd></div><div><dt>Outcome comparison events</dt><dd>${summary.outcomeEvents}</dd></div></dl>`;
-  $("#review-stage-chart").innerHTML = bars(summary.stages, "stage", "Reviewed records by evidence stage; counts start at zero");
-  $("#review-timeline").innerHTML = bars(summary.years, "year", "Archive record count by year, 2018 to 2026");
+  $("#review-status").textContent = fill("{n} of {m} reviewed records\u00A0· {k} distinct topics/events\u00A0· reviewed {date}", { n: rows.length, m: all.records, k: summary.events, date: showDate(state.archive.reviewedAt) });
+  $("#review-verdict").innerHTML = `<h2>${esc(tx(!rows.length ? "No evidence matches this selection" : summary.outcomeEvents ? "Outcome claims need their comparison evidence" : "Activity is documented. Citizen impact remains an evidence gap."))}</h2>
+    <p>${esc(fill("{n} records across {k} distinct topics/events in this selection. {o} events have a reviewed outcome comparison; that is a limit of this archive, not proof that cities produced no benefits.", { n: summary.records, k: summary.events, o: summary.outcomeEvents }))}</p>
+    <dl class="review-measures"><div><dt>${esc(tx("City-specific evidence"))}</dt><dd>${summary.cityCount}</dd></div><div><dt>${esc(tx("Selected cities without delivery coverage"))}</dt><dd>${gapCount} / ${shownCities.length}</dd></div><div><dt>${esc(tx("Outcome comparison events"))}</dt><dd>${summary.outcomeEvents}</dd></div></dl>`;
+  $("#review-stage-chart").innerHTML = bars(summary.stages, "stage", tx("Reviewed records by evidence stage; counts start at zero"));
+  $("#review-timeline").innerHTML = bars(summary.years, "year", tx("Archive record count by year, 2018 to 2026"));
   const questions = { Cooperation: "Which shared practices were adopted by another city, and what changed after adoption?", "Bankable projects": "Which proposals reached financial close, procurement and operation?", Funding: "Which commitments were disbursed to named city projects, in which currencies and periods?" };
   $("#review-mandates").innerHTML = REVIEW_MANDATES.map((mandate) => {
     const matched = rows.filter((row) => row.mandates.includes(mandate));
-    return `<div class="review-mandate"><h3>${esc(mandate)}</h3><p>${matched.length} relevant records\u00A0· ${new Set(matched.map((row) => row.eventId)).size} topics/events</p><p>${esc(questions[mandate])}</p>${matched.slice(0, 2).map((row) => `<a href="#news/archive?city=${encodeURIComponent(state.filters.city === "all" ? "" : state.filters.city)}" data-evidence-id="${esc(row.id)}">${esc(row.title)} ↗</a>`).join("")}</div>`;
+    return `<div class="review-mandate"><h3>${esc(tx(mandate))}</h3><p>${esc(fill("{n} relevant records\u00A0· {k} topics/events", { n: matched.length, k: new Set(matched.map((row) => row.eventId)).size }))}</p><p>${esc(tx(questions[mandate]))}</p>${matched.slice(0, 2).map((row) => `<a href="#news/archive?city=${encodeURIComponent(state.filters.city === "all" ? "" : state.filters.city)}" data-evidence-id="${esc(row.id)}">${esc(row.title)} ↗</a>`).join("")}</div>`;
   }).join("");
   const topics = new Set();
   const followups = rows.filter((row) => { if (!(row.projectLinks.length || row.mandates.includes("Funding") || row.stage === "Scrutiny") || topics.has(row.eventId)) return false; topics.add(row.eventId); return true; }).slice(0, 6);
   const followupHost = $("#review-followups");
-  followupHost.innerHTML = followups.map((row) => `<div class="review-followup"><h3>${esc(row.cities.join(", ") || row.title)}</h3><p>${esc(row.followUp)}</p><p class="review-note">Based on ${external(row.url, row.publisher)}\u00A0· ${esc(showDate(row.publishedAt))}\u00A0· review question, not a verified failure</p></div>`).join("") || '<p class="review-note">No project-specific or financing follow-up in this selection. Broaden the evidence filters.</p>';
+  followupHost.innerHTML = followups.map((row) => `<div class="review-followup"><h3>${esc(row.cities.join(", ") || row.title)}</h3><p>${esc(tx(row.followUp))}</p><p class="review-note">${esc(tx("Based on"))} ${external(row.url, row.publisher)}\u00A0· ${esc(showDate(row.publishedAt))}\u00A0· ${esc(tx("review question, not a verified failure"))}</p></div>`).join("") || `<p class="review-note">${esc(tx("No project-specific or financing follow-up in this selection. Broaden the evidence filters."))}</p>`;
   // How many questions there are, published for the stylesheet. The column
   // count is a function of this number and not of the width alone: Law IV
   // says the grid fills, and a grid of three columns holding two questions
   // leaves an empty cell that reads as a hole. The count is the fact the
   // layout needs; the width only says how many columns would FIT.
   followupHost.dataset.count = String(followups.length);
-  $("#review-cities").innerHTML = shownCities.map((city) => `<tr><th><button type="button" data-review-city="${esc(city.name)}">${esc(city.name)}</button><small>${esc(city.country)}</small></th><td>${city.evidence || "No coverage"}</td><td>${city.delivery || "No coverage"}</td><td>${city.outcomes || "Not evidenced"}</td><td>${city.projects === null ? "Unavailable" : city.projects || "No row"}</td></tr>`).join("");
+  $("#review-cities").innerHTML = shownCities.map((city) => `<tr><th><button type="button" data-review-city="${esc(city.name)}">${esc(city.name)}</button><small>${esc(city.country)}</small></th><td>${esc(city.evidence || tx("No coverage"))}</td><td>${esc(city.delivery || tx("No coverage"))}</td><td>${esc(city.outcomes || tx("Not evidenced"))}</td><td>${city.projects === null ? esc(tx("Unavailable")) : esc(city.projects || tx("No row"))}</td></tr>`).join("");
   $("#review-cities").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => { state.filters.city = button.dataset.reviewCity; $("#review-city").value = state.filters.city; state.page = 0; render(); }));
   state.page = Math.min(state.page, Math.max(0, Math.ceil(rows.length / pageSize) - 1));
-  $("#review-archive").innerHTML = rows.slice(state.page * pageSize, (state.page + 1) * pageSize).map(record).join("") || '<p class="review-empty">No evidence matches. Reset or broaden the filters.</p>';
+  $("#review-archive").innerHTML = rows.slice(state.page * pageSize, (state.page + 1) * pageSize).map(record).join("") || `<p class="review-empty">${esc(tx("No evidence matches. Reset or broaden the filters."))}</p>`;
   for (const id of opened) { const el = document.getElementById(id)?.querySelector('details'); if (el) el.open = true; }
   if (focusedIndex >= 0) document.getElementById(focusedRecord.id)?.querySelectorAll(focusables)[focusedIndex]?.focus({ preventScroll: true });
   pagination("#review-pagination", state.page, rows.length, (page) => { state.page = page; render(); $("#review-archive").scrollIntoView(); });
-  $("#review-method").innerHTML = `<p>${esc(state.archive.scope)}</p><p>Sources checked ${showDate(state.archive.reviewedAt)}. Search routes: ${esc(state.archive.queries.join("; "))}.</p><p>Commitment = an intention or pledge; Cooperation = a meeting or partnership; Implementation = work in progress; Output = a delivered asset, service reach or published product; Outcome = a measured change with explicit comparison; Scrutiny = attributed research or critique. These are review classifications, not official project statuses.</p><p>Multiple records can cover one event. The distinct-event count uses curated topic/event keys, not an estimate of all activity. Source type does not guarantee accuracy or independence; implementing partners and official releases can be interested parties. Indexed-text records have partial access. Unknown publication dates are not invented.</p><p>Discovery matches are never promoted automatically. An editor must check the source, identify the claim and limits, link a real city/project, and commit a reviewed record. No article bodies or publisher images are republished; summaries and interpretations are this platform's.</p><p>News does not establish ASCN's causal contribution. Absence of news is not absence of activity. Outcome measures, audited financing and service records are needed for a stronger performance verdict.</p>`;
+  $("#review-method").innerHTML = `<p>${esc(tx(state.archive.scope))}</p><p>${esc(tx("Sources checked"))} ${esc(showDate(state.archive.reviewedAt))}. ${esc(tx("Search routes:"))} ${esc(state.archive.queries.join("; "))}.</p><p>${esc(tx("Commitment = an intention or pledge; Cooperation = a meeting or partnership; Implementation = work in progress; Output = a delivered asset, service reach or published product; Outcome = a measured change with explicit comparison; Scrutiny = attributed research or critique. These are review classifications, not official project statuses."))}</p><p>${esc(tx("Multiple records can cover one event. The distinct-event count uses curated topic/event keys, not an estimate of all activity. Source type does not guarantee accuracy or independence; implementing partners and official releases can be interested parties. Indexed-text records have partial access. Unknown publication dates are not invented."))}</p><p>${esc(tx("Discovery matches are never promoted automatically. An editor must check the source, identify the claim and limits, link a real city/project, and commit a reviewed record. No article bodies or publisher images are republished; summaries and interpretations are this platform's."))}</p><p>${esc(tx("News does not establish ASCN's causal contribution. Absence of news is not absence of activity. Outcome measures, audited financing and service records are needed for a stronger performance verdict."))}</p>`;
   renderBaseline();
 }
 
@@ -124,9 +129,9 @@ function renderDiscovery() {
   const rows = inbox.filter((row) => !search || `${row.title} ${row.publisher}`.toLowerCase().includes(search));
   state.discoveryPage = Math.min(state.discoveryPage, Math.max(0, Math.ceil(rows.length / pageSize) - 1));
   const unavailable = state.discoverySources.filter((source) => source.status !== "ok").length;
-  $("#discovery-status").textContent = `${state.loading ? "Checking index" : state.discoveryMode === "live" ? "Index checked" : "Saved index; live check unavailable"}\u00A0· ${state.checkedAt ? showDate(state.checkedAt) : "check date unknown"}\u00A0· ${rows.length} matching leads\u00A0· ${state.candidates.length - inbox.length} title matches already reviewed${unavailable ? `\u00A0· ${unavailable} search feeds unavailable` : ""}`;
+  $("#discovery-status").textContent = `${state.loading ? tx("Checking index") : state.discoveryMode === "live" ? tx("Index checked") : tx("Saved index; live check unavailable")}\u00A0· ${state.checkedAt ? showDate(state.checkedAt) : tx("check date unknown")}\u00A0· ${rows.length} ${tx("matching leads")}\u00A0· ${state.candidates.length - inbox.length} ${tx("title matches already reviewed")}${unavailable ? `\u00A0· ${unavailable} ${tx("search feeds unavailable")}` : ""}`;
   $("#discovery-refresh").disabled = state.loading;
-  $("#discovery-results").innerHTML = rows.slice(state.discoveryPage * pageSize, (state.discoveryPage + 1) * pageSize).map((row) => `<article class="review-record"><div class="news-story-meta"><span>${esc(row.publisher)}</span><span>Unreviewed search match</span></div><h2>${external(row.url, row.title)}</h2><p class="review-note">Index date: ${row.publishedAt ? showDate(row.publishedAt) : "unknown"}\u00A0· Google News link\u00A0· not included in findings</p></article>`).join("") || '<p class="review-empty">No indexed leads match. The reviewed archive remains available.</p>';
+  $("#discovery-results").innerHTML = rows.slice(state.discoveryPage * pageSize, (state.discoveryPage + 1) * pageSize).map((row) => `<article class="review-record"><div class="news-story-meta"><span>${esc(row.publisher)}</span><span>${esc(tx("Unreviewed search match"))}</span></div><h2>${external(row.url, row.title)}</h2><p class="review-note">${esc(tx("Index date:"))} ${row.publishedAt ? showDate(row.publishedAt) : tx("unknown")}\u00A0· ${esc(tx("Google News link"))}\u00A0· ${esc(tx("not included in findings"))}</p></article>`).join("") || `<p class="review-empty">${esc(tx("No indexed leads match. The reviewed archive remains available."))}</p>`;
   pagination("#discovery-pagination", state.discoveryPage, rows.length, (page) => { state.discoveryPage = page; renderDiscovery(); $("#discovery-results").scrollIntoView(); });
 }
 
@@ -160,7 +165,7 @@ async function initArchive() {
     $("#review-city").insertAdjacentHTML("beforeend", state.cities.map((city) => `<option>${esc(city.name)}</option>`).join(""));
     render(); route(); renderDiscovery();
     try { state.engine = validateDataset("ascn-v2-data.json", await json("data/ascn-v2-data.json")); render(); } catch { renderBaseline(); }
-  } catch { $("#review-status").textContent = "ASCN evidence archive unavailable. Regional news and discovery remain available."; }
+  } catch { $("#review-status").textContent = tx("ASCN evidence archive unavailable. Regional news and discovery remain available."); }
 }
 
 async function initDiscovery() {
@@ -180,4 +185,6 @@ $("#discovery-search").addEventListener("input", (event) => { state.discoveryQue
 $("#review-mandates").addEventListener("click", (event) => { const link = event.target.closest("[data-evidence-id]"); if (!link) return; event.preventDefault(); state.filters.query = ""; $("#review-search").value = ""; const rows = filterRecords(state.archive.records, state.filters); state.page = Math.floor(rows.findIndex((row) => row.id === link.dataset.evidenceId) / pageSize); render(); location.hash = "#news/archive"; });
 window.addEventListener("hashchange", route);
 window.addEventListener("ascn:tabchange", route);
+// A language switch must repaint the generated copy, not only the [data-i18n] shell.
+document.addEventListener("ascn:lang", () => { if (state.archive) render(); renderDiscovery(); });
 route(); initArchive(); initDiscovery();
