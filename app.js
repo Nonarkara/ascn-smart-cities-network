@@ -629,8 +629,8 @@ function renderHistory() {
         <figure><img src="${esc(safeUrl(m.photo, location.href))}" alt="${esc(m.label)}" loading="lazy" /></figure>
         <div class="moment-body">
           <span class="moment-year">${esc(m.year)}</span>
-          <span class="moment-label">${esc(m.label)}</span>
-          <p class="moment-caption">${esc(m.caption)}</p>
+          <span class="moment-label">${esc(tx(m.label))}</span>
+          <p class="moment-caption">${esc(tx(m.caption))}</p>
         </div>
       </div>`).join("");
   }
@@ -671,7 +671,7 @@ function ascapHtml() {
   // full-width band under it. As a band they were 360px of note in a 994px
   // panel, and the panel is a box with a border: a box that is 63% empty
   // (rule 1) and a section that is 62% dead on the right (rule 2).
-  return `<p class="label">Forward agenda</p><h3>${esc(a.name)}</h3><p class="lede" style="margin:0.5rem 0 0">${esc(a.note)} Adopted ${esc(a.adopted)}.</p>
+  return `<p class="label">Forward agenda</p><h3>${esc(a.name)}</h3><p class="lede" style="margin:0.5rem 0 0">${esc(tx(a.note))} Adopted ${esc(a.adopted)}.</p>
     <div class="ascap-notes"><p class="ig-note" style="margin:0.75rem 0 0.25rem" data-i18n="a.each.pillar.shows.which.current">Each pillar shows which current focus area feeds into it and its 2025 project count.</p>${alignNote}</div>
     <div class="pillars">${pillarsHtml}</div>`;
 }
@@ -973,8 +973,8 @@ function renderFramework() {
     <div class="focus-item"><div class="fi-head"><b>${esc(a.name)}</b><span class="fi-share">${esc(a.share)}%</span></div>
       <p>${esc(tx(a.blurb))}</p><div class="bar-track"><div class="bar-fill${a.name.includes("Built") ? " red" : ""}" style="width:${(a.share / fmax) * 100}%"></div></div></div>`).join("");
   $("#gov-grid").innerHTML = `
-    <article class="gov-card"><h3>Leadership model</h3><p>${esc(g.model)}</p></article>
-    <article class="gov-card"><h3>Decisions &amp; legal status</h3><p>${esc(g.decision_making)}</p><p class="muted" style="text-transform:none;letter-spacing:0;margin-top:0.5rem">Reporting: ${esc(g.reporting_chain)}</p></article>
+    <article class="gov-card"><h3>Leadership model</h3><p>${esc(tx(g.model))}</p></article>
+    <article class="gov-card"><h3>Decisions &amp; legal status</h3><p>${esc(tx(g.decision_making))}</p><p class="muted" style="text-transform:none;letter-spacing:0;margin-top:0.5rem">Reporting: ${esc(g.reporting_chain)}</p></article>
     <article class="gov-card"><h3>Open challenges</h3><ul>${g.challenges.map((c) => `<li>${esc(c)}</li>`).join("")}</ul></article>`;
   $("#framework-ascap").innerHTML = ascapHtml();
 
@@ -1948,7 +1948,7 @@ function renderContacts() {
       </div>
 
       <div class="contacts-footer">
-        <p class="contacts-source-note">Source: ASCN M&amp;E Reports (2022–2025) and official April 2026 ASCN Contact List. Names and positions change with government transitions — verify current contacts at <a href="https://asean.org/body/asean-smart-cities-network/" target="_blank" rel="noopener">asean.org</a>.</p>
+        <p class="contacts-source-note">${esc(tx("Source: ASCN M&E Reports (2022–2025) and official April 2026 ASCN Contact List. Names and positions change with government transitions — verify current contacts at"))} <a href="https://asean.org/body/asean-smart-cities-network/" target="_blank" rel="noopener">asean.org</a>.</p>
       </div>
 
       ${renderAlumni()}
@@ -2294,7 +2294,7 @@ function renderResearch() {
 </div>
 
 <div class="research-section">
-  <p class="research-section-label label">ACADEMIC GEOGRAPHY</p>
+  <p class="research-section-label label">${esc(tx("ACADEMIC GEOGRAPHY"))}</p>
   <div class="geo-grid">
     <div class="geo-col">
       <p class="geo-h">Languages of scholarship</p>
@@ -2315,7 +2315,7 @@ function renderResearch() {
 </div>
 
 <div class="research-section">
-  <p class="research-section-label label">INSIDER PERSPECTIVE</p>
+  <p class="research-section-label label">${esc(tx("INSIDER PERSPECTIVE"))}</p>
   <div class="insider-block">
     <p class="insider-lede" data-i18n="a.the.scholarship.on.ascn.has.grow">The scholarship on ASCN has grown since the network launched. Eight papers and documents now constitute a body of evidence. Most is written by people who study the network from outside. Four things the literature gets right, and one thing it consistently misses:</p>
     <div class="insider-grid">
@@ -2881,7 +2881,7 @@ function renderEssay() {
         <p>${tx(`The structural reason is well known and rarely stated plainly: ASCN operates under the ASEAN Way. Consensus-based, voluntary, non-binding. Standardizing KPIs would require every member state to agree on what counts — which means agreeing on what doesn't count, and agreeing that some cities are performing better than others. That is politically difficult in a network explicitly designed to avoid peer-review and ranking mechanisms.<sup>5</sup>`)}</p>
         <p>${tx(`ASCAP 2026–2035 advances a potential resolution. The new strategic plan introduces eight pillars aligned to ASEAN Community Vision 2045, each broad enough to serve as a KPI category rather than a target. Pillar 8 — Rural-Village Collaboration — has zero current portfolio coverage: not a single project among 134 touches rural-urban linkage. That is visible now precisely because the pillars give us something to map against. If the network adopted even a minimal reporting template — project, pillar, one measurable indicator, one defined beneficiary group — the entire landscape of what is and isn't being built would become legible.<sup>6</sup>`)}</p>
         <p data-i18n="a.the.question.is.not.whether.the">The question is not whether the data can be collected. It clearly can — cities are already generating it. The question is whether the network can agree on a common language for what it is trying to accomplish. That is a governance question, not a technical one. And it is the question ASCAP 2026–2035 has the best chance of resolving — if the member states choose to use it that way.</p>
-        <p class="essay-footnotes"><sup>1</sup> ASCN M&amp;E Report 2025, Appendix. <sup>2</sup> ASEAN Smart Cities Framework, 2018, p. 4. <sup>3</sup> Comparative analysis from ascn_dim05.md §11.6; U4SSC indicator framework (ITU/UN-Habitat, 2021); EU Cities Mission monitoring (European Commission, 2022). <sup>4</sup> City outcome data compiled from ASCN M&amp;E reports 2022–2025 and bilateral programme reports. <sup>5</sup> Costoya, M. (2022). "Institutional Design and Policy Diffusion in ASEAN Smart Cities," <em>Politics &amp; Governance</em> 10(3). <sup>6</sup> ASCAP 2026–2035 pillar framework; gap analysis derived from ASCN project portfolio mapping.</p>
+        <p class="essay-footnotes" data-i18n-html="es.footnotes"><sup>1</sup> ASCN M&amp;E Report 2025, Appendix. <sup>2</sup> ASEAN Smart Cities Framework, 2018, p. 4. <sup>3</sup> Comparative analysis from ascn_dim05.md §11.6; U4SSC indicator framework (ITU/UN-Habitat, 2021); EU Cities Mission monitoring (European Commission, 2022). <sup>4</sup> City outcome data compiled from ASCN M&amp;E reports 2022–2025 and bilateral programme reports. <sup>5</sup> Costoya, M. (2022). "Institutional Design and Policy Diffusion in ASEAN Smart Cities," <em>Politics &amp; Governance</em> 10(3). <sup>6</sup> ASCAP 2026–2035 pillar framework; gap analysis derived from ASCN project portfolio mapping.</p>
       </div>
     </div>
     <div class="essay-next-card essay-next-placeholder">

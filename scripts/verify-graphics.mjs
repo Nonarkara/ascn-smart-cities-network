@@ -861,10 +861,6 @@ try {
           // \p{M}, not \p{L}, so stripping non-letters counted the marks as
           // Latin and every Thai sentence came back looking untranslated. The
           // property that actually identifies English is its function words.
-          const STOP = new Set(["the", "and", "of", "to", "in", "is", "that", "with",
-            "for", "are", "was", "were", "on", "as", "at", "by", "from", "it",
-            "its", "this", "which", "not", "but", "has", "have", "been", "or",
-            "we", "they", "one", "every", "their", "than", "into", "also"]);
           const out = [];
           for (const el of view.querySelectorAll("p, li, figcaption, .ig-note, .card-sub")) {
             if (el.getBoundingClientRect().height === 0) continue;
@@ -873,8 +869,10 @@ try {
             // "their" or "breathe" cannot be counted as a hit.
             const words = (t.toLowerCase().match(/[a-z]+/g) || []);
             if (words.length < 8) continue; // headings, labels, proper nouns
-            const hits = words.filter((w) => STOP.has(w)).length;
-            if (hits >= 3) out.push(`${hits}/${words.length} ${t}`);
+            // The passage is handed back whole. The words that belong to a name
+            // a publisher issued are stripped before the count is judged, and
+            // that has to happen where the issued names are known.
+            out.push(t);
           }
           return out;
         }, { v: route.includes("/") ? route.split("/")[0] : route });
@@ -895,7 +893,8 @@ try {
   // dataset is authored prose and must be translated.
   const datasetText = [];
   for (const name of ["ascn-news-archive.json", "ascn-news-discovery.json", "news-snapshot.json",
-    "ascn-knowledge.json", "ascn-library.json", "ascn-library-full.json", "ascn-v2-data.json"]) {
+    "ascn-knowledge.json", "ascn-library.json", "ascn-library-full.json", "ascn-v2-data.json",
+    "ascn-issued-names.json"]) {
     const res = await fetch(`${BASE}/data/${name}`).catch(() => null);
     if (!res?.ok) { await res?.body?.cancel(); continue; }
     // Only source-issued names are exempt. An editorial claim or takeaway is
@@ -909,19 +908,52 @@ try {
     };
     collectTitles(await res.json());
   }
+  // A published name can sit INSIDE a sentence the platform wrote — a
+  // bibliography line that names a published work and then describes it. The
+  // old test compared the whole passage to one dataset value, so a mixed
+  // passage could not be judged at all: it was either wholly exempt or wholly
+  // flagged. The test now strips every issued name from the passage and
+  // measures what the platform actually wrote. That is stricter, not looser:
+  // prose that surrounds an issued name is still measured, and only the names
+  // the site publishes can be stripped.
+  //
+  // Longest first: a shorter name nested in a longer one must not leave a
+  // fragment behind that the word count would then read as prose.
+  const sourceValues = [...new Set(datasetText)].sort((a, b) => b.length - a.length);
+  const authoredRemainder = (t) => {
+    let flat = String(t).replace(/\s+/g, " ").trim();
+    for (const value of sourceValues) {
+      if (!value) continue;
+      const at = flat.indexOf(value);
+      if (at >= 0) flat = `${flat.slice(0, at)} ${flat.slice(at + value.length)}`;
+    }
+    return flat.replace(/\s+/g, " ").trim();
+  };
+  const STOP = new Set(["the", "and", "of", "to", "in", "is", "that", "with",
+    "for", "are", "was", "were", "on", "as", "at", "by", "from", "it",
+    "its", "this", "which", "not", "but", "has", "have", "been", "or",
+    "we", "they", "one", "every", "their", "than", "into", "also"]);
   const isSourceValue = (t) => {
-    const flat = t.replace(/\s+/g, " ").trim();
-    return datasetText.some((title) => title === flat);
+    const flat = String(t).replace(/\s+/g, " ").trim();
+    if (sourceValues.some((title) => title === flat)) return true;
+    return authoredRemainder(flat).length === 0;
   };
 
   for (const lang of ["th", "zh"]) {
-    const authored = [...new Set(prose[lang])].filter((entry) => {
-      const text = entry.replace(/^[^:]*:\s*/, "").replace(/^\d+\/\d+\s*/, "");
-      return !isSourceValue(text);
-    });
+    const authored = [];
+    for (const entry of new Set(prose[lang])) {
+      const route = entry.split(": ")[0];
+      const text = entry.slice(route.length + 2);
+      if (isSourceValue(text)) continue;
+      const remainder = authoredRemainder(text);
+      const words = (remainder.toLowerCase().match(/[a-z]+/g) || []);
+      if (words.length < 8) continue;
+      const hits = words.filter((w) => STOP.has(w)).length;
+      if (hits >= 3) authored.push(`${route}: ${hits}/${words.length} ${text}`);
+    }
     ok(`no untranslated authored prose when ${lang} is chosen`, authored.length === 0,
       authored.length ? `${authored.length} untranslated: ${authored.slice(0, 3).join(" | ")}`
-        : `${routesForProse.length} views; source-issued titles exempt by exact match`, authored);
+        : `${routesForProse.length} views; source-issued names exempt, the prose around them measured`, authored);
   }
 
   // The language has to survive a route change, or choosing it is a one-page

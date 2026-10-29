@@ -7,7 +7,7 @@ export const siteEntries = ["index.html", "styles.css", "app.js", "showcase.js",
 
 export const publishedDatasets = new Set([
   "ascn-archive.json",
-  "ascn-cities.json", "ascn-knowledge.json",
+  "ascn-cities.json", "ascn-issued-names.json", "ascn-knowledge.json",
   "ascn-library.json", "ascn-library-full.json", "ascn-news-archive.json",
   "ascn-news-discovery.json", "ascn-v2-data.json", "city-stats-merged.json", "news-snapshot.json",
 ]);

@@ -1,0 +1,39 @@
+{
+  "meta": {
+    "note": "Names this platform publishes exactly as issued. A name recorded here was published under its own wording; it keeps that wording in every language, because rendering a translated title would put a sentence on the page that no publisher issued. The release audit reads this file, strips these names from a passage, and measures only the prose the platform wrote around them.",
+    "rule": "Titles only. Editorial description is not a title and is not exempt.",
+    "source": "The essay's Publications section (app.js, author-block), the annual-meeting session titles in the history timeline (data/ascn-knowledge.json), and the site's own publication record."
+  },
+  "names": [
+    {
+      "title": "Guide to Building Smart Cities for People in a Hurry (2023)",
+      "kind": "published work",
+      "year": 2023,
+      "note": "Practical guide for rapid, citizen-centric smart city implementation. The Thai rendering of the title appears in the same dictionary entry that carries the English one."
+    },
+    {
+      "title": "The Smart City Primer (2022)",
+      "kind": "published work",
+      "year": 2022,
+      "note": "Co-authored with Reilly Paul Rabitaille; released with C-ASEAN and the U.S. Embassy Bangkok."
+    },
+    {
+      "title": "Panel Session 3: Forging Partnerships to Spearhead Smart and Sustainable Urban Development in ASEAN",
+      "kind": "meeting session",
+      "year": 2024,
+      "note": "Session title as issued at the 7th Annual Meeting and Discussion Conference, Luang Prabang."
+    },
+    {
+      "title": "Roundtable 1: Southeast Asia Special Session",
+      "kind": "meeting session",
+      "year": 2025,
+      "note": "Session title as issued at the Smart City World Congress, Shanghai."
+    },
+    {
+      "title": "Smart Cities Expert Talk: Empowering Sustainable Urban Futures — Innovations and Collaborations for Smart Cities in ASEAN",
+      "kind": "meeting session",
+      "year": 2025,
+      "note": "Session title as issued at the 8th ASCN Annual Meeting, Kuala Lumpur."
+    }
+  ]
+}
