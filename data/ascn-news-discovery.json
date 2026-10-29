@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-28T08:58:51.368Z",
+  "checkedAt": "2026-10-29T09:07:26.404Z",
   "articles": [
     {
       "title": "ASEAN Smart Cities Network leads the region drive for smarter, more resilient cities",
@@ -375,7 +375,7 @@
       "title": "Chiang Mai, Khon Kaen, Rayong join ASEAN Smart Cities Network",
       "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOODVrYmFTNU9pX25jVXUtSGFvenFXMGZ1b2RNSjk2SWFGdGZOSV9YbWRxcnJlSDFJMG1VY1V1V29RMXY4cTN3VFZpWDhyTWdYeWRiRTRQbU9TV1c5dldrRUdZVWJaQU9yRlpVaENfNGxWUXFRVWRmbEhPcG1lV0c1M2xqTDYtZllfVlN2TnMxRWdLMmZyT2wxVlN1VFFBMnFnQzZxQUNSTWZGeTA?oc=5",
       "publisher": "Pattaya Mail",
-      "sourceId": "ascn-variants",
+      "sourceId": "ascn-exact",
       "publishedAt": "2023-07-29T07:00:00.000Z",
       "kind": "Unreviewed search match",
       "countries": [],
@@ -564,7 +564,7 @@
     {
       "title": "Innovative solutions for the society｜Yachiyo Engineering Co., Ltd.",
       "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxOb1I1eDBZOXE2WG9lV2hyM19kNnhmUjdUalg2MDlHbVFES1dfaEUzZW9vcFI1dmVPMV85S3A3UXQ1QlNzMmVfTVhZZ1Z2cEhMbkdDUVY1QjFkeVd1NnE3UnVJNzFhM1JobzBfdS1UMG9KZW1yVDJEZnlHMnhFTWpBZ0l0N01LSUJuTlNzZzdR?oc=5",
-      "publisher": "八千代エンジニヤリング株式会社",
+      "publisher": "八千代エンジニヤリング",
       "sourceId": "ascn-exact",
       "publishedAt": "2022-11-07T08:00:00.000Z",
       "kind": "Unreviewed search match",
@@ -1132,8 +1132,8 @@
       "topics": []
     },
     {
-      "title": "PM Lee Hsien Loong at the Press Conference of the 33rd ASEAN Summit",
-      "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxNdkRod3F0Vllib01JMVBWU2lBbGFVUmotY3ZCbG0zQmtLNmNQUUlUTlZJbEdVZ0NsejV6TnhubUtvVG5aMUtLTk5SalBIY1pqM2p4Y1M2QlV0RUZtY1A3bnVxdDRpeGxWdnVLdXZzZF9xVDdsSUR3dFEzc3dvbjlTVzBQb1JjSF91M2lGMXhqOA?oc=5",
+      "title": "PM Lee Hsien Loong at the Closing Ceremony of the 33rd ASEAN Summit and Related Summits",
+      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxNdzlfMEZQZGlSSjFMMi1VV21fWmg2cnIzblZfRnhBeE5VMU5tb2VUVzFrZGF5TEtCVk9yMUlxbHVvakxGRjVOMXJ4SFRkZFBZY0o4TDYyY1p1eFdJYmktM0dLYjh0U2xmN2tUUFIwaHhtZzk4TklIQjhGYXY2aTA4Uk5IN2s4UXJQMjNkZlY1R0VUMmhGaDQ5RG5XNV8zeXZyT0pZLTl3VUk4QQ?oc=5",
       "publisher": "Prime Minister's Office Singapore",
       "sourceId": "ascn-exact",
       "publishedAt": "2018-11-15T08:00:00.000Z",
@@ -1142,10 +1142,10 @@
       "topics": []
     },
     {
-      "title": "PM Lee Hsien Loong at the Closing Ceremony of the 33rd ASEAN Summit and Related Summits",
-      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxNdzlfMEZQZGlSSjFMMi1VV21fWmg2cnIzblZfRnhBeE5VMU5tb2VUVzFrZGF5TEtCVk9yMUlxbHVvakxGRjVOMXJ4SFRkZFBZY0o4TDYyY1p1eFdJYmktM0dLYjh0U2xmN2tUUFIwaHhtZzk4TklIQjhGYXY2aTA4Uk5IN2s4UXJQMjNkZlY1R0VUMmhGaDQ5RG5XNV8zeXZyT0pZLTl3VUk4QQ?oc=5",
+      "title": "PM Lee Hsien Loong at the Press Conference of the 33rd ASEAN Summit",
+      "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxNdkRod3F0Vllib01JMVBWU2lBbGFVUmotY3ZCbG0zQmtLNmNQUUlUTlZJbEdVZ0NsejV6TnhubUtvVG5aMUtLTk5SalBIY1pqM2p4Y1M2QlV0RUZtY1A3bnVxdDRpeGxWdnVLdXZzZF9xVDdsSUR3dFEzc3dvbjlTVzBQb1JjSF91M2lGMXhqOA?oc=5",
       "publisher": "Prime Minister's Office Singapore",
-      "sourceId": "ascn-exact",
+      "sourceId": "ascn-variants",
       "publishedAt": "2018-11-15T08:00:00.000Z",
       "kind": "Unreviewed search match",
       "countries": [],
@@ -1428,17 +1428,17 @@
       "id": "ascn-exact",
       "section": "Exact network name",
       "url": "https://news.google.com/rss/search?q=%22ASEAN%20Smart%20Cities%20Network%22&hl=en-SG&gl=SG&ceid=SG%3Aen",
-      "checkedAt": "2026-10-28T08:58:51.368Z",
+      "checkedAt": "2026-10-29T09:07:26.404Z",
       "status": "ok",
-      "returned": 37
+      "returned": 70
     },
     {
       "id": "ascn-variants",
       "section": "Name and language variants",
       "url": "https://news.google.com/rss/search?q=%22ASEAN%20Smart%20Cities%20Network%22%20OR%20%22ASEAN%20Smart%20City%20Network%22%20OR%20%22Jaringan%20Kota%20Cerdas%20ASEAN%22%20OR%20%22%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%B7%E0%B8%AD%E0%B8%82%E0%B9%88%E0%B8%B2%E0%B8%A2%E0%B9%80%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%87%E0%B8%AD%E0%B8%B1%E0%B8%88%E0%B8%89%E0%B8%A3%E0%B8%B4%E0%B8%A2%E0%B8%B0%E0%B8%AD%E0%B8%B2%E0%B9%80%E0%B8%8B%E0%B8%B5%E0%B8%A2%E0%B8%99%22&hl=en-SG&gl=SG&ceid=SG%3Aen",
-      "checkedAt": "2026-10-28T08:58:51.368Z",
+      "checkedAt": "2026-10-29T09:07:26.404Z",
       "status": "ok",
-      "returned": 20
+      "returned": 31
     },
     {
       "id": "ascn-history-2018",
