@@ -111,6 +111,26 @@ test("every authored prose string in the published data has a Thai and a Chinese
   assert.deepEqual(missing, []);
 });
 
+test("no wrapped literal renders a dictionary key", () => {
+  // tx() looks a string up by its ENGLISH TEXT, not by its key. Handing it a
+  // key returns the key, and the key lands on the page — the same failure the
+  // Research route had with "a.eight.themes.from.the.literature". Any literal
+  // that comes back looking like a key is the reader seeing one.
+  const offenders = [];
+  for (const file of FILES) {
+    const source = fs.readFileSync(new URL(`../${file}`, import.meta.url), "utf8");
+    for (const match of source.matchAll(CALL)) {
+      const en = JSON.parse(`"${match[1]}"`);
+      for (const lang of ["th", "zh"]) {
+        const out = tx(en, lang);
+        if (DICT[out]) { offenders.push(`${file} ${lang}: ${en} -> ${out}`); continue; }
+        if (/^[a-z][a-z0-9]*(\.[a-z0-9]+)+$/.test(out)) offenders.push(`${file} ${lang}: ${en} -> ${out}`);
+      }
+    }
+  }
+  assert.deepEqual(offenders, []);
+});
+
 test("no two dictionary entries claim the same English text with different wording", () => {
   // BY_TEXT keeps the first match, so a second entry with the same English
   // text is unreachable through tx() — it reads as translated in the source

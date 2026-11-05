@@ -712,11 +712,15 @@ function visibleCities() {
 }
 
 function renderCityCards() {
+  // The country name repeated on every entry was the same word thirty-eight times.
+  // The code says it in two characters; the full name stays in the title and
+  // in the accessible name, and the filter above lists the full names.
+  const cc = { "Brunei Darussalam": "BN", "Cambodia": "KH", "Indonesia": "ID", "Lao PDR": "LA", "Malaysia": "MY", "Myanmar": "MM", "Philippines": "PH", "Singapore": "SG", "Thailand": "TH", "Viet Nam": "VN", "Timor-Leste": "TL" };
   const list = visibleCities();
   $("#city-cards").innerHTML = list.map((c) => `
-    <div class="city-cell"><button class="city-card${state.selectedCity && c.name === state.selectedCity.name ? " active" : ""}" data-city="${esc(c.name)}">
-      <b>${esc(c.name)}</b><span class="cc-country">${esc(c.country)}</span>
-      <span class="cc-meta">Joined ${esc(c.year)} · ${esc(c.pop)}</span></button></div>`).join("") ||
+    <div class="city-cell"><button class="city-card${state.selectedCity && c.name === state.selectedCity.name ? " active" : ""}" data-city="${esc(c.name)}" aria-label="${esc(c.name + ", " + c.country + ", " + tx("Joined") + " " + c.year + ", " + c.pop)}">
+      <b>${esc(c.name)}</b><span class="cc-country" title="${esc(c.country)}">${esc(cc[c.country] || c.country)}</span>
+      <span class="cc-meta">${esc(tx("Joined"))} ${esc(c.year)} · ${esc(c.pop)}</span></button></div>`).join("") ||
     `<p class="muted" style="padding:1rem 0">No cities match.</p>`;
   $$("#city-cards .city-card").forEach((b) => b.addEventListener("click", () => {
     const city = state.C.find((c) => c.name === b.dataset.city);

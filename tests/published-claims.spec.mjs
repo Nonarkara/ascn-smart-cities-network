@@ -40,5 +40,10 @@ test('the footer states independent authorship and the actual translation limit'
     await expect(page.locator('[data-i18n-html="footer.depa"]')).not.toContainText('developed by the Digital Economy');
   }
   await page.locator('[data-lang-set="en"]').click();
-  await expect(page.locator('[data-i18n="note.source.language"]')).toContainText('translations are incomplete');
+  // The footer has to state the real limit of the translations: they were
+  // written by an agent and have not had native-reader review, and the names
+  // a source issued keep their published wording.
+  const footerLimit = page.locator('[data-i18n="note.source.language"]');
+  await expect(footerLimit).toContainText('have not had native-reader review');
+  await expect(footerLimit).toContainText('retain their published wording');
 });

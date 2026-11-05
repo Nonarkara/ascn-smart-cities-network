@@ -104,7 +104,10 @@ test("all existing routes render with working maps, charts, filters, and no CSP 
   await expect.poll(() => page.locator("#sea-map .leaflet-tile").evaluateAll((images) =>
     images.some((image) => image.complete && image.naturalWidth > 0)), { timeout: 15_000 }).toBe(true);
   await page.locator("#city-search").fill("Bangkok");
-  await page.getByRole("button", { name: /Bangkok Thailand Joined/ }).click();
+  // The city entry carries its country as a two-letter code on the face of the
+  // card, but its accessible name keeps all three facts in full: a screen
+  // reader is not a place to make the reader guess what TH means.
+  await page.getByRole("button", { name: /Bangkok, Thailand, Joined/ }).click();
   await expect(page.locator("#city-detail h2")).toHaveText("Bangkok");
   await page.locator('#tab-nav [data-tab="insights"]').click();
   await expect(page.locator("#ig-data-quality .dq-grid")).toBeVisible();
