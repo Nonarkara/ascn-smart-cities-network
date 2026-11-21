@@ -1009,12 +1009,12 @@
         </nav>
         <div id="review-controls" class="review-controls">
           <label class="review-search"><span>Search evidence</span><input type="search" id="review-search" placeholder="City, project or claim" /></label>
-          <label><span>City</span><select id="review-city" data-source-issued><option value="all">All cities</option></select></label>
+          <label><span data-i18n="find.city">City</span><select id="review-city" data-source-issued><option data-i18n="flt.all.cities" value="all">All cities</option></select></label>
           <details id="review-filter-panel"><summary data-i18n="hd.more.filters">More filters</summary><div class="review-filter-fields">
-            <label><span>Year</span><select id="review-year"><option value="all">All years</option></select></label>
-            <label><span>Evidence stage</span><select id="review-stage"><option value="all">All stages</option></select></label>
-            <label><span>Source type</span><select id="review-sourceType"><option value="all">All sources</option></select></label>
-            <label><span>ASCN objective</span><select id="review-mandate"><option value="all">All objectives</option></select></label>
+            <label><span data-i18n="flt.year">Year</span><select id="review-year"><option data-i18n="flt.all.years" value="all">All years</option></select></label>
+            <label><span data-i18n="flt.evidence.stage">Evidence stage</span><select id="review-stage"><option data-i18n="flt.all.stages" value="all">All stages</option></select></label>
+            <label><span data-i18n="flt.source.type">Source type</span><select id="review-sourceType"><option data-i18n="flt.all.sources" value="all">All sources</option></select></label>
+            <label><span data-i18n="flt.ascn.objective">ASCN objective</span><select id="review-mandate"><option data-i18n="flt.all.objectives" value="all">All objectives</option></select></label>
           </div></details>
           <button data-i18n="hd.reset" type="button" id="review-clear" class="text-button">Reset</button>
           <button type="button" id="review-export" class="news-icon-button" aria-label="Download filtered evidence as CSV" title="Download filtered evidence as CSV">↓</button>
@@ -1051,10 +1051,10 @@
           <details class="news-filter-panel" id="news-filter-panel" open>
             <summary data-i18n="hd.filters" id="news-filter-summary">Filters</summary>
             <div class="news-filter-fields">
-              <label><span>Location</span><select id="news-country"><option value="all">All locations</option></select></label>
-              <label><span>Publisher</span><select id="news-publisher"><option value="all">All publishers</option></select></label>
-              <label><span>Published</span><select id="news-days"><option value="all">Any date</option><option value="7">Past 7 days</option><option value="30">Past 30 days</option><option value="90">Past 90 days</option></select></label>
-              <label class="news-mobile-topic" data-source-issued><span>Topic</span><select id="news-mobile-topic"><option data-i18n="hd.all.topics" value="all">All topics</option></select></label>
+              <label><span data-i18n="flt.location">Location</span><select id="news-country"><option data-i18n="flt.all.locations" value="all">All locations</option></select></label>
+              <label><span data-i18n="flt.publisher">Publisher</span><select id="news-publisher"><option data-i18n="flt.all.publishers" value="all">All publishers</option></select></label>
+              <label><span data-i18n="flt.published">Published</span><select id="news-days"><option data-i18n="flt.any.date" value="all">Any date</option><option data-i18n="flt.past.7.days" value="7">Past 7 days</option><option data-i18n="flt.past.30.days" value="30">Past 30 days</option><option data-i18n="flt.past.90.days" value="90">Past 90 days</option></select></label>
+              <label class="news-mobile-topic" data-source-issued><span data-i18n="flt.topic">Topic</span><select id="news-mobile-topic"><option data-i18n="hd.all.topics" value="all">All topics</option></select></label>
             </div>
           </details>
           <button id="news-refresh" type="button" class="news-icon-button" title="Check news feeds" aria-label="Check news feeds">↻</button>
@@ -1128,7 +1128,7 @@
           </div>
           <div class="controls">
             <input id="city-search" type="search" placeholder="Search a city" aria-label="Search a city" />
-            <select id="city-country" aria-label="Filter by country"><option value="all">All countries</option></select>
+            <select id="city-country" aria-label="Filter by country"><option data-i18n="flt.all.countries" value="all">All countries</option></select>
             <div class="segmented" id="map-mode">
               <button data-i18n="hd.map" type="button" class="active" data-mode="map">Map</button>
               <button data-i18n="hd.night" type="button" data-mode="night">Night</button>
@@ -1151,8 +1151,8 @@
           <p data-i18n="nav.projects" class="label">Projects</p>
           <div class="controls">
             <input id="search-filter" type="search" placeholder="Search projects" aria-label="Search projects" />
-            <select id="country-filter" aria-label="Filter by country"><option value="all">All countries</option></select>
-            <select id="focus-filter" aria-label="Filter by focus area"><option value="all">All focus areas</option></select>
+            <select id="country-filter" aria-label="Filter by country"><option data-i18n="flt.all.countries" value="all">All countries</option></select>
+            <select id="focus-filter" aria-label="Filter by focus area"><option data-i18n="flt.all.focus.areas" value="all">All focus areas</option></select>
             <button data-i18n="hd.export.csv" id="export-csv" class="text-button" type="button">Export CSV</button>
           </div>
           <h1 data-i18n="h.projects-title">The smart-city project portfolio</h1>

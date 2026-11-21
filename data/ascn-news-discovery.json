@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-05T01:21:48.340Z",
+  "checkedAt": "2026-11-21T11:04:01.361Z",
   "articles": [
     {
       "title": "ASEAN Smart Cities Network leads the region drive for smarter, more resilient cities",
@@ -547,6 +547,16 @@
       "publisher": "គណបក្សប្រជាជនកម្ពុជា",
       "sourceId": "ascn-history-2022",
       "publishedAt": "2022-12-02T08:00:00.000Z",
+      "kind": "Unreviewed search match",
+      "countries": [],
+      "topics": []
+    },
+    {
+      "title": "Asean and India upgrade ties to comprehensive strategic partnership",
+      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxQOUlLLTFXQkNtWTRzSFZZWXpldkZqUmROdXQ5RTYwWUhNT0RLYXFUR3M0b2xPdndGdm55SVFCNFJRa2g5eFJ6UHlzTXZDcG52NVBrN250YWJVM0p0bmxpUlBqTmZEd0t4aUphenFOVEVDcDM3dXc1UDlIODJqS2dZVHlTX09LREQ0UlVBU0RqS25GZHd2YjgwaGw5WHZIMWdXd3hkVXpR?oc=5",
+      "publisher": "The Straits Times",
+      "sourceId": "ascn-exact",
+      "publishedAt": "2022-11-12T08:00:00.000Z",
       "kind": "Unreviewed search match",
       "countries": [],
       "topics": []
@@ -1132,9 +1142,9 @@
       "topics": []
     },
     {
-      "title": "Pence Announces US-ASEAN ‘Smart Cities Partnership’",
-      "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxOS0xDTHBFNWpHQXV3dS1PRDRSZWtFdmRmUU5uUUIwMmxVRWdIZjVUcEFUejhlQ3VPNlRLLUdNTWU4V0JkdDU0Z0YwQW5MSWVoZzBjMGdYaHVmSXREdWw4Nlg0T29tcHJ5YkstX2E1cW5uWWh6amUwUmpLc3JoRjBrTGRSVFRDM2JMb2thSEpHa0RGbFXSAZYBQVVfeXFMTzFCTnJTdi1tdXRZSXk4TDd6Z1BaU29EaTNTb0E1a2xkVnI0MmhZVi1hM3VtWEMxbXF5aHpEN0NwNGRKWXBPT2ROOEhpSjZlTkNBMlpiNTBhQUJrSWR3MVNVa0JUT01ocERQWEc0M0hCOFVma1JyRWw4OEVGSDEwa0tIcWJRV3V3cG5rcFVVU2FNMDdyeG53?oc=5",
-      "publisher": "VOA - Voice of America English News",
+      "title": "PM Lee Hsien Loong at the Closing Ceremony of the 33rd ASEAN Summit and Related Summits",
+      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxNdzlfMEZQZGlSSjFMMi1VV21fWmg2cnIzblZfRnhBeE5VMU5tb2VUVzFrZGF5TEtCVk9yMUlxbHVvakxGRjVOMXJ4SFRkZFBZY0o4TDYyY1p1eFdJYmktM0dLYjh0U2xmN2tUUFIwaHhtZzk4TklIQjhGYXY2aTA4Uk5IN2s4UXJQMjNkZlY1R0VUMmhGaDQ5RG5XNV8zeXZyT0pZLTl3VUk4QQ?oc=5",
+      "publisher": "Prime Minister's Office Singapore",
       "sourceId": "ascn-exact",
       "publishedAt": "2018-11-15T08:00:00.000Z",
       "kind": "Unreviewed search match",
@@ -1142,9 +1152,9 @@
       "topics": []
     },
     {
-      "title": "PM Lee Hsien Loong at the Closing Ceremony of the 33rd ASEAN Summit and Related Summits",
-      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxNdzlfMEZQZGlSSjFMMi1VV21fWmg2cnIzblZfRnhBeE5VMU5tb2VUVzFrZGF5TEtCVk9yMUlxbHVvakxGRjVOMXJ4SFRkZFBZY0o4TDYyY1p1eFdJYmktM0dLYjh0U2xmN2tUUFIwaHhtZzk4TklIQjhGYXY2aTA4Uk5IN2s4UXJQMjNkZlY1R0VUMmhGaDQ5RG5XNV8zeXZyT0pZLTl3VUk4QQ?oc=5",
-      "publisher": "Prime Minister's Office Singapore",
+      "title": "Pence Announces US-ASEAN ‘Smart Cities Partnership’",
+      "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxOS0xDTHBFNWpHQXV3dS1PRDRSZWtFdmRmUU5uUUIwMmxVRWdIZjVUcEFUejhlQ3VPNlRLLUdNTWU4V0JkdDU0Z0YwQW5MSWVoZzBjMGdYaHVmSXREdWw4Nlg0T29tcHJ5YkstX2E1cW5uWWh6amUwUmpLc3JoRjBrTGRSVFRDM2JMb2thSEpHa0RGbFXSAZYBQVVfeXFMTzFCTnJTdi1tdXRZSXk4TDd6Z1BaU29EaTNTb0E1a2xkVnI0MmhZVi1hM3VtWEMxbXF5aHpEN0NwNGRKWXBPT2ROOEhpSjZlTkNBMlpiNTBhQUJrSWR3MVNVa0JUT01ocERQWEc0M0hCOFVma1JyRWw4OEVGSDEwa0tIcWJRV3V3cG5rcFVVU2FNMDdyeG53?oc=5",
+      "publisher": "VOA - Voice of America English News",
       "sourceId": "ascn-exact",
       "publishedAt": "2018-11-15T08:00:00.000Z",
       "kind": "Unreviewed search match",
@@ -1282,9 +1292,9 @@
       "topics": []
     },
     {
-      "title": "Banyuwangi included in ASEAN smart cities network",
-      "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxOZnZhSzNMM3JDeWNJUlNZb1pXRGxQUjY3bUdYY3FhcXI0ZWhxaVpYMjVMVU1Ea0pRMnRyMEE4V3FLUmxHQlhJODJ3RWM3NUQ2MnlacUVTMnNGQ2FGel9BMjd6RjFJN0ZnSGkxOUs4RmJrY3B3SmZCS29NRGt0em9kN3pUMEpTYW83Ql85VTd1QXXSAZYBQVVfeXFMT2duVzN2dHRvTDc5NXBMeGwybkhxbEI0LXJiaVBQbmtBTWE3TklmMC16OXVadkxiSEVVMmRUSURoR250a2dCZVM4NHhuajJ4TGIxZDZMbmRJY0xBZUYyUWhlbW5PenlUQ1dCTWtDLWNpN3ItQVVnNTRURkx3UnpaTDlEa1E1ck50VUdRSGdpT1laRHU1eVBB?oc=5",
-      "publisher": "ANTARA News",
+      "title": "Smart City Spotlight: Bangkok",
+      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTFBLQTJKYXphdUhNNFRDY0V2MHpSVUhVRTc5eTJaUDNVMzVxTjJmQ04yTm9JRUt6bUdGTmdtbVBobjRKOVdFS255RloyQlJLWHR5X1JBbm92X0ZJeDVpQlAzcDdtcXR1V3NQbEJic0Z30gFzQVVfeXFMTlBtcnpVS1lvTUZ1NG03N1BIdzR5SmJtVjNha0JnaEhza1Q4QUdhUksxOV9fX2FyTS03MGhQdGQ5eFZYYll2cWxWTGpncERIZnB3dGdFMHdMa2hWX0F3X3EyaHBOLU5GeC1VZzJaR1Z6MWxnQQ?oc=5",
+      "publisher": "The ASEAN Post",
       "sourceId": "ascn-exact",
       "publishedAt": "2018-05-22T07:00:00.000Z",
       "kind": "Unreviewed search match",
@@ -1292,9 +1302,9 @@
       "topics": []
     },
     {
-      "title": "Smart City Spotlight: Bangkok",
-      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTFBLQTJKYXphdUhNNFRDY0V2MHpSVUhVRTc5eTJaUDNVMzVxTjJmQ04yTm9JRUt6bUdGTmdtbVBobjRKOVdFS255RloyQlJLWHR5X1JBbm92X0ZJeDVpQlAzcDdtcXR1V3NQbEJic0Z30gFzQVVfeXFMTlBtcnpVS1lvTUZ1NG03N1BIdzR5SmJtVjNha0JnaEhza1Q4QUdhUksxOV9fX2FyTS03MGhQdGQ5eFZYYll2cWxWTGpncERIZnB3dGdFMHdMa2hWX0F3X3EyaHBOLU5GeC1VZzJaR1Z6MWxnQQ?oc=5",
-      "publisher": "The ASEAN Post",
+      "title": "Banyuwangi included in ASEAN smart cities network",
+      "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxOZnZhSzNMM3JDeWNJUlNZb1pXRGxQUjY3bUdYY3FhcXI0ZWhxaVpYMjVMVU1Ea0pRMnRyMEE4V3FLUmxHQlhJODJ3RWM3NUQ2MnlacUVTMnNGQ2FGel9BMjd6RjFJN0ZnSGkxOUs4RmJrY3B3SmZCS29NRGt0em9kN3pUMEpTYW83Ql85VTd1QXXSAZYBQVVfeXFMT2duVzN2dHRvTDc5NXBMeGwybkhxbEI0LXJiaVBQbmtBTWE3TklmMC16OXVadkxiSEVVMmRUSURoR250a2dCZVM4NHhuajJ4TGIxZDZMbmRJY0xBZUYyUWhlbW5PenlUQ1dCTWtDLWNpN3ItQVVnNTRURkx3UnpaTDlEa1E1ck50VUdRSGdpT1laRHU1eVBB?oc=5",
+      "publisher": "ANTARA News",
       "sourceId": "ascn-exact",
       "publishedAt": "2018-05-22T07:00:00.000Z",
       "kind": "Unreviewed search match",
@@ -1402,6 +1412,16 @@
       "topics": []
     },
     {
+      "title": "Cybersecurity a critical area for closer cooperation between Asean and Australia: PM Lee",
+      "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxNakEza2VvOXpCeTMwdVJSRXdJeWJueFR6SjNXcWV3eTJWbHlldklEeWVGYS1KVUFySEhQX2czVHlJeTVhVjd5Z3dMenJKVzlKS0lmLUNNNEFtdjkzLXhqZ2JtR0p5akhjRnVfM2UyT29rV0hta3hiNVFjYVE1aHlJYXlrbkhQTm9kaE1IZGhOZ2JZSWk2Sm1kSmdQQmR3em85MU0wUEh2U29abTJRY3JtbzI1RU04MXV1QkRhNVd4bnlySk0?oc=5",
+      "publisher": "The Straits Times",
+      "sourceId": "ascn-exact",
+      "publishedAt": "2018-03-18T07:00:00.000Z",
+      "kind": "Unreviewed search match",
+      "countries": [],
+      "topics": []
+    },
+    {
       "title": "Thailand’s smart cities to herald in Thailand 4.0",
       "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE5pYmUzOG44WmRNTklDUFZHQUFYYVJIZ1B0Z3RFT1pPdnRqSVV5ZDQ2dmJ0c3pNQk5HOWNFRXVMbnJkUV9iOGo3MGExVkVUZVhvdU4tVjJYeGlQcEZXa19TT3V2elVmd3NTNllmUmtMYnJNdF9VM1ZhMVJXd2hqZDDSAYQBQVVfeXFMTU9VR0hWVjNrTzEzT2Q1X1ZnNmhWXzVMMmdLVXROR040b04wa3FvY2lsNFpGZTZlM1l3cmhFLTB6bEZ5LVNFeWVuNkxCbEkweFVLZTlEOTljYzVmcS1uRFp6bDMyMVI0YnloRHFWamlZYzR4ZTRTTUY1UUwzM2VVSW1WRk5x?oc=5",
       "publisher": "The ASEAN Post",
@@ -1448,17 +1468,17 @@
       "id": "ascn-exact",
       "section": "Exact network name",
       "url": "https://news.google.com/rss/search?q=%22ASEAN%20Smart%20Cities%20Network%22&hl=en-SG&gl=SG&ceid=SG%3Aen",
-      "checkedAt": "2026-11-05T01:21:48.340Z",
+      "checkedAt": "2026-11-21T11:04:01.361Z",
       "status": "ok",
-      "returned": 37
+      "returned": 58
     },
     {
       "id": "ascn-variants",
       "section": "Name and language variants",
       "url": "https://news.google.com/rss/search?q=%22ASEAN%20Smart%20Cities%20Network%22%20OR%20%22ASEAN%20Smart%20City%20Network%22%20OR%20%22Jaringan%20Kota%20Cerdas%20ASEAN%22%20OR%20%22%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%B7%E0%B8%AD%E0%B8%82%E0%B9%88%E0%B8%B2%E0%B8%A2%E0%B9%80%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%87%E0%B8%AD%E0%B8%B1%E0%B8%88%E0%B8%89%E0%B8%A3%E0%B8%B4%E0%B8%A2%E0%B8%B0%E0%B8%AD%E0%B8%B2%E0%B9%80%E0%B8%8B%E0%B8%B5%E0%B8%A2%E0%B8%99%22&hl=en-SG&gl=SG&ceid=SG%3Aen",
-      "checkedAt": "2026-11-05T01:21:48.340Z",
+      "checkedAt": "2026-11-21T11:04:01.361Z",
       "status": "ok",
-      "returned": 22
+      "returned": 17
     },
     {
       "id": "ascn-history-2018",

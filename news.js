@@ -46,7 +46,7 @@ function render() {
 
 function updatePublishers() {
   const publishers = [...new Set(state.articles.map((article) => article.publisher))].sort();
-  $("#news-publisher").innerHTML = `<option value="all">All publishers</option>${publishers.map((publisher) => `<option>${esc(publisher)}</option>`).join("")}`;
+  $("#news-publisher").innerHTML = `<option data-i18n="flt.all.publishers" value="all">${esc(tx("All publishers"))}</option>${publishers.map((publisher) => `<option data-source-issued>${esc(publisher)}</option>`).join("")}`;
   if (!publishers.includes(state.publisher)) state.publisher = "all";
   $("#news-publisher").value = state.publisher;
 }
@@ -80,7 +80,7 @@ async function init() {
   phone.addEventListener("change", () => { $("#news-filter-panel").open = !phone.matches; });
   $("#news-mobile-topic").insertAdjacentHTML("beforeend", NEWS_TOPICS.map((topic) => `<option>${esc(topic)}</option>`).join(""));
   $("#news-mobile-topic").addEventListener("change", (event) => { state.topic = event.target.value; render(); });
-  $("#news-country").insertAdjacentHTML("beforeend", [...NEWS_COUNTRIES, "Regional"].map((country) => `<option>${esc(country)}</option>`).join(""));
+  $("#news-country").insertAdjacentHTML("beforeend", [...NEWS_COUNTRIES, "Regional"].map((country) => `<option data-source-issued>${esc(country)}</option>`).join(""));
   // A topic name is a name the platform publishes it under, so it keeps its
   // wording and is marked as issued. The "all" chip is the platform's own
   // label and is translated.

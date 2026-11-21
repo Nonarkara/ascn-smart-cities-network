@@ -1,5 +1,5 @@
 import { escapeHtml as esc, safeUrl, csvCell, validateDataset } from "./lib/security.mjs";
-import { tx, fill } from "./lib/i18n.mjs";
+import { tx, fill, keyFor } from "./lib/i18n.mjs";
 import { REVIEW_STAGES, REVIEW_MANDATES, SOURCE_TYPES, validateArchive, filterRecords, summarizeEvidence, cityEvidence, linkProjects, discoveryInbox } from "./lib/ascn-review.mjs";
 import { validateDiscovery, mergeDiscovery } from "./lib/ascn-discovery.mjs";
 
@@ -174,7 +174,12 @@ async function initDiscovery() {
 }
 
 for (const [key, values] of [["stage", REVIEW_STAGES], ["sourceType", SOURCE_TYPES], ["mandate", REVIEW_MANDATES]]) {
-  $(`#review-${key}`).insertAdjacentHTML("beforeend", values.map((value) => `<option>${esc(value)}</option>`).join(""));
+  // The options are written once, at start-up, so a key is what lets the
+  // language switch re-translate them.
+  $(`#review-${key}`).insertAdjacentHTML("beforeend", values.map((value) => {
+    const labelKey = keyFor(value);
+    return `<option${labelKey ? ` data-i18n="${labelKey}"` : ""}>${esc(value)}</option>`;
+  }).join(""));
 }
 for (const key of ["city", "year", "stage", "sourceType", "mandate"]) $(`#review-${key}`).addEventListener("change", (event) => { state.filters[key] = event.target.value; state.page = 0; render(); });
 $("#review-search").addEventListener("input", (event) => { state.filters.query = event.target.value; state.page = 0; render(); });

@@ -3065,7 +3065,7 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
     font-size: var(--t-small);
   }
   .bar-row strong { text-align: right; }
-  .bar-row .bar-sub { display: inline; margin-left: 0.2rem; white-space: normal; }
+  .bar-row .bar-sub { margin-left: 0; white-space: normal; }
   .bar-row > span { line-height: 1.3; }
   .dq-cycle { grid-template-columns: 3.2rem 1fr; }
   .dq-count { grid-column: 2; text-align: left; }

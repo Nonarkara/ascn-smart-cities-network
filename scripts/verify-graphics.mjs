@@ -952,6 +952,10 @@ try {
     "ACGF", "Aus4ASEAN Futures", "Terms of Reference", "Concept Note",
     "Smart City Action Plans", "Smart Cities Framework", "Shepherd", "Digital Twin",
     "Smart City Action Plan", "Action Plan (SCAP)", "Founding Presentation",
+    // The Framework's own six focus areas, in either spelling.
+    "Civic & Social", "Built Infrastructure", "Quality Environment",
+    "Safety & Security", "Industry & Innovation", "Health & Well-being",
+    "Health & Well-Being",
     "Smart City", "Innovation Sandbox", "Liveability Index", "Finance Toolkit",
     "Investment Toolkit", "Digital Literacy", "Cybersecurity Skilling", "ASPP",
     "FloodDash", "Airdash", "Digital Government", "Urban Innovation",
@@ -966,7 +970,7 @@ try {
     const collect = (value) => {
       if (!value || typeof value !== "object") return;
       for (const [key, child] of Object.entries(value)) {
-        if (["title", "project", "name", "publisher", "author", "venue"].includes(key) && typeof child === "string") {
+        if (["title", "project", "name", "country", "publisher", "author", "venue"].includes(key) && typeof child === "string") {
           issuedNames.add(child.replace(/\s+/g, " ")
             .replace(/[\u2010-\u2015\u2212]/g, "-")
             .replace(/\u00A0/g, " ").trim());
@@ -994,7 +998,7 @@ try {
         const view = document.getElementById("view-" + (location.hash.slice(1).split("/")[0]));
         if (!view) return [];
         const out = [];
-        for (const el of view.querySelectorAll("h1, h2, h3, h4, button, label, legend, summary, .label")) {
+        for (const el of view.querySelectorAll("h1, h2, h3, h4, button, label, legend, summary, .label, option")) {
           if (el.closest("[data-source-issued]")) continue;
           const own = [...el.childNodes]
             .filter((n) => n.nodeType === 3)
