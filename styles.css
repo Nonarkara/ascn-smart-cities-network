@@ -2387,7 +2387,11 @@ body .view p.record-actions { max-width: 100%; }
 /* Narrower than the two-column form: the country code sits beside the name
    and the membership below, so an entry is two lines rather than three. The
    code is a symbol — the full country name stays in the title attribute and
-   in the accessible name, and the filter above the wall lists the names. */
+   in the accessible name, and the filter above the wall lists the names.
+   A 390px phone lays the wall out in one column of about 351px, which is
+   above the 22rem threshold below, so this rule serves the narrowest cells
+   rather than the phone: at 360px the wall splits in two and a cell falls to
+   about 160px. */
 @container city (max-width: 21.99rem) {
   .city-card {
     grid-template-columns: auto minmax(0, 1fr);
@@ -2400,12 +2404,15 @@ body .view p.record-actions { max-width: 100%; }
 @container city (min-width: 22rem) {
   .city-card {
     grid-template-columns: minmax(0, 1fr) auto;
-    align-items: end;
+    align-items: start;
     column-gap: 0.9rem;
   }
-  .city-card b { grid-column: 1; grid-row: 1; }
-  .city-card .cc-country { grid-column: 1; grid-row: 2; }
-  .city-card .cc-meta { grid-column: 2; grid-row: 1 / span 2; margin-top: 0; }
+  /* The code is two characters, so it sits on the name's line instead of
+     taking one of its own, and the membership stays beside the name rather
+     than under it. */
+  .city-card b { grid-column: 1; grid-row: 1 / span 2; align-self: center; }
+  .city-card .cc-country { grid-column: 2; grid-row: 1; justify-self: end; align-self: end; }
+  .city-card .cc-meta { grid-column: 2; grid-row: 2; justify-self: end; margin-top: 0.15rem; }
 }
 /* Wide enough for all three across — 131 + 128 + 117 and three gutters
    is 411px, so the threshold is 422px — the entry becomes a row across

@@ -939,6 +939,115 @@ try {
     return authoredRemainder(flat).length === 0;
   };
 
+  // Headings and labels are copy too. The prose check above cannot see them:
+  // it measures p, li, figcaption, .ig-note and .card-sub, so a Thai page
+  // whose every section heading was still English passed it. This measures the
+  // headings and the controls, and exempts only what a source issued.
+  // The platform's own vocabulary: an acronym, an instrument's name, a role.
+  // A translated sentence still carries these, and they are not untranslated
+  // prose — they are the names the platform publishes them under.
+  const PLATFORM_VOCABULARY = ["ASCN", "ASEAN", "SCAP", "ASCAP", "M&E", "ADB", "AIIB",
+    "GCF", "DEPA", "JBIC", "JOIN", "MOLIT", "NR", "CSCO", "CLC", "CSV", "JICA", "BRI",
+    "DFAT", "ITU", "OECD", "U4SSC", "UN-Habitat", "World Bank", "SMARTJAMP", "AASCTF",
+    "ACGF", "Aus4ASEAN Futures", "Terms of Reference", "Concept Note",
+    "Smart City Action Plans", "Smart Cities Framework", "Shepherd", "Digital Twin",
+    "Smart City Action Plan", "Action Plan (SCAP)", "Founding Presentation",
+    "Smart City", "Innovation Sandbox", "Liveability Index", "Finance Toolkit",
+    "Investment Toolkit", "Digital Literacy", "Cybersecurity Skilling", "ASPP",
+    "FloodDash", "Airdash", "Digital Government", "Urban Innovation",
+    "ASCN Operational Intelligence", "Applied Digital Twins",
+    "Climate & Resilience", "Quality Environment", "Built Infrastructure"];
+  const issuedNames = new Set();
+  for (const name of ["ascn-cities.json", "ascn-knowledge.json", "ascn-library.json",
+    "ascn-library-full.json", "ascn-news-archive.json", "ascn-news-discovery.json",
+    "ascn-v2-data.json", "ascn-issued-names.json"]) {
+    const res = await fetch(`${BASE}/data/${name}`).catch(() => null);
+    if (!res?.ok) { await res?.body?.cancel(); continue; }
+    const collect = (value) => {
+      if (!value || typeof value !== "object") return;
+      for (const [key, child] of Object.entries(value)) {
+        if (["title", "project", "name", "publisher", "author", "venue"].includes(key) && typeof child === "string") {
+          issuedNames.add(child.replace(/\s+/g, " ")
+            .replace(/[\u2010-\u2015\u2212]/g, "-")
+            .replace(/\u00A0/g, " ").trim());
+        } else if (child && typeof child === "object") collect(child);
+      }
+    };
+    collect(await res.json());
+  }
+  for (const lang of ["th", "zh"]) {
+    const { page } = await newPage({ width: 1280, height: 900 });
+    const untranslated = [];
+    for (const route of routesForProse) {
+      await page.goto(`${BASE}/#${route}`, { waitUntil: "domcontentloaded" });
+      const surface = route.split("/")[0];
+      const shown = (v) => { const el = document.getElementById("view-" + v); return !!el && !el.hidden; };
+      try { await page.waitForFunction(shown, surface, { timeout: 8000 }); }
+      catch { await page.reload({ waitUntil: "domcontentloaded" }); await page.waitForFunction(shown, surface, { timeout: 20000 }); }
+      await page.locator(`[data-lang-set="${lang}"]`).click();
+      await page.waitForTimeout(250);
+      // The element's OWN text, not the text of everything inside it: a
+      // heading that holds a bold title and a span of copy has two pieces,
+      // and the container's textContent mixes them into a third string that
+      // is on no page.
+      const rows = await page.evaluate(() => {
+        const view = document.getElementById("view-" + (location.hash.slice(1).split("/")[0]));
+        if (!view) return [];
+        const out = [];
+        for (const el of view.querySelectorAll("h1, h2, h3, h4, button, label, legend, summary, .label")) {
+          if (el.closest("[data-source-issued]")) continue;
+          const own = [...el.childNodes]
+            .filter((n) => n.nodeType === 3)
+            .map((n) => n.textContent || "")
+            .join(" ")
+            .replace(/\s+/g, " ")
+            .trim();
+          if (!own || own.length < 3) continue;
+          // A Roman numeral or a single capital is not English prose. The
+          // test looks for a lowercase Latin word, which is what a sentence
+          // is made of.
+          if (!/[a-z]{3,}/.test(own)) continue;
+          out.push(own.slice(0, 110));
+        }
+        return [...new Set(out)];
+      });
+      for (const text of rows) {
+        // The same name can be written with a different dash or a non-breaking
+        // space in the dataset and in the page; compare them as one string.
+        const flat = text.replace(/\s+/g, " ")
+          .replace(/[\u2010-\u2015\u2212]/g, "-")
+          .replace(/\u00A0/g, " ").trim();
+        if (issuedNames.has(flat)) continue;
+        // Strip every issued name, and the platform's own vocabulary: an
+        // acronym or an instrument's name that a translated sentence still
+        // carries is not untranslated prose.
+        //
+        // Longest first. "ASCN Operational Intelligence" must go before "ASCN",
+        // or the short one breaks the long one and leaves its tail behind as
+        // if it were prose.
+        let rest = flat;
+        for (const name of [...issuedNames].sort((a, b) => b.length - a.length)) {
+          if (!name || name.length < 3) continue;
+          if (rest.includes(name)) { rest = rest.split(name).join(" "); continue; }
+          // A title can differ from the page by a dash or a quote. Matching its
+          // first words takes the whole thing out rather than leaving a tail
+          // that reads as prose.
+          const head = name.slice(0, 40);
+          if (head.length >= 20 && rest.includes(head)) rest = rest.split(head).join(" ");
+        }
+        for (const term of [...PLATFORM_VOCABULARY].sort((a, b) => b.length - a.length)) {
+          if (rest.includes(term)) rest = rest.split(term).join(" ");
+        }
+        if ((rest.match(/[A-Za-z]/g) || []).length < 3) continue;
+        untranslated.push(`${route}: ${flat}`);
+      }
+    }
+    await page.close();
+    ok(`no untranslated heading or label when ${lang} is chosen`, untranslated.length === 0,
+      untranslated.length ? `${untranslated.length} untranslated: ${untranslated.slice(0, 3).join(" | ")}`
+        : `${routesForProse.length} views; headings and labels measured, issued names exempt`, untranslated);
+  }
+
   for (const lang of ["th", "zh"]) {
     const authored = [];
     for (const entry of new Set(prose[lang])) {

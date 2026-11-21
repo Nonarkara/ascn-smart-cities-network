@@ -1,4 +1,5 @@
 import { escapeHtml as esc, safeUrl } from "./lib/security.mjs";
+import { tx, fill } from "./lib/i18n.mjs";
 import { NEWS_COUNTRIES, NEWS_SOURCES, NEWS_TOPICS, filterArticles, validateNewsPayload } from "./lib/news-sources.mjs";
 
 const $ = (selector) => document.querySelector(selector);
@@ -18,9 +19,9 @@ function story(article, compact = false) {
 function render() {
   const articles = filterArticles(state.articles, state);
   $("#news-results").setAttribute("aria-busy", String(state.loading));
-  $("#news-results").innerHTML = articles.map((article) => story(article)).join("") || `<div class="news-empty"><h2>No stories match</h2><p>Try another location, topic, or date.</p><button id="news-clear" class="text-button" type="button">Clear filters</button></div>`;
+  $("#news-results").innerHTML = articles.map((article) => story(article)).join("") || `<div class="news-empty"><h2>${esc(tx("news.empty.title"))}</h2><p>${esc(tx("news.empty.hint"))}</p><button id="news-clear" class="text-button" type="button">${esc(tx("news.empty.clear"))}</button></div>`;
   $("#news-clear")?.addEventListener("click", clearFilters);
-  $("#news-count").textContent = `${articles.length} of ${state.articles.length} stories`;
+  $("#news-count").textContent = fill("{n} of {m} stories", { n: articles.length, m: state.articles.length });
   const checked = state.checkedAt ? `checked ${showDate(state.checkedAt)}` : "";
   const unavailable = state.sources.filter((source) => source.status === "unavailable").length;
   $("#news-status").textContent = state.loading ? `Checking publisher feeds${checked ? ` · saved headlines ${checked}` : "…"}` :
@@ -35,7 +36,7 @@ function render() {
 
   const counts = NEWS_COUNTRIES.map((country) => [country, state.articles.filter((article) => article.countries.includes(country)).length]).sort((a, b) => b[1] - a[1]);
   const max = Math.max(1, ...counts.map(([, count]) => count));
-  $("#news-coverage").innerHTML = counts.map(([country, count]) => `<button type="button" class="news-country-row" data-country="${esc(country)}"><span>${esc(country)}</span><span class="news-country-bar"><span style="width:${count / max * 100}%"></span></span><strong>${count}</strong></button>`).join("");
+  $("#news-coverage").innerHTML = counts.map(([country, count]) => `<button type="button" class="news-country-row" data-source-issued data-country="${esc(country)}"><span>${esc(country)}</span><span class="news-country-bar"><span style="width:${count / max * 100}%"></span></span><strong>${count}</strong></button>`).join("");
   $("#news-coverage").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => { state.country = button.dataset.country; $("#news-country").value = state.country; render(); }));
   $("#news-sources").innerHTML = NEWS_SOURCES.map((source) => {
     const status = state.sources.find((item) => item.id === source.id)?.status;
@@ -80,7 +81,12 @@ async function init() {
   $("#news-mobile-topic").insertAdjacentHTML("beforeend", NEWS_TOPICS.map((topic) => `<option>${esc(topic)}</option>`).join(""));
   $("#news-mobile-topic").addEventListener("change", (event) => { state.topic = event.target.value; render(); });
   $("#news-country").insertAdjacentHTML("beforeend", [...NEWS_COUNTRIES, "Regional"].map((country) => `<option>${esc(country)}</option>`).join(""));
-  $("#news-topics").innerHTML = ["all", ...NEWS_TOPICS].map((topic) => `<button type="button" data-topic="${esc(topic)}" aria-pressed="${topic === "all"}">${topic === "all" ? "All topics" : esc(topic)}</button>`).join("");
+  // A topic name is a name the platform publishes it under, so it keeps its
+  // wording and is marked as issued. The "all" chip is the platform's own
+  // label and is translated.
+  $("#news-topics").innerHTML = ["all", ...NEWS_TOPICS].map((topic) => topic === "all"
+    ? `<button type="button" data-i18n="hd.all.topics" data-topic="all" aria-pressed="true">${esc(tx("All topics"))}</button>`
+    : `<button type="button" data-source-issued data-topic="${esc(topic)}" aria-pressed="false">${esc(topic)}</button>`).join("");
   $("#news-topics").addEventListener("click", (event) => { const button = event.target.closest("button[data-topic]"); if (button) { state.topic = button.dataset.topic; render(); } });
   $("#news-search").addEventListener("input", (event) => { state.query = event.target.value; render(); });
   for (const name of ["country", "publisher", "days"]) $(`#news-${name}`).addEventListener("change", (event) => { state[name] = event.target.value; render(); });

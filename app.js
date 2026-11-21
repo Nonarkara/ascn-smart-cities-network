@@ -470,7 +470,7 @@ function renderRecordCharts() {
   if (!host || !state.data) return;
   const reports = [...state.data.reports].sort((a, b) => a.year - b.year);
   const series = [
-    { year: 2021, total: 65, ongoing: null, completed: null, planning: null, note: "baseline quoted by the 2022 report" },
+    { year: 2021, total: 65, ongoing: null, completed: null, planning: null, note: tx("baseline quoted by the 2022 report") },
     ...reports.map((r) => ({
       year: r.year,
       total: r.total_projects,
@@ -538,12 +538,12 @@ function renderOverview() {
   const kpis = [
     [s.cities, "Cities", "across 11 countries"],
     [s.countries, "Countries", "10 AMS + Timor-Leste"],
-    [s.projects, "Projects", "latest M&E cycle"],
+    [s.projects, tx("Projects"), "latest M&E cycle"],
     [s.ongoing, "Ongoing", "in implementation"],
     [s.completed, "Completed", "concluded"],
   ];
   $("#kpi-grid").innerHTML = kpis.map(([v, l, n]) => `<article class="kpi"><strong>${fmt.format(v)}</strong><span>${l} — ${n}</span></article>`).join("");
-  $("#gap-headline").textContent = "The performance question no official report asks.";
+  $("#gap-headline").textContent = tx("The performance question no official report asks.");
   $("#gap-body").textContent = tx(s.the_gap);
   $("#evidence-status").textContent = fillText("{reports} M&E reports · {rows} appendix rows · {documents} source documents.", { reports: state.data.reports.length, rows: state.data.projects.length, documents: state.K.documents.length });
   const fa = [...state.K.framework.focus_areas].sort((a, b) => b.share - a.share);
@@ -671,7 +671,7 @@ function ascapHtml() {
   // full-width band under it. As a band they were 360px of note in a 994px
   // panel, and the panel is a box with a border: a box that is 63% empty
   // (rule 1) and a section that is 62% dead on the right (rule 2).
-  return `<p class="label">Forward agenda</p><h3>${esc(a.name)}</h3><p class="lede" style="margin:0.5rem 0 0">${esc(tx(a.note))} Adopted ${esc(a.adopted)}.</p>
+  return `<p data-i18n="hd.forward.agenda" class="label">Forward agenda</p><h3>${esc(a.name)}</h3><p class="lede" style="margin:0.5rem 0 0">${esc(tx(a.note))} Adopted ${esc(a.adopted)}.</p>
     <div class="ascap-notes"><p class="ig-note" style="margin:0.75rem 0 0.25rem" data-i18n="a.each.pillar.shows.which.current">Each pillar shows which current focus area feeds into it and its 2025 project count.</p>${alignNote}</div>
     <div class="pillars">${pillarsHtml}</div>`;
 }
@@ -891,8 +891,8 @@ function renderDataQuality() {
   const stats = [
     [uniq.total, "unique city-project records", `${uniq.allCycles} tracked through all ${reports.length} cycles`],
     [uniq.latestOnly, `new in ${latestYear()}`, `${uniq.intermittent} intermittent records`],
-    [silentCountries.length, "countries silent in latest appendix", silentCountries.length ? silentCountries.join(", ") : "All countries represented"],
-    [impactCities.size, "cities with outcome examples", `${impactFocus.size} focus areas have at least one citizen impact data point`],
+    [silentCountries.length, tx("countries silent in latest appendix"), silentCountries.length ? silentCountries.join(", ") : "All countries represented"],
+    [impactCities.size, tx("cities with outcome examples"), `${impactFocus.size} focus areas have at least one citizen impact data point`],
   ];
   $("#ig-data-quality").innerHTML = `
     <div class="dq-grid">
@@ -911,7 +911,7 @@ function renderDataQuality() {
 
 function renderProjects() {
   const r = latestReport();
-  const k = [[r.total_projects, "Projects"], [r.status.ongoing, "Ongoing"], [r.status.completed, "Completed"], [r.status.planning, "Planning"]];
+  const k = [[r.total_projects, tx("Projects")], [r.status.ongoing, "Ongoing"], [r.status.completed, "Completed"], [r.status.planning, "Planning"]];
   $("#project-kpis").innerHTML = k.map(([v, l]) => `<article class="kpi"><strong>${fmt.format(v)}</strong><span>${l}</span></article>`).join("");
   $("#status-count").textContent = `${r.total_projects} projects`;
   const fe = Object.entries(r.focus_share);
@@ -977,9 +977,9 @@ function renderFramework() {
     <div class="focus-item"><div class="fi-head"><b>${esc(a.name)}</b><span class="fi-share">${esc(a.share)}%</span></div>
       <p>${esc(tx(a.blurb))}</p><div class="bar-track"><div class="bar-fill${a.name.includes("Built") ? " red" : ""}" style="width:${(a.share / fmax) * 100}%"></div></div></div>`).join("");
   $("#gov-grid").innerHTML = `
-    <article class="gov-card"><h3>Leadership model</h3><p>${esc(tx(g.model))}</p></article>
-    <article class="gov-card"><h3>Decisions &amp; legal status</h3><p>${esc(tx(g.decision_making))}</p><p class="muted" style="text-transform:none;letter-spacing:0;margin-top:0.5rem">Reporting: ${esc(g.reporting_chain)}</p></article>
-    <article class="gov-card"><h3>Open challenges</h3><ul>${g.challenges.map((c) => `<li>${esc(c)}</li>`).join("")}</ul></article>`;
+    <article class="gov-card"><h3 data-i18n="hd.leadership.model">Leadership model</h3><p>${esc(tx(g.model))}</p></article>
+    <article class="gov-card"><h3 data-i18n="hd.decisions.legal.status">Decisions &amp; legal status</h3><p>${esc(tx(g.decision_making))}</p><p class="muted" style="text-transform:none;letter-spacing:0;margin-top:0.5rem">Reporting: ${esc(g.reporting_chain)}</p></article>
+    <article class="gov-card"><h3 data-i18n="hd.open.challenges">Open challenges</h3><ul>${g.challenges.map((c) => `<li>${esc(c)}</li>`).join("")}</ul></article>`;
   $("#framework-ascap").innerHTML = ascapHtml();
 
   // ── Capacity building — training, scholarships, knowledge ────────────────
@@ -989,19 +989,19 @@ function renderFramework() {
       name: "ASPP — ASEAN Smart City Professional Programme",
       by: "South Korea · Seoul National University",
       desc: "Professional training plus Master's scholarships for city officials, funded through the ASEAN-Korea Cooperation Fund. First cohort of graduates completes February 2026.",
-      stat: "Smart City Cooperation Centres in Hanoi, Bangkok &amp; Jakarta",
+      stat: tx("Smart City Cooperation Centres in Hanoi, Bangkok &amp; Jakarta"),
     },
     {
       name: "ASUS — ASEAN Sustainable Urbanisation Strategy",
       by: "UN-Habitat",
       desc: "Technical assistance and capacity building that helps member cities turn the smart-city framework into local urban plans and project pipelines.",
-      stat: "Regional · technical assistance to member cities",
+      stat: tx("Regional · technical assistance to member cities"),
     },
     {
       name: "Smart City Financing Toolkit training",
       by: "ADB · Aus4ASEAN Futures Initiative",
       desc: "Hands-on official training on the FIRST financing tool, launched in Jakarta in November 2024 for officials from all member states and Timor-Leste.",
-      stat: "Launched Nov 2024 · available in 9 ASEAN languages",
+      stat: tx("Launched Nov 2024 · available in 9 ASEAN languages"),
     },
     {
       name: "ASCN Planning Guidebook",
@@ -1054,7 +1054,7 @@ function renderPartners() {
     },
     {
       name: "USASCP", country: "United States", flag: "US",
-      tagline: "City-to-city twinning across the Pacific",
+      tagline: tx("City-to-city twinning across the Pacific"),
       url: "https://www.usascp.org/",
       desc: "U.S. Department of State initiative connecting American public and private sector expertise with ASCN pilot cities. Over USD 10M committed to 20+ projects since 2018. Flagship WiSE twinning pairs: Vientiane–Hillsboro (OR), Phuket–Milwaukee (WI), Ho Chi Minh City–San Francisco (CA).",
       cities: ["Vientiane", "Phuket", "Ho Chi Minh City", "Kuala Lumpur", "Makassar", "Jakarta"],
@@ -1079,7 +1079,7 @@ function renderPartners() {
   $("#toolkit-feature").innerHTML = `
     <div class="toolkit-card">
       <div class="toolkit-card-meta">
-        <span class="label">ADB · Aus4ASEAN Futures Initiative</span>
+        <span data-source-issued class="label">ADB · Aus4ASEAN Futures Initiative</span>
         <a href="https://smartcitytoolkit.asean.org/" target="_blank" rel="noopener" class="toolkit-link">smartcitytoolkit.asean.org ↗</a>
       </div>
       <p data-i18n="a.a.web.platform.helping.asean.cit">A web platform helping ASEAN city officials navigate financing options for smart city projects. Core feature: <b>FIRST</b> — a Financial Instrument Recommendation and Selection Tool that maps financing instruments to project characteristics, risk profile, and city capacity. Includes case study library, discussion board, and AI chatbot. Available in all 9 ASEAN languages.</p>
@@ -1143,7 +1143,7 @@ function renderInsights() {
   const momentumStats = [
     { v: totals[3].total, label: "Projects documented", note: `+${deltas[2].project_delta} from 2024 — largest single-year jump` },
     { v: `${compRate(totals[3])}%`, label: "Completion rate 2025", note: `vs 2.6% in 2022 — five-fold improvement in three years` },
-    { v: me[me.length - 1].total, label: "Cities in network", note: `Founded with 26 cities in 2018; Timor-Leste joined 2025` },
+    { v: me[me.length - 1].total, label: tx("Cities in network"), note: `Founded with 26 cities in 2018; Timor-Leste joined 2025` },
     { v: `+${deltas[0].project_delta} / +${deltas[1].project_delta} / +${deltas[2].project_delta}`, label: "Annual additions 2022→23→24→25", note: "Accelerating each cycle; 2024 jump driven by completion surge" },
   ];
   const linePoints = totals.map((t) => ({ v: t.total, label: `'${String(t.year).slice(2)}` }));
@@ -1249,7 +1249,7 @@ function renderInsights() {
     { city: "Luang Prabang",       project: "Smart City Planning and Development",    type: "planning" },
     { city: "Luang Prabang",       project: "Smart and Integrated Urban Strategy",    type: "planning" },
     { city: "Johor Bahru",         project: "Iskandar Malaysia Integrated Urban Services", type: "digital" },
-    { city: "Johor Bahru",         project: "Management of Water Resources",          type: "physical" },
+    { city: "Johor Bahru",         project: tx("Management of Water Resources"),          type: "physical" },
     { city: "Kuala Lumpur",        project: "OSC 3.0 Plus Online",                   type: "digital" },
     { city: "Kuching",             project: "Introduction of Blockchain Technology",  type: "digital" },
     { city: "Mandalay",            project: "Cadastral Map and GIS Database",         type: "planning" },
@@ -1263,8 +1263,8 @@ function renderInsights() {
   const compRows = COMPLETED.map((p) => `<div class="comp-row"><span class="comp-city">${esc(p.city)}</span><span class="comp-proj">${esc(p.project)}</span><span class="comp-type" style="color:${typeColor[p.type]}">${typeLabel[p.type]}</span></div>`).join("");
   $("#ig-completed").innerHTML = `
     <div class="comp-summary">
-      <span class="comp-sum-n" style="color:var(--muted)">${planningCount}/18</span><span class="comp-sum-label">are planning or strategy documents — no physical delivery, no resident outcomes verifiable</span>
-      <span class="comp-sum-n" style="color:var(--amber)">3/18</span><span class="comp-sum-label">are physical infrastructure — a road, a river, a water pipe</span>
+      <span class="comp-sum-n" style="color:var(--muted)">${planningCount}/18</span><span data-i18n="hd.are.planning.or.strategy.documents.no.physical" class="comp-sum-label">are planning or strategy documents — no physical delivery, no resident outcomes verifiable</span>
+      <span class="comp-sum-n" style="color:var(--amber)">3/18</span><span data-i18n="hd.are.physical.infrastructure.a.road.a.river" class="comp-sum-label">are physical infrastructure — a road, a river, a water pipe</span>
     </div>
     <p class="ig-note" data-i18n="a.completion.criterion.successfull">Completion criterion: "successfully concluded." No standardized thresholds, no external verification, no post-completion check. Source: ASCN M&E Report 2025, Appendix + ascn_dim05.md §4.2.</p>
     <div class="comp-list">${compRows}</div>`;
@@ -1428,8 +1428,8 @@ function renderInsights() {
     { country: "Indonesia", n: 35, note: "UGM, UI, Unhas, BINUS — implementation & diplomacy focus" },
     { country: "UK / Australia", n: 30, note: "Bristol, Cambridge, Sydney, ANU — governance & rights" },
     { country: "Thailand", n: 18, note: "Chula, Thammasat, KMUTT — city-level & policy studies" },
-    { country: "Malaysia / Philippines", n: 16, note: "UKM, UP Diliman, De La Salle — digital inclusion, LGU capacity" },
-    { country: "Japan / Korea / China", n: 12, note: "Partner-country perspectives on investment & technology transfer" },
+    { country: "Malaysia / Philippines", n: 16, note: tx("UKM, UP Diliman, De La Salle — digital inclusion, LGU capacity") },
+    { country: "Japan / Korea / China", n: 12, note: tx("Partner-country perspectives on investment & technology transfer") },
   ];
   const csRows = countrySchol.map((c) => `<div class="lang-country-row"><span class="lang-country-n">${c.n}</span><span class="lang-country-name">${esc(c.country)}</span><span class="lang-country-note">${esc(c.note)}</span></div>`).join("");
   $("#ig-language-map").innerHTML = `
@@ -1512,9 +1512,9 @@ function renderInsights() {
       <div class="churn-total"><span class="churn-n">${churn.total}</span><span class="churn-label">unique city+project combinations, 2022–2025</span></div>
       <div class="churn-bar churn-bar--total" style="width:100%"></div>
       <div class="churn-segs">
-        <div class="churn-seg" style="width:${(churn.allCycles / churn.total) * 100}%"><span class="churn-seg-n">${churn.allCycles}</span><span class="churn-seg-label">Tracked all 4 cycles</span></div>
-        <div class="churn-seg churn-seg--new" style="width:${(churn.latestOnly / churn.total) * 100}%"><span class="churn-seg-n">${churn.latestOnly}</span><span class="churn-seg-label">New in 2025</span></div>
-        <div class="churn-seg churn-seg--drop" style="width:${(churn.firstOnly / churn.total) * 100}%"><span class="churn-seg-n">${churn.firstOnly}</span><span class="churn-seg-label">Dropped after 2022</span></div>
+        <div class="churn-seg" style="width:${(churn.allCycles / churn.total) * 100}%"><span class="churn-seg-n">${churn.allCycles}</span><span data-i18n="hd.tracked.all.4.cycles" class="churn-seg-label">Tracked all 4 cycles</span></div>
+        <div class="churn-seg churn-seg--new" style="width:${(churn.latestOnly / churn.total) * 100}%"><span class="churn-seg-n">${churn.latestOnly}</span><span data-i18n="hd.new.in.2025.2" class="churn-seg-label">New in 2025</span></div>
+        <div class="churn-seg churn-seg--drop" style="width:${(churn.firstOnly / churn.total) * 100}%"><span class="churn-seg-n">${churn.firstOnly}</span><span data-i18n="hd.dropped.after.2022" class="churn-seg-label">Dropped after 2022</span></div>
         <div class="churn-seg churn-seg--int" style="width:${(churn.intermittent / churn.total) * 100}%"><span class="churn-seg-n">${churn.intermittent}</span><span class="churn-seg-label">Intermittent</span></div>
       </div>
     </div>
@@ -1581,7 +1581,7 @@ function renderInsights() {
   const g5Rows = FIVEG.map((r) => {
     const trail = r.p
       ? `<div class="bar-track g5-track"><div class="bar-fill" style="width:${r.p}%"></div></div><strong class="g5-pct">${r.p}%</strong>`
-      : `<div class="g5-track g5-track--na"></div><span class="g5-na">no projection</span>`;
+      : `<div class="g5-track g5-track--na"></div><span data-i18n="hd.no.projection" class="g5-na">no projection</span>`;
     return `<div class="g5-row"><span class="g5-country">${esc(r.c)}</span><span class="g5-status">${esc(r.status)}</span><span class="g5-lean g5-lean--${r.lean}">${esc(leanLabel[r.lean])}</span>${trail}</div>`;
   }).join("");
   $("#ig-5g").innerHTML = `<div class="g5-head"><span>Country</span><span>5G mode</span><span>Dominant vendors</span><span>Projected 2030 penetration</span></div>
@@ -1593,8 +1593,8 @@ function renderInsights() {
   $("#ig-dili").innerHTML = `
     <div class="dili-wrap">
       <div class="dili-stat"><strong>US$1.92<em>&thinsp;/GB</em></strong><span>mobile data cost — vs Cambodia $0.12, Fiji $0.09, Samoa $0.36</span></div>
-      <div class="dili-stat"><strong>0.45</strong><span>Human Capital Index — lowest in ASEAN, below Laos 0.46, Myanmar 0.48, Cambodia 0.49</span></div>
-      <div class="dili-stat"><strong>~40%</strong><span>of Timorese live below the poverty line; submarine fibre only from late 2025</span></div>
+      <div class="dili-stat"><strong>0.45</strong><span data-i18n="hd.human.capital.index.lowest.in.asean.below">Human Capital Index — lowest in ASEAN, below Laos 0.46, Myanmar 0.48, Cambodia 0.49</span></div>
+      <div class="dili-stat"><strong>~40%</strong><span data-i18n="hd.of.timorese.live.below.the.poverty.line">of Timorese live below the poverty line; submarine fibre only from late 2025</span></div>
     </div>
     <p class="ig-note" data-i18n="a.timor.leste.s.2026.accession.is">Timor-Leste's 2026 accession is the network's inclusivity stress-test: extending "smart city" to the member with the region's highest data costs and lowest human-capital base forces a definition of smart that cannot rest on technology alone. Source: ascn_dim13.md.</p>`;
 
@@ -1644,7 +1644,7 @@ function renderOpenData() {
     ["Full dataset (JSON)", tx("The complete knowledge layer, city profiles, and project engine in one bundle."), () => downloadBlob("ascn-open-dataset.json", JSON.stringify({ knowledge: state.K, cities: state.C, engine: state.data }, null, 2), "application/json")],
   ];
   $("#dataset-downloads").innerHTML = downloads.map(([t, d], i) => `
-    <article class="download-card"><b>${esc(t)}</b><p>${esc(d)}</p><button class="text-button" type="button" data-dl="${i}">Download</button></article>`).join("");
+    <article class="download-card"><b>${esc(t)}</b><p>${esc(d)}</p><button data-i18n="hd.download" class="text-button" type="button" data-dl="${i}">Download</button></article>`).join("");
   $$("#dataset-downloads [data-dl]").forEach((b) => b.addEventListener("click", () => downloads[Number(b.dataset.dl)][2]()));
 
   $("#document-grid").innerHTML = state.K.documents.map((d) => `
@@ -1658,9 +1658,9 @@ function renderOpenData() {
   const methods = [
     ["Source model", t("library.publication")],
     ["Freshness", `Engine generated ${m.generated_at || "—"}. Knowledge layer synthesized ${state.K.meta.research_date} from official documents.`],
-    ["Counts", "Network KPIs use figures stated in report text. Appendix rows are extracted from PDF tables — treat row-level counts as indicative."],
-    ["The honest limit", "ASCN M&E counts projects, not outcomes. This platform surfaces the official record faithfully; it does not invent metrics the network does not yet collect."],
-    ["Public information", "The 2026 contact list is cited as a source, but personal contact details are not exposed in this dataset."],
+    ["Counts", tx("Network KPIs use figures stated in report text. Appendix rows are extracted from PDF tables — treat row-level counts as indicative.")],
+    ["The honest limit", tx("ASCN M&E counts projects, not outcomes. This platform surfaces the official record faithfully; it does not invent metrics the network does not yet collect.")],
+    ["Public information", tx("The 2026 contact list is cited as a source, but personal contact details are not exposed in this dataset.")],
   ];
   $("#method-list").innerHTML = methods.map(([t, b]) => `<div class="method-row"><b>${esc(t)}</b><span>${esc(b)}</span></div>`).join("");
 
@@ -1935,8 +1935,8 @@ function renderContacts() {
   $("#contacts-content").innerHTML = `
     <div class="contacts-wrap">
       <div class="contacts-header">
-        <p class="label">Network Contacts</p>
-        <h1>Click any city to see the NR and CSCO.</h2>
+        <p data-i18n="hd.network.contacts" class="label">Network Contacts</p>
+        <h1 data-i18n="hd.click.any.city.to.see.the.nr">Click any city to see the NR and CSCO.</h2>
         <p class="lede" data-i18n="a.38.cities.11.countries.each.mark">38 cities, 11 countries. Each marker shows the National Representative at the top, followed by the Chief Smart City Officer for that city. Data: April 2026 ASCN contact list.</p>
         <a class="text-button" href="https://asean.org/asean-smart-cities-network/" target="_blank" rel="noopener noreferrer">Official contact directory (ASEAN)</a>
       </div>
@@ -2112,13 +2112,13 @@ function renderResearch() {
 
   const THEMES = [
     {
-      n: "01", label: "The Learning Gap",
+      n: "01", label: tx("The Learning Gap"),
       heading: "Information sharing ≠ knowledge transfer",
       body: "ASCN generates meetings, reports, and bilateral partnerships — but systematic learning across cities is largely absent. Tan, Taeihagh &amp; Sha (2021) conducted 19 key-informant interviews with ASCN participants and found that most knowledge transfer is voluntary and inspiration-based. Cities attend meetings, hear what others are doing, take away ideas. Copying a practice, adapting a methodology, or building on a peer city's failure data: rare. The network produces information. It has not yet built the infrastructure for knowledge.",
       tags: ["Tan et al. 2021", "Costoya 2022"],
     },
     {
-      n: "02", label: "The Capacity Paradox",
+      n: "02", label: tx("The Capacity Paradox"),
       heading: "One table. Very different starting points.",
       body: "ASCN's 38 cities sit at one table. They do not sit at the same table. Singapore's GDP per capita (PPP) in 2017: $93,905. Cambodia's: $4,010. Singapore ranked 2nd in digital security globally; Bangkok 52nd, Yangon 57th, Manila 59th, Jakarta 60th. Crumpton et al. (2021) found that implementing even a mid-range smart city approach would require outside funding equivalent to some cities' entire annual operating budgets. Kanaev &amp; Fedorenko (2023) put it plainly: for Singapore, smart city development is trivially achievable. For the others, it is a genuine developmental challenge.",
       tags: ["Crumpton et al. 2021", "Kanaev &amp; Fedorenko 2023"],
@@ -2130,19 +2130,19 @@ function renderResearch() {
       tags: ["Kong &amp; Woods 2021", "Tan et al. 2021", "Kanaev &amp; Fedorenko 2023"],
     },
     {
-      n: "04", label: "The Implementation Pivot",
+      n: "04", label: tx("The Implementation Pivot"),
       heading: "From plans to bankable projects",
       body: "ASCN spent its first five years (2018–2022) building a framework: the Smart Cities Framework, the M&amp;E methodology, the Terms of Reference, the city typology. Indonesia's shepherdship (2023–2025) represented a deliberate pivot. Prayogo &amp; Juned (2025) document how Indonesia used dual roles as Chair and Shepherd to shift the network from conceptual planning to funded implementation. Key deliverable: the ASEAN Smart City Investment Toolkit. Projects grew from 77 (2022) to 108 (Sept 2024). Indonesia's Sumedang pilot — stunting rates reduced from 32.2% to 7.89% through data-driven social services — offered an alternative to capital-intensive models.",
       tags: ["Prayogo &amp; Juned 2025", "Lim 2024"],
     },
     {
-      n: "05", label: "The Measurement Problem",
+      n: "05", label: tx("The Measurement Problem"),
       heading: "Output vs outcome: what the M&amp;E framework counts",
       body: "Four M&amp;E cycles. 134 projects. What do we know about whether any of them worked? Hollands (2008) identified the central gap in smart city reporting a decade before ASCN was founded: the record consistently documents what was deployed, not whether deployment produced better lives. Kitchin (2014) confirmed the pattern globally. ASCN's M&amp;E framework is more sophisticated than most — it tracks implementation status and strategic target progress across six focus areas. But it does not yet systematically measure outcomes: whether Phnom Penh's waste management reduced illness rates; whether Da Nang's transport system cut commute times; whether Bangkok's digital platform produced decisions city officials could not previously make.",
       tags: ["Hollands 2008", "Kitchin 2014", "Costoya 2022"],
     },
     {
-      n: "06", label: "The Diplomatic Dimension",
+      n: "06", label: tx("The Diplomatic Dimension"),
       heading: "Smart city as foreign policy",
       body: "ASCN is a technical governance network. It is also a diplomatic arena. Prayogo &amp; Juned (2025) introduce 'smart city diplomacy' to describe how Indonesia used the Shepherd role to assert middle-power regional leadership — offering diverse pilot city models as a counter-narrative to capital-intensive approaches. Thailand's 2019 chairmanship focused on external partner relations. Cambodia's 2022 chairmanship introduced the Green Deal theme. Brunei navigated digital resilience during COVID-19. Lao PDR chaired in 2024. Each annual chair shapes the network's emphasis in ways that serve domestic as well as regional goals. Reading the annual meeting communiqués as diplomatic texts reveals the political infrastructure beneath the smart city language.",
       tags: ["Prayogo &amp; Juned 2025", "Tan et al. 2021", "Lim 2024"],
@@ -2203,14 +2203,14 @@ function renderResearch() {
       venue: "Plenary, 6th ASEAN–Japan Smart Cities Network High-Level Meeting · Tokyo, 29 October 2024",
       summary: "ASEAN Secretariat director's overview at year six. 108 projects (Sept 2024): Civic &amp; Social 27%, Built Infrastructure 26%, Quality Environment 21%, Safety &amp; Security 12%, Industry &amp; Innovation 11%, Health 6%. Sumedang and Sihanoukville joined in 2024 (31 cities). ASEAN Smart City Financing Toolkit launched. ASUS Phase II commenced.",
       themes: ["implementation", "measurement"] },
-    { n: "R7", type: "official", author: "Singapore Ministry of Foreign Affairs", year: 2018,
+    { n: "R7", type: "official", author: tx("Singapore Ministry of Foreign Affairs"), year: 2018,
       title: "ASEAN Smart Cities Network (ASCN) — Founding Presentation",
       venue: "Internal briefing document · Singapore, 2018",
       summary: "Singapore MFA's internal framing at founding. Core objective: 'improving peoples' lives, using technology as an enabler.' Defines 26 original pilot cities, the NR/CSCO governance structure, and the Twinning Programme with 15 external partners. Articulates ASCN's 'broad and inclusive' definition of smart = digital adoption + sustainability. Primary document for understanding Singapore's founding vision and the logic behind the Shepherd model.",
       themes: ["singapore", "diplomacy"] },
     { n: "R8", type: "official", author: "ASEAN Secretariat", year: 2018,
       title: "ASCN Smart City Action Plans (Consolidated)",
-      venue: "As of 8 July 2018 · ASEAN Singapore 2018",
+      venue: tx("As of 8 July 2018 · ASEAN Singapore 2018"),
       summary: "Consolidated SCAPs for all 26 original pilot cities. Each plan: Vision, Focus Areas, Strategic Targets, Priority Projects. Documents the full range of founding ambitions: from Bandar Seri Begawan's Kampong Ayer heritage revitalisation to Battambang's sewage infrastructure and informal settlement formalisation. Primary evidence that 'smart city' meant different things to different cities from day one.",
       themes: ["implementation", "capacity"] },
     { n: "R9", type: "journal", author: "Putra, B.A.", year: 2026,
@@ -2249,8 +2249,8 @@ function renderResearch() {
 
   el.innerHTML = `
 <div class="section-head">
-  <p class="label">Research</p>
-  <h1>What the scholarship says — and what it misses</h2>
+  <p data-i18n="nav.research" class="label">Research</p>
+  <h1 data-i18n="hd.what.the.scholarship.says.and.what.it">What the scholarship says — and what it misses</h2>
   <p class="lede" data-i18n="a.a.synthesis.of.fourteen.peer.rev">A synthesis of fourteen peer-reviewed papers and official documents on ASCN. Eight structural themes, an insider FAQ, and a full bibliography — written by a participant who has attended every annual meeting since 2018.</p>
 </div>
 
@@ -2289,7 +2289,7 @@ function renderResearch() {
         <span class="paper-year">${p.year}</span>
       </div>
       <p class="paper-author">${p.author}</p>
-      <h4 class="paper-title">${p.title}</h4>
+      <h4 class="paper-title" data-source-issued>${p.title}</h4>
       <p class="paper-venue">${bindSeparators(p.venue)}</p>
       <p class="paper-summary">${esc(tx(p.summary))}</p>
       <div class="paper-themes">${p.themes.map(th => `<span class="paper-theme-tag">${th}</span>`).join("")}</div>
@@ -2301,7 +2301,7 @@ function renderResearch() {
   <p class="research-section-label label">${esc(tx("ACADEMIC GEOGRAPHY"))}</p>
   <div class="geo-grid">
     <div class="geo-col">
-      <p class="geo-h">Languages of scholarship</p>
+      <p data-i18n="hd.languages.of.scholarship" class="geo-h">Languages of scholarship</p>
       <p class="geo-body" data-i18n="a.of.229.works.catalogued.218.95.a">Of 229+ works catalogued, 218 (95%) are in English. Indonesian/Malay contributes 4, Thai 3, Chinese 2, Korean 1, Vietnamese 1, Japanese-linked English 3. Local-language scholarship is growing — especially in Indonesia and Thailand — but the critical canon is still written largely in English from Singapore, UK, and Australian institutions.</p>
     </div>
     <div class="geo-col">
@@ -2390,7 +2390,7 @@ function renderEssay() {
     <text x="104" y="216" font-size="8.5" class="dg-muted" fill="currentColor">Cambodia</text>
     <text x="175" y="216" font-size="8.5" class="dg-muted" fill="currentColor">Indonesia</text>
     <text x="248" y="216" font-size="8.5" class="dg-muted" fill="currentColor">Lao PDR</text>
-    <text x="305" y="216" font-size="8.5" class="dg-muted" fill="currentColor">Malaysia</text>
+    <text data-source-issued x="305" y="216" font-size="8.5" class="dg-muted" fill="currentColor">Malaysia</text>
     <text x="365" y="216" font-size="8.5" class="dg-muted" fill="currentColor">Myanmar</text>
     <text x="418" y="216" font-size="8.5" class="dg-muted" fill="currentColor">Philippines</text>
     <text x="492" y="216" font-size="8.5" class="dg-muted" fill="currentColor">Singapore</text>
@@ -2439,7 +2439,7 @@ function renderEssay() {
       ${note.split("\n").map((l,i)=>`<text x="${x}" y="${92+i*12}" text-anchor="middle" font-size="7.5" class="dg-muted" fill="currentColor">${l}</text>`).join("")}`;
     }).join("")}
     <text x="640" y="52" text-anchor="end" font-size="8" class="dg-accent-text" fill="currentColor" font-weight="700">2025 →</text>
-    <text x="640" y="80" text-anchor="end" font-size="8.5" font-weight="700" fill="currentColor">Malaysia</text>
+    <text data-source-issued x="640" y="80" text-anchor="end" font-size="8.5" font-weight="700" fill="currentColor">Malaysia</text>
     <text x="640" y="92" text-anchor="end" font-size="7.5" class="dg-muted" fill="currentColor">chairs</text>
     <text x="0" y="124" font-size="8.5" class="dg-quiet" fill="currentColor">Four M&amp;E cycles. Eight annual meetings. Two Shepherds. The measurement framework has not kept pace with the network's growth.</text>
   </svg>
@@ -2547,7 +2547,7 @@ function renderEssay() {
     <line x1="318" y1="68" x2="328" y2="78" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
     <line x1="318" y1="84" x2="312" y2="100" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
     <line x1="318" y1="84" x2="324" y2="100" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-    <text x="318" y="116" text-anchor="middle" font-size="7.5" class="dg-muted" fill="currentColor">Malaysia</text>
+    <text data-source-issued x="318" y="116" text-anchor="middle" font-size="7.5" class="dg-muted" fill="currentColor">Malaysia</text>
     <!-- PH lower right -->
     <circle cx="368" cy="116" r="10" fill="white" stroke="currentColor" stroke-width="1.5"/>
     <line x1="368" y1="126" x2="368" y2="150" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -2781,11 +2781,11 @@ function renderEssay() {
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[17]</span>
-      <div><b>Prayogo, A.N. &amp; Juned, M.</b> (2025). "Indonesia's Smart City Diplomacy Through ASEAN Smart Cities Network Shepherdship (2023–2025)." <i>Journal of Social and Political Sciences</i>, 8(3), 39–47. Introduces smart city diplomacy as a middle-power foreign policy concept. Documents Indonesia's pivot from framework to implementation: ASEAN Smart City Investment Toolkit delivered, four pilot cities deployed (Jakarta, Makassar, Banyuwangi, Sumedang), projects grew 77→108. Sumedang's stunting-rate reduction (32.2%→7.89%) via data-driven social services is the network's clearest human-development proof-of-concept.</div>
+      <div><b data-source-issued>Prayogo, A.N. &amp; Juned, M.</b> (2025). "Indonesia's Smart City Diplomacy Through ASEAN Smart Cities Network Shepherdship (2023–2025)." <i>Journal of Social and Political Sciences</i>, 8(3), 39–47. Introduces smart city diplomacy as a middle-power foreign policy concept. Documents Indonesia's pivot from framework to implementation: ASEAN Smart City Investment Toolkit delivered, four pilot cities deployed (Jakarta, Makassar, Banyuwangi, Sumedang), projects grew 77→108. Sumedang's stunting-rate reduction (32.2%→7.89%) via data-driven social services is the network's clearest human-development proof-of-concept.</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[18]</span>
-      <div><b>Kanaev, E.A. &amp; Fedorenko, D.O.</b> (2023). "Whither ASEAN Smart Cities Network? Evidence from Singapore and Its Energy Policy." <i>Yugo-Vostochnaya Aziya: aktual'nyye problemy razvitiya</i>, 4(3), 191–201. Analyses ASCN through Singapore's energy policy dimension (Grid Digital Twin, IoT, renewable transition). Key finding: smart city development is trivially achievable for Singapore; it represents a genuine developmental challenge for Cambodia, Laos, and Myanmar. Intra-ASEAN digital gaps are severe; only Myanmar and Thailand have energy-related ASCN projects. Recommends Singapore maintain a 'low profile' to avoid amplifying structural inequality.</div>
+      <div><b data-source-issued>Kanaev, E.A. &amp; Fedorenko, D.O.</b> (2023). "Whither ASEAN Smart Cities Network? Evidence from Singapore and Its Energy Policy." <i>Yugo-Vostochnaya Aziya: aktual'nyye problemy razvitiya</i>, 4(3), 191–201. Analyses ASCN through Singapore's energy policy dimension (Grid Digital Twin, IoT, renewable transition). Key finding: smart city development is trivially achievable for Singapore; it represents a genuine developmental challenge for Cambodia, Laos, and Myanmar. Intra-ASEAN digital gaps are severe; only Myanmar and Thailand have energy-related ASCN projects. Recommends Singapore maintain a 'low profile' to avoid amplifying structural inequality.</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[19]</span>
@@ -2793,15 +2793,15 @@ function renderEssay() {
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[20]</span>
-      <div><b>ASEAN Secretariat</b> (2018). <i>ASCN Smart City Action Plans (Consolidated)</i>. Singapore: ASEAN Singapore 2018 (as of 8 July 2018). Consolidated SCAPs for all 26 original pilot cities: Vision, Focus Areas, Strategic Targets, Priority Projects for each. Primary evidence that 'smart city' meant different things to different cities from day one — from Bandar Seri Begawan's heritage revitalisation to Battambang's sewage infrastructure and informal settlement formalisation. The gap between what the SCAP framework asked for and what member cities could realistically deliver is visible in every page.</div>
+      <div><b>ASEAN Secretariat</b> (2018). <i data-source-issued>ASCN Smart City Action Plans (Consolidated)</i>. Singapore: ASEAN Singapore 2018 (as of 8 July 2018). Consolidated SCAPs for all 26 original pilot cities: Vision, Focus Areas, Strategic Targets, Priority Projects for each. Primary evidence that 'smart city' meant different things to different cities from day one — from Bandar Seri Begawan's heritage revitalisation to Battambang's sewage infrastructure and informal settlement formalisation. The gap between what the SCAP framework asked for and what member cities could realistically deliver is visible in every page.</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[21]</span>
-      <div><b>Singapore Ministry of Foreign Affairs</b> (2018). "ASEAN Smart Cities Network (ASCN)." Internal briefing presentation. Singapore. Defines the founding vision: core objective 'improving peoples' lives, using technology as an enabler'; NR and CSCO governance structure; the Twinning Programme with 15 external partners. Documents ASCN's 'broad and inclusive' definition of smart = digital adoption + sustainability and liveability. Key source for understanding Singapore's institutional design choices at founding and the diplomatic logic of the Shepherd model.</div>
+      <div><b data-i18n="hd.singapore.ministry.of.foreign.affairs">Singapore Ministry of Foreign Affairs</b> (2018). "ASEAN Smart Cities Network (ASCN)." Internal briefing presentation. Singapore. Defines the founding vision: core objective 'improving peoples' lives, using technology as an enabler'; NR and CSCO governance structure; the Twinning Programme with 15 external partners. Documents ASCN's 'broad and inclusive' definition of smart = digital adoption + sustainability and liveability. Key source for understanding Singapore's institutional design choices at founding and the diplomatic logic of the Shepherd model.</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[22]</span>
-      <div><b>Putra, B.A.</b> (2026). "Human Rights and the ASEAN Smart Cities Network: Covering Unaddressed Civic and Social Concerns." <i>F1000Research</i>, 14:733. doi:10.12688/f1000research.167098.3. Open peer review; reviewers from Tampere, Danang, Sydney, and Kerala. Most comprehensive human rights analysis of ASCN. Identifies surveillance risk in authoritarian/semi-authoritarian member states (Cambodia rank 121, Vietnam 136, Laos 159, Myanmar 166 — Democracy Index 2023) and external-funder dependency as two structural concerns. Recommends ASCN acknowledge vulnerability of underprivileged populations and strengthen bottom-up grassroots digital initiatives.</div>
+      <div><b data-source-issued>Putra, B.A.</b> (2026). "Human Rights and the ASEAN Smart Cities Network: Covering Unaddressed Civic and Social Concerns." <i>F1000Research</i>, 14:733. doi:10.12688/f1000research.167098.3. Open peer review; reviewers from Tampere, Danang, Sydney, and Kerala. Most comprehensive human rights analysis of ASCN. Identifies surveillance risk in authoritarian/semi-authoritarian member states (Cambodia rank 121, Vietnam 136, Laos 159, Myanmar 166 — Democracy Index 2023) and external-funder dependency as two structural concerns. Recommends ASCN acknowledge vulnerability of underprivileged populations and strengthen bottom-up grassroots digital initiatives.</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[23]</span>
@@ -2824,7 +2824,7 @@ function renderEssay() {
 
 <details class="author-block">
   <summary class="author-summary">
-    <span class="author-summary-label">About the author</span>
+    <span data-i18n="essay.chrome.17" class="author-summary-label">About the author</span>
     <span class="author-summary-name">Non Arkaraprasertkul, PhD</span>
     <span class="author-summary-role">${tx("Architect\u00A0· Urban Anthropologist\u00A0· Senior Expert, DEPA Thailand\u00A0· National Representative, ASCN")}</span>
     <span class="author-toggle-icon" aria-hidden="true"></span>
@@ -3067,7 +3067,7 @@ function renderIntegrity_UNUSED() {
   }
 
   const typeOptions = [
-    { v: "all", l: "All" },
+    { v: "all", l: tx("All") },
     { v: "name", l: "Name confusion" },
     { v: "title", l: "Title fraud" },
     { v: "org", l: "Org identity" },

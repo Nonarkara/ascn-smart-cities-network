@@ -1,4 +1,5 @@
 import { escapeHtml as esc, safeUrl } from "./lib/security.mjs";
+import { tx } from "./lib/i18n.mjs";
 
 const TYPES = ["grant", "trip", "mou", "communication", "course"];
 const OUTCOMES = ["delivered", "partial", "stalled", "failed"];
@@ -41,7 +42,7 @@ const COPY = {
     filterYear: "Year",
     filterOutcome: "Outcome",
     filterSearch: "Search",
-    all: "All",
+    all: tx("All"),
     columns: { date: "Date", item: "Item", counterpart: "Counterpart", outcome: "Outcome", source: "Source" },
     none: "No items match.",
     noCounterpart: "No external organisation",

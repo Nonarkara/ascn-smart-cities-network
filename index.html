@@ -142,12 +142,12 @@
         <section class="innovation-showcase" aria-labelledby="innovation-heading">
           <header class="showcase-heading">
             <p class="label" data-i18n="over.asean.smart.cities.network.demon">ASEAN Smart Cities Network · Demonstrations</p>
-            <h2 id="innovation-heading" data-i18n="view.iaas">Innovation-as-a-Service</h2>
+            <h2 data-source-issued id="innovation-heading" data-i18n="view.iaas">Innovation-as-a-Service</h2>
             <p class="lede" data-i18n="lede.iaas">Flood intelligence in the field, at the operations desk, and on the map. Data made useful for cities.</p>
           </header>
           <div class="showcase-layout">
             <figure class="showcase-feature">
-              <video id="showcase-player" controls playsinline preload="none" poster="media/showcase/flood-field.jpg" aria-label="Flood intelligence in the field" aria-describedby="showcase-description">
+              <video id="showcase-player" controls playsinline preload="none" poster="media/showcase/flood-field.jpg" aria-label=tx("Flood intelligence in the field") aria-describedby="showcase-description">
                 <source src="media/showcase/flood-field.mp4" type="video/mp4" />
                 <p data-i18n-html="over.a.href.media.showcase.flood.fie"><a href="media/showcase/flood-field.mp4">Open Flood intelligence in the field</a></p>
               </video>
@@ -163,19 +163,19 @@
             <div id="showcase-selector" class="showcase-selector" role="group" aria-label="Choose a demonstration" hidden>
               <button type="button" class="showcase-clip" data-video="flood-field" aria-pressed="true" aria-controls="showcase-player">
                 <img src="media/showcase/flood-field.jpg" width="640" height="360" alt="" />
-                <span class="showcase-clip-copy"><span class="showcase-clip-meta">01&nbsp;· Field demonstration&nbsp;· 4:34</span><strong>Flood intelligence in the field</strong><span class="showcase-clip-description">A tablet-based flood dashboard demonstrated on a flooded street, connecting conditions on the ground with mapped data.</span></span>
+                <span class="showcase-clip-copy"><span class="showcase-clip-meta">01&nbsp;· Field demonstration&nbsp;· 4:34</span><strong data-i18n="h.flood-field">Flood intelligence in the field</strong><span data-i18n="over.a.tablet.based.flood.dashboard.d" class="showcase-clip-description">A tablet-based flood dashboard demonstrated on a flooded street, connecting conditions on the ground with mapped data.</span></span>
               </button>
               <button type="button" class="showcase-clip" data-video="city-operations" aria-pressed="false" aria-controls="showcase-player">
                 <img src="media/showcase/city-operations.jpg" width="1280" height="720" alt="" />
-                <span class="showcase-clip-copy"><span class="showcase-clip-meta">02&nbsp;· Operations desk&nbsp;· 7:21</span><strong>City operations on one screen</strong><span class="showcase-clip-description">Maps, camera feeds, and dashboards brought together in a multi-screen city operations setup.</span></span>
+                <span class="showcase-clip-copy"><span class="showcase-clip-meta">02&nbsp;· Operations desk&nbsp;· 7:21</span><strong data-i18n="hd.city.operations.on.one.screen">City operations on one screen</strong><span data-i18n="hd.maps.camera.feeds.and.dashboards.brought.together" class="showcase-clip-description">Maps, camera feeds, and dashboards brought together in a multi-screen city operations setup.</span></span>
               </button>
               <button type="button" class="showcase-clip" data-video="flood-analysis" aria-pressed="false" aria-controls="showcase-player">
                 <img src="media/showcase/flood-analysis.jpg" width="1280" height="720" alt="" />
-                <span class="showcase-clip-copy"><span class="showcase-clip-meta">03&nbsp;· Maps &amp; modelling&nbsp;· 7:24</span><strong>From flood data to decisions</strong><span class="showcase-clip-description">A walkthrough of flood maps, a Bangkok flood simulation, and analysis alongside the data.</span></span>
+                <span class="showcase-clip-copy"><span class="showcase-clip-meta">03&nbsp;· Maps &amp; modelling&nbsp;· 7:24</span><strong data-i18n="hd.from.flood.data.to.decisions">From flood data to decisions</strong><span data-i18n="hd.a.walkthrough.of.flood.maps.a.bangkok" class="showcase-clip-description">A walkthrough of flood maps, a Bangkok flood simulation, and analysis alongside the data.</span></span>
               </button>
             </div>
           </div>
-          <noscript><p data-i18n-html="over.a.href.media.showcase.city.oper"><a href="media/showcase/city-operations.mp4">City operations on one screen</a> · <a href="media/showcase/flood-analysis.mp4">From flood data to decisions</a></p></noscript>
+          <noscript><p data-i18n-html="over.a.href.media.showcase.city.oper"><a data-i18n="hd.city.operations.on.one.screen" href="media/showcase/city-operations.mp4">City operations on one screen</a> · <a data-i18n="hd.from.flood.data.to.decisions" href="media/showcase/flood-analysis.mp4">From flood data to decisions</a></p></noscript>
         </section>
 
         <section class="news-preview" aria-labelledby="news-preview-heading">
@@ -209,7 +209,7 @@
               <p data-i18n-html="over.strong.what.is.an.urban.digital"><strong>What is an urban digital twin?</strong> Rather than a static PDF report or a conventional map, an urban digital twin connects a city’s 3D spatial geometry with live sensor feeds, weather models, telemetry, and civic infrastructure. It enables city operators, emergency teams, and citizens to track real-time conditions — from canal gates and rainfall radar to air quality and traffic — as they unfold on the ground. Explore the live digital twins built for ASEAN member cities below:</p>
               <div class="twins-meta-badge">
                 <span class="twins-badge-pill">DT · Level 2 Operational</span>
-                <span class="twins-badge-ref">UNDP-JTC Digital Twins for Cities · ADB Digital Twin Framework</span>
+                <span data-source-issued class="twins-badge-ref">UNDP-JTC Digital Twins for Cities · ADB Digital Twin Framework</span>
               </div>
             </div>
           </div>
@@ -230,7 +230,7 @@
               <div class="twin-row-main">
                 <h3 class="twin-city">Bangkok</h3>
                 <span class="twin-meta">Thailand · BKKX Live Atlas</span>
-                <span class="twin-desc">432,000+ 3D buildings, canal gates, CCTV streams, rainfall radar, and real-time flood emergency telemetry.</span>
+                <span data-i18n="hd.432.000.3d.buildings.canal.gates.cctv" class="twin-desc">432,000+ 3D buildings, canal gates, CCTV streams, rainfall radar, and real-time flood emergency telemetry.</span>
                 <span class="twin-link-label">atlas.nonarkara.org ↗</span>
               </div>
             </a>
@@ -242,7 +242,7 @@
               <div class="twin-row-main">
                 <h3 class="twin-city">Jakarta</h3>
                 <span class="twin-meta">Indonesia · JKTX Blok demi Blok</span>
-                <span class="twin-desc">3D urban mesh, BMKG CAP disaster alerts, air quality indices, Himawari satellite clouds, and block-level flood screening.</span>
+                <span data-i18n="hd.3d.urban.mesh.bmkg.cap.disaster.alerts" class="twin-desc">3D urban mesh, BMKG CAP disaster alerts, air quality indices, Himawari satellite clouds, and block-level flood screening.</span>
                 <span class="twin-link-label">jakarta.nonarkara.org ↗</span>
               </div>
             </a>
@@ -253,8 +253,8 @@
               </span>
               <div class="twin-row-main">
                 <h3 class="twin-city">Ho Chi Minh City</h3>
-                <span class="twin-meta">Viet Nam · HCMC Block by Block</span>
-                <span class="twin-desc">Saigon River drainage corridors, 3D skyline geometry, recurring flood screening, satellite layers, and urban runoff models.</span>
+                <span data-i18n="hd.viet.nam.hcmc.block.by.block" class="twin-meta">Viet Nam · HCMC Block by Block</span>
+                <span data-i18n="hd.saigon.river.drainage.corridors.3d.skyline.geometry" class="twin-desc">Saigon River drainage corridors, 3D skyline geometry, recurring flood screening, satellite layers, and urban runoff models.</span>
                 <span class="twin-link-label">hcmc.nonarkara.org ↗</span>
               </div>
             </a>
@@ -266,7 +266,7 @@
               <div class="twin-row-main">
                 <h3 class="twin-city">Kuching</h3>
                 <span class="twin-meta">Malaysia · Greater Kuching Telemetry</span>
-                <span class="twin-desc">River telemetry (Buso, Siniawan, Kampung Git), drainage catchment models, and MET Malaysia weather warnings.</span>
+                <span data-i18n="hd.river.telemetry.buso.siniawan.kampung.git.drainage" class="twin-desc">River telemetry (Buso, Siniawan, Kampung Git), drainage catchment models, and MET Malaysia weather warnings.</span>
                 <span class="twin-link-label">kuching.nonarkara.org ↗</span>
               </div>
             </a>
@@ -278,7 +278,7 @@
               <div class="twin-row-main">
                 <h3 class="twin-city">Chiang Mai</h3>
                 <span class="twin-meta">Thailand · CNX OPS War Room</span>
-                <span class="twin-desc">Ping River telemetry, PM2.5 air sensors, NASA FIRMS fire hotspot detection, CCTV network, and 3D urban relief.</span>
+                <span data-i18n="hd.ping.river.telemetry.pm2.5.air.sensors" class="twin-desc">Ping River telemetry, PM2.5 air sensors, NASA FIRMS fire hotspot detection, CCTV network, and 3D urban relief.</span>
                 <span class="twin-link-label">cnx.nonarkara.org ↗</span>
               </div>
             </a>
@@ -289,13 +289,13 @@
 
         <div class="overview-grid">
           <article class="gap-panel">
-            <p class="label">Why this platform exists</p>
+            <p data-i18n="hd.why.this.platform.exists" class="label">Why this platform exists</p>
             <h2 id="gap-headline"></h2>
             <p class="lede" id="gap-body"></p>
             <div class="source-note"><strong>Evidence base</strong><span id="evidence-status">Loading official report dataset…</span></div>
           </article>
           <aside class="glance-panel">
-            <p class="label">At a glance</p>
+            <p data-i18n="hd.at.a.glance" class="label">At a glance</p>
             <div id="focus-mini" class="focus-mini"></div>
             <div class="glance-note" id="glance-note"></div>
           </aside>
@@ -309,11 +309,11 @@
         <header class="section-head split">
           <div>
             <p class="label" data-i18n="inn.asean.smart.cities.network.appli">ASEAN Smart Cities Network · Applied Technology</p>
-            <h1>Innovation-as-a-Service</h1>
+            <h1 data-source-issued data-i18n="view.iaas">Innovation-as-a-Service</h1>
             <p class="lede" data-i18n="lede.innovation.hero">Live systems, not a roadmap. Two national watches, three country dashboards, seven ASCN city dashboards — each one built inside a city, on data the city already had.</p>
           </div>
           <div class="innovation-status-badge">
-            <span class="label">Active Innovation Sandbox</span>
+            <span data-source-issued class="label">Active Innovation Sandbox</span>
             <p class="muted" data-i18n="inn.all.links.below.are.live.and.pub">All links below are live and public. No login, no request form.</p>
           </div>
         </header>
@@ -321,7 +321,7 @@
         <!-- ROW 00 — WHAT INNOVATION-AS-A-SERVICE IS -->
         <section class="iaas-row iaas-row-hero" aria-labelledby="iaas-hero-heading">
           <div class="iaas-hero-copy">
-            <p class="label">What this actually is</p>
+            <p data-i18n="hd.what.this.actually.is" class="label">What this actually is</p>
             <h2 id="iaas-hero-heading" data-i18n="h.not-a-product">Not a product. A method.</h2>
             <p class="lede" data-i18n="inn.innovation.as.a.service.sits.ins">Innovation-as-a-Service sits inside a city agency and builds the one screen that speeds up the one decision that actually gets made — on data the city already has, with no new hardware, in two weeks.</p>
             <p class="iaas-hero-figure" data-i18n="inn.one.screen.one.decision.two.week">One screen. One decision. Two weeks.</p>
@@ -346,7 +346,7 @@
           <header class="iaas-row-head">
             <p class="iaas-row-num">01</p>
             <div>
-              <p class="label">Featured · National watches</p>
+              <p data-i18n="hd.featured.national.watches" class="label">Featured · National watches</p>
               <h2 id="iaas-featured-heading" data-i18n="h.flooddash">FloodDash and Airdash</h2>
               <p class="lede" data-i18n="inn.the.two.systems.the.rest.of.the">The two systems the rest of the portfolio is built on. Both are live, free, and run on public data that already refreshes on its own.</p>
             </div>
@@ -357,7 +357,7 @@
               <div class="iaas-feature-head">
                 <div>
                   <p class="iaas-card-domain">flood.nonarkara.org</p>
-                  <h3>FloodDash — Thailand Flood Watch <span class="th-title">เฝ้าระวังน้ำท่วมประเทศไทย</span></h3>
+                  <h3 data-source-issued>FloodDash — Thailand Flood Watch <span class="th-title">เฝ้าระวังน้ำท่วมประเทศไทย</span></h3>
                 </div>
                 <span class="iaas-live-tag">● Live</span>
               </div>
@@ -376,7 +376,7 @@
               <div class="iaas-feature-head">
                 <div>
                   <p class="iaas-card-domain">air.nonarkara.org</p>
-                  <h3>AirDash — Your lungs today <span class="th-title">ปอดของคุณวันนี้</span></h3>
+                  <h3 data-source-issued>AirDash — Your lungs today <span class="th-title">ปอดของคุณวันนี้</span></h3>
                 </div>
                 <span class="iaas-live-tag">● Live</span>
               </div>
@@ -398,7 +398,7 @@
           <header class="iaas-row-head">
             <p class="iaas-row-num">02</p>
             <div>
-              <p class="label">Country dashboards</p>
+              <p data-i18n="hd.country.dashboards" class="label">Country dashboards</p>
               <h2 id="iaas-country-heading" data-i18n="h.countries-glance">Whole countries, read at a glance</h2>
               <p class="lede" data-i18n="inn.the.same.question.asked.of.a.nat">The same question asked of a nation instead of a ward: what is happening, how bad is it, and who is affected.</p>
             </div>
@@ -407,21 +407,21 @@
           <div class="iaas-grid iaas-grid-3">
             <article class="iaas-card">
               <p class="iaas-card-domain">malaysia.nonarkara.org</p>
-              <h3>Malaysia</h3>
+              <h3 data-source-issued>Malaysia</h3>
               <p data-i18n="inn.river.gauges.met.warnings.and.ci">River gauges, MET warnings and city signals in one national view — the God Mode pattern applied to a whole country.</p>
               <a class="iaas-card-link" href="https://malaysia.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
             </article>
 
             <article class="iaas-card">
               <p class="iaas-card-domain">carbon.nonarkara.org</p>
-              <h3>Forest Carbon <span class="th-title">คาบอนนะ</span></h3>
+              <h3 data-source-issued>Forest Carbon <span class="th-title">คาบอนนะ</span></h3>
               <p data-i18n="inn.satellite.based.carbon.stock.for">Satellite-based carbon stock, forest loss, fire and emissions for any province — or any area you draw on the map — with sources and stated uncertainty.</p>
               <a class="iaas-card-link" href="https://carbon.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
             </article>
 
             <article class="iaas-card">
               <p class="iaas-card-domain" data-i18n="inno.globalmonitor.nonarkara.org">globalmonitor.nonarkara.org</p>
-              <h3>GlobeWatch</h3>
+              <h3 data-source-issued>GlobeWatch</h3>
               <p data-i18n="inn.a.planetary.comparative.and.macr">A planetary comparative and macro intelligence console — the comparative view, when a city decision is really a regional one.</p>
               <a class="iaas-card-link" href="https://globalmonitor.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
             </article>
@@ -433,7 +433,7 @@
           <header class="iaas-row-head">
             <p class="iaas-row-num">03</p>
             <div>
-              <p class="label">ASCN member cities</p>
+              <p data-i18n="hd.ascn.member.cities" class="label">ASCN member cities</p>
               <h2 id="iaas-city-heading" data-i18n="h.city-dashboards">City dashboards across the network</h2>
               <p class="lede" data-i18n="inn.the.city.hub.pattern.give.it.a.c">The City Hub pattern: give it a city name and it maps the city and absorbs whatever data exists. Seven ASCN cities, each with its own operational surface.</p>
             </div>
@@ -513,12 +513,12 @@
           <div class="demo-cards-grid">
             <article class="demo-card">
               <div class="demo-card-media">
-                <img src="media/showcase/flood-field.jpg" width="640" height="360" loading="lazy" alt="Flood intelligence in the field" />
+                <img src="media/showcase/flood-field.jpg" width="640" height="360" loading="lazy" alt=tx("Flood intelligence in the field") />
                 <a href="media/showcase/flood-field.mp4" target="_blank" rel="noopener" class="demo-play-btn" aria-label="Play Flood intelligence in the field">▶ 4:34</a>
               </div>
               <div class="demo-card-body">
-                <span class="label">Field demonstration</span>
-                <h3>Flood intelligence in the field</h3>
+                <span data-source-issued class="label">Field demonstration</span>
+                <h3 data-i18n="h.flood-field">Flood intelligence in the field</h3>
                 <p data-i18n="inn.a.ruggedized.tablet.based.dashbo">A ruggedized tablet-based dashboard operated on flooded streets, correlating physical water marks with live sensor telemetry.</p>
                 <a href="media/showcase/flood-field.mp4" target="_blank" rel="noopener" class="demo-link">Watch field recording ↗</a>
               </div>
@@ -526,12 +526,12 @@
 
             <article class="demo-card">
               <div class="demo-card-media">
-                <img src="media/showcase/city-operations.jpg" width="1280" height="720" loading="lazy" alt="City operations on one screen" />
+                <img src="media/showcase/city-operations.jpg" width="1280" height="720" loading="lazy" alt=tx("City operations on one screen") />
                 <a href="media/showcase/city-operations.mp4" target="_blank" rel="noopener" class="demo-play-btn" aria-label="Play City operations on one screen">▶ 7:21</a>
               </div>
               <div class="demo-card-body">
-                <span class="label">Operations desk</span>
-                <h3>City operations on one screen</h3>
+                <span data-source-issued class="label">Operations desk</span>
+                <h3 data-i18n="hd.city.operations.on.one.screen">City operations on one screen</h3>
                 <p data-i18n="inn.telemetry.layers.live.cctv.camer">Telemetry layers, live CCTV camera grids, and municipal GIS integrated into unified situation dashboards for emergency war rooms.</p>
                 <a href="media/showcase/city-operations.mp4" target="_blank" rel="noopener" class="demo-link">Watch operations recording ↗</a>
               </div>
@@ -539,12 +539,12 @@
 
             <article class="demo-card">
               <div class="demo-card-media">
-                <img src="media/showcase/flood-analysis.jpg" width="1280" height="720" loading="lazy" alt="From flood data to decisions" />
+                <img src="media/showcase/flood-analysis.jpg" width="1280" height="720" loading="lazy" alt=tx("From flood data to decisions") />
                 <a href="media/showcase/flood-analysis.mp4" target="_blank" rel="noopener" class="demo-play-btn" aria-label="Play From flood data to decisions">▶ 7:24</a>
               </div>
               <div class="demo-card-body">
-                <span class="label">Maps &amp; modelling</span>
-                <h3>From flood data to decisions</h3>
+                <span data-source-issued class="label">Maps &amp; modelling</span>
+                <h3 data-i18n="hd.from.flood.data.to.decisions">From flood data to decisions</h3>
                 <p data-i18n="inn.high.resolution.terrain.elevatio">High-resolution terrain elevation masks, 3D flood simulations, and drainage bottleneck analytics informing municipal infrastructure investments.</p>
                 <a href="media/showcase/flood-analysis.mp4" target="_blank" rel="noopener" class="demo-link">Watch modelling walkthrough ↗</a>
               </div>
@@ -557,7 +557,7 @@
           <header class="iaas-row-head">
             <p class="iaas-row-num">05</p>
             <div>
-              <p class="label">Public platforms</p>
+              <p data-i18n="hd.public.platforms" class="label">Public platforms</p>
               <h2 id="iaas-platforms-heading" data-i18n="h.open-to-cities">Open to any city that asks</h2>
               <p class="lede" data-i18n="inn.the.lab.these.dashboards.are.bui">The lab these dashboards are built in, the browser-based computer-vision workbench, and the regional liveability index.</p>
             </div>
@@ -566,21 +566,21 @@
           <div class="iaas-grid iaas-grid-3">
             <article class="iaas-card">
               <p class="iaas-card-domain">axiom.nonarkara.org</p>
-              <h3>Axiom</h3>
+              <h3 data-source-issued>Axiom</h3>
               <p data-i18n="inn.smart.city.dashboards.and.govtec">Smart-city dashboards and GovTech systems for governments. 66 systems across five countries, 41 of them in production, drawing on more than 247 public data sources.</p>
               <a class="iaas-card-link" href="https://axiom.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
             </article>
 
             <article class="iaas-card">
               <p class="iaas-card-domain">vision.nonarkara.org</p>
-              <h3>Vision — how a computer sees <span class="th-title">คอมพิวเตอร์มองเห็นอย่างไร</span></h3>
+              <h3 data-source-issued>Vision — how a computer sees <span class="th-title">คอมพิวเตอร์มองเห็นอย่างไร</span></h3>
               <p data-i18n="inn.a.public.classroom.and.operation">A public classroom and operational workbench for computer vision on Thailand’s open traffic and municipal CCTV. Neural inference runs in the client browser — no camera video leaves the city.</p>
               <a class="iaas-card-link" href="https://vision.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
             </article>
 
             <article class="iaas-card">
               <p class="iaas-card-domain">slic.nonarkara.org</p>
-              <h3>SLIC Liveability Index</h3>
+              <h3 data-source-issued>SLIC Liveability Index</h3>
               <p data-i18n="inn.regional.benchmarking.across.fiv">Regional benchmarking across five liveability pillars — in which mayors decide what livability means, rather than receive it.</p>
               <a class="iaas-card-link" href="https://slic.nonarkara.org" target="_blank" rel="noopener">Open ↗</a>
             </article>
@@ -592,8 +592,8 @@
           <header class="iaas-row-head">
             <p class="iaas-row-num">06</p>
             <div>
-              <p class="label">Provenance</p>
-              <h2 id="iaas-origins-heading">Where this came from</h2>
+              <p data-i18n="hd.provenance" class="label">Provenance</p>
+              <h2 data-i18n="hd.where.this.came.from" id="iaas-origins-heading">Where this came from</h2>
             </div>
           </header>
 
@@ -602,20 +602,20 @@
           <ol class="iaas-origins">
             <li>
               <p class="iaas-origin-year">2020 · Expo 2020, Dubai</p>
-              <h3>Hydrogence</h3>
+              <h3 data-source-issued>Hydrogence</h3>
               <p data-i18n="inn.a.flood.warning.platform.built.b">A flood-warning platform built by Thai practitioners that won on the world stage at the Hackathon at Expo 2020. The first version of the argument this page makes: a city should not need to buy software in order to see a flood coming.</p>
               <a class="iaas-origin-link" href="https://techsauce.co/news/hydrogence-win-hackathon" target="_blank" rel="noopener">Techsauce ↗</a>
               <a class="iaas-origin-link" href="https://www.facebook.com/share/p/1JYvedfzwk/" target="_blank" rel="noopener">depa Thailand ↗</a>
             </li>
             <li>
               <p class="iaas-origin-year">2023 · 24 September, Taipei</p>
-              <h3>Refill City</h3>
+              <h3 data-source-issued>Refill City</h3>
               <p data-i18n="inn.a.team.of.excellence.in.the.pres">A Team of Excellence in the Presidential Hackathon International Track, awarded by the President of Taiwan. Free clean drinking water run by municipalities under their own rules — Nakhon Si Thammarat, then Rangsit, then Sukhothai Thani — and the depa Smart Living Excellence award in 2026. This is where the 4Ps above come from: a prototype, a pilot, then the boring work of changing the rules.</p>
               <a class="iaas-origin-link" href="https://www.thekommon.co/re-fill-city-innovation-smart-city-nakhonsithammarat/" target="_blank" rel="noopener">The Kommon ↗</a>
             </li>
             <li>
               <p class="iaas-origin-year">2023 · 25 September, Taipei</p>
-              <h3>The Taipei IOC</h3>
+              <h3 data-source-issued>The Taipei IOC</h3>
               <p data-i18n="inn.the.same.week.the.taipei.intelli">The same week: the Taipei Intelligent Operation Center, and a city dashboard released open-source under AGPL-3.0. A whole city on one screen, used by the people who decide to spend the money. That is where every dashboard on this page comes from.</p>
               <a class="iaas-origin-link" href="https://github.com/taipei-doit/Taipei-City-Dashboard" target="_blank" rel="noopener">Taipei City Dashboard ↗</a>
             </li>
@@ -628,8 +628,8 @@
         <section class="iaas-row iaas-row-contact" aria-labelledby="iaas-contact-heading">
           <div class="pipeline-card callout">
             <div class="pipeline-content">
-              <p class="label">Partner With Us</p>
-              <h3 id="iaas-contact-heading">Have an urban dataset or challenge?</h3>
+              <p data-i18n="hd.partner.with.us" class="label">Partner With Us</p>
+              <h3 data-i18n="hd.have.an.urban.dataset.or.challenge" id="iaas-contact-heading">Have an urban dataset or challenge?</h3>
               <p data-i18n="inn.ascn.innovation.as.a.service.is">ASCN Innovation-as-a-Service is an open testbed built by ASEAN city practitioners. We help member cities turn static datasets into live operational tools.</p>
               <a href="#contacts" data-tab="contacts" class="text-button">Contact ASCN Team ↗</a>
             </div>
@@ -645,7 +645,7 @@
             <p class="lede" data-i18n="lede.record.hero">ASCN was founded in 2018. This review covers 2018–2026. This page counts what was committed to it, what it holds, and what can be shown to have reached a citizen — separating money announced from money moved, and activity held from outcome delivered.</p>
           </div>
           <div class="innovation-status-badge">
-            <span class="label">Method</span>
+            <span data-i18n="hd.method" class="label">Method</span>
             <p class="muted" data-i18n="rec.ery.figure.below.carries.its.sou">Every figure below carries its source and its evidentiary status. Committed is not disbursed. An output is not an outcome.</p>
           </div>
         </header>
@@ -657,17 +657,17 @@
           <div class="rec-finding-grid">
             <div class="rec-finding-card">
               <p class="rec-finding-num">USD 0</p>
-              <h3>Held centrally by ASCN</h3>
+              <h3 data-i18n="hd.held.centrally.by.ascn">Held centrally by ASCN</h3>
               <p data-i18n-html="rec.cn.is.a.coordinating.platform.no">ASCN is a coordinating platform, not a funding pool. It coordinates, it does not finance. Every figure below is money that flows <em>around</em> the network, through bilateral programmes, trust funds and development banks.</p>
             </div>
             <div class="rec-finding-card">
               <p class="rec-finding-num">0</p>
-              <h3>Systems tracking total flows</h3>
+              <h3 data-i18n="hd.systems.tracking.total.flows">Systems tracking total flows</h3>
               <p data-i18n="rec.e.network.has.no.systematic.trac">The network has no systematic tracking of total investment flows. There is no published ASCN-wide figure for money committed, disbursed or absorbed in eight years of M&amp;E cycles — because the network does not collect one.</p>
             </div>
             <div class="rec-finding-card">
               <p class="rec-finding-num">13.4%</p>
-              <h3>Of tracked projects completed</h3>
+              <h3 data-i18n="hd.of.tracked.projects.completed">Of tracked projects completed</h3>
               <p data-i18n="rec.4.projects.tracked.in.the.septem">134 projects tracked in the September 2025 M&amp;E cycle. 18 completed. 108 still ongoing. A project counted as "ongoing" in year five has not delivered, and the report does not say how long it has been ongoing.</p>
             </div>
           </div>
@@ -679,7 +679,7 @@
           <header class="iaas-row-head">
             <p class="iaas-row-num">00</p>
             <div>
-              <p class="label">The founding instruments · 2018–2019</p>
+              <p data-i18n="hd.the.founding.instruments.2018.2019" class="label">The founding instruments · 2018–2019</p>
               <h2 id="rec-founding-heading" data-i18n="h.instrument-late">The instrument that would have measured this never arrived on time</h2>
               <p class="lede" data-i18n="rec.fore.the.count.of.projects.the.c">Before the count of projects, the count that matters is the count of the machinery built to evaluate them. The founding documents tell a precise story about why seven years of this network went unmeasured.</p>
             </div>
@@ -688,22 +688,22 @@
           <div class="rec-timeline">
             <div class="rec-timeline-item">
               <p class="rec-timeline-when">Apr 2018</p>
-              <h3>Concept Note</h3>
+              <h3 data-source-issued>Concept Note</h3>
               <p data-i18n-html="rec.tablishes.ascn.as.a.singapore.pr">Establishes ASCN as a Singapore proposal. Scope capped at "up to three cities from each AMS". 26 pilot cities listed as of 23 March 2018. <b>No project target. No funding total. No deadline beyond the 2025 planning horizon.</b></p>
             </div>
             <div class="rec-timeline-item">
               <p class="rec-timeline-when">Jul 2018</p>
-              <h3>26 Smart City Action Plans</h3>
+              <h3 data-source-issued>26 Smart City Action Plans</h3>
               <p data-i18n-html="rec.ch.city.submits.a.scap.with.four">Each city submits a SCAP with four parts, including exactly two priority projects. That is the entire founding portfolio: <b>26 cities × 2 projects = 52 projects.</b> Cities were to report status annually to the Secretariat; no such consolidated report has been found.</p>
             </div>
             <div class="rec-timeline-item">
               <p class="rec-timeline-when">Aug 2019</p>
-              <h3>Terms of Reference adopted</h3>
+              <h3 data-i18n="hd.terms.of.reference.adopted">Terms of Reference adopted</h3>
               <p data-i18n-html="rec.e.year.in.ascn.has.still.26.citi">One year in, ASCN has still 26 cities. The Terms of Reference mandate periodic project evaluation under an M&amp;E Framework — which is recorded in the same report as <b>not yet finished, and deferred to 2020.</b></p>
             </div>
             <div class="rec-timeline-item rec-timeline-break">
               <p class="rec-timeline-when">2020 →</p>
-              <h3>The accountability gap</h3>
+              <h3 data-i18n="hd.the.accountability.gap">The accountability gap</h3>
               <p data-i18n="rec.e.instrument.that.would.have.mad">The instrument that would have made the network measurable against its own goals slipped past the year it was needed. Every cycle since has counted projects instead — because that is what the framework was built to do.</p>
             </div>
           </div>
@@ -728,18 +728,18 @@
               <thead>
                 <tr>
                   <th scope="col">Cycle</th>
-                  <th scope="col">Projects</th>
+                  <th data-i18n="nav.projects" scope="col">Projects</th>
                   <th scope="col">Ongoing</th>
                   <th scope="col">Completed</th>
                   <th scope="col">Completion rate</th>
                 </tr>
               </thead>
               <tbody>
-                <tr><th scope="row">2021 <span class="rec-note">baseline quoted by the 2022 report</span></th><td class="rec-figure">65</td><td>—</td><td>—</td><td>—</td></tr>
-                <tr><th scope="row">2022 <span class="rec-note">cut-off 21 Sep</span></th><td class="rec-figure">77</td><td>58</td><td>2</td><td><span class="rec-rate rec-rate-low">2.6%</span></td></tr>
-                <tr><th scope="row">2023 <span class="rec-note">cut-off 14 Aug</span></th><td class="rec-figure">86</td><td>67</td><td>2</td><td><span class="rec-rate rec-rate-low">2.3%</span></td></tr>
-                <tr><th scope="row">2024 <span class="rec-note">cut-off 25 Sep</span></th><td class="rec-figure">108</td><td>81</td><td>11</td><td><span class="rec-rate">10.2%</span></td></tr>
-                <tr class="rec-table-current"><th scope="row">2025 <span class="rec-note">cut-off 30 Sep</span></th><td class="rec-figure">134</td><td>108</td><td>18</td><td><span class="rec-rate rec-rate-high">13.4%</span></td></tr>
+                <tr><th scope="row">2021 <span data-i18n="hd.baseline.quoted.by.the.2022.report" class="rec-note">baseline quoted by the 2022 report</span></th><td class="rec-figure">65</td><td>—</td><td>—</td><td>—</td></tr>
+                <tr><th scope="row">2022 <span data-i18n="hd.cut.off.21.sep" class="rec-note">cut-off 21 Sep</span></th><td class="rec-figure">77</td><td>58</td><td>2</td><td><span class="rec-rate rec-rate-low">2.6%</span></td></tr>
+                <tr><th scope="row">2023 <span data-i18n="hd.cut.off.14.aug" class="rec-note">cut-off 14 Aug</span></th><td class="rec-figure">86</td><td>67</td><td>2</td><td><span class="rec-rate rec-rate-low">2.3%</span></td></tr>
+                <tr><th scope="row">2024 <span data-i18n="hd.cut.off.25.sep" class="rec-note">cut-off 25 Sep</span></th><td class="rec-figure">108</td><td>81</td><td>11</td><td><span class="rec-rate">10.2%</span></td></tr>
+                <tr class="rec-table-current"><th scope="row">2025 <span data-i18n="hd.cut.off.30.sep" class="rec-note">cut-off 30 Sep</span></th><td class="rec-figure">134</td><td>108</td><td>18</td><td><span class="rec-rate rec-rate-high">13.4%</span></td></tr>
               </tbody>
             </table>
           </div>
@@ -760,7 +760,7 @@
           <header class="iaas-row-head">
             <p class="iaas-row-num">A</p>
             <div>
-              <p class="label">Ledger · Funding</p>
+              <p data-i18n="hd.ledger.funding" class="label">Ledger · Funding</p>
               <h2 id="rec-funding-heading" data-i18n="h.committed-orbit">What was committed to the network's orbit</h2>
               <p class="lede" data-i18n="rec.rtner.programmes.not.ascn.grants">Partner programmes, not ASCN grants. The status column is the point: these are envelope figures announced at partnership level, and the public record does not resolve how much reached an ASCN city.</p>
             </div>
@@ -818,7 +818,7 @@
                   <th scope="row">ADB — ASEAN Catalytic Green Finance Facility</th>
                   <td class="rec-figure">USD 300M<small>+ USD 1.9B co-financing</small></td>
                   <td>~30 projects in pipeline</td>
-                  <td><span class="rec-tag rec-tag-un">Pipeline, not disbursed</span></td>
+                  <td><span data-i18n="hd.pipeline.not.disbursed" class="rec-tag rec-tag-un">Pipeline, not disbursed</span></td>
                 </tr>
               </tbody>
             </table>
@@ -831,33 +831,33 @@
           <header class="iaas-row-head">
             <p class="iaas-row-num">B</p>
             <div>
-              <p class="label">Ledger · Travel &amp; funding</p>
-              <h2 id="rec-travel-heading">Public reporting limits</h2>
+              <p data-i18n="hd.ledger.travel.funding" class="label">Ledger · Travel &amp; funding</p>
+              <h2 data-i18n="hd.public.reporting.limits" id="rec-travel-heading">Public reporting limits</h2>
               <p class="lede" data-i18n="audit.public-reports">Published reports describe meetings and programmes. Private messages and internal drafts stay outside this public review.</p>
             </div>
           </header>
 
           <div id="corr-summary" class="privacy-note">Private correspondence stays local. Public evidence is available in the Archive.</div>
-          <details class="rec-public-context"><summary>Public reporting rules and first-hand disclosure</summary>
+          <details class="rec-public-context"><summary data-i18n="hd.public.reporting.rules.and.first.hand.disclosure">Public reporting rules and first-hand disclosure</summary>
           <div class="rec-uncounted">
             <div class="rec-uncounted-row">
               <p class="rec-uncounted-num">Rule, 2019</p>
               <div>
-                <h3>The host country pays</h3>
+                <h3 data-i18n="hd.the.host.country.pays">The host country pays</h3>
                 <p data-i18n="rec.e.terms.of.reference.adopted.in">The Terms of Reference adopted in 2019 are explicit: "the hosting of the Meetings and the cost of organising shall be borne by the host country." The written rule is not that donor governments fly officials around — it is that each host funds its own year.</p>
               </div>
             </div>
             <div class="rec-uncounted-row">
               <p class="rec-uncounted-num">USD 0</p>
               <div>
-                <h3>Cost of the network itself</h3>
+                <h3 data-i18n="hd.cost.of.the.network.itself">Cost of the network itself</h3>
                 <p data-i18n="rec.budget.line.staff.number.or.sec">No budget line, staff number or secondment figure appears in any founding, chairmanship or M&amp;E document. This is a structural blank, not a search failure. ASEAN official time has been spent since 2018, and none of it is priced anywhere.</p>
               </div>
             </div>
             <div class="rec-uncounted-row">
               <p class="rec-uncounted-num">0</p>
               <div>
-                <h3>Participants, for any event, in any year</h3>
+                <h3 data-i18n="hd.participants.for.any.event.in.any.year">Participants, for any event, in any year</h3>
                 <p data-i18n="rec.m.e.cycle.states.an.attendance">No M&amp;E cycle states an attendance figure for a single meeting. Workshops, high-level meetings, showcases, Smart City professional programmes, MoU signing trips and business-matching programmes are all named as recurring activity. Not one of them is counted.</p>
               </div>
             </div>
@@ -889,21 +889,21 @@
             <div class="rec-uncounted-row">
               <p class="rec-uncounted-num">3</p>
               <div>
-                <h3>Memoranda of understanding, in four cycles</h3>
+                <h3 data-i18n="hd.memoranda.of.understanding.in.four.cycles">Memoranda of understanding, in four cycles</h3>
                 <p data-i18n="rec.ree.mous.are.named.across.the.20">Three MoUs are named across the 2022–2025 reports, all in 2023, and all at city level: Makassar Puskesmas with two Indonesian medical partners, and the Siem Reap Tourism Club with a Japanese firm. No network-level MoU, joint declaration or communiqué is named in any cycle.</p>
               </div>
             </div>
             <div class="rec-uncounted-row">
               <p class="rec-uncounted-num">0</p>
               <div>
-                <h3>Peer-review exercises ever run</h3>
+                <h3 data-i18n="hd.peer.review.exercises.ever.run">Peer-review exercises ever run</h3>
                 <p data-i18n-html="rec.e.2022.report.recommends.that.pe">The 2022 report recommends that peer review and expert guidance <em>could</em> give cities opportunities. The 2024 and 2025 reports record no such exercise being conducted. A network that reviews its cities' plans only in its own documents does not review them.</p>
               </div>
             </div>
             <div class="rec-uncounted-row">
               <p class="rec-uncounted-num">2 of 27</p>
               <div>
-                <h3>Independent scrutiny in the reviewed archive</h3>
+                <h3 data-i18n="hd.independent.scrutiny.in.the.reviewed.archive">Independent scrutiny in the reviewed archive</h3>
                 <p data-i18n="rec.o.of.27.curated.records.are.inde">Two of 27 curated records are independent critique: a commentary on Makatizen and smart-city governance, and the CIDOB analysis of Singapore's leadership role — the most important auditing document in the whole record, and not an ASCN publication.</p>
               </div>
             </div>
@@ -917,7 +917,7 @@
             <p class="iaas-row-num">D</p>
             <div>
               <p class="label" data-i18n="reco.ledger.training.courses">Ledger · Training &amp; courses</p>
-              <h2 id="rec-training-heading">People were trained. The record stops there.</h2>
+              <h2 data-i18n="hd.people.were.trained.the.record.stops.there" id="rec-training-heading">People were trained. The record stops there.</h2>
               <p class="lede" data-i18n="rec.aining.is.the.network.s.most.hum">Training is the network's most human output and the best documented — which is exactly why its blind spot is worth naming: the archive reports attendance, and almost never reports what a graduate then did.</p>
             </div>
           </header>
@@ -925,12 +925,12 @@
           <div class="rec-split">
             <div class="rec-split-col">
               <p class="rec-split-num">144 + 40</p>
-              <h3>ASPP: trained and enrolled</h3>
+              <h3 data-i18n="hd.aspp.trained.and.enrolled">ASPP: trained and enrolled</h3>
               <p data-i18n="rec.e.asean.smart.city.professional">The ASEAN Smart City Professional Programme with Seoul National University, funded by the ASEAN-Korea Cooperation Fund, reports 144 local government representatives through short-term training and 40 more mid-degree. It is the network's most credible human output and its most precisely counted.</p>
             </div>
             <div class="rec-split-col">
               <p class="rec-split-num">0</p>
-              <h3>Reported downstream outcomes</h3>
+              <h3 data-i18n="hd.reported.downstream.outcomes">Reported downstream outcomes</h3>
               <p data-i18n="rec.ross.the.2024.and.2025.cycles.th">Across the 2024 and 2025 cycles the programme reports attendance and enrolment only. No graduate is tracked to a system they commissioned, a policy they changed, or a budget they moved. The conversion from trained to deployed is the one metric the network does not publish.</p>
             </div>
           </div>
@@ -942,8 +942,8 @@
           <header class="iaas-row-head">
             <p class="iaas-row-num">?</p>
             <div>
-              <p class="label">The founding question</p>
-              <h2 id="rec-question-heading">Who was the network built for?</h2>
+              <p data-i18n="hd.the.founding.question" class="label">The founding question</p>
+              <h2 data-i18n="hd.who.was.the.network.built.for" id="rec-question-heading">Who was the network built for?</h2>
             </div>
           </header>
 
@@ -951,12 +951,12 @@
 
           <div class="rec-question-grid">
             <div class="rec-question-col">
-              <h3>What the design does reveal</h3>
+              <h3 data-i18n="hd.what.the.design.does.reveal">What the design does reveal</h3>
               <p data-i18n="rec.ope.was.capped.at.up.to.three.ci">Scope was capped at "up to three cities from each AMS". Decisions are by consensus. Meetings are funded by the host. There is no budget, no staff line, and no working group named in any founding document. Every one of those choices is cheap for a city-state with a permanent secretariat, a consolidated budget and a domestic mandate — and expensive, or impossible, for a country still building those things.</p>
               <p data-i18n="rec.year.one.the.network.added.no.c">In year one the network added no cities at all: 26 at founding, still 26 at the end of 2019. A body created to scale cities did not scale in its first year.</p>
             </div>
             <div class="rec-question-col">
-              <h3>What the evidence does not establish</h3>
+              <h3 data-i18n="hd.what.the.evidence.does.not.establish">What the evidence does not establish</h3>
               <p data-i18n="rec.does.not.establish.that.singapo">It does not establish that Singapore's own density motivated the initiative — the founding documents name Singapore as a co-beneficiary, not the driver. Independent researchers do read the network critically: CIDOB examines Singapore's city diplomacy and commercial interests in its December 2025 analysis, and Kong &amp; Woods (2021) describe a technocratic regionalism in which Singapore's urban model circulates as neutral regional knowledge.</p>
               <a class="rec-source" href="https://www.cidob.org/en/publications/singapores-role-city-diplomacy-lessons-its-leadership-developing-asean-smart-cities" target="_blank" rel="noopener">CIDOB / Melinda Martinus, Dec 2025 ↗</a>
             </div>
@@ -966,9 +966,9 @@
             <p class="rec-urban-lede" data-i18n="rec.e.one.asymmetry.the.sources.do.s">The one asymmetry the sources do support is urban density — and it needs to be stated precisely, because the usual version of the claim is wrong.</p>
             <div class="rec-urban-bars" id="rec-urban-bars" aria-hidden="true"></div>
             <div class="rec-urban-table">
-              <div class="rec-urban-row rec-urban-head"><span>Member state</span><span>Urban share of population</span></div>
+              <div class="rec-urban-row rec-urban-head"><span>Member state</span><span data-i18n="hd.urban.share.of.population">Urban share of population</span></div>
               <div class="rec-urban-row rec-urban-lead"><span>Singapore</span><span>100.0%</span></div>
-              <div class="rec-urban-row"><span>Malaysia</span><span>76.4%</span></div>
+              <div class="rec-urban-row"><span data-source-issued>Malaysia</span><span>76.4%</span></div>
               <div class="rec-urban-row"><span>Brunei</span><span>74.8%</span></div>
               <div class="rec-urban-row"><span>Thailand</span><span>60.9%</span></div>
               <div class="rec-urban-row"><span>Indonesia</span><span>58.1%</span></div>
@@ -978,7 +978,7 @@
               <div class="rec-urban-row"><span>Vietnam</span><span>38.1%</span></div>
               <div class="rec-urban-row"><span>Myanmar</span><span>30.4%</span></div>
               <div class="rec-urban-row"><span>Timor-Leste</span><span>28.6%</span></div>
-              <div class="rec-urban-row rec-urban-row-asean"><span>Timor-Leste joined ASEAN in 2025, becoming ASCN's 11th member state.</span></div>
+              <div class="rec-urban-row rec-urban-row-asean"><span data-i18n="hd.timor.leste.joined.asean.in.2025.becoming">Timor-Leste joined ASEAN in 2025, becoming ASCN's 11th member state.</span></div>
             </div>
             <p class="rec-urban-read" data-i18n-html="rec.ngapore.is.the.only.fully.urbani">Singapore is the only fully urbanised state in the network: every resident lives in a city, and no other member reaches 80%. The median ASEAN member sits near 40% — below half. A network designed by a state where urban governance <em>is</em> national governance is being asked to serve a region where it is not. That asymmetry is real, and it is worth naming precisely enough that it survives a reader who checks the sources. The looser claim — that Singapore is the only urbanised ASEAN state — is not supportable, because Malaysia and Brunei both clear 70%.</p>
             <p class="rec-urban-src" data-i18n="rec.urce.world.bank.world.developmen">Source: World Bank, World Development Indicators, SP.URB.TOTL.IN.ZS, 2023. Malaysia's 76.4% sits alongside 58% forest cover, which looks contradictory until you read the definition: each country classifies a settlement as urban on its own national rule, and Malaysia's census counts a place of 2,000 or more residents where at least half the workforce is in non-agricultural work — so a small township ringed by forest counts. The numbers above are not measured on a common basis, which is itself a reason to treat any "only one urbanised state" comparison as unsettled.</p>
@@ -989,7 +989,7 @@
 
         <!-- WHAT ACTUALLY WORKS -->
         <section class="iaas-row rec-row rec-bridge" aria-labelledby="rec-bridge-heading">
-          <h2 id="rec-bridge-heading">Meanwhile, in the gap</h2>
+          <h2 data-i18n="hd.meanwhile.in.the.gap" id="rec-bridge-heading">Meanwhile, in the gap</h2>
           <p data-i18n="rec.ile.the.apparatus.above.ran.its">While the apparatus above ran its cycles, one practitioner inside the network kept shipping. Fifteen systems are live right now — two national watches, three country dashboards, seven ASCN city dashboards and three public platforms — built outside the network's own machinery, in about three years, on public data only.</p>
           <a class="text-button primary" href="#innovation" data-tab="innovation">See what that produced ↗</a>
         </section>
@@ -1009,14 +1009,14 @@
         </nav>
         <div id="review-controls" class="review-controls">
           <label class="review-search"><span>Search evidence</span><input type="search" id="review-search" placeholder="City, project or claim" /></label>
-          <label><span>City</span><select id="review-city"><option value="all">All cities</option></select></label>
-          <details id="review-filter-panel"><summary>More filters</summary><div class="review-filter-fields">
+          <label><span>City</span><select id="review-city" data-source-issued><option value="all">All cities</option></select></label>
+          <details id="review-filter-panel"><summary data-i18n="hd.more.filters">More filters</summary><div class="review-filter-fields">
             <label><span>Year</span><select id="review-year"><option value="all">All years</option></select></label>
             <label><span>Evidence stage</span><select id="review-stage"><option value="all">All stages</option></select></label>
             <label><span>Source type</span><select id="review-sourceType"><option value="all">All sources</option></select></label>
             <label><span>ASCN objective</span><select id="review-mandate"><option value="all">All objectives</option></select></label>
           </div></details>
-          <button type="button" id="review-clear" class="text-button">Reset</button>
+          <button data-i18n="hd.reset" type="button" id="review-clear" class="text-button">Reset</button>
           <button type="button" id="review-export" class="news-icon-button" aria-label="Download filtered evidence as CSV" title="Download filtered evidence as CSV">↓</button>
         </div>
         <p id="review-status" class="review-note" role="status">Loading ASCN evidence…</p>
@@ -1034,7 +1034,7 @@
           <div id="review-archive"></div><div id="review-pagination" class="review-pagination"></div>
         </div>
         <div id="news-panel-discovery" data-news-panel="discovery" hidden>
-          <div class="review-band-head"><h2>ASCN discovery leads</h2><button type="button" id="discovery-refresh" class="news-icon-button" aria-label="Check ASCN news index" title="Check ASCN news index">↻</button></div>
+          <div class="review-band-head"><h2 data-i18n="hd.ascn.discovery.leads">ASCN discovery leads</h2><button type="button" id="discovery-refresh" class="news-icon-button" aria-label="Check ASCN news index" title="Check ASCN news index">↻</button></div>
           <p class="review-note" data-i18n="news.unreviewed.search.matches.exclud">Unreviewed search matches, excluded from performance findings. Index dates may differ from publication dates. Coverage includes old and new articles, research and announcements; duplicate reporting may remain.</p>
           <label class="discovery-search"><span>Search discovery</span><input type="search" id="discovery-search" placeholder="Search indexed titles or publishers" /></label>
           <p id="discovery-status" class="review-note" role="status" data-i18n="news.loading.saved.discovery.leads">Loading saved discovery leads…</p>
@@ -1042,19 +1042,19 @@
         </div>
         <div id="news-panel-regional" data-news-panel="regional" hidden>
         <header class="news-head">
-          <p class="label">ASEAN · City development</p>
+          <p data-i18n="hd.asean.city.development" class="label">ASEAN · City development</p>
           <h2 data-i18n="view.news">Regional news</h2>
           <p class="lede" data-i18n="lede.news.hero">Public services, transport, infrastructure, and the technology shaping Southeast Asia’s cities.</p>
         </header>
         <div class="news-controls">
           <label class="news-search-label"><span>Search</span><input id="news-search" type="search" placeholder="Search headlines" /></label>
           <details class="news-filter-panel" id="news-filter-panel" open>
-            <summary id="news-filter-summary">Filters</summary>
+            <summary data-i18n="hd.filters" id="news-filter-summary">Filters</summary>
             <div class="news-filter-fields">
               <label><span>Location</span><select id="news-country"><option value="all">All locations</option></select></label>
               <label><span>Publisher</span><select id="news-publisher"><option value="all">All publishers</option></select></label>
               <label><span>Published</span><select id="news-days"><option value="all">Any date</option><option value="7">Past 7 days</option><option value="30">Past 30 days</option><option value="90">Past 90 days</option></select></label>
-              <label class="news-mobile-topic"><span>Topic</span><select id="news-mobile-topic"><option value="all">All topics</option></select></label>
+              <label class="news-mobile-topic" data-source-issued><span>Topic</span><select id="news-mobile-topic"><option data-i18n="hd.all.topics" value="all">All topics</option></select></label>
             </div>
           </details>
           <button id="news-refresh" type="button" class="news-icon-button" title="Check news feeds" aria-label="Check news feeds">↻</button>
@@ -1064,12 +1064,12 @@
         <div class="news-layout">
           <div id="news-results" aria-label="Regional stories" aria-busy="true"></div>
           <aside class="news-sidebar">
-            <section><h2>Stories by location</h2><div id="news-coverage"></div><p class="news-muted" data-i18n="news.location.and.topic.tags.are.infe">Location and topic tags are inferred from publisher metadata. Counts include overlapping locations.</p></section>
-            <section><h2>Publisher feeds</h2><div id="news-sources"></div><p class="news-muted" data-i18n="news.headline.links.only.reporting.an">Headline links only. Reporting and article rights remain with each publisher.</p></section>
+            <section><h2 data-i18n="hd.stories.by.location">Stories by location</h2><div id="news-coverage"></div><p class="news-muted" data-i18n="news.location.and.topic.tags.are.infe">Location and topic tags are inferred from publisher metadata. Counts include overlapping locations.</p></section>
+            <section><h2 data-i18n="hd.publisher.feeds">Publisher feeds</h2><div id="news-sources"></div><p class="news-muted" data-i18n="news.headline.links.only.reporting.an">Headline links only. Reporting and article rights remain with each publisher.</p></section>
           </aside>
         </div>
         </div>
-        <details class="review-method"><summary>Sources, method and coverage limits</summary><div id="review-method"></div></details>
+        <details class="review-method"><summary data-i18n="hd.sources.method.and.coverage.limits">Sources, method and coverage limits</summary><div id="review-method"></div></details>
       </section>
 
       <!-- ASCN 9 RECORD -->
@@ -1082,7 +1082,7 @@
       <!-- HISTORY -->
       <section class="view" id="view-history" data-view="history" hidden>
         <div class="section-head">
-          <p class="label">History</p>
+          <p data-i18n="nav.history" class="label">History</p>
           <h1 data-i18n="h.history-title">From 26 pilot cities to a regional network</h1>
           <p class="lede" data-i18n="lede.history">Established at the 32nd ASEAN Summit in April 2018, the network has grown across eight chair years and five rounds of expansion.</p>
         </div>
@@ -1090,21 +1090,21 @@
           <div class="timeline-rail" id="history-timeline"></div>
           <aside class="history-side">
             <article class="side-block">
-              <p class="label">Membership growth</p>
+              <p data-i18n="hd.membership.growth" class="label">Membership growth</p>
               <div id="growth-bars" class="growth-bars"></div>
             </article>
             <article class="side-block">
-              <p class="label">Chair &amp; Shepherd</p>
+              <p data-i18n="hd.chair.shepherd" class="label">Chair &amp; Shepherd</p>
               <div id="chair-roster" class="chair-roster"></div>
             </article>
           </aside>
         </div>
-        <div class="sub-head"><p class="label" data-i18n="hist.the.rotating.chair.the.persisten">The rotating chair &amp; the persistent shepherd</p><h3>Nine years of leadership — and the continuity role built to survive the annual hand-off</h3></div>
+        <div class="sub-head"><p class="label" data-i18n="hist.the.rotating.chair.the.persisten">The rotating chair &amp; the persistent shepherd</p><h3 data-i18n="hd.nine.years.of.leadership.and.the.continuity">Nine years of leadership — and the continuity role built to survive the annual hand-off</h3></div>
         <div id="chair-ribbon"></div>
         <div id="history-quote" class="history-quote"></div>
-        <div class="sub-head"><p class="label">The network in the field</p><h3>Seven years of meetings, partnerships, and knowledge exchange</h3></div>
+        <div class="sub-head"><p data-i18n="hd.the.network.in.the.field" class="label">The network in the field</p><h3 data-i18n="hd.seven.years.of.meetings.partnerships.and.knowledge">Seven years of meetings, partnerships, and knowledge exchange</h3></div>
         <div id="history-moments" class="moments-strip"></div>
-        <div class="sub-head"><p class="label">Annual meetings</p><h3>The ASCN Annual Meeting cycle</h3></div>
+        <div class="sub-head"><p data-i18n="hd.annual.meetings" class="label">Annual meetings</p><h3 data-i18n="hd.the.ascn.annual.meeting.cycle">The ASCN Annual Meeting cycle</h3></div>
         <div id="meetings-grid" class="meetings-grid"></div>
         <article class="ascap-panel" id="ascap-panel"></article>
       </section>
@@ -1113,16 +1113,16 @@
       <section class="view" id="view-cities" data-view="cities" hidden>
         <div class="section-head split">
           <div>
-            <p class="label">Member Cities</p>
+            <p data-i18n="hd.member.cities" class="label">Member Cities</p>
             <h1 data-i18n="h.cities-title">38 cities, 11 countries — and what each is building</h1>
             <div class="cities-related">
               <a href="https://slic.nonarkara.org/" target="_blank" rel="noopener" class="cities-rel-link">
                 <span class="cities-rel-label">SLIC Index</span>
-                <span class="cities-rel-desc">Southeast Asia's city liveability and competitiveness index — 174 cities ranked across 5 pillars</span>
+                <span data-i18n="hd.southeast.asia.s.city.liveability.and.competitiveness" class="cities-rel-desc">Southeast Asia's city liveability and competitiveness index — 174 cities ranked across 5 pillars</span>
               </a>
               <a href="https://sciti.nonarkara.org/" target="_blank" rel="noopener" class="cities-rel-link">
                 <span class="cities-rel-label">SCITI Index</span>
-                <span class="cities-rel-desc">Smart City Thailand Index — tracking Thailand's 30 smart city candidates against the global frontier</span>
+                <span data-i18n="hd.smart.city.thailand.index.tracking.thailand.s" class="cities-rel-desc">Smart City Thailand Index — tracking Thailand's 30 smart city candidates against the global frontier</span>
               </a>
             </div>
           </div>
@@ -1130,8 +1130,8 @@
             <input id="city-search" type="search" placeholder="Search a city" aria-label="Search a city" />
             <select id="city-country" aria-label="Filter by country"><option value="all">All countries</option></select>
             <div class="segmented" id="map-mode">
-              <button type="button" class="active" data-mode="map">Map</button>
-              <button type="button" data-mode="night">Night</button>
+              <button data-i18n="hd.map" type="button" class="active" data-mode="map">Map</button>
+              <button data-i18n="hd.night" type="button" data-mode="night">Night</button>
             </div>
           </div>
         </div>
@@ -1148,32 +1148,32 @@
       <!-- PROJECTS -->
       <section class="view" id="view-projects" data-view="projects" hidden>
         <div class="section-head split projects-head">
-          <p class="label">Projects</p>
+          <p data-i18n="nav.projects" class="label">Projects</p>
           <div class="controls">
             <input id="search-filter" type="search" placeholder="Search projects" aria-label="Search projects" />
             <select id="country-filter" aria-label="Filter by country"><option value="all">All countries</option></select>
             <select id="focus-filter" aria-label="Filter by focus area"><option value="all">All focus areas</option></select>
-            <button id="export-csv" class="text-button" type="button">Export CSV</button>
+            <button data-i18n="hd.export.csv" id="export-csv" class="text-button" type="button">Export CSV</button>
           </div>
           <h1 data-i18n="h.projects-title">The smart-city project portfolio</h1>
         </div>
         <div class="kpi-grid kpi-grid--four" id="project-kpis"></div>
         <div class="analytics-grid">
           <article class="chart-panel">
-            <div class="panel-head"><h3>Focus-area mix</h3><span class="muted" id="focus-scale-note">latest cycle</span></div>
+            <div class="panel-head"><h3 data-i18n="hd.focus.area.mix">Focus-area mix</h3><span class="muted" id="focus-scale-note">latest cycle</span></div>
             <div id="focus-bars" class="focus-bars"></div>
           </article>
           <article class="chart-panel">
-            <div class="panel-head"><h3>Implementation status</h3><span class="muted" id="status-count"></span></div>
+            <div class="panel-head"><h3 data-i18n="hd.implementation.status">Implementation status</h3><span class="muted" id="status-count"></span></div>
             <div id="status-bars" class="status-bars"></div>
           </article>
           <article class="chart-panel">
-            <div class="panel-head"><h3>Top cities by project load</h3><span class="muted">filtered</span></div>
+            <div class="panel-head"><h3 data-i18n="hd.top.cities.by.project.load">Top cities by project load</h3><span class="muted">filtered</span></div>
             <div id="city-load" class="city-load"></div>
           </article>
         </div>
         <article class="table-panel">
-          <div class="panel-head"><h3>Project evidence table</h3><span id="project-count" class="muted"></span></div>
+          <div class="panel-head"><h3 data-i18n="hd.project.evidence.table">Project evidence table</h3><span id="project-count" class="muted"></span></div>
           <div class="table-wrap" tabindex="0" role="region" aria-label="Project evidence table; scroll to read all columns">
             <table class="project-evidence-table">
               <colgroup><col class="project-city"><col class="project-country"><col class="project-name"><col class="project-focus"><col class="project-status"></colgroup>
@@ -1182,14 +1182,14 @@
             </table>
           </div>
         </article>
-        <div class="sub-head"><p class="label">Flagship investments</p><h3>Largest documented projects by investment</h3></div>
+        <div class="sub-head"><p data-i18n="hd.flagship.investments" class="label">Flagship investments</p><h3 data-i18n="hd.largest.documented.projects.by.investment">Largest documented projects by investment</h3></div>
         <div id="big-projects" class="big-projects"></div>
       </section>
 
       <!-- FRAMEWORK / BY-LAWS -->
       <section class="view" id="view-framework" data-view="framework" hidden>
         <div class="section-head">
-          <p class="label">Framework &amp; By-laws</p>
+          <p data-i18n="hd.framework.by.laws" class="label">Framework &amp; By-laws</p>
           <h1 data-i18n="h.framework-title">The ASEAN Smart Cities Framework</h1>
           <p class="lede" id="framework-status"></p>
         </div>
@@ -1198,41 +1198,41 @@
           <article class="fw-block" id="fw-systems"></article>
           <article class="fw-block" id="fw-enablers"></article>
         </div>
-        <div class="sub-head"><p class="label">Six focus areas</p><h3>Where the work is concentrated</h3></div>
+        <div class="sub-head"><p data-i18n="hd.six.focus.areas" class="label">Six focus areas</p><h3 data-i18n="hd.where.the.work.is.concentrated">Where the work is concentrated</h3></div>
         <div id="focus-detail" class="focus-detail"></div>
-        <div class="sub-head"><p class="label">Governance</p><h3>How the network is run</h3></div>
+        <div class="sub-head"><p data-i18n="hd.governance" class="label">Governance</p><h3 data-i18n="hd.how.the.network.is.run">How the network is run</h3></div>
         <div class="gov-grid" id="gov-grid"></div>
         <article class="ascap-panel" id="framework-ascap"></article>
-        <div class="sub-head"><p class="label">Capacity building</p><h3>How the network trains the people who run the cities</h3></div>
+        <div class="sub-head"><p data-i18n="hd.capacity.building" class="label">Capacity building</p><h3 data-i18n="hd.how.the.network.trains.the.people.who">How the network trains the people who run the cities</h3></div>
         <div id="capacity-building"></div>
       </section>
 
       <!-- PARTNERS -->
       <section class="view" id="view-partners" data-view="partners" hidden>
         <div class="section-head">
-          <p class="label">Partnerships &amp; Finance</p>
+          <p data-i18n="hd.partnerships.finance" class="label">Partnerships &amp; Finance</p>
           <h1 data-i18n="h.partners-title">A multi-stakeholder ecosystem</h1>
           <p class="lede" data-i18n="lede.partners">ASCN coordinates rather than funds. Bilateral partners, multilateral banks, and blended finance carry the projects.</p>
         </div>
-        <div class="sub-head"><p class="label">Dialogue partners</p><h3>Major bilateral programmes</h3></div>
+        <div class="sub-head"><p data-i18n="hd.dialogue.partners" class="label">Dialogue partners</p><h3 data-i18n="hd.major.bilateral.programmes">Major bilateral programmes</h3></div>
         <div id="partner-cards" class="partner-cards"></div>
         <div class="partners-split">
           <article class="side-block">
-            <p class="label">Multilateral partners</p>
+            <p data-i18n="hd.multilateral.partners" class="label">Multilateral partners</p>
             <div id="multi-list" class="def-list"></div>
           </article>
           <article class="side-block">
-            <p class="label">Financing landscape</p>
+            <p data-i18n="hd.financing.landscape" class="label">Financing landscape</p>
             <div id="finance-block"></div>
           </article>
         </div>
-        <div class="sub-head"><p class="label">Programme networks</p><h3>Bilateral smart city cooperation with ASCN</h3></div>
+        <div class="sub-head"><p data-i18n="hd.programme.networks" class="label">Programme networks</p><h3 data-i18n="hd.bilateral.smart.city.cooperation.with.ascn">Bilateral smart city cooperation with ASCN</h3></div>
         <div id="programme-networks" class="programme-cards"></div>
 
-        <div class="sub-head"><p class="label">Resource · Aus4ASEAN Futures</p><h3>ASEAN Smart City Financing Toolkit</h3></div>
+        <div class="sub-head"><p data-source-issued class="label">Resource · Aus4ASEAN Futures</p><h3>ASEAN Smart City Financing Toolkit</h3></div>
         <div id="toolkit-feature"></div>
 
-        <div class="sub-head"><p class="label">Event · Jakarta · 26–27 November 2024</p><h3>Advancing Smart Cities across ASEAN and Beyond</h3></div>
+        <div class="sub-head"><p data-source-issued class="label">Event · Jakarta · 26–27 November 2024</p><h3 data-source-issued>Advancing Smart Cities across ASEAN and Beyond</h3></div>
         <div id="workshop-section"></div>
 
       </section>
@@ -1240,7 +1240,7 @@
       <!-- INSIGHTS / INFOGRAPHICS -->
       <section class="view" id="view-insights" data-view="insights" hidden>
         <div class="section-head">
-          <p class="label">Insights</p>
+          <p data-i18n="nav.insights" class="label">Insights</p>
           <h1 data-i18n="h.insights-title">The network in numbers</h1>
           <p class="lede" data-i18n="lede.insights">Four M&amp;E cycles, 134 projects, 38 cities. What the official record shows — and what it doesn't.</p>
         </div>
@@ -1274,7 +1274,7 @@
             <div id="ig-data-quality"></div>
           </article>
           <article class="info-card wide">
-            <p class="label">Citizen impact, documented</p>
+            <p data-i18n="hd.citizen.impact.documented" class="label">Citizen impact, documented</p>
             <div id="ig-impact" class="impact-grid"></div>
           </article>
           <article class="info-card wide">
@@ -1362,39 +1362,39 @@
       <!-- LIBRARY / OPEN DATA -->
       <section class="view" id="view-data" data-view="data" hidden>
         <div class="section-head">
-          <p class="label">Library &amp; Open Data</p>
+          <p data-i18n="hd.library.open.data" class="label">Library &amp; Open Data</p>
           <h1 data-i18n="h.data-title">The knowledge base behind this platform.</h1>
           <p class="lede" id="data-lede"></p>
         </div>
         <div class="download-grid" id="dataset-downloads"></div>
-        <div class="sub-head"><p class="label">Official documents</p><h3>Source reports, free to download</h3></div>
+        <div class="sub-head"><p data-i18n="hd.official.documents" class="label">Official documents</p><h3 data-i18n="hd.source.reports.free.to.download">Source reports, free to download</h3></div>
         <div id="document-grid" class="document-grid"></div>
 
         <div class="sub-head">
-          <p class="label">Knowledge library</p>
-          <h3>Everything we read — official docs, academic papers, reports, research</h3>
+          <p data-i18n="hd.knowledge.library" class="label">Knowledge library</p>
+          <h3 data-i18n="hd.everything.we.read.official.docs.academic.papers">Everything we read — official docs, academic papers, reports, research</h3>
         </div>
         <div class="lib-search-bar">
           <input type="search" id="lib-search" placeholder="Search sources…" aria-label="Search the knowledge library" />
           <div class="lib-type-chips" id="lib-type-chips" role="group" aria-label="Filter by source type">
             <button class="lib-chip active" data-type="all" type="button">All <span id="lib-count"></span></button>
-            <button class="lib-chip" data-type="official" type="button">Official</button>
-            <button class="lib-chip" data-type="academic" type="button">Academic</button>
-            <button class="lib-chip" data-type="report" type="button">Reports</button>
-            <button class="lib-chip" data-type="research" type="button">Research</button>
-            <button class="lib-chip" data-type="data" type="button">Data</button>
+            <button data-i18n="hd.official" class="lib-chip" data-type="official" type="button">Official</button>
+            <button data-i18n="hd.academic" class="lib-chip" data-type="academic" type="button">Academic</button>
+            <button data-i18n="hd.reports" class="lib-chip" data-type="report" type="button">Reports</button>
+            <button data-i18n="nav.research" class="lib-chip" data-type="research" type="button">Research</button>
+            <button data-i18n="hd.data" class="lib-chip" data-type="data" type="button">Data</button>
           </div>
         </div>
         <div id="lib-results" class="lib-results"></div>
 
-        <div class="sub-head"><p class="label">Methodology &amp; sources</p></div>
+        <div class="sub-head"><p data-i18n="hd.methodology.sources" class="label">Methodology &amp; sources</p></div>
         <div class="partners-split">
           <article class="side-block">
-            <p class="label">External data sources</p>
+            <p data-i18n="hd.external.data.sources" class="label">External data sources</p>
             <div id="source-list" class="def-list"></div>
           </article>
           <article class="side-block">
-            <p class="label">Methodology &amp; limits</p>
+            <p data-i18n="hd.methodology.limits" class="label">Methodology &amp; limits</p>
             <div id="method-list" class="method-list"></div>
           </article>
         </div>

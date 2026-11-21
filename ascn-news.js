@@ -92,7 +92,7 @@ function render() {
   const shownCities = matrix.filter((city) => state.filters.city === "all" || city.name === state.filters.city);
   const gapCount = shownCities.filter((city) => !city.delivery).length;
   $("#review-status").textContent = fill("{n} of {m} reviewed records\u00A0· {k} distinct topics/events\u00A0· reviewed {date}", { n: rows.length, m: all.records, k: summary.events, date: showDate(state.archive.reviewedAt) });
-  $("#review-verdict").innerHTML = `<h2>${esc(tx(!rows.length ? "No evidence matches this selection" : summary.outcomeEvents ? "Outcome claims need their comparison evidence" : "Activity is documented. Citizen impact remains an evidence gap."))}</h2>
+  $("#review-verdict").innerHTML = `<h2>${esc(tx(!rows.length ? "No evidence matches this selection" : summary.outcomeEvents ? "Outcome claims need their comparison evidence" : tx("Activity is documented. Citizen impact remains an evidence gap.")))}</h2>
     <p>${esc(fill("{n} records across {k} distinct topics/events in this selection. {o} events have a reviewed outcome comparison; that is a limit of this archive, not proof that cities produced no benefits.", { n: summary.records, k: summary.events, o: summary.outcomeEvents }))}</p>
     <dl class="review-measures"><div><dt>${esc(tx("City-specific evidence"))}</dt><dd>${summary.cityCount}</dd></div><div><dt>${esc(tx("Selected cities without delivery coverage"))}</dt><dd>${gapCount} / ${shownCities.length}</dd></div><div><dt>${esc(tx("Outcome comparison events"))}</dt><dd>${summary.outcomeEvents}</dd></div></dl>`;
   $("#review-stage-chart").innerHTML = bars(summary.stages, "stage", tx("Reviewed records by evidence stage; counts start at zero"));
@@ -105,7 +105,7 @@ function render() {
   const topics = new Set();
   const followups = rows.filter((row) => { if (!(row.projectLinks.length || row.mandates.includes("Funding") || row.stage === "Scrutiny") || topics.has(row.eventId)) return false; topics.add(row.eventId); return true; }).slice(0, 6);
   const followupHost = $("#review-followups");
-  followupHost.innerHTML = followups.map((row) => `<div class="review-followup"><h3>${esc(row.cities.join(", ") || row.title)}</h3><p>${esc(tx(row.followUp))}</p><p class="review-note">${esc(tx("Based on"))} ${external(row.url, row.publisher)}\u00A0· ${esc(showDate(row.publishedAt))}\u00A0· ${esc(tx("review question, not a verified failure"))}</p></div>`).join("") || `<p class="review-note">${esc(tx("No project-specific or financing follow-up in this selection. Broaden the evidence filters."))}</p>`;
+  followupHost.innerHTML = followups.map((row) => `<div class="review-followup"><h3 data-source-issued>${esc(row.cities.join(", ") || row.title)}</h3><p>${esc(tx(row.followUp))}</p><p class="review-note">${esc(tx("Based on"))} ${external(row.url, row.publisher)}\u00A0· ${esc(showDate(row.publishedAt))}\u00A0· ${esc(tx("review question, not a verified failure"))}</p></div>`).join("") || `<p class="review-note">${esc(tx("No project-specific or financing follow-up in this selection. Broaden the evidence filters."))}</p>`;
   // How many questions there are, published for the stylesheet. The column
   // count is a function of this number and not of the width alone: Law IV
   // says the grid fills, and a grid of three columns holding two questions
