@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-21T15:12:40.669Z",
+  "checkedAt": "2026-11-21T15:27:14.088Z",
   "articles": [
     {
       "title": "ASEAN Smart Cities Network leads the region drive for smarter, more resilient cities",
@@ -995,7 +995,7 @@
       "title": "Who Will Pay For ASEAN’s Smart Cities?",
       "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE1JRHBIalFNYUh2YTFqcS16eWZ3WjlYandLSGRqQmMtVnF2Rk53VHRTZW1fVW1vUld0d2lJaXhZZ0hReURYb3FoaG8wWEhMVG05Unh6Q0UwdXBqYmxCTW83QUFjNXB2R2ltZVNMbXU1cGdlQUXSAXhBVV95cUxOaHR6T1VnN1dCUVBEOTdDOUR6bXgxZ0xWSWJPUC1NRmNPMTBETnZWb0ZOalI1LUZrdDJwY1Z4aUcydVhmUUFtc2VQQ2N1QWZ2dXJNRGs3a2h1T09FN25yLTdlaDVDLXlCVzhmcV81ZFktZ1JtRERQM3Q?oc=5",
       "publisher": "The ASEAN Post",
-      "sourceId": "ascn-exact",
+      "sourceId": "ascn-variants",
       "publishedAt": "2019-09-29T07:00:00.000Z",
       "kind": "Unreviewed search match",
       "countries": [],
@@ -1468,15 +1468,15 @@
       "id": "ascn-exact",
       "section": "Exact network name",
       "url": "https://news.google.com/rss/search?q=%22ASEAN%20Smart%20Cities%20Network%22&hl=en-SG&gl=SG&ceid=SG%3Aen",
-      "checkedAt": "2026-11-21T15:12:40.669Z",
+      "checkedAt": "2026-11-21T15:27:14.088Z",
       "status": "ok",
-      "returned": 34
+      "returned": 32
     },
     {
       "id": "ascn-variants",
       "section": "Name and language variants",
       "url": "https://news.google.com/rss/search?q=%22ASEAN%20Smart%20Cities%20Network%22%20OR%20%22ASEAN%20Smart%20City%20Network%22%20OR%20%22Jaringan%20Kota%20Cerdas%20ASEAN%22%20OR%20%22%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%B7%E0%B8%AD%E0%B8%82%E0%B9%88%E0%B8%B2%E0%B8%A2%E0%B9%80%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%87%E0%B8%AD%E0%B8%B1%E0%B8%88%E0%B8%89%E0%B8%A3%E0%B8%B4%E0%B8%A2%E0%B8%B0%E0%B8%AD%E0%B8%B2%E0%B9%80%E0%B8%8B%E0%B8%B5%E0%B8%A2%E0%B8%99%22&hl=en-SG&gl=SG&ceid=SG%3Aen",
-      "checkedAt": "2026-11-21T15:12:40.669Z",
+      "checkedAt": "2026-11-21T15:27:14.088Z",
       "status": "ok",
       "returned": 17
     },
