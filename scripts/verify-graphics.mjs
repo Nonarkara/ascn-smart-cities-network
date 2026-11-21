@@ -998,7 +998,7 @@ try {
         const view = document.getElementById("view-" + (location.hash.slice(1).split("/")[0]));
         if (!view) return [];
         const out = [];
-        for (const el of view.querySelectorAll("h1, h2, h3, h4, button, label, legend, summary, .label, option")) {
+        for (const el of view.querySelectorAll("h1, h2, h3, h4, button, label, legend, summary, .label, option, .ig-stat-card span, .ig-stat-card em")) {
           if (el.closest("[data-source-issued]")) continue;
           const own = [...el.childNodes]
             .filter((n) => n.nodeType === 3)

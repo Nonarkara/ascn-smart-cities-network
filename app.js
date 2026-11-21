@@ -1141,10 +1141,10 @@ function renderInsights() {
   const deltas = derived.project_deltas;
   const compRate = (t) => (t.completed / t.total * 100).toFixed(1);
   const momentumStats = [
-    { v: totals[3].total, label: "Projects documented", note: `+${deltas[2].project_delta} from 2024 — largest single-year jump` },
-    { v: `${compRate(totals[3])}%`, label: "Completion rate 2025", note: `vs 2.6% in 2022 — five-fold improvement in three years` },
-    { v: me[me.length - 1].total, label: tx("Cities in network"), note: `Founded with 26 cities in 2018; Timor-Leste joined 2025` },
-    { v: `+${deltas[0].project_delta} / +${deltas[1].project_delta} / +${deltas[2].project_delta}`, label: "Annual additions 2022→23→24→25", note: "Accelerating each cycle; 2024 jump driven by completion surge" },
+    { v: totals[3].total, label: tx("Projects documented"), note: `<b>+${deltas[2].project_delta}</b> ${tx("from 2024 — largest single-year jump")}` },
+    { v: `${compRate(totals[3])}%`, label: tx("Completion rate 2025"), note: tx("vs 2.6% in 2022 — five-fold improvement in three years") },
+    { v: me[me.length - 1].total, label: tx("Cities in network"), note: tx("Founded with 26 cities in 2018; Timor-Leste joined 2025") },
+    { v: `+${deltas[0].project_delta} / +${deltas[1].project_delta} / +${deltas[2].project_delta}`, label: tx("Annual additions 2022→23→24→25"), note: tx("Accelerating each cycle; 2024 jump driven by completion surge") },
   ];
   const linePoints = totals.map((t) => ({ v: t.total, label: `'${String(t.year).slice(2)}` }));
   INSIGHTS_LINE_POINTS = linePoints;
