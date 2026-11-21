@@ -1,5 +1,5 @@
 import { escapeHtml as esc, safeUrl } from "./lib/security.mjs";
-import { tx, fill } from "./lib/i18n.mjs";
+import { tx, t, fill } from "./lib/i18n.mjs";
 import { NEWS_COUNTRIES, NEWS_SOURCES, NEWS_TOPICS, filterArticles, validateNewsPayload } from "./lib/news-sources.mjs";
 
 const $ = (selector) => document.querySelector(selector);
@@ -19,7 +19,7 @@ function story(article, compact = false) {
 function render() {
   const articles = filterArticles(state.articles, state);
   $("#news-results").setAttribute("aria-busy", String(state.loading));
-  $("#news-results").innerHTML = articles.map((article) => story(article)).join("") || `<div class="news-empty"><h2>${esc(tx("news.empty.title"))}</h2><p>${esc(tx("news.empty.hint"))}</p><button id="news-clear" class="text-button" type="button">${esc(tx("news.empty.clear"))}</button></div>`;
+  $("#news-results").innerHTML = articles.map((article) => story(article)).join("") || `<div class="news-empty"><h2>${esc(t("news.empty.title"))}</h2><p>${esc(t("news.empty.hint"))}</p><button id="news-clear" class="text-button" type="button">${esc(t("news.empty.clear"))}</button></div>`;
   $("#news-clear")?.addEventListener("click", clearFilters);
   $("#news-count").textContent = fill("{n} of {m} stories", { n: articles.length, m: state.articles.length });
   const checked = state.checkedAt ? `checked ${showDate(state.checkedAt)}` : "";

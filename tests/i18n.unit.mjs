@@ -6,7 +6,7 @@ import { tx, fill, DICT } from "../lib/i18n.mjs";
 // Every literal handed to tx() / fill() is authored copy. A wrapped string with no
 // dictionary entry renders in English in every language and looks translated in
 // the source, which is how an unfinished handoff reads as finished.
-const FILES = ["app.js", "ascn-news.js"];
+const FILES = ["app.js", "ascn-news.js", "news.js", "archive.js"];
 const CALL = /\b(?:tx|fillText)\(\s*"((?:\\.|[^"\\])*)"/g;
 const slots = (s) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort().join(",");
 
