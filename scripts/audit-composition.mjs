@@ -28,19 +28,33 @@
 // WHAT FAILS, and what does not:
 //
 //   A band fails when it is at least 12% of the content width, at least
-//   250px tall, and either
+//   250px tall, and one of these holds:
 //     (a) it is INTERIOR — content on both sides of it in the same rows, so
 //         the page stops halfway across and then resumes; or
 //     (b) a HEAVY RULE (2px or more) crosses it. A rule is a claim about the
 //         width of the block beneath it. A 2px ink rule that spans the
 //         content area and then has a quarter of the page empty beside it is
-//         a broken promise. A hairline divider is not a claim and is not
-//         judged.
+//         a broken promise; or
+//     (c) a HAIRLINE crosses it and the content under that hairline does not
+//         reach the far end of it. A hairline that divides a 1211px row and
+//         leaves 625px of that row empty, on every one of twenty rows, is
+//         the same broken promise one weight lighter. A CENTRED measure
+//         inside its own frame is not a defect — the margins are the page's
+//         margins — so the test is whether the content is centred in the
+//         frame, not whether the frame is wider than the text.
 //
-//   A band that fails neither test is a margin: the view is a centred band
+//   A band that fails none of these is a margin: the view is a centred band
 //   and the space beside it is the page's own margin. Those are listed in the
 //   report with their size so they can be answered with a reason, not
 //   silently ignored.
+//
+//   Two refinements keep the third class honest, and both were learned from
+//   the independent review. A rule has to INTRODUCE the band — sit at its top
+//   edge — because the next section's opening rule is not a promise about
+//   the band above it. And a band framed by a hairline only fails when it
+//   REPEATS down a list: the same empty column in every one of twenty
+//   records is a frame keeping a promise it does not keep, while a single gap
+//   in one block is reported, answered in the record, and not failed.
 //
 // Usage:
 //   ASCN_TEST_URL=http://127.0.0.1:4187 node scripts/audit-composition.mjs
@@ -148,8 +162,15 @@ export async function auditView(page, surface) {
         const bw = parseFloat(st['border' + side + 'Width']) || 0;
         if (bw < 0.5 || !opaque(bc)) continue;
         push({ left: x1, right: x2, top: y1, bottom: y2 }, tag + '>' + side, cls, text);
-        if (bw >= HEAVY_RULE && side === 'Top') {
-          rules.push({ x1, x2, y1, y2, width: bw });
+        // Only a HORIZONTAL rule is a claim about width. A blockquote's 2px
+        // left rule marks the quote; it says nothing about how wide the page
+        // is, and the air beside a pull quote is the page's margin.
+        if (bw >= 1 && (side === 'Top' || side === 'Bottom')) {
+          // The rule carries the box it belongs to: a band is framed by the
+          // rule of the block it sits inside, not by some rule further up
+          // the page.
+          rules.push({ x1, x2, y1, y2, width: bw, cls, side,
+            blockTop: r.top - viewRect.top + yBase, blockBottom: r.bottom - viewRect.top + yBase });
         }
       }
     }
@@ -230,18 +251,77 @@ export async function auditView(page, surface) {
         if (contentLeft && contentRight) break;
       }
       const interior = contentLeft && contentRight;
-      // A heavy rule crossing the band makes the band a broken promise: the
-      // rule claims a width the block beneath it does not deliver.
-      const crossed = rules.some((rule) =>
-        rule.y2 > cur.rowStart * Y_STEP && rule.y1 < (cur.rowEnd + 1) * Y_STEP &&
-        rule.x1 < x1 && rule.x2 > x0 && (rule.x2 > x1 || rule.x1 < x0));
+      // A rule crossing the band. A rule is a claim about the width of the
+      // block beneath it: a hairline that divides two rows, or a 2px ink
+      // rule that opens a section.
+      // The rule that INTRODUCES the band: the nearest horizontal rule above
+      // it, within reach, and spanning it. A rule that closes the band
+      // belongs to the block below it — the next section's opening rule is
+      // not a promise about the band above it. The opener can sit a little
+      // above the band, because the block it opens has its own padding.
+      const bandTop = cur.rowStart * Y_STEP;
+      let opener = null;
+      for (const rule of rules) {
+        // The rule's own block must contain the band: that block is what the
+        // rule introduces, and the rule is a claim about its width.
+        if (rule.blockTop > bandTop + 4) continue;
+        if (rule.blockBottom < bandTop) continue;
+        if (rule.x2 <= x0 || rule.x1 >= x1) continue;
+        if (!opener || rule.y2 > opener.y2) opener = rule;
+      }
+      const crossing = opener ? [opener] : [];
+      // A heavy rule (2px or more) crossing the band is a broken promise
+      // whatever the geometry: the rule claims the width, and a quarter of
+      // the page is empty beside it.
+      const heavy = !!opener && opener.width >= HEAVY_RULE;
+      const heavyCrossed = heavy;
+      // A hairline that divides a row whose content stops short on one side
+      // is the same broken promise, one weight lighter: the rule runs the
+      // whole width and the text under it never reaches the far end. A
+      // centred measure inside its own frame is not a defect — the margins
+      // are the page's margins — so the test is whether the content is
+      // centred in the frame, not whether the frame is wider than the text.
+      let framedShort = false;
+      let framingRule = '';
+      for (const rule of crossing) {
+        if (rule.width >= HEAVY_RULE) continue;
+        const r0 = Math.max(0, Math.floor((rule.x1 - left) / X_STEP));
+        const r1 = Math.min(cols - 1, Math.floor((rule.x2 - left) / X_STEP));
+        const ruleW = (r1 - r0) * X_STEP;
+        if (ruleW < X_STEP * 20) continue;
+        // Row by row: a row is one-sided when the content under the rule is
+        // biased to one end of it and leaves a substantial gap at the other.
+        // A row whose content spans the whole rule, or a centred measure
+        // inside it, is not one-sided — the margins there are the page's.
+        let oneSided = 0, rows = 0;
+        for (let row = cur.rowStart; row <= cur.rowEnd; row++) {
+          const base = row * cols;
+          let lo = -1, hi = -1;
+          for (let c = r0; c <= r1; c++) {
+            if (!grid[base + c]) continue;
+            if (lo < 0) lo = c;
+            hi = c;
+          }
+          if (lo < 0) continue;
+          rows++;
+          const gapLeft = (lo - r0) * X_STEP;
+          const gapRight = (r1 - hi) * X_STEP;
+          // One-sided means UNBALANCED: the content sits against one end of
+          // the rule and leaves the other end empty. A centred measure
+          // leaves equal gaps either side, however wide those gaps are.
+          const larger = Math.max(gapLeft, gapRight);
+          const smaller = Math.min(gapLeft, gapRight);
+          if (larger > ruleW * 0.2 && larger > smaller * 2) oneSided++;
+        }
+        if (rows >= 3 && oneSided >= rows * 0.6) { framedShort = true; framingRule = String(rule.cls || '').slice(0, 28) + '>' + rule.side; break; }
+      }
       bands.push({
         x0: Math.round(x0), x1: Math.round(x1),
         widthPx: best.len * X_STEP,
         widthPct: Math.round((100 * best.len * X_STEP) / width),
         topPx: cur.rowStart * Y_STEP,
         heightPx: (cur.rowEnd - cur.rowStart + 1) * Y_STEP,
-        interior, crossed,
+        interior, crossed: heavy || framedShort, framedShort, heavyCrossed, framingRule,
       });
     }
     cur = null;
@@ -268,11 +348,27 @@ export async function auditView(page, surface) {
 
   const failures = [];
   const margins = [];
+  // A band that repeats down a list — the same empty column in every one of
+  // twenty records — is a different animal from a single gap in one block. A
+  // one-off gap is reported and answered in the audit record; a repeating one
+  // is the frame making a promise it does not keep, and it fails.
+  const repeats = new Map();
+  for (const band of bands) {
+    if (!band.framedShort) continue;
+    const key = Math.round(band.x0 / 16) + ':' + Math.round(band.x1 / 16);
+    repeats.set(key, (repeats.get(key) || 0) + 1);
+  }
   for (const band of bands) {
     const big = band.widthPct >= WIDTH_FRACTION * 100 && band.heightPx >= HEIGHT_FLOOR;
     if (!big) continue;
     const record = { ...band, contentWidth: Math.round(width), contentHeight: Math.round(height) };
-    if (band.interior || band.crossed) failures.push(record);
+    if (band.interior || band.crossed) {
+      if (band.framedShort && !band.heavyCrossed) {
+        const key = Math.round(band.x0 / 16) + ':' + Math.round(band.x1 / 16);
+        if ((repeats.get(key) || 0) < 2) { margins.push(record); continue; }
+      }
+      failures.push(record);
+    }
     else margins.push(record);
   }
   failures.sort((a, b) => b.widthPx * b.heightPx - a.widthPx * a.heightPx);
@@ -320,7 +416,8 @@ async function main() {
   console.log('\nComposition bands — failures');
   if (!report.failures.length) console.log('  none');
   for (const f of report.failures) {
-    console.log(`  ${f.route} @${f.viewport}: ${f.widthPx}px (${f.widthPct}%) x ${f.heightPx}px at x=${f.x0}..${f.x1} — ${f.interior ? 'interior hole' : 'a heavy rule crosses it'}`);
+    const why = f.interior ? 'interior hole' : f.framedShort ? `a rule frames a row whose content stops short (${f.framingRule || 'unknown rule'})` : 'a heavy rule crosses it';
+    console.log(`  ${f.route} @${f.viewport}: ${f.widthPx}px (${f.widthPct}%) x ${f.heightPx}px at x=${f.x0}..${f.x1} — ${why}`);
   }
   console.log('\nComposition bands — margins (answered, not failed)');
   if (!report.margins.length) console.log('  none');

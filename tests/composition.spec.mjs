@@ -72,4 +72,24 @@ test.describe('composition bands', () => {
     expect(after.failures.length, 'the planted interior band was not reported').toBeGreaterThan(0);
     expect(after.failures.some((f) => f.interior)).toBe(true);
   });
+
+  test('the gate fails on a hairline framing rows whose content stops short', async ({ page }) => {
+    await open(page, 'news/archive', 'news');
+    const before = await auditView(page, 'news');
+    expect(before.failures).toEqual([]);
+
+    // The News archive's shape, put back: a hairline that divides the whole
+    // row and text that never reaches the far end of it. The rule is a claim
+    // about the width of the row beneath it. It has to REPEAT — the same
+    // empty column in every one of twenty records is what makes it a frame
+    // keeping a promise it does not keep, rather than one gap in a block.
+    await page.addStyleTag({
+      content: `.review-record { grid-template-columns: 220px 220px !important;
+        justify-content: start !important; }`,
+    });
+    await page.waitForTimeout(500);
+    const after = await auditView(page, 'news');
+    expect(after.failures.length, 'the planted framed band was not reported').toBeGreaterThan(0);
+    expect(after.failures.some((f) => f.framedShort)).toBe(true);
+  });
 });

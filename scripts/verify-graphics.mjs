@@ -210,7 +210,13 @@ try {
     const cs = getComputedStyle(el);
     const w = el.getBoundingClientRect().width;
     const px = parseFloat(cs.fontSize);
-    return { chars: Math.round(w / (px * 0.5)), size: px };
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const SAMPLE = "the quick brown fox jumps over the lazy dog, and then it does it again";
+    ctx.font = `${cs.fontSize} ${cs.fontFamily}`;
+    const measured = ctx.measureText(SAMPLE).width;
+    const avg = measured > 0 ? measured / SAMPLE.length : px * 0.5;
+    return { chars: Math.round(w / avg), size: px };
   });
   ok("twin captions keep body type size (not shrunk to fit the cell)",
     caption.size >= 13, `${caption.size}px, ~${caption.chars} chars per line`);
@@ -364,8 +370,8 @@ try {
 
 /* ── Reading measure: no prose may outrun the eye ─────────────────────────── */
 {
-  // Past roughly 90 characters the return sweep fails and reading degrades
-  // into scanning. This site had NO measure token at all: 167 of 278 prose
+  // Past 75 characters the return sweep fails and reading degrades into
+  // scanning — the law's ceiling, not a slack one. This site had NO measure token at all: 167 of 278 prose
   // blocks ran past 90 characters and many ran to 208, because every section
   // stretched to the full 1248px column. This sweeps all views so a future
   // section cannot reintroduce it.
@@ -379,7 +385,36 @@ try {
     await page.waitForTimeout(500);
     const found = await page.evaluate(() => {
       const out = [];
-      for (const el of document.querySelectorAll("p, li, dd, blockquote, figcaption")) {
+      // The average advance of the font, measured rather than assumed. Jost's
+      // average character is about 0.45em, not 0.5em: assuming half an em
+      // under-counted every line by about a tenth, and a 100-character line
+      // read as 89 and passed.
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      const SAMPLE = "the quick brown fox jumps over the lazy dog, and then it does it again";
+      const avgAdvance = (cs) => {
+        ctx.font = `${cs.fontSize} ${cs.fontFamily}`;
+        const w = ctx.measureText(SAMPLE).width;
+        return w > 0 ? w / SAMPLE.length : parseFloat(cs.fontSize) * 0.5;
+      };
+      // A prose block is a paragraph, a list item, a quote, a caption — or a
+      // div whose content is inline text and nothing else. The Research
+      // view's Insider FAQ is a stack of divs: the widest prose on the site,
+      // 175 characters to a line, and a sweep that selects only p/li/dd/
+      // blockquote/figcaption never saw it.
+      const BLOCK = new Set(["P","DIV","UL","OL","LI","SECTION","ARTICLE","H1","H2","H3","H4","H5","H6","TABLE","FIGURE","BLOCKQUOTE","DL","DD","DT","PRE","FORM","ASIDE","NAV","HEADER","FOOTER","MAIN"]);
+      const isProse = (el) => {
+        const tag = el.tagName;
+        if (["P","LI","DD","BLOCKQUOTE","FIGCAPTION"].includes(tag)) return true;
+        if (tag !== "DIV") return false;
+        // Only a div whose content is inline text: a div that holds a heading
+        // or a paragraph is a layout container, not a paragraph.
+        for (const child of el.children) if (BLOCK.has(child.tagName)) return false;
+        for (const node of el.querySelectorAll("*")) if (BLOCK.has(node.tagName)) return false;
+        return true;
+      };
+      for (const el of document.querySelectorAll("p, li, dd, blockquote, figcaption, div")) {
+        if (!isProse(el)) continue;
         const r = el.getBoundingClientRect();
         if (r.width < 200 || r.height < 8) continue;
         if ((el.textContent || "").trim().length < 120) continue; // labels are not prose
@@ -414,7 +449,7 @@ try {
         for (const runs of byTop.values()) for (const run of runs) lineW = Math.max(lineW, run.right - run.left);
         if (!lineW) lineW = r.width;
         out.push({
-          chars: Math.round(lineW / (parseFloat(cs.fontSize) * 0.5)),
+          chars: Math.round(lineW / avgAdvance(cs)),
           sel: el.tagName.toLowerCase() + "." + (el.className || "").toString().split(" ")[0],
           px: Math.round(parseFloat(cs.fontSize)),
         });
@@ -423,7 +458,7 @@ try {
     });
     for (const f of found) {
       if (f.chars > worst.chars) worst = { chars: f.chars, where: `${v} ${f.sel} @${f.px}px` };
-      if (f.chars > 90) offenders.push(`${v} ${f.sel}=${f.chars}`);
+      if (f.chars > 75) offenders.push(`${v} ${f.sel}=${f.chars}`);
     }
   }
   ok("no prose block exceeds a readable measure", offenders.length === 0,
@@ -431,7 +466,7 @@ try {
 
   // Control. The assertion above is a number comparison, so if the measurement
   // ever silently returned zero the whole sweep would pass and test nothing.
-  ok("the measure sweep measures something (control)", worst.chars > 20 && worst.chars <= 90,
+  ok("the measure sweep measures something (control)", worst.chars > 20 && worst.chars <= 75,
     `worst observed ${worst.chars} chars`);
 
   // The cap must be in characters, not pixels, so 12px notes do not get a
@@ -1795,7 +1830,14 @@ try {
     for (const width of [1280, 1440, 1920]) {
       const { page } = await newPage({ width, height: 900 });
       await page.goto(`${BASE}/#overview`, { waitUntil: "networkidle" });
-      await page.waitForTimeout(400);
+      // The rail's width is read from the live grid, so the grid has to have
+      // settled: at 400ms the shell could still be one column, which reads as
+      // a rail of 1264px. A flaky measurement is worse than a slow one.
+      await page.waitForFunction(() => {
+        const shell = document.querySelector(".shell");
+        return shell && getComputedStyle(shell).gridTemplateColumns.split(" ").length > 1;
+      }, null, { timeout: 10000 }).catch(() => {});
+      await page.waitForTimeout(300);
       const rail = await page.evaluate(() => {
         const el = document.querySelector(".index");
         const r = el.getBoundingClientRect();

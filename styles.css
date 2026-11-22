@@ -1167,6 +1167,7 @@ h3 { margin-bottom: 0; font-size:var(--t-body); line-height: 1.25; }
   .innovation-status-badge { text-align: left; }
   .innovation-status-badge .muted { max-width: none; }
 }
+
 /* The projects head is a title, a row of filters and a heading that has to
    keep the full width. The filters sat on a second line, left-aligned, with
    471px of nothing to their right. They now share the label's row, and the
@@ -1289,7 +1290,22 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .news-empty { padding: 2rem 0; }
 .news-empty h2 { font-size:var(--t-h2); }
 .news-empty p { font-size:var(--t-body); margin-top: 0.6rem; }
-.review-head { max-width: 55rem; margin-bottom: 1rem; }
+/* The News view's header is two compartments, like every other view header
+   on the site: the title on the left, the lede on the right. It was capped at
+   55rem, which left the right 800px of a 1211px row empty beside the
+   statement. */
+.review-head { max-width: none; margin-bottom: 1rem; }
+@container view (min-width: 1000px) {
+  .review-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 30rem);
+    gap: 0 2rem;
+    align-items: start;
+  }
+  .review-head > .label { grid-column: 1; grid-row: 1; }
+  .review-head > h1 { grid-column: 1; grid-row: 2; }
+  .review-head > p:not(.label) { grid-column: 2; grid-row: 1 / span 2; align-self: end; }
+}
 .review-verdict h2, .review-section h2, .review-band-head h2, .review-baseline h2, .review-record h2 { font-size:var(--t-h2); line-height: 1.25; letter-spacing: 0; }
 .review-head p, .review-verdict p, .review-baseline p, .review-record p, .review-method p, .review-followup p, .review-mandate p, .review-project-links { font-size:var(--t-body); }
 .review-head .label, .review-note, .review-record .review-note, .review-followup .review-note, .review-baseline .review-note { font-size:var(--t-small); color: var(--muted); }
@@ -1464,9 +1480,36 @@ body .view .review-followup .review-note { max-width: 54ch; }
 .review-city-table th:first-child { text-align: left; }
 .review-city-table small { display: block; font-size:var(--t-small); font-weight: 400; color: var(--muted); }
 .review-city-table button { min-height: 44px; min-width: 44px; border: 0; background: transparent; padding: 0; font-weight: 700; cursor: pointer; text-align: left; text-decoration: underline; text-underline-offset: 3px; }
-.review-band-head { display: flex; justify-content: space-between; gap: 1rem; align-items: center; padding: 0.8rem 0; }
+/* The band head's control sits beside the heading. Pinned to the far edge it
+   left 880px of nothing between itself and the note under the heading — the
+   note and the button were on the same line, with the void between them. */
+.review-band-head { display: flex; justify-content: flex-start; gap: 1rem; align-items: center; padding: 0.8rem 0; }
 .review-band-head > a { font-size:var(--t-body); min-height: 44px; display: inline-flex; align-items: center; white-space: nowrap; }
-.review-record { padding: 1.3rem 0; border-bottom: 1px solid var(--line); }
+/* The record is two columns: what it is on the left, what it claims on the
+   right. It was one column — a headline and a paragraph in a 1211px row closed
+   by a full-width hairline — so 625px of the row, 52% of the content area, was
+   empty on every one of the twenty records on the page. The rule was framing a
+   row the content never filled. */
+.review-record {
+  padding: 1.3rem 0; border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0 2.6rem;
+  align-items: start;
+}
+/* A search result has no claim to put in a second column, so it is a single
+   column, and the list of results is two columns of results. */
+.review-record--plain { grid-template-columns: minmax(0, 1fr) !important; }
+#discovery-results { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 2.4rem; }
+@container view (min-width: 760px) {
+  #discovery-results { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .review-record { grid-template-columns: minmax(0, 1fr) minmax(0, 30rem); }
+  .review-record > .news-story-meta { grid-column: 1; grid-row: 1; }
+  .review-record > h2 { grid-column: 1; grid-row: 2; }
+  .review-record > .review-note { grid-column: 1; grid-row: 3; }
+  .review-record > p:not(.review-note) { grid-column: 2; grid-row: 1 / span 3; align-self: start; }
+  .review-record > details { grid-column: 1 / -1; }
+}
 .review-record h2, .review-record p { max-width: 55rem; overflow-wrap: anywhere; }
 .review-record .news-story-meta > span { max-width: 100%; overflow-wrap: anywhere; }
 .review-record h2 a:hover { text-decoration: underline; text-underline-offset: 3px; }
@@ -1477,7 +1520,16 @@ body .view .review-followup .review-note { max-width: 54ch; }
    wears the house's strong rule instead — 2px --ink, the weight the method
    block above it uses. The padding takes the border's 1px back so the text
    does not move by a near miss (Law VII). */
-.review-record-detail { width: fit-content; max-width: 100%; border-left: 2px solid var(--ink); padding-left: calc(1rem + 1px); }
+/* The expanded analysis is long prose: one column of it in a 1211px row left
+   820px of the row empty. It sets in two columns when the row can carry
+   them, and the metric list runs across the foot of it. */
+.review-record-detail {
+  max-width: 760px; border-left: 2px solid var(--ink); padding-left: calc(1rem + 1px);
+  column-gap: 2.4rem;
+}
+@container view (min-width: 900px) {
+  .review-record-detail { columns: 2; }
+}
 .review-record-detail a { text-decoration: underline; text-underline-offset: 3px; }
 .review-project-links { padding-left: 1.2rem; }
 .review-project-links li { margin: 0.5rem 0; }
@@ -1620,24 +1672,29 @@ body .view .review-followup .review-note { max-width: 54ch; }
 .meeting-summary-copy { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 1.2rem; }
 .meeting-summary-copy > span { color: var(--ink-2); }
 /* The intro block is two compartments — the statement and its lede — like the
-   twins header below it. It was a single left column: a heading, a 359px
-   paragraph and three buttons in a 1574px area, which left more than half
-   the row empty beside the statement. */
-.overview-intro {
-  margin-top: 1.7rem;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 0 2rem;
-}
+   twins header below it. It was a single left column: a heading, a paragraph
+   and three buttons in a 1574px area, which left more than half the row empty
+   beside the statement.
+
+   The grid belongs to .hero-text, not to .overview-intro: the lede is nested
+   inside .hero-text, and a grid places only its own items. An earlier version
+   put the columns on .overview-intro and left the whole block inert. */
+.overview-intro { margin-top: 1.7rem; }
 .overview-intro h2 { font-size:var(--t-h2); line-height: 1.15; letter-spacing: 0; margin-bottom: 0.6rem; }
 .overview-intro .lede { max-width: 52rem; }
-.view .overview-intro .lede { max-width: 65ch; }
+.view .overview-intro .lede { max-width: var(--measure); }
 .overview-intro .hero-cta { margin-top: 0.8rem; }
 @container view (min-width: 1000px) {
-  .overview-intro { grid-template-columns: minmax(0, 1fr) minmax(0, 30rem); }
-  .overview-intro h2 { grid-column: 1; grid-row: 1; }
-  .overview-intro .hero-cta { grid-column: 1; grid-row: 2; }
-  .overview-intro .lede { grid-column: 2; grid-row: 1 / span 2; align-self: start; }
+  .overview-intro .hero-text {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 30rem);
+    gap: 0 2rem;
+    align-items: start;
+  }
+  .overview-intro .hero-text > .label { grid-column: 1; grid-row: 1; }
+  .overview-intro .hero-text > h2 { grid-column: 1; grid-row: 2; }
+  .overview-intro .hero-text > .lede { grid-column: 2; grid-row: 1 / span 2; align-self: start; }
+  .overview-intro .hero-text > .hero-cta { grid-column: 1; grid-row: 3; }
 }
 
 /* ---------- Digital Twins Showcase Row ---------- */
@@ -1895,6 +1952,14 @@ body .view .review-followup .review-note { max-width: 54ch; }
 /* ---------- Innovation-as-a-Service View ---------- */
 .innovation-status-badge {
   text-align: right;
+}
+/* Below the two-column tier the note sits under the title, and a note that
+   is right-aligned under a left-aligned title strands the space between
+   them. It reads from the left there, like everything else on the page.
+   This sits AFTER the base rule on purpose: at equal specificity the later
+   rule wins, and a version of this placed above the base was inert. */
+@media (max-width: 1100px) {
+  .innovation-status-badge { text-align: left; }
 }
 .innovation-status-badge .muted {
   max-width: 22rem;
@@ -2262,7 +2327,10 @@ body .view p.record-actions { max-width: 100%; }
 .gap-panel, .glance-panel { border-top: 1px solid var(--line); padding-top: 1rem; }
 .gap-panel h2 { margin-bottom: 0.7rem; }
 .focus-mini { display: grid; gap: 0.5rem; margin-top: 0.4rem; }
-.glance-note { margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid var(--line-soft); color: var(--ink-2); }
+/* The note is a caption under the chart it annotates: it keeps the house's
+   measure and sits centred under it, so the space beside it is balanced
+   rather than a hole on one side. */
+.glance-note { margin: 1rem auto 0; padding-top: 0.85rem; border-top: 1px solid var(--line-soft); color: var(--ink-2); max-width: var(--measure); }
 
 /* ---------- Bars (shared) ---------- */
 .focus-bars, .stack-bars, .city-load, .growth-bars, .ig-bars, .focus-mini { display: grid; gap: 0.5rem; }
@@ -2313,7 +2381,9 @@ body .view p.record-actions { max-width: 100%; }
    360px of note in a 950px panel. */
 .ascap-panel {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+  /* The notes are two short lines; a 26rem column left 220px of the panel
+     empty beside them. The column takes what the notes need. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 14rem);
   grid-template-areas:
     "label notes"
     "title notes"
@@ -2337,7 +2407,10 @@ body .view p.record-actions { max-width: 100%; }
   .ascap-panel > * { min-width: 0; }
 }
 .ascap-notes p { margin-top: 0; }
-.ascap-panel .pillars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 1rem; }
+/* Six pillars, three columns: the count divides and each column is narrow
+   enough for a pillar's own text. Four columns left the sixth pillar alone on
+   a second row with two empty cells beside it. */
+.ascap-panel .pillars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin-top: 1rem; }
 .ascap-pillar { padding: 0.7rem 0.8rem 0.7rem 0; border-top: 1px solid var(--line-soft); }
 .ascap-pillar b { color: var(--navy); display: block; font-size:var(--t-small); }
 .ascap-pillar span { color: var(--ink-2); font-size:var(--t-body); }
@@ -2586,7 +2659,9 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .def-row b a { color: var(--navy); }
 .def-row span { color: var(--ink-2); font-size:var(--t-body); }
 .def-row em { font-style: normal; color: var(--muted); font-size:var(--t-small); }
-.finance-stat { padding: 0.7rem 0; border-top: 1px solid var(--line-soft); color: var(--ink-2); }
+/* The financing notes run at the house's measure. 70ch of Jost is about 95
+   characters to a line; the measure is about 65. */
+.finance-stat { padding: 0.7rem 0; border-top: 1px solid var(--line-soft); color: var(--ink-2); max-width: var(--measure); }
 .finance-stat:first-child { border-top: 0; }
 .finance-stat b { color: var(--ink); }
 
@@ -2693,6 +2768,13 @@ td { color: var(--ink-2); font-size:var(--t-body); }
   min-width: 0;
   padding-top: 0.2rem;
   align-self: start;
+  /* The two figures keep their own natural ratios — a shared aspect ratio
+     cropped the square frame to a row of torsos and a banner — so their
+     captions started 69px apart at 1440 and 129px apart at 1920. Where the
+     pair sits side by side they are bottom-aligned instead: the captions
+     share a baseline and the ragged edge is the top of the pictures, where
+     it belongs. */
+  align-items: stretch;
   /* No sticky while the block is a single column: a column taller than the
      viewport cannot travel, and the reader would find it pinned to nothing. */
   position: static;
@@ -2702,7 +2784,7 @@ td { color: var(--ink-2); font-size:var(--t-body); }
    the measure, and 65ch is the ceiling the law sets. */
 .view .persp-stance .lede,
 .view .persp-point p,
-.view .persp-quote p { max-width: 65ch; }
+.view .persp-quote p { max-width: var(--measure); }
 
 .persp-figure { margin: 0; }
 .persp-figure img {
@@ -2730,6 +2812,7 @@ td { color: var(--ink-2); font-size:var(--t-body); }
   .persp-aside {
     grid-column: 1 / -1;
     flex-direction: row;
+    align-items: end;
     gap: 1.4rem;
   }
   .persp-aside > * { flex: 1 1 0; min-width: 0; }
@@ -2743,6 +2826,7 @@ td { color: var(--ink-2); font-size:var(--t-body); }
   .persp-aside {
     grid-column: 3;
     flex-direction: row;
+    align-items: end;
     gap: 1.4rem;
     /* Travel with the reading now that the photographs are a column beside
        the argument rather than a band under it. */
@@ -2752,7 +2836,7 @@ td { color: var(--ink-2); font-size:var(--t-body); }
   .persp-aside > * { flex: 1 1 0; min-width: 0; }
 }
 .persp-stance h2 { margin: 0.3rem 0 0.7rem; max-width: 34ch; }
-.persp-stance .lede { max-width: 65ch; }
+.persp-stance .lede { max-width: var(--measure); }
 
 /* The author is a byline, not a heading. It used to be an h3 at --t-h2 —
    exactly the 24px of the stance above it — so a person's name carried the
@@ -3070,12 +3154,20 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 .lib-empty { padding: 2.5rem 0; color: var(--muted); font-size:var(--t-body); }
 
 /* ---------- Responsive ---------- */
+/* The partners' two side blocks follow the CONTENT area, not the viewport.
+   The viewport is the plate plus the rail, so a viewport query collapses a
+   795px plate's two columns to one long before the columns have stopped
+   fitting — and the measure column that results leaves 430px of empty plate
+   beside it. */
+@container view (max-width: 620px) {
+  .partners-split { grid-template-columns: 1fr; }
+}
 @media (max-width: 1100px) {
   .site-nav { align-items: flex-start; flex-direction: column; gap: 0.5rem; }
   .site-nav nav { width: 100%; overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
   .site-nav nav::-webkit-scrollbar { display: none; }
-  .hero, .overview-grid, .history-grid, .cities-layout, .partners-split,
-  .analytics-grid, .framework-grid, .gov-grid, .focus-detail, .info-grid,
+  .hero, .overview-grid, .history-grid, .cities-layout, .info-grid,
+  .analytics-grid, .framework-grid, .gov-grid, .focus-detail,
   .dq-grid { grid-template-columns: 1fr; }
   .footer-content { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .footer-logos { grid-column: 1 / -1; grid-row: 3; }
@@ -3083,7 +3175,7 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
   .le-actions { display: none; }
   .kpi-grid { grid-template-columns: repeat(3, 1fr); }
   .kpi-grid--four { grid-template-columns: repeat(2, 1fr); }
-  .meetings-grid, .ascap-panel .pillars, .partner-cards, .download-grid,
+  .meetings-grid, .partner-cards, .download-grid,
   .document-grid { grid-template-columns: repeat(2, 1fr); }
   .big-projects, .impact-grid { grid-template-columns: 1fr; }
   .big-project:nth-child(odd) { border-right: 0; }
@@ -4206,19 +4298,28 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 }
 
 /* ---- Research tab ---- */
-/* The research view's sections are a 1020px band, centred — the measure the
-   essay view already uses. At full width the paper cards held 359px of text
-   inside a 769px card, so each card had a 410px hole in it and the two
-   columns of the grid floated 430px apart with a gulf between them. The
-   header is in the same band, so the view is one column of content and not a
-   full-width title above a narrower one. */
-.research-section { max-width: 1020px; margin-inline: auto; margin-bottom: 3rem; }
-#view-research .section-head { max-width: 1020px; margin-inline: auto; }
+/* The research view's sections are a centred 860px band — the essay view's
+   measure. At full width the paper cards held 359px of text inside a 769px
+   box, so each card had a 410px hole in it, the two columns of the grid
+   floated 430px apart, and the Insider FAQ's answers ran 175 characters to a
+   line — more than twice the law's ceiling of 75. Inside the band every
+   column carries the house's 46ch measure and fills it. */
+.research-section { max-width: 860px; margin-inline: auto; margin-bottom: 3rem; }
+#view-research .section-head { max-width: 860px; margin-inline: auto; }
+.view .research-theme .research-theme-body,
+.view .research-theme .research-theme-h { max-width: none; }
+/* The FAQ's answers are the widest prose in the system — 943px of column, a
+   175-character line — and they are in divs, which the reading-measure gate
+   does not select. They are a measure column now, like the essay's. */
+.insider-grid { max-width: var(--measure); margin-inline: auto; }
+.view .insider-item > div { max-width: none; }
 .research-section-label { margin-bottom: 1rem; }
 
 .research-theme-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  /* Two columns, not four: eight themes in a 860px band were four cards of
+     205px, which set their text at 28 characters a line. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1px;
   box-shadow: inset 0 0 0 1px var(--rule);
 }
@@ -4469,16 +4570,19 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 }
 
 /* ── "What completed means" panel ───────────────────────────────────────── */
-.comp-summary { display: flex; flex-wrap: wrap; gap: 0.25rem 1.5rem; margin-bottom: 1rem; align-items: baseline; }
+.comp-summary { display: flex; flex-wrap: wrap; gap: 0.25rem 1.5rem; margin-bottom: 1rem; align-items: baseline; max-width: var(--measure); }
 .comp-sum-n { font-size:var(--t-h2); font-weight: 800; margin-right: 0.25rem; }
 .comp-sum-label { font-size:var(--t-small); color: var(--ink-2); flex: 1; min-width: 180px; }
-.comp-list { border-top: 1px solid var(--line-soft); margin-top: 0.75rem; }
-.comp-row { display: grid; grid-template-columns: 110px 1fr 130px; align-items: baseline; gap: 0.6rem; padding: 0.45rem 0; border-bottom: 1px solid var(--line-soft); }
+/* The completed-projects table fills the card it sits in. A ledger whose
+   rows stop 198px short of the card's edge is a hole; the gap between a
+   label and its right-aligned figure is a table convention, not one. */
+.comp-list { border-top: 1px solid var(--line-soft); margin-top: 0.75rem; width: 100%; max-width: 100%; }
+.comp-row { display: grid; grid-template-columns: 110px minmax(0, 1fr) 130px; align-items: baseline; gap: 0.6rem; padding: 0.45rem 0; border-bottom: 1px solid var(--line-soft); }
 .comp-city { font-size:var(--t-small); font-weight: 700; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .comp-proj { font-size:var(--t-body); color: var(--ink-2); }
 .comp-type { font-size:var(--t-micro); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; text-align: right; }
 @media (max-width: 600px) {
-  .comp-row { grid-template-columns: 80px 1fr; }
+  .comp-row { grid-template-columns: 80px minmax(0, 1fr); }
   .comp-type { grid-column: 1 / -1; text-align: left; }
 }
 
@@ -4896,12 +5000,17 @@ body .view .iaas-row-contact .label { width: fit-content; }
    This compact region preserves the complete method, caption and open action. */
 .iaas-row-hero {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 34rem));
+  /* The copy keeps its measure; the video takes what is left. The row was
+     fit-content and stopped 664px short of the content area at 1920, with
+     the right third of the page empty from the header down to the next
+     row's rule. The video is a fixed height and crops to its frame, so it
+     can widen without the composition changing shape. */
+  grid-template-columns: minmax(0, 34rem) minmax(0, 1fr);
   grid-template-areas: "copy media" "steps media";
   gap: 1rem 2rem;
   align-items: start;
   align-content: start;
-  width: fit-content;
+  width: 100%;
   max-width: 100%;
   border-top: 0;
   margin-top: 1.6rem;
@@ -4967,7 +5076,7 @@ body .view .iaas-hero-media figcaption {
   font-size: var(--t-small);
   line-height: 1.5;
   color: var(--muted);
-  max-width: 70ch;
+  max-width: var(--measure);
 }
 @container view (max-width: 48rem) {
   body .view .iaas-row-hero {
@@ -5225,12 +5334,21 @@ body .view .iaas-hero-media figcaption {
 }
 
 /* ── What is not published ────────────────────────────────────────────────── */
+/* Six rows, two columns at wide widths. They were one column: a 9rem label
+   and a 359px paragraph inside a 1211px row, so 720px — 59% of the content
+   area — was empty beside every row, for the whole list's height. Six
+   divides by two, so the list reads in pairs without an orphan. */
 .rec-uncounted { border-top: 1px solid var(--line); }
+.rec-uncounted-list { display: grid; grid-template-columns: minmax(0, 1fr); column-gap: 2.4rem; }
+@container view (min-width: 760px) {
+  .rec-uncounted-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 .rec-uncounted-row {
   display: grid; grid-template-columns: 9rem minmax(0, 1fr);
   gap: 1.2rem; align-items: start;
   padding: 0.9rem 0; border-bottom: 1px solid var(--line-soft);
 }
+.view .rec-uncounted-row p { max-width: var(--measure); }
 .rec-uncounted-num {
   font-family: var(--mono); font-size:var(--t-body); color: var(--red);
   margin: 0; font-variant-numeric: tabular-nums; line-height: 1.2;
@@ -5401,14 +5519,14 @@ body .view .iaas-hero-media figcaption {
 body .view .rec-bridge p {
   margin: 0 0 0.4rem;
   color: var(--ink-2);
-  /* The rule that says 75ch has to outrank the house's prose measure.
-     `body .view :is(p, li, ...)` is (0,1,2) and a plain `.rec-bridge p`
-     is (0,1,1), so the declared cap never applied: the paragraph stood
-     at 358.8px — 46ch — inside a 767.5px column at 2103, 408.7px of the
-     column empty, and the row's ink reached 0.7403 of its own width
-     while every other top-level section reached 1.0000. The routes list
-     already carries this fix; the bridge did not. */
-  max-width: 75ch;
+  /* The house's measure, not a wider one. `ch` is the width of a zero, and in
+     Jost a zero is wider than the average character: 46ch holds about 61
+     characters, while 75ch held about 100 — a hundred-character line, twice
+     the law's ceiling of 75, and the rule that said 75ch had to outrank the
+     house's prose measure was the thing that broke it. The band takes the
+     width of the paragraph's own measure and the rule frames the statement
+     instead of straddling empty page. */
+  max-width: var(--measure);
 }
 .rec-bridge .text-button { justify-self: start; }
 
@@ -5472,7 +5590,7 @@ body .view .rec-bridge p {
   .rec-urban-src { grid-column: 2; grid-row: 3; }
 }
 .rec-urban-lede {
-  max-width: 65ch; margin: 0 0 1rem; font-size:var(--t-body); color: var(--ink-2);
+  max-width: var(--measure); margin: 0 0 1rem; font-size:var(--t-body); color: var(--ink-2);
 }
 .rec-urban-table { border: 1px solid var(--line); max-width: none; }
 .rec-urban-row {
@@ -5502,11 +5620,11 @@ body .view .rec-bridge p {
   border-top: 1px solid var(--line-soft);
 }
 .view .rec-urban .rec-urban-read {
-  max-width: 65ch; margin: 0 0 0.5rem; font-size:var(--t-body);
+  max-width: var(--measure); margin: 0 0 0.5rem; font-size:var(--t-body);
   line-height: 1.6; color: var(--ink-2);
 }
 .rec-urban-read em { color: var(--ink); font-style: italic; }
-.view .rec-urban .rec-urban-src { margin: 0; max-width: 65ch; font-size:var(--t-small); color: var(--muted); }
+.view .rec-urban .rec-urban-src { margin: 0; max-width: var(--measure); font-size:var(--t-small); color: var(--muted); }
 
 /* ── First-hand witness disclosure ────────────────────────────────────────── */
 .rec-witness {
@@ -6307,7 +6425,7 @@ body .view .evidence-routes li { max-width: none; }
 }
 .site-notice { text-align: left; }
 .site-notice summary { cursor: pointer; color: var(--ink-2); }
-.site-notice > div { max-width: 65ch; padding: .5rem 0; }
+.site-notice > div { max-width: var(--measure); padding: .5rem 0; }
 .site-nav nav { min-width: 0; gap: .7rem; }
 .finder-open { flex-shrink: 0; background: transparent; border: 0; color: var(--ink); min-height: 44px; padding: .3rem; cursor: pointer; }
 .finder-open kbd { border: 1px solid var(--line-soft); padding: 0 .35rem; margin-left: .3rem; font: inherit; }
@@ -6327,7 +6445,7 @@ body .view .evidence-routes li { max-width: none; }
 .finder-kind { color: var(--amber); font-size: var(--t-small); }
 .skip-link { position: fixed; top: .5rem; left: .5rem; z-index: 300; transform: translateY(-200%); background: var(--ink); color: var(--bg); padding: .6rem; }
 .skip-link:focus { transform: none; }
-.privacy-note { max-width: 65ch; margin: 1rem 0; padding-left: .8rem; border-left: 2px solid var(--line); }
+.privacy-note { max-width: var(--measure); margin: 1rem 0; padding-left: .8rem; border-left: 2px solid var(--line); }
 @media (max-width: 900px) {
   .evidence-opening { grid-template-columns: 1fr; gap: 1rem; }
   .evidence-opening h1 { font-size: var(--t-figure); max-width: 15ch; }
