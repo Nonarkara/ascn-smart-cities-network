@@ -566,15 +566,15 @@ function renderPerspective() {
       <p class="label">${tx("The stance")}</p>
       <h2>${esc(tx(st.headline))}</h2>
       <p class="lede">${esc(tx(st.body))}</p>
-    </div>
-    <div class="persp-article">
       <p class="persp-byline">${esc(p.author)}</p>
       <p class="persp-role">${esc(p.role)}\u00A0· ${esc(p.credentials)}</p>
-      <ol class="persp-points">${p.points.map((pt, i) => `<li class="persp-point"><span class="persp-n">${String(i + 1).padStart(2, "0")}</span><p><b>${esc(tx(pt.h))}</b> ${esc(tx(pt.t))}</p></li>`).join("")}</ol>
       <blockquote class="persp-quote">
         <p>${esc(tx(p.pull_quote))}</p>
         <cite>${esc(p.author)}, <i>The ASEAN Magazine</i>, Issue 14, ${esc(p.year)}</cite>
       </blockquote>
+    </div>
+    <div class="persp-article">
+      <ol class="persp-points">${p.points.map((pt, i) => `<li class="persp-point"><span class="persp-n">${String(i + 1).padStart(2, "0")}</span><p><b>${esc(tx(pt.h))}</b> ${esc(tx(pt.t))}</p></li>`).join("")}</ol>
       <p class="persp-cta"><a href="${esc(safeUrl(p.url))}" target="_blank" rel="noopener noreferrer">${tx("Read the essay in")} <i>The ASEAN Magazine</i>${tx(", Issue 14")} <span aria-hidden="true">↗</span></a></p>
     </div>
     <aside class="persp-aside">

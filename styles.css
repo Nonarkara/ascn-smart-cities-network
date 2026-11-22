@@ -1126,9 +1126,47 @@ h3 { margin-bottom: 0; font-size:var(--t-body); line-height: 1.25; }
 .lede { max-width: 38rem; margin-bottom: 0; color: var(--ink-2); font-size:var(--t-body); }
 .muted { color: var(--muted); }
 
-.section-head { max-width: 52rem; margin-bottom: 1.4rem; }
+/* The header is two compartments, not a narrow column stranded in a wide
+   page. It was capped at 52rem, which left 380–720px of the content area
+   empty beside it on six views — the same stranded right edge the twins
+   header was already repaired for. The title block keeps the left and the
+   lede takes the right, so the header fills the grid it sits in. */
+.section-head:not(.split):not(.projects-head) {
+  max-width: none;
+  margin-bottom: 1.4rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0 2rem;
+}
+@container view (min-width: 1000px) {
+  .section-head:not(.split):not(.projects-head) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 30rem);
+  }
+  .section-head:not(.split):not(.projects-head) > .label { grid-column: 1; grid-row: 1; }
+  .section-head:not(.split):not(.projects-head) > h1 { grid-column: 1; grid-row: 2; }
+  /* The lede sits at the foot of the title block's height, so its last line
+     lands on the headline's last line rather than floating at the top. */
+  .section-head:not(.split):not(.projects-head) > .lede {
+    grid-column: 2; grid-row: 1 / span 2; align-self: end;
+  }
+}
 .section-head .lede { margin-top: 0.6rem; }
-.section-head.split { max-width: none; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+/* The split headers put a note or a control group on the right. It used to
+   float at the page edge with several hundred pixels of gap between it and
+   the title, so the right column made no claim on the width. It has a track
+   now, and the note fills it. */
+.section-head.split:not(.projects-head) {
+  max-width: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem 2rem;
+  align-items: start;
+}
+@container view (min-width: 1000px) {
+  .section-head.split:not(.projects-head) { grid-template-columns: minmax(0, 1fr) minmax(0, 26rem); }
+  .innovation-status-badge { text-align: left; }
+  .innovation-status-badge .muted { max-width: none; }
+}
 /* The projects head is a title, a row of filters and a heading that has to
    keep the full width. The filters sat on a second line, left-aligned, with
    471px of nothing to their right. They now share the label's row, and the
@@ -1581,10 +1619,26 @@ body .view .review-followup .review-note { max-width: 54ch; }
 }
 .meeting-summary-copy { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 1.2rem; }
 .meeting-summary-copy > span { color: var(--ink-2); }
-.overview-intro { margin-top: 1.7rem; }
+/* The intro block is two compartments — the statement and its lede — like the
+   twins header below it. It was a single left column: a heading, a 359px
+   paragraph and three buttons in a 1574px area, which left more than half
+   the row empty beside the statement. */
+.overview-intro {
+  margin-top: 1.7rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0 2rem;
+}
 .overview-intro h2 { font-size:var(--t-h2); line-height: 1.15; letter-spacing: 0; margin-bottom: 0.6rem; }
 .overview-intro .lede { max-width: 52rem; }
+.view .overview-intro .lede { max-width: 65ch; }
 .overview-intro .hero-cta { margin-top: 0.8rem; }
+@container view (min-width: 1000px) {
+  .overview-intro { grid-template-columns: minmax(0, 1fr) minmax(0, 30rem); }
+  .overview-intro h2 { grid-column: 1; grid-row: 1; }
+  .overview-intro .hero-cta { grid-column: 1; grid-row: 2; }
+  .overview-intro .lede { grid-column: 2; grid-row: 1 / span 2; align-self: start; }
+}
 
 /* ---------- Digital Twins Showcase Row ---------- */
 .twins-showcase {
@@ -2608,62 +2662,48 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .method-row span { color: var(--ink-2); font-size:var(--t-body); }
 
 /* ---------- Perspective (featured article) ---------- */
-/* Stacked, not two columns. The stance is a short declaration and the essay
-   is four times its length; side by side, every column ratio still left the
-   stance column half empty and the block read as unfinished. A thesis gets
-   the full measure and reads as a statement, and the essay sits beneath it
-   under its own rule. The void is not restyled — it is removed. */
+/* Three compartments, and they take the full width of the content area.
+   The previous build set the pair's tracks at 46ch + 440px and centred that
+   pair inside a 1211px column: 184px of dead page down the left of the essay
+   and the same again on the right, for the 900px the block is tall. The rule
+   above the block still spanned the whole column, so the composition promised
+   a full-width band and then stopped halfway across the screen.
+
+   The two text columns are the house's own running line — 46ch, the measure
+   every other block on the site is set to — and the photographs take what is
+   left of the column, side by side. Stacked, two figures at that width were
+   twice the height of the argument they sit beside; side by side they end
+   within 100px of it, and the block's three columns end together. */
 .perspective {
   margin-top: 2.6rem; border-top: 2px solid var(--ink); padding-top: 1.5rem;
-  /* Two columns. The measure fix capped the prose at 72ch and left the right
-     half of a 1248px column empty — about 900px of vertical void beside the
-     argument. Narrowing the text and stopping there moved the imbalance
-     rather than resolving it: the page just stopped halfway across.
-
-     The second column carries photographs the site already publishes with
-     verified captions (the same two figures used in the full essay), so the
-     eye gets somewhere to land and the reader sees the network the essay is
-     about. Nothing here is invented — these are existing assets with existing
-     captions, reused verbatim.
-
-     Tracks are sized to content and packed left, matching the twins
-     directory, so the leftover space sits at the page edge where it reads as
-     margin instead of as a hole. */
-  /* Fill the column. This was minmax(0, var(--measure)) 360px packed left with
-     justify-content: start, which put a 498px + 360px grid inside a 1248px
-     container and left roughly 360px of dead page at the right edge — the
-     composition stopped halfway across the screen, which reads as a mistake
-     rather than as margin. The text track now takes the slack and the prose
-     keeps its own 65ch cap inside it, so the measure rule and the grid rule
-     stop fighting each other. */
-  /* Text keeps its measure, the photographs take a fixed 440px, and the pair is
-     centred. Two earlier attempts each fixed the void by moving it: left-packed
-     left ~360px dead at the page edge, and letting the photos absorb the slack
-     pushed them to 704px, where two large frames outweighed a thin column of
-     argument. Centring puts the same slack on both sides, which reads as a
-     margin rather than as a hole. */
+  /* The tracks are sized in `ch`, so the grid has to answer to the same font
+     the prose does — otherwise 46ch here and 46ch in the measure rule are two
+     different widths and the columns stop matching the prose they hold. */
+  font-size: var(--t-body);
   display: grid;
-  grid-template-columns: minmax(0, var(--measure)) 440px;
-  justify-content: center;
-  gap: 2.2rem 3rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.6rem 2.2rem;
+  align-items: start;
 }
-.persp-stance, .persp-article { grid-column: 1; }
+.persp-stance, .persp-article, .persp-aside { grid-column: 1; }
 .persp-aside {
-  grid-column: 2;
-  grid-row: 1 / span 2;
   display: flex;
   flex-direction: column;
   gap: 1.4rem;
   min-width: 0;
   padding-top: 0.2rem;
-  /* Travel with the reading. The text column runs about 1600px; two figures
-     cover roughly half that, so a static aside simply relocates the void from
-     beside the argument to below it. Sticky keeps the photographs in view for
-     the whole passage without inventing a third image to pad the column. */
   align-self: start;
-  position: sticky;
-  top: 5rem;
+  /* No sticky while the block is a single column: a column taller than the
+     viewport cannot travel, and the reader would find it pinned to nothing. */
+  position: static;
 }
+/* The prose fills its column here. The global 46ch cap exists to stop prose
+   running the full width of a wide track; inside these columns the column IS
+   the measure, and 65ch is the ceiling the law sets. */
+.view .persp-stance .lede,
+.view .persp-point p,
+.view .persp-quote p { max-width: 65ch; }
+
 .persp-figure { margin: 0; }
 .persp-figure img {
   display: block;
@@ -2679,28 +2719,45 @@ td { color: var(--ink-2); font-size:var(--t-body); }
   color: var(--muted);
   padding-top: 0.45rem;
 }
-@media (max-width: 1080px) {
-  .perspective { grid-template-columns: minmax(0, 1fr); }
+/* The plate is the viewport minus the rail, so a viewport query measures the
+   wrong thing for anything living in here — these are the content area's own
+   widths, and the house already answers to them this way. */
+@container view (min-width: 760px) {
+  /* Two compartments of argument, the photographs as a band beneath them. */
+  .perspective { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .persp-stance { grid-column: 1; }
+  .persp-article { grid-column: 2; }
   .persp-aside {
-    grid-column: 1;
-    grid-row: auto;
+    grid-column: 1 / -1;
     flex-direction: row;
     gap: 1.4rem;
-    /* Sticky reads as a bug once the column is taller than the viewport. */
-    position: static;
   }
   .persp-aside > * { flex: 1 1 0; min-width: 0; }
 }
-@media (max-width: 620px) {
-  .persp-aside { flex-direction: column; }
+@container view (min-width: 1150px) {
+  /* Three compartments: the stance, the argument, and the photographs. The
+     two text columns are the measure itself, and the photographs take what
+     is left — two figures side by side, so their height stays matched to
+     the argument's instead of running twice as tall as the text. */
+  .perspective { grid-template-columns: minmax(0, 46ch) minmax(0, 46ch) minmax(0, 1fr); }
+  .persp-aside {
+    grid-column: 3;
+    flex-direction: row;
+    gap: 1.4rem;
+    /* Travel with the reading now that the photographs are a column beside
+       the argument rather than a band under it. */
+    position: sticky;
+    top: 5rem;
+  }
+  .persp-aside > * { flex: 1 1 0; min-width: 0; }
 }
 .persp-stance h2 { margin: 0.3rem 0 0.7rem; max-width: 34ch; }
-.persp-stance .lede { max-width: var(--measure); }
+.persp-stance .lede { max-width: 65ch; }
 
 /* The author is a byline, not a heading. It used to be an h3 at --t-h2 —
    exactly the 24px of the stance above it — so a person's name carried the
    same weight as the argument, and the block had no focal point at all. */
-.persp-article { border-top: 1px solid var(--line); padding-top: 1.5rem; max-width: var(--measure); }
+.persp-article { border-top: 1px solid var(--line); padding-top: 1.5rem; max-width: none; }
 .persp-byline {
   margin: 0 0 0.15rem; color: var(--ink); font-size: var(--t-lede);
   font-weight: 700; letter-spacing: 0.01em;
@@ -2848,7 +2905,14 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .essay-body > .essay-section > .essay-footnotes > p,
 .essay-body > .essay-section > .essay-fn,
 .essay-body > .essay-section > .essay-fn-label { margin-inline: auto; max-width: var(--measure); }
-.essay-body > .essay-section > .essay-diagram,
+.essay-body > .essay-section > .essay-diagram {
+  /* The diagram was left-aligned in a 1020px section while the prose sits
+     centred in the middle 359px of it, so the chart hung off the left edge
+     and the right half of the section stood empty for the height of the
+     chart. It now shares the prose's centre line. */
+  max-width: 680px;
+  margin-inline: auto;
+}
 .essay-body > .essay-section > .essay-ref-grid { max-width: 1020px; }
 .essay-section { padding: 2rem 0; border-top: 1px solid var(--line-soft); }
 .essay-section:first-child { border-top: 0; padding-top: 0; }
@@ -3025,8 +3089,6 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
   .big-project:nth-child(odd) { border-right: 0; }
   .info-card.wide { grid-column: auto; }
   .hero-feature { order: -1; }
-  .perspective { grid-template-columns: 1fr; gap: 1.4rem; }
-  .persp-article { border-left: 0; padding-left: 0; padding-top: 1rem; border-top: 1px solid var(--line-soft); }
   .lib-items { grid-template-columns: 1fr; }
 }
 
@@ -4144,7 +4206,14 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 }
 
 /* ---- Research tab ---- */
-.research-section { margin-bottom: 3rem; }
+/* The research view's sections are a 1020px band, centred — the measure the
+   essay view already uses. At full width the paper cards held 359px of text
+   inside a 769px card, so each card had a 410px hole in it and the two
+   columns of the grid floated 430px apart with a gulf between them. The
+   header is in the same band, so the view is one column of content and not a
+   full-width title above a narrower one. */
+.research-section { max-width: 1020px; margin-inline: auto; margin-bottom: 3rem; }
+#view-research .section-head { max-width: 1020px; margin-inline: auto; }
 .research-section-label { margin-bottom: 1rem; }
 
 .research-theme-grid {
@@ -4807,6 +4876,19 @@ body .view .iaas-row-contact .label { width: fit-content; }
 }
 .iaas-row-head .lede { max-width: 52rem; margin: 0; }
 .iaas-row-head .label { margin: 0; color: var(--muted); }
+/* Two compartments, like the twins header: the statement on the left and the
+   lede on the right. The stack left the right half of a 1574px row empty for
+   the height of the heading. */
+@container view (min-width: 1000px) {
+  .iaas-row-head > div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 30rem);
+    gap: 0 2rem;
+  }
+  .iaas-row-head > div > .label { grid-column: 1; grid-row: 1; }
+  .iaas-row-head > div > h2 { grid-column: 1; grid-row: 2; }
+  .iaas-row-head > div > .lede { grid-column: 2; grid-row: 1 / span 2; align-self: end; }
+}
 
 /* ── Row 00: the hero ─────────────────────────────────────────────────────── */
 /* Keep the explanation and its method in one reading column. The video
@@ -5369,11 +5451,30 @@ body .view .rec-bridge p {
 }
 
 /* ── Urbanisation comparison ──────────────────────────────────────────────── */
-.rec-urban { margin-top: 1.8rem; }
-.rec-urban-lede {
-  max-width: 52rem; margin: 0 0 1rem; font-size:var(--t-body); color: var(--ink-2);
+/* The urban block is two columns: the data on the left, the reading on the
+   right. It was a single narrow stack — a 544px table and a 359px paragraph
+   in a 1211px column — which left 764px of the content area empty for the
+   424px the block is tall. The lede still spans the full width, because it
+   introduces both halves. */
+.rec-urban {
+  margin-top: 1.8rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem 2.4rem;
+  align-items: start;
 }
-.rec-urban-table { border: 1px solid var(--line); max-width: 34rem; }
+@container view (min-width: 900px) {
+  .rec-urban { grid-template-columns: minmax(0, 1fr) minmax(0, 30rem); }
+  .rec-urban-lede { grid-column: 1 / -1; grid-row: 1; }
+  .rec-urban-bars { grid-column: 1; grid-row: 2; }
+  .rec-urban-table { grid-column: 1; grid-row: 3; }
+  .rec-urban-read { grid-column: 2; grid-row: 2; }
+  .rec-urban-src { grid-column: 2; grid-row: 3; }
+}
+.rec-urban-lede {
+  max-width: 65ch; margin: 0 0 1rem; font-size:var(--t-body); color: var(--ink-2);
+}
+.rec-urban-table { border: 1px solid var(--line); max-width: none; }
 .rec-urban-row {
   display: flex; justify-content: space-between; gap: 1rem;
   padding: 0.45rem 0.8rem; font-size:var(--t-body);
@@ -5393,15 +5494,19 @@ body .view .rec-bridge p {
 }
 .rec-urban-lead span:last-child { color: var(--red); }
 .rec-urban-row-asean {
+  /* No wash. The row is a footnote under the ledger, and a filled strip
+     1151px wide holding one line of text is a frame that claims far more
+     than it holds — the spatial audit's frame check caught it at 1920 and
+     above. The hairline above it still separates it from the data. */
   display: block; font-size:var(--t-small); color: var(--muted);
-  background: var(--surface); border-top: 1px solid var(--line-soft);
+  border-top: 1px solid var(--line-soft);
 }
-.rec-urban-read {
-  max-width: 56rem; margin: 1.1rem 0 0.5rem; font-size:var(--t-body);
+.view .rec-urban .rec-urban-read {
+  max-width: 65ch; margin: 0 0 0.5rem; font-size:var(--t-body);
   line-height: 1.6; color: var(--ink-2);
 }
 .rec-urban-read em { color: var(--ink); font-style: italic; }
-.rec-urban-src { margin: 0; font-size:var(--t-small); color: var(--muted); }
+.view .rec-urban .rec-urban-src { margin: 0; max-width: 65ch; font-size:var(--t-small); color: var(--muted); }
 
 /* ── First-hand witness disclosure ────────────────────────────────────────── */
 .rec-witness {
@@ -5569,10 +5674,20 @@ button:active { transform: scale(0.97); }
    page: five columns across 5.3:1 of landscape, with the counts set at the
    bottom of the ramp. A reader does not experience that as a chart. Constrain
    the measure, then let the numbers carry the graphic. */
+/* The chart and the reading it supports sit side by side. They were a stack
+   of narrow blocks — a 672px chart in a 1574px column — so the right 1000px
+   stood empty for the height of the chart. */
 .rec-chart {
   display: flex; align-items: flex-end; gap: 0.75rem;
   max-width: 42rem; height: 16rem; padding: 0 0.5rem; margin-top: 1.2rem;
   border-bottom: 2px solid var(--line);
+}
+.rec-stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.6rem 2.4rem; }
+@container view (min-width: 1000px) {
+  .rec-stack { grid-template-columns: minmax(0, 1fr) minmax(0, 30rem); }
+  .rec-chart { grid-column: 1; grid-row: 1; max-width: none; }
+  .rec-caption { grid-column: 1; grid-row: 2; }
+  .rec-read { grid-column: 2; grid-row: 1 / span 2; }
 }
 .rec-col {
   flex: 1 1 0; margin: 0; display: flex; flex-direction: column;
@@ -5628,7 +5743,7 @@ button:active { transform: scale(0.97); }
 /* Urbanisation bars sit above the table and read faster. Eleven ranked rows
    are a list, not a banner: a full-width version strands each label ~700px
    from its own bar and shrinks the state names to 11px. */
-.rec-urban-bars { max-width: 38rem; margin: 0 0 1rem; }
+.rec-urban-bars { max-width: none; margin: 0 0 1rem; }
 .rec-ubar {
   /* Name column sized to the longest name, not a fraction of the whole — a
      1.4fr column reserves ~230px for a 95px label and strands the bar. */
@@ -5653,6 +5768,9 @@ button:active { transform: scale(0.97); }
   .rec-urban-bars { max-width: 100%; }
   .rec-caption { max-width: 100%; }
   .rec-legend { display: flex; margin-left: 0; }
+  /* The name column reserved 128px for names that are 78px long at their
+     widest, and the 44px left over ran down the column beside every bar. */
+  .rec-ubar { grid-template-columns: 5.5rem minmax(3rem, 1fr) 3rem; gap: 0.45rem; }
 }
 
 /* ══════════════════════════════════════════════════════════════════════════

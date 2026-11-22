@@ -27,3 +27,10 @@ MSH is a standing design law: geometry must serve reading and action. Run
 `npm run audit:spatial` at the documented viewports, inspect the screenshots,
 and record chrome cost, task visibility, hierarchy, preservation and remaining
 findings. A numerical pass alone is not a visual pass. Keep screenshots local.
+
+Composition is a release gate too. `npm run audit:composition` measures every
+view for empty bands beside content — a column that ran out while its neighbour
+ran on — and fails on an interior band or on a heavy rule that crosses one.
+`tests/composition.spec.mjs` is its falsifier: plant the defect, prove the
+gate goes red, restore. Do not widen the gate's thresholds to make a release
+pass; repair the layout or record the reason in `AUDIT-2026-11-22.md`.

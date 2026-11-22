@@ -54,6 +54,7 @@ try {
   for (const [name, command, args] of [
     ['Browser flows and incoming-data regressions', 'npx', ['playwright', 'test']],
     ['Spatial geometry and map readiness', 'npm', ['run', 'audit:spatial']],
+    ['Composition bands — empty content area beside content', 'npm', ['run', 'audit:composition']],
     ['All-view visual captures', 'npm', ['run', 'audit:visual']],
     ['Complete reading-path captures', 'npm', ['run', 'audit:reading']],
   ]) {
