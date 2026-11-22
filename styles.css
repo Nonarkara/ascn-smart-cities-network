@@ -2739,7 +2739,11 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .method-row { padding: 0.65rem 0; border-top: 1px solid var(--line-soft); }
 .method-row:first-child { border-top: 0; }
 .method-row b { display: block; color: var(--ink); }
-.method-row span { color: var(--ink-2); font-size:var(--t-body); }
+.method-row span {
+  /* A block, so the cap bites: max-width does nothing to an inline box, and
+     the description ran 104 characters to a line. */
+  display: block; color: var(--ink-2); font-size:var(--t-body); max-width: var(--measure);
+}
 
 /* ---------- Perspective (featured article) ---------- */
 /* Three compartments, and they take the full width of the content area.
@@ -5339,19 +5343,55 @@ body .view .iaas-hero-media figcaption {
 }
 
 /* ── What is not published ────────────────────────────────────────────────── */
-/* Six rows, two columns at wide widths. They were one column: a 9rem label
-   and a 359px paragraph inside a 1211px row, so 720px — 59% of the content
-   area — was empty beside every row, for the whole list's height. Six
-   divides by two, so the list reads in pairs without an orphan. */
+/* Three entries, three compartments.
+   They were one column: a 9rem label and a 359px paragraph inside a 1211px
+   row, so 720px — 59% of the content area — was empty beside every row, for
+   the whole list's height.
+   They were then two columns, which closed that hole for two of the three and
+   stranded the third: the DOM holds TWO LISTS OF THREE, not one list of six.
+   Letting the third take the row instead moves the hole rather than closing
+   it — the row is then 1211px wide with a 359px body under it and 735px of
+   air beside it.
+   The house's own rule is that the column count divides the count: five
+   entries in the twin directory go five across or one across, never three and
+   two. So three entries go three across, and every compartment holds the
+   house's whole measure. The number rides above the title rather than in a
+   rail, because a rail would spend a third of a 378px compartment and cut its
+   measure to 44 characters. */
 .rec-uncounted { border-top: 1px solid var(--line); }
 .rec-uncounted-list { display: grid; grid-template-columns: minmax(0, 1fr); column-gap: 2.4rem; }
-@container view (min-width: 760px) {
-  .rec-uncounted-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
 .rec-uncounted-row {
-  display: grid; grid-template-columns: 9rem minmax(0, 1fr);
-  gap: 1.2rem; align-items: start;
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.35rem; align-items: start;
   padding: 0.9rem 0; border-bottom: 1px solid var(--line-soft);
+}
+/* The title and the body become the row's own items, so a row can set them
+   side by side when the row is wide enough to carry both. */
+.rec-uncounted-row > div { display: contents; }
+/* A plate that can pay for the label: it rides in a rail and the body fills
+   what is left. Below that the label stands above the title. */
+@container view (min-width: 383px) and (max-width: 537px) {
+  .rec-uncounted-row { grid-template-columns: 9rem minmax(0, 1fr); gap: 1.2rem; }
+  .rec-uncounted-row > div { display: block; }
+}
+/* Two compartments. The count does not divide two, so the third entry takes
+   the row — as a band with its title beside its body, the shape the section
+   header above already uses, so the row is filled rather than half empty. */
+@container view (min-width: 538px) and (max-width: 794px) {
+  .rec-uncounted-list { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1.2rem; }
+  .rec-uncounted-list > .rec-uncounted-row:last-child {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 2.4rem; row-gap: 0.35rem;
+    grid-template-areas: "num num" "title body";
+  }
+  .rec-uncounted-list > .rec-uncounted-row:last-child .rec-uncounted-num { grid-area: num; }
+  .rec-uncounted-list > .rec-uncounted-row:last-child h3 { grid-area: title; }
+  .rec-uncounted-list > .rec-uncounted-row:last-child > div > p { grid-area: body; }
+}
+/* Three compartments: the count divides the columns, so no entry strands and
+   every compartment holds the house's whole measure. */
+@container view (min-width: 795px) {
+  .rec-uncounted-list { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 1.2rem; }
 }
 .view .rec-uncounted-row p { max-width: var(--measure); }
 .rec-uncounted-num {
@@ -5540,7 +5580,6 @@ body .view .rec-bridge p {
 }
 @media (max-width: 720px) {
   .rec-split, .rec-question-grid { grid-template-columns: minmax(0, 1fr); }
-  .rec-uncounted-row { grid-template-columns: minmax(0, 1fr); gap: 0.3rem; }
 }
 
 /* ── Founding timeline ────────────────────────────────────────────────────── */
@@ -6008,7 +6047,9 @@ body .view :is(h1, h2, h3, h4) {
 /* A note that runs in columns takes its measure from the column, so the
    global cap on prose comes off it. */
 body .view p.col-flow,
-body .view .ig-note.col-flow { max-width: none; }
+/* The framework's note ran 82 characters a line: `max-width: none` let it
+   fill a column the law's measure does not allow. */
+body .view .ig-note.col-flow { max-width: var(--measure); }
 @container view (max-width: 709px) {
   .col-flow { max-width: 75ch; }
 }

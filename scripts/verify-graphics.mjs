@@ -375,11 +375,19 @@ try {
   // blocks ran past 90 characters and many ran to 208, because every section
   // stretched to the full 1248px column. This sweeps all views so a future
   // section cannot reintroduce it.
-  const { page } = await newPage();
-  const views = ["overview", "innovation", "record", "news", "history", "cities",
-    "projects", "framework", "partners", "insights", "library", "research"];
+  // The sweep runs at the three viewports the law names, not at one. A line
+  // that is 73 characters at 1280 is 77 at 1440: the layout that fits the
+  // measure on one screen breaks it on the next, and a sweep at a single
+  // width cannot see that.
+  const sweepViewports = [{ width: 1440, height: 900 }, { width: 1024, height: 768 }, { width: 390, height: 844 }];
+  const views = ["overview", "innovation", "record", "news", "news/archive",
+    "news/discovery", "news/regional", "archive", "history", "cities",
+    "projects", "framework", "partners", "contacts", "insights", "data",
+    "research", "essay", "ascn9"];
   let worst = { chars: 0, where: "—" };
   const offenders = [];
+  for (const vp of sweepViewports) {
+  const { page } = await newPage(vp);
   for (const v of views) {
     await page.goto(`${BASE}/#${v}`, { waitUntil: "networkidle" });
     await page.waitForTimeout(500);
@@ -402,18 +410,22 @@ try {
       // view's Insider FAQ is a stack of divs: the widest prose on the site,
       // 175 characters to a line, and a sweep that selects only p/li/dd/
       // blockquote/figcaption never saw it.
-      const BLOCK = new Set(["P","DIV","UL","OL","LI","SECTION","ARTICLE","H1","H2","H3","H4","H5","H6","TABLE","FIGURE","BLOCKQUOTE","DL","DD","DT","PRE","FORM","ASIDE","NAV","HEADER","FOOTER","MAIN"]);
+      // A prose block is an element whose text is its OWN: no block-level
+      // descendant, and not a row of columns. A flex row's text is its
+      // children's text laid out side by side, and measuring the row measures
+      // the whole row as one sentence — 139 characters for a strip of four
+      // filter labels.
       const isProse = (el) => {
-        const tag = el.tagName;
-        if (["P","LI","DD","BLOCKQUOTE","FIGCAPTION"].includes(tag)) return true;
-        if (tag !== "DIV") return false;
-        // Only a div whose content is inline text: a div that holds a heading
-        // or a paragraph is a layout container, not a paragraph.
-        for (const child of el.children) if (BLOCK.has(child.tagName)) return false;
-        for (const node of el.querySelectorAll("*")) if (BLOCK.has(node.tagName)) return false;
+        const cs = getComputedStyle(el);
+        if (cs.display.includes("flex") || cs.display.includes("grid")) return false;
+        for (const node of el.querySelectorAll("*")) {
+          const d = getComputedStyle(node).display;
+          if (d === "block" || d === "flex" || d === "grid" || d === "list-item" ||
+              d === "table" || d === "table-row" || d === "table-cell") return false;
+        }
         return true;
       };
-      for (const el of document.querySelectorAll("p, li, dd, blockquote, figcaption, div")) {
+      for (const el of document.querySelectorAll("p, li, dd, blockquote, figcaption, div, span")) {
         if (!isProse(el)) continue;
         const r = el.getBoundingClientRect();
         if (r.width < 200 || r.height < 8) continue;
@@ -457,12 +469,14 @@ try {
       return out;
     });
     for (const f of found) {
-      if (f.chars > worst.chars) worst = { chars: f.chars, where: `${v} ${f.sel} @${f.px}px` };
-      if (f.chars > 75) offenders.push(`${v} ${f.sel}=${f.chars}`);
+      if (f.chars > worst.chars) worst = { chars: f.chars, where: `${v} ${f.sel} @${f.px}px @${vp.width}` };
+      if (f.chars > 75) offenders.push(`${v} ${f.sel}=${f.chars} @${vp.width}px`);
     }
   }
+  await page.close();
+  }
   ok("no prose block exceeds a readable measure", offenders.length === 0,
-    offenders.length ? offenders.slice(0, 5).join(" | ") : `worst: ${worst.chars} chars (${worst.where})`);
+    offenders.length ? offenders.slice(0, 25).join(" | ") : `worst: ${worst.chars} chars (${worst.where})`);
 
   // Control. The assertion above is a number comparison, so if the measurement
   // ever silently returned zero the whole sweep would pass and test nothing.
@@ -475,16 +489,18 @@ try {
   // Assert the TOKEN, not a computed max-width: getComputedStyle resolves
   // `ch` to px, so reading maxWidth here would fail forever while saying
   // nothing about how the cap was written.
-  const measureToken = await page.evaluate(() =>
+  const { page: tokenPage } = await newPage();
+  await tokenPage.goto(`${BASE}/#overview`, { waitUntil: "networkidle" });
+  const measureToken = await tokenPage.evaluate(() =>
     getComputedStyle(document.documentElement).getPropertyValue("--measure").trim());
   ok("the measure cap is expressed in ch, not px", /^[\d.]+ch$/.test(measureToken),
     `--measure: ${measureToken || "not defined"}`);
 
-  const headToken = await page.evaluate(() =>
+  const headToken = await tokenPage.evaluate(() =>
     getComputedStyle(document.documentElement).getPropertyValue("--measure-heading").trim());
   ok("headings carry a shorter measure than prose", shorterMeasure(headToken, measureToken),
     `--measure-heading: ${headToken || "not defined"} vs --measure: ${measureToken}`);
-  await page.close();
+  await tokenPage.close();
 }
 
 /* ── Heading measure and ramp ────────────────────────────────────────────── */

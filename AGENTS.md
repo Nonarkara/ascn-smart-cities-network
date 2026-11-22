@@ -30,7 +30,13 @@ findings. A numerical pass alone is not a visual pass. Keep screenshots local.
 
 Composition is a release gate too. `npm run audit:composition` measures every
 view for empty bands beside content — a column that ran out while its neighbour
-ran on — and fails on an interior band or on a heavy rule that crosses one.
-`tests/composition.spec.mjs` is its falsifier: plant the defect, prove the
+ran on — and fails on an interior band, on a heavy rule that crosses one, and on
+a hairline-framed band whose content stops short on one side and repeats down a
+list. `tests/composition.spec.mjs` is its falsifier: plant the defect, prove the
 gate goes red, restore. Do not widen the gate's thresholds to make a release
 pass; repair the layout or record the reason in `AUDIT-2026-11-22.md`.
+
+The reading-measure sweep in `npm run audit:graphics` is part of the same law:
+every view at 1440, 1024 and 390, measured in real characters against a ceiling
+of 75. Take its route list from the nav — a route name that is not real falls
+back to the Overview and silently sweeps the wrong view.
