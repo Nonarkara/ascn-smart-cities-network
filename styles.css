@@ -1524,7 +1524,12 @@ body .view .review-followup .review-note { max-width: 54ch; }
    820px of the row empty. It sets in two columns when the row can carry
    them, and the metric list runs across the foot of it. */
 .review-record-detail {
-  max-width: 760px; border-left: 2px solid var(--ink); padding-left: calc(1rem + 1px);
+  /* The expanded analysis is long prose: one column of it in a 1211px row left
+     820px of the row empty. It sets in two columns of the house's measure and
+     sits centred in the row, so the space beside it is the page's margin
+     rather than a hole on one side. */
+  max-width: 824px; margin-inline: auto;
+  border-left: 2px solid var(--ink); padding-left: calc(1rem + 1px);
   column-gap: 2.4rem;
 }
 @container view (min-width: 900px) {
