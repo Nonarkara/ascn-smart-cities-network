@@ -1729,6 +1729,15 @@ body .view .review-followup .review-note { max-width: 54ch; }
 @container view (min-width: 1000px) {
   .twins-header { grid-template-columns: minmax(0, 1fr) minmax(0, 38rem); gap: 0 1.5rem; }
 }
+/* A 1024px window leaves a plate of about 800px: under the tier above, so
+   the heading and the explainer stacked, each stopping at its measure,
+   while the section's rules ran the full plate. The right 280px of that
+   header was empty, and the directory rows underneath repeated the same
+   short edge. The explainer takes the reading measure and the heading
+   takes what remains, so both tracks are as wide as what they hold. */
+@container view (min-width: 720px) and (max-width: 999px) {
+  .twins-header { grid-template-columns: minmax(0, 1fr) minmax(0, var(--measure)); gap: 0 1.5rem; }
+}
 .twins-header-main, .twins-explainer { min-width: 0; }
 .twins-explainer { max-width: none; }
 .twins-header-main h2 {
@@ -1921,10 +1930,12 @@ body .view .review-followup .review-note { max-width: 54ch; }
 @container view (max-width: 839px) {
   .twins-grid { grid-template-columns: 1fr; }
   .twin-row {
-    /* One directory row: a modest picture beside the copy. The picture is
-       capped so a wide plate does not turn the strip back into the wall of
-       779px screenshots that was rejected. */
-    grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+    /* One directory row: the picture takes the width the copy does not.
+       A 260px cap left the copy column wider than the reading measure, so
+       the sentence stopped and the row's rule kept going — the same short
+       edge the header had, repeated down the list. The copy stays on the
+       measure; the picture fills the rest of the plate. */
+    grid-template-columns: minmax(0, 1fr) minmax(0, var(--measure));
     grid-template-rows: auto auto auto auto;
     column-gap: 1.5rem;
     padding: 1.05rem 0;
@@ -2977,6 +2988,19 @@ td { color: var(--ink-2); font-size:var(--t-body); }
   .essay-title { grid-area: title; }
   .essay-subtitle { grid-area: sub; }
   .essay-bio { grid-area: bio; align-self: start; }
+}
+/* On a wide plate the 1.55fr track is wider than the headline, so the
+   glyphs stop and the author column starts 272px later. Size the track to
+   the headline. The series line is shorter than that headline, so it stays
+   one line inside the same track. Below this the fractional columns remain:
+   a max-content track there is wider than the plate. */
+@container view (min-width: 1100px) {
+  .essay-header {
+    grid-template-columns: max-content minmax(16rem, 1fr);
+    column-gap: 2.5rem;
+  }
+  .essay-title { width: max-content; justify-self: start; }
+  .essay-subtitle, .essay-pilot-note { justify-self: start; }
 }
 .essay-title { font-size:var(--t-h1); font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; color: var(--ink); margin: 0.75rem 0 1rem; }
 .essay-byline { font-size:var(--t-body); color: var(--ink-2); margin: 0 0 0.4rem; }
@@ -4063,12 +4087,17 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 .bio-expand-hint::after { content: " ↓"; }
 
 .essay-bio-body {
-  display: grid;
+  /* `display: grid` on this child beats the closed-<details> user-agent
+     hide, so the author panel painted 720px down the header's right column
+     while the headline stopped 272px short of it. The disclosure stays
+     closed until it is opened; the grid is the open state. */
+  display: none;
   grid-template-columns: 200px 1fr;
   gap: 2rem;
   padding: 1.4rem 0 1.8rem;
   border-top: 1px solid var(--rule);
 }
+.essay-bio[open] > .essay-bio-body { display: grid; }
 .bio-photo-wrap { margin: 0; }
 .bio-photo {
   width: 100%;

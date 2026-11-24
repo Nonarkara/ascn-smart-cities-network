@@ -12,7 +12,12 @@ then starts a fresh local Pages preview. It runs the browser suite, strict spati
 audit, visual captures and complete reading-path captures in sequence against that build. A failed step stops
 the release. `deploy` runs this gate again after refreshing discovery, uploads
 only on success, then verifies exact live bytes and no-store 404 responses for
-private paths. CI runs the same pre-upload checks.
+private paths. CI runs the same pre-upload checks when a push or pull request
+changes anything outside `data/`. A change that only touches `data/` — a
+discovery-index refresh — runs `npm audit` and `npm run check` and does not
+install Playwright or run the browser, spatial, composition, or capture
+audits. `npm run deploy` still runs the full gate before it uploads. A new
+run of the same branch cancels the one already in progress.
 
 The browser suite includes an intercepted dataset with 220 additional projects,
 long prose and an unbroken title token. It verifies complete table rows, matching
