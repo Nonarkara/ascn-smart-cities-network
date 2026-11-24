@@ -1952,6 +1952,31 @@ body .view .review-followup .review-note { max-width: 54ch; }
   .twin-desc { grid-column: 1; grid-row: 4; max-width: var(--measure); }
   .twin-link-label { grid-column: 1; grid-row: 5; }
 }
+/* Between the phone stack and the five-across strip, the plate is wider
+   than a picture plus one readable description. Stretching the section
+   to the plate drew the showcase rules across that leftover — 280px of
+   empty header beside copy that had already ended. The block is the
+   width of the picture and the description, and the explainer sits in
+   the description's column so the header and the rows share one right edge. */
+@container view (min-width: 561px) and (max-width: 839px) {
+  .twins-showcase {
+    width: max-content;
+    max-width: 100%;
+    margin-inline: auto;
+  }
+  .twins-header {
+    display: grid;
+    grid-template-columns: 260px minmax(0, var(--measure));
+    column-gap: 1.5rem;
+    width: max-content;
+    max-width: 100%;
+    align-items: start;
+  }
+  .twins-header-main { grid-column: 1 / -1; min-width: 0; }
+  .twins-explainer { grid-column: 2; min-width: 0; max-width: var(--measure); }
+  .twins-grid { width: max-content; max-width: 100%; }
+  .twin-row { grid-template-columns: 260px minmax(0, var(--measure)); }
+}
 
 
 /* ---------- Innovation-as-a-Service View ---------- */
@@ -2960,23 +2985,18 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .essay-wrap { width: 100%; max-width: var(--content); margin: 0 auto; padding: 2.5rem 0 4rem; }
 .essay-header { padding-bottom: 2rem; border-bottom: 1px solid var(--line); margin-bottom: 2.5rem; }
 
-/* At desktop the header stacked series bar, title, subtitle and author across
-   one 1280px row, so the title sat in the left 45% and the whole right half
-   stayed empty for 400px of scroll — a heavy side with nothing against it.
-   The author block was already there; it just had no column to stand in.
-   Below the breakpoint it stacks as before. */
+/* The header is the width of its own lines, centred with the essay.
+   A two-column track was tried here so the author block could fill the
+   right side. The title did not fill its track — "The Network at Seven"
+   ended 272px short of the bio — and that gap ran the height of the
+   header, an interior hole. The author disclosure belongs under the
+   deck, at the width of the words, not in a column the title never reaches. */
 @media (min-width: 1100px) {
   .essay-header {
-    display: grid;
-    grid-template-columns: minmax(0, 1.55fr) minmax(300px, 0.85fr);
-    grid-template-areas: "bar bio" "title bio" "sub bio";
-    column-gap: 3.5rem;
-    align-items: start;
+    width: fit-content;
+    max-width: min(1020px, 100%);
+    margin-inline: auto;
   }
-  .essay-series-bar { grid-area: bar; }
-  .essay-title { grid-area: title; }
-  .essay-subtitle { grid-area: sub; }
-  .essay-bio { grid-area: bio; align-self: start; }
 }
 .essay-title { font-size:var(--t-h1); font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; color: var(--ink); margin: 0.75rem 0 1rem; }
 .essay-byline { font-size:var(--t-body); color: var(--ink-2); margin: 0 0 0.4rem; }
@@ -4062,9 +4082,14 @@ body .view .path-steps li { max-width: none; }
 details[open] .bio-expand-hint::after { content: " ↑"; }
 .bio-expand-hint::after { content: " ↓"; }
 
+/* `display: grid` on this element beats the user-agent `display: none`
+   that hides a closed <details> body, so the biography laid out — and
+   counted as content — while the control still said it was closed.
+   The grid applies only once the reader opens it. */
+.essay-bio:not([open]) > .essay-bio-body { display: none; }
 .essay-bio-body {
   display: grid;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: 200px minmax(0, 1fr);
   gap: 2rem;
   padding: 1.4rem 0 1.8rem;
   border-top: 1px solid var(--rule);
