@@ -250,8 +250,7 @@ function routeFromHash({ preserveIndex = false } = {}) {
     const city = state.C.find((c) => citySlug(c.name) === sub);
     if (city) {
       ensureMap();
-      selectCity(city);
-      if (state.map) state.map.setView([city.lat, city.lon], Math.max(state.map.getZoom(), 6), { animate: false });
+      locateCity(city);
     }
   }
 }
@@ -694,14 +693,22 @@ function renderCitiesView() {
   countryFilter.length = 1;
   countryFilter.insertAdjacentHTML("beforeend", countries.map((c) => `<option value="${esc(c)}">${esc(c)}</option>`).join(""));
   countryFilter.value = state.cityCountry;
-  $("#map-legend").innerHTML = [["#064f6e", "2018 founding"], ["#986f2d", "2023–24"], ["#cc1236", "2025"], ["#051230", "2026"]]
-    .map(([col, lab]) => `<span><i style="background:${col}"></i>${lab}</span>`).join("");
+  $("#map-legend").innerHTML = [["#064f6e", t("map.founding")], ["#986f2d", "2023–24"], ["#cc1236", "2025"], ["#051230", "2026+"]]
+    .map(([col, lab]) => `<span><i style="background:${col}"></i>${esc(lab)}</span>`).join("");
+  $("#city-directory-title").textContent = cityRosterLabel();
+  const picker = $("#city-pick");
+  picker.innerHTML = cityOptions(state.C);
   renderCityCards();
   const sub = (location.hash || "").split("/")[1];
   const routed = sub && state.C.find((c) => citySlug(c.name) === sub);
   selectCity(routed || state.C.find((c) => c.name === "Bangkok") || state.C[0]);
-  $("#city-search").oninput = (e) => { state.citySearch = e.target.value; renderCityCards(); };
+  $("#city-search").setAttribute("aria-label", t("map.search"));
+  $("#city-search").oninput = (e) => { state.citySearch = e.target.value; renderCityCards(); syncMarkers(); };
   countryFilter.onchange = (e) => { state.cityCountry = e.target.value; renderCityCards(); syncMarkers(); };
+  picker.onchange = (e) => {
+    const city = state.C.find(item => item.name === e.target.value);
+    if (city) locateCity(city);
+  };
 }
 
 function visibleCities() {
@@ -709,6 +716,21 @@ function visibleCities() {
   return state.C.filter((c) =>
     (state.cityCountry === "all" || c.country === state.cityCountry) &&
     (!q || c.name.toLowerCase().includes(q) || c.country.toLowerCase().includes(q)));
+}
+
+function cityOptions(cities) {
+  return cities.map(city => `<option value="${esc(city.name)}">${esc(city.name)}</option>`).join("");
+}
+
+function cityRosterLabel() {
+  const cityCount = state.C.length;
+  const countryCount = new Set(state.C.map(city => city.country)).size;
+  return fillText("{cities} cities across {countries} countries", { cities: cityCount, countries: countryCount });
+}
+
+function locateCity(city) {
+  selectCity(city);
+  if (state.map) state.map.setView([city.lat, city.lon], Math.max(state.map.getZoom(), 6), { animate: false });
 }
 
 function renderCityCards() {
@@ -724,7 +746,7 @@ function renderCityCards() {
     `<p class="muted" style="padding:1rem 0">No cities match.</p>`;
   $$("#city-cards .city-card").forEach((b) => b.addEventListener("click", () => {
     const city = state.C.find((c) => c.name === b.dataset.city);
-    if (city) { selectCity(city); if (state.map) state.map.setView([city.lat, city.lon], Math.max(state.map.getZoom(), 6), { animate: true }); }
+    if (city) { locateCity(city); $("#city-detail h2").focus(); }
   }));
 }
 
@@ -744,16 +766,20 @@ function selectCity(city) {
   const outcomeChip = city.key_outcome ? `<span class="cd-chip cd-chip--outcome" title="Documented citizen outcome">${esc(city.key_outcome)}</span>` : "";
   const chipsHtml = (connChip || imdChip || outcomeChip) ? `<div class="cd-chips">${connChip}${imdChip}${outcomeChip}</div>` : "";
 
-  $("#city-detail").innerHTML = `
-    <div class="cd-place">${esc(city.country)} · joined ${esc(city.year)}</div>
-    <h2>${esc(city.name)}</h2>
+  $("#city-selection").innerHTML = `
+    <h2 tabindex="-1">${esc(city.name)}</h2>
+    <a class="cd-portal" href="#news/archive?city=${encodeURIComponent(city.name)}">${esc(t("map.evidence"))} ↗</a>`;
+  $("#city-record").innerHTML = `
+    <div class="cd-place">${esc(city.country)} · ${esc(tx("Joined"))} ${esc(city.year)}</div>
     <div class="cd-meta"><span>Population <b>${esc(city.pop)}</b></span><span>Documented projects <b>${projects.length || city.flagship.length}</b></span></div>
     ${chipsHtml}
     <p style="color:var(--ink-2);margin:0 0 0.4rem">${esc(city.summary)}</p>
     ${flagHtml ? `<div class="cd-section-label">Flagship work</div><div class="cd-projects">${flagHtml}</div>` : ""}
     ${extraHtml ? `<div class="cd-section-label">From the M&E appendix</div><div class="cd-projects">${extraHtml}</div>` : (projects.length ? "" : `<p class="cd-empty" data-i18n="a.detailed.project.rows.pending.in">Detailed project rows pending in the public appendix.</p>`)}
-    ${city.portal ? `<a class="cd-portal" href="${esc(safeUrl(city.portal))}" target="_blank" rel="noopener noreferrer">Open city data portal ↗</a>` : ""}
-    <a class="cd-portal" href="#news/archive?city=${encodeURIComponent(city.name)}">Review public evidence for ${esc(city.name)} ↗</a>`;
+    ${city.portal ? `<a class="cd-portal" href="${esc(safeUrl(city.portal))}" target="_blank" rel="noopener noreferrer">Open city data portal ↗</a>` : ""}`;
+  const picker = $("#city-pick");
+  if (picker) picker.value = city.name;
+  syncMarkers();
   $$("#city-cards .city-card").forEach((b) => b.classList.toggle("active", b.dataset.city === city.name));
   // Reflect the selected city in the URL so it can be deep-linked / shared (§11.8)
   if (state.tab === "cities") history.replaceState(null, "", "#cities/" + citySlug(city.name));
@@ -761,15 +787,33 @@ function selectCity(city) {
 
 /* ---------------- Map ---------------- */
 function observeMapSize(map) {
-  if (window.ResizeObserver) new ResizeObserver(() => map.invalidateSize({ pan: false })).observe(map.getContainer());
-  document.fonts?.ready.then(() => map.invalidateSize({ pan: false }));
+  const container = map.getContainer();
+  const refresh = () => {
+    if (container.clientWidth && container.clientHeight) map.invalidateSize();
+  };
+  if (window.ResizeObserver) {
+    const observer = new ResizeObserver(refresh);
+    observer.observe(container);
+    map.once("unload", () => observer.disconnect());
+  }
+  document.fonts?.ready.then(refresh);
+}
+
+function addBasemap(map, layer) {
+  const notice = map.getContainer().closest(".map-view").querySelector(".map-notice");
+  let failed = false;
+  return L.tileLayer(layer.url, { attribution: layer.attr, className: layer.className || "" })
+    .on("loading", () => { failed = false; })
+    .on("tileerror", () => { failed = true; if (notice) notice.hidden = false; })
+    .on("load", () => { if (notice) notice.hidden = !failed; })
+    .addTo(map);
 }
 
 function ensureMap() {
-  if (state.mapReady) { setTimeout(() => state.map && state.map.invalidateSize(), 60); return; }
+  if (state.mapReady) { state.map.invalidateSize(); return; }
   if (!window.L || !$("#sea-map")) return;
-  state.map = L.map("sea-map", { fadeAnimation: false, zoomControl: true, scrollWheelZoom: false, minZoom: 3, maxZoom: 9, worldCopyJump: false }).setView([8.5, 112], 4);
-  state.tileLayer = L.tileLayer(tileLayers.map.url, { attribution: tileLayers.map.attr }).addTo(state.map);
+  state.map = L.map("sea-map", { fadeAnimation: false, zoomSnap: 0.5, scrollWheelZoom: false, minZoom: 3, maxZoom: 9, worldCopyJump: false }).setView([8.5, 112], 4);
+  state.tileLayer = addBasemap(state.map, tileLayers.map);
   state.map.setMaxBounds([[-15, 88], [25, 142]]);
   state.markerLayer = L.layerGroup().addTo(state.map);
   buildMarkers();
@@ -777,10 +821,13 @@ function ensureMap() {
     const btn = e.target.closest("button[data-mode]");
     if (!btn) return;
     state.mapMode = btn.dataset.mode;
-    $$("#map-mode button").forEach((b) => b.classList.toggle("active", b === btn));
+    $$("#map-mode button").forEach((b) => {
+      b.classList.toggle("active", b === btn);
+      b.setAttribute("aria-pressed", String(b === btn));
+    });
     if (state.tileLayer) state.map.removeLayer(state.tileLayer);
     const layer = tileLayers[state.mapMode];
-    state.tileLayer = L.tileLayer(layer.url, { attribution: layer.attr, className: layer.className || "" }).addTo(state.map);
+    state.tileLayer = addBasemap(state.map, layer);
     buildMarkers();
   });
   state.mapReady = true;
@@ -807,7 +854,11 @@ function buildMarkers() {
 }
 function syncMarkers() {
   const vis = new Set(visibleCities().map((c) => c.name));
-  Object.entries(state.markers).forEach(([name, m]) => m.setStyle({ opacity: vis.has(name) ? 1 : 0.15, fillOpacity: vis.has(name) ? 0.92 : 0.1 }));
+  Object.entries(state.markers).forEach(([name, m]) => {
+    const selected = state.selectedCity?.name === name;
+    const visible = selected || vis.has(name);
+    m.setStyle({ weight: selected ? 3 : 1.5, opacity: visible ? 1 : 0.15, fillOpacity: visible ? 0.92 : 0.1 });
+  });
 }
 
 /* ---------------- Projects ---------------- */
@@ -1874,43 +1925,43 @@ function renderContacts() {
     "Rayong":     [{ name: "Dr. Abhichatbutr Rodyoung", title: "Senior Expert in Smart City Promotion", org: "Digital Economy Promotion Agency (DEPA)" }],
   };
 
-  function cityPopupHtml(city) {
+  function cityContactHtml(city) {
     const nr = NRS[city.country] || {};
     const cscos = CSCOS[city.name] || [];
     const staff = STAFF[city.name] || [];
-    const officialListUrl = "https://asean.org/body/asean-smart-cities-network/";
-    let h = `<div class="cpop">`;
-    h += `<div class="cpop-city">${esc(city.name)}<span class="cpop-ctry"> · ${esc(city.country)}</span></div>`;
+    let h = `<div class="contact-roles">`;
     // NR block
     h += `<div class="cpop-block">`;
-    h += `<div class="cpop-role-label">National Representative</div>`;
+    h += `<div class="cpop-role-label">${esc(t("map.nr"))}</div>`;
     if (nr.name) {
       h += `<div class="cpop-name">${esc(nr.name)}</div>`;
       h += `<div class="cpop-detail">${esc(nr.title)}</div>`;
+      const org = nr.url ? `<a href="${esc(safeUrl(nr.url))}" target="_blank" rel="noopener">${esc(nr.org)}</a>` : esc(nr.org);
+      h += `<div class="cpop-org">${org}`;
+      if (nr.badge) h += ` <span class="cpop-badge">${esc(nr.badge)}</span>`;
+      h += `</div>`;
+    } else {
+      h += `<div class="cpop-detail">${esc(t("map.contact.unlisted"))}</div>`;
     }
-    h += `<div class="cpop-org"><a href="${esc(safeUrl(nr.url || "#"))}" target="_blank" rel="noopener">${esc(nr.org)}</a>`;
-    if (nr.badge) h += ` <span class="cpop-badge">${esc(nr.badge)}</span>`;
-    h += `</div></div>`;
+    h += `</div>`;
     // CSCO block
     h += `<div class="cpop-block">`;
-    h += `<div class="cpop-role-label">Chief Smart City Officer</div>`;
+    h += `<div class="cpop-role-label">${esc(t("map.csco"))}</div>`;
     if (cscos.length && cscos[0].name) {
       cscos.forEach((c) => {
         h += `<div class="cpop-name">${esc(c.name)}</div>`;
         if (c.title) h += `<div class="cpop-detail">${esc(c.title)}</div>`;
         h += `<div class="cpop-org">${esc(c.org)}</div>`;
       });
-    } else if (cscos.length) {
-      h += `<div class="cpop-org">${esc(cscos[0].org)}</div>`;
-      h += `<div class="cpop-verify"><a href="${officialListUrl}" target="_blank" rel="noopener">Verify current contact ↗</a></div>`;
     } else {
-      h += `<div class="cpop-verify"><a href="${officialListUrl}" target="_blank" rel="noopener">See official April 2026 list ↗</a></div>`;
+      h += `<div class="cpop-detail">${esc(t("map.contact.unlisted"))}</div>`;
+      if (cscos[0]?.org) h += `<div class="cpop-org">${esc(cscos[0].org)}</div>`;
     }
     h += `</div>`;
     // Staff contacts block (where listed)
     if (staff.length) {
       h += `<div class="cpop-block">`;
-      h += `<div class="cpop-role-label">Staff Contact</div>`;
+      h += `<div class="cpop-role-label">${esc(t("map.staff"))}</div>`;
       staff.forEach((s) => {
         h += `<div class="cpop-name">${esc(s.name)}</div>`;
         h += `<div class="cpop-detail">${esc(s.title)}</div>`;
@@ -1934,16 +1985,24 @@ function renderContacts() {
 
   $("#contacts-content").innerHTML = `
     <div class="contacts-wrap">
-      <div class="contacts-header">
-        <p data-i18n="hd.network.contacts" class="label">Network Contacts</p>
-        <h1 data-i18n="hd.click.any.city.to.see.the.nr">Click any city to see the NR and CSCO.</h2>
-        <p class="lede" data-i18n="a.38.cities.11.countries.each.mark">38 cities, 11 countries. Each marker shows the National Representative at the top, followed by the Chief Smart City Officer for that city. Data: April 2026 ASCN contact list.</p>
-        <a class="text-button" href="https://asean.org/asean-smart-cities-network/" target="_blank" rel="noopener noreferrer">Official contact directory (ASEAN)</a>
+      <div id="contacts-map" class="map-stage contacts-map" role="region" aria-label="${esc(t("hd.network.contacts"))}"></div>
+      <div id="contact-detail">
+        <div class="map-exit">
+          <div class="map-edge">
+            <h1 class="map-title" data-i18n="hd.network.contacts">Network Contacts</h1>
+            <select id="contact-city" aria-label="${esc(t("map.choose"))}">${cityOptions(state.C)}</select>
+          </div>
+          <div class="map-selection">
+            <h2 id="contact-name"></h2><span class="cpop-ctry" id="contact-country"></span>
+            <a class="cd-portal" href="https://asean.org/body/asean-smart-cities-network/" target="_blank" rel="noopener">${esc(t("map.contacts.official"))} ↗</a>
+          </div>
+        </div>
+        <p class="map-notice" role="status" data-i18n="map.tiles.unavailable" hidden>${esc(t("map.tiles.unavailable"))}</p>
+        <div id="contact-record"></div>
       </div>
-
-      <div class="contacts-map-wrap">
-        <div id="contacts-map" class="contacts-map"></div>
-        <p class="contacts-map-hint" data-i18n="a.click.a.city.marker.to.view.cont">Click a city marker to view contacts\u00A0· Scroll to zoom</p>
+      <div class="contacts-header">
+        <p class="lede">${esc(cityRosterLabel())}. ${esc(t("map.contacts.scope"))}</p>
+        <a class="text-button" href="https://asean.org/asean-smart-cities-network/" target="_blank" rel="noopener noreferrer" data-i18n="map.contacts.network">${esc(t("map.contacts.network"))}</a>
       </div>
 
       <div class="contacts-grid-wrap">
@@ -1958,50 +2017,59 @@ function renderContacts() {
       ${renderAlumni()}
     </div>`;
 
-  // Initialise contacts map after DOM is ready
-  setTimeout(() => ensureContactsMap(cityPopupHtml), 60);
+  const readContact = (city) => {
+    state.contactCity = city.name;
+    $("#contact-city").value = city.name;
+    $("#contact-name").textContent = city.name;
+    $("#contact-country").textContent = city.country;
+    $("#contact-record").innerHTML = cityContactHtml(city);
+  };
+  const initial = state.C.find(city => city.name === (state.contactCity || "Bangkok")) || state.C[0];
+  if (!initial) return;
+  readContact(initial);
+  const selectMarker = ensureContactsMap(readContact, initial.name);
+  $("#contact-city").onchange = (event) => {
+    const city = state.C.find(item => item.name === event.target.value);
+    if (!city) return;
+    selectContact(city);
+    state.cMap?.panInside([city.lat, city.lon], { animate: false });
+  };
+
+  function selectContact(city) {
+    readContact(city);
+    selectMarker?.(city.name);
+  }
 }
 
-function ensureContactsMap(popupFn) {
-  if (state.cMapReady) { state.cMap && state.cMap.invalidateSize(); return; }
-  const el = document.getElementById("contacts-map");
-  if (!window.L || !el) return;
+function ensureContactsMap(readContact, initialCity) {
+  if (!window.L) return;
+  const el = $("#contacts-map");
+  if (!el) return;
+  state.cMap?.remove();
   const aseanBounds = L.latLngBounds(L.latLng(-15, 85), L.latLng(28, 155));
-  state.cMap = L.map("contacts-map", { fadeAnimation: false, zoomControl: true, scrollWheelZoom: true, minZoom: 3, maxZoom: 9, worldCopyJump: false, maxBounds: aseanBounds, maxBoundsViscosity: 0.9 })
-    .setView([5, 115], 5);
-  L.tileLayer(tileLayers.map.url, { attribution: tileLayers.map.attr }).addTo(state.cMap);
-  // Tall popups (NR + CSCO + Staff) open above the marker and can clip the map's top
-  // edge. Leaflet's autoPan/panInside are unreliable on programmatic opens, so recenter
-  // explicitly: place the marker ~52px above the map's bottom edge, leaving the full
-  // height above it for the popup. Deterministic — fires on every open.
-  state.cMap.on("popupopen", function (e) {
-    const map = state.cMap;
-    setTimeout(function () {
-      map.invalidateSize({ animate: false }); // first open after a tab switch can have a stale size
-      const z = map.getZoom();
-      const size = map.getSize();
-      const mPx = map.project(e.popup.getLatLng(), z);
-      const centerX = map.project(map.getCenter(), z).x;
-      const newCenter = map.unproject(L.point(centerX, mPx.y - size.y / 2 + 52), z);
-      map.setView(newCenter, z, { animate: false });
-    }, 120);
-  });
-  for (const city of state.C) {
-    const nr = (function(c) {
-      const nrs = { "Brunei Darussalam": null, "Cambodia": null, "Indonesia": "Dr. Amran", "Lao PDR": null, "Malaysia": "Mohd Hazli Bin Ahmad Adnan", "Myanmar": null, "Philippines": null, "Singapore": null, "Thailand": "Non Arkaraprasertkul, PhD", "Timor-Leste": null, "Viet Nam": "Dr. Tran Quoc Thai" };
-      return nrs[c] || null;
-    })(city.country);
-    const m = L.circleMarker([city.lat, city.lon], {
-      radius: 7, color: "#fff", weight: 1.5,
-      fillColor: nr ? "#986f2d" : "#064f6e", fillOpacity: 0.9,
-    });
-    m.bindTooltip(`<b>${esc(city.name)}</b> · ${esc(city.country)}`, { direction: "top", offset: [0, -4] });
-    m.bindPopup(popupFn(city), { maxWidth: 280, maxHeight: 310, className: "cpop-wrap", autoPan: false });
-    m.addTo(state.cMap);
+  state.cMap = L.map(el, { fadeAnimation: false, zoomSnap: 0.5, scrollWheelZoom: false, minZoom: 3, maxZoom: 9,
+    worldCopyJump: false, maxBounds: aseanBounds, maxBoundsViscosity: 0.9 }).setView([5, 115], 5);
+  addBasemap(state.cMap, tileLayers.map);
+  const markers = new Map();
+  let selectedCity;
+  function selectMarker(name) {
+    markers.get(selectedCity)?.setStyle({ fillColor: "#064f6e", weight: 1.5 });
+    markers.get(name)?.setStyle({ fillColor: "#986f2d", weight: 3 });
+    selectedCity = name;
   }
-  state.cMapReady = true;
-  state.cMap.fitBounds(state.C.map((city) => [city.lat, city.lon]), { padding: [24,24], maxZoom: 5, animate: false });
+  for (const city of state.C) {
+    const marker = L.circleMarker([city.lat, city.lon], {
+      radius: 7, color: "#fff", weight: 1.5,
+      fillColor: "#064f6e", fillOpacity: 0.9,
+    });
+    marker.bindTooltip(`<b>${esc(city.name)}</b> · ${esc(city.country)}`, { direction: "top", offset: [0, -4] });
+    marker.on("click", () => { readContact(city); selectMarker(city.name); }).addTo(state.cMap);
+    markers.set(city.name, marker);
+  }
+  selectMarker(initialCity);
+  state.cMap.fitBounds(state.C.map(city => [city.lat, city.lon]), { padding: [24,24], maxZoom: 5, animate: false });
   observeMapSize(state.cMap);
+  return selectMarker;
 }
 
 /* ---------------- ASCN Alumni (removed from active roster) ---------------- */

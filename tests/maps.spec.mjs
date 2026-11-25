@@ -47,3 +47,57 @@ for (const width of [375, 768, 1280]) {
     await page.screenshot({ path: testInfo.outputPath("cities.png"), fullPage: true });
   });
 }
+
+test("the first screen is a map and its selection is at the lower edge", async ({ page }) => {
+  for (const [width, height] of [[390, 844], [1024, 768], [1440, 900]]) {
+    await page.setViewportSize({ width, height });
+    for (const [route, map, action, result] of [
+      ["cities", "#sea-map", "#city-pick", "#city-detail"],
+      ["contacts", "#contacts-map", "#contact-city", "#contact-detail"],
+    ]) {
+      await page.goto(`/#${route}`);
+      await expect(page.locator(action).locator("option").last()).toBeAttached();
+      await page.evaluate(() => document.fonts.ready);
+      const visibleArea = async () => page.locator(map).evaluate(element => {
+        const r = element.getBoundingClientRect();
+        return (Math.min(r.right, innerWidth) - Math.max(0, r.left)) *
+          (Math.min(r.bottom, innerHeight) - Math.max(0, r.top)) / (innerWidth * innerHeight);
+      });
+      await expect.poll(visibleArea).toBeGreaterThanOrEqual(0.60);
+      await expect(page.locator(action)).toBeInViewport({ ratio: 0.95 });
+      await expect(page.locator(`${result} .map-selection a`)).toBeInViewport({ ratio: 0.95 });
+      const old = await page.addStyleTag({ content: `${map} { height: 22rem !important; }` });
+      expect(await visibleArea()).toBeLessThan(0.60);
+      await old.evaluate(element => element.remove());
+    }
+  }
+});
+
+test("city pickers retain evidence and officer details without basemap tiles", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.route("https://tile.openstreetmap.org/**", route => route.abort());
+  await page.goto("/#cities");
+  await expect(page.locator('#view-cities .map-notice')).toBeVisible();
+  await page.locator("#city-search").fill("No matching city");
+  await page.locator("#city-pick").selectOption("Kuching");
+  await expect(page.locator("#city-detail h2")).toHaveText("Kuching");
+  await expect(page.locator("#city-detail a[href^='#news/archive']")).toHaveAttribute("href", "#news/archive?city=Kuching");
+  await page.locator("#city-pick").focus();
+  await page.keyboard.press("Tab");
+  await expect(page.locator("#map-mode button").first()).toBeFocused();
+  await page.goto("/#contacts");
+  await expect(page.locator('#view-contacts .map-notice')).toBeVisible();
+  await page.locator("#contact-city").selectOption("Kuching");
+  await expect(page.locator("#contact-detail h2")).toHaveText("Kuching");
+  await expect(page.locator("#contact-detail")).toContainText("National Representative");
+  await expect(page.locator("#contact-detail")).toContainText("Chief Smart City Officer");
+  await page.locator("#contact-city").focus();
+  await page.keyboard.press("Tab");
+  await expect(page.locator("#contact-detail .map-selection a")).toBeFocused();
+  await page.locator("#contact-city").selectOption("Bandar Seri Begawan");
+  await expect(page.locator("#contact-record")).toContainText("Name unavailable in the source list.");
+  await page.locator("#contact-city").selectOption("Kuching");
+  await page.locator('[data-lang-set="th"]').click();
+  await expect(page.locator("#contact-city")).toHaveValue("Kuching");
+  await expect(page.locator("#contacts-map .leaflet-interactive")).toHaveCount(38);
+});
