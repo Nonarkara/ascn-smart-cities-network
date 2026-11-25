@@ -1918,6 +1918,10 @@ body .view .review-followup .review-note { max-width: 54ch; }
     grid-row: span 5;
   }
 }
+@container view (560px < width < 840px) {
+  /* The tablet directory rule ends at its picture, gutter and copy measure. */
+  .twins-showcase { max-width: calc(260px + 1.5rem + var(--measure)); }
+}
 @container view (max-width: 839px) {
   .twins-grid { grid-template-columns: 1fr; }
   .twin-row {
@@ -2960,23 +2964,27 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .essay-wrap { width: 100%; max-width: var(--content); margin: 0 auto; padding: 2.5rem 0 4rem; }
 .essay-header { padding-bottom: 2rem; border-bottom: 1px solid var(--line); margin-bottom: 2.5rem; }
 
-/* At desktop the header stacked series bar, title, subtitle and author across
-   one 1280px row, so the title sat in the left 45% and the whole right half
-   stayed empty for 400px of scroll — a heavy side with nothing against it.
-   The author block was already there; it just had no column to stand in.
-   Below the breakpoint it stacks as before. */
+/* The title leads the reading column. Credit and the publication note
+   share the next row, within the same measure as the essay body. */
 @media (min-width: 1100px) {
   .essay-header {
+    max-width: 1020px;
+    margin-inline: auto;
     display: grid;
-    grid-template-columns: minmax(0, 1.55fr) minmax(300px, 0.85fr);
-    grid-template-areas: "bar bio" "title bio" "sub bio";
-    column-gap: 3.5rem;
+    grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+    grid-template-areas: "bar bar" "title title" "sub sub" "bio note";
+    gap: 0 1.5rem;
     align-items: start;
   }
   .essay-series-bar { grid-area: bar; }
   .essay-title { grid-area: title; }
   .essay-subtitle { grid-area: sub; }
-  .essay-bio { grid-area: bio; align-self: start; }
+  .essay-header > .essay-bio { grid-area: bio; margin-bottom: 0; min-width: 0; }
+  .essay-header > .essay-pilot-note { grid-area: note; margin-block: 0; }
+  .essay-header:has(> .essay-bio[open]) {
+    grid-template-areas: "bar bar" "title title" "sub sub" "bio bio" "note note";
+    row-gap: 0.65rem;
+  }
 }
 .essay-title { font-size:var(--t-h1); font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; color: var(--ink); margin: 0.75rem 0 1rem; }
 .essay-byline { font-size:var(--t-body); color: var(--ink-2); margin: 0 0 0.4rem; }

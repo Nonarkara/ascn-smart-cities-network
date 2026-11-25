@@ -102,3 +102,28 @@ test('audit navigation includes secondary routes and rejects a wrong panel', asy
   await expect(waitForAuditRoute(page, 'news/archive', 200)).rejects.toThrow();
   await expect(waitForAuditRoute(page, 'typo-route', 200)).rejects.toThrow();
 });
+
+test('tablet directory and wide Essay keep their ruled bands within the task width', async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 768 });
+  await page.goto('/#overview');
+  const directory = page.locator('.twins-showcase');
+  await expect(directory.locator('.twin-row')).toHaveCount(5);
+  const widthOf = el => el.getBoundingClientRect().width;
+  expect(await directory.evaluate(widthOf)).toBeLessThanOrEqual(650);
+  const oldDirectory = await page.addStyleTag({ content: '.twins-showcase { max-width: none !important; }' });
+  expect(await directory.evaluate(widthOf)).toBeGreaterThan(750);
+  await oldDirectory.evaluate(el => el.remove());
+
+  for (const width of [1440, 1920, 2103]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/#essay');
+    const header = page.locator('.essay-header');
+    await expect(header.locator('h1')).toBeVisible();
+    expect(await header.evaluate(widthOf)).toBeLessThanOrEqual(1020);
+    await header.locator('summary').click();
+    await expect(header.locator('.essay-bio-body')).toBeVisible();
+    await header.locator('summary').click();
+  }
+  await page.addStyleTag({ content: '.essay-header { max-width: none !important; }' });
+  expect(await page.locator('.essay-header').evaluate(widthOf)).toBeGreaterThan(1400);
+});
