@@ -106,6 +106,7 @@ test('audit navigation includes secondary routes and rejects a wrong panel', asy
 test('tablet directory and wide Essay keep their ruled bands within the task width', async ({ page }) => {
   await page.setViewportSize({ width: 1024, height: 768 });
   await page.goto('/#overview');
+  await page.locator('#kpi-grid .kpi').first().waitFor({ state: 'attached' });
   const directory = page.locator('.twins-showcase');
   await expect(directory.locator('.twin-row')).toHaveCount(5);
   const widthOf = el => el.getBoundingClientRect().width;

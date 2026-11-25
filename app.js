@@ -179,7 +179,7 @@ const TAB_META = {
   essay: { num: "15" },
 };
 
-function setTab(tab, push = true) {
+function setTab(tab, push = true, { preserveIndex = false } = {}) {
   if (!TABS.includes(tab)) tab = "overview";
   const changingTab = state.tab !== tab;
   state.tab = tab;
@@ -223,7 +223,7 @@ function setTab(tab, push = true) {
   if (plate && (changingTab || push)) plate.scrollTop = 0;
 
   const shell = $("#shell");
-  if (shell && window.matchMedia("(max-width: 860px)").matches) {
+  if (shell && window.matchMedia("(max-width: 860px)").matches && !preserveIndex) {
     const opening = !shell.classList.contains("is-open");
     shell.classList.add("is-open");
     if (plate && (changingTab || opening)) plate.focus();
@@ -243,9 +243,9 @@ function setTab(tab, push = true) {
 }
 
 // Parse hash into tab + optional sub-route (e.g. #cities/jakarta)
-function routeFromHash() {
+function routeFromHash({ preserveIndex = false } = {}) {
   const [tab, sub] = (location.hash || "#overview").slice(1).split("/");
-  setTab(tab, false);
+  setTab(tab, false, { preserveIndex });
   if (tab === "cities" && sub && state.data && state.C) {
     const city = state.C.find((c) => citySlug(c.name) === sub);
     if (city) {
@@ -3290,7 +3290,8 @@ async function init() {
     ]);
     state.data = data; state.K = K; state.C = cities.cities; state.L = library; state.LF = libraryFull; state.CS = Array.isArray(cityStats) ? cityStats : [];
     state.CORR = correspondence;
-    routeFromHash();
+    // Loading may finish while a phone reader is choosing from the index.
+    routeFromHash({ preserveIndex: true });
   } catch (err) {
     console.error(err);
     document.body.classList.add("boot-error");
