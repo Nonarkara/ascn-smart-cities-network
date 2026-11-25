@@ -63,11 +63,44 @@ test("discovery fallback stays readable and cannot change performance findings",
 test("new discovery results merge with saved history instead of replacing it", async ({ page }) => {
   const row = { publisher: "Test index", url: "https://news.google.com/rss/articles/new", kind: "Unreviewed search match", publishedAt: "2026-10-01" };
   await page.route("**/data/ascn-news-discovery.json", (route) => route.fulfill({ json: { checkedAt: "2026-10-08", articles: [{ ...row, title: "Historical ASCN lead", publishedAt: "2018-01-01" }] } }));
-  await page.route("**/api/ascn-news", (route) => route.fulfill({ json: { checkedAt: "2026-10-08", sources: [{ status: "ok" }], articles: [{ ...row, title: "New ASCN lead" }] } }));
+  await page.route("**/api/ascn-news", (route) => route.fulfill({ json: { checkedAt: "2026-10-08", mode: "live", sources: [{ id: "ascn-exact", status: "ok" }], articles: [{ ...row, title: "New ASCN lead" }] } }));
   await page.goto("/#news/discovery");
   await expect(page.locator("#discovery-results .review-record")).toHaveCount(2);
   await page.locator("#discovery-search").fill("Historical");
   await expect(page.locator("#discovery-results .review-record")).toHaveCount(1);
+});
+
+test("saved leads stay searchable and the refresh button keeps focus during an outage", async ({ page }) => {
+  const article = { title: "Saved transport lead", publisher: "Public index",
+    url: "https://news.google.com/rss/articles/saved", kind: "Unreviewed search match", publishedAt: null };
+  await page.route("**/data/ascn-news-discovery.json", route => route.fulfill({
+    json: { checkedAt: "2025-10-08", articles: [article] }
+  }));
+  let finish;
+  const pending = new Promise(resolve => { finish = resolve; });
+  await page.route("**/api/ascn-news", async route => {
+    await pending;
+    await route.fulfill({ json: {
+      checkedAt: "2025-10-08", snapshotAt: "2025-10-08", attemptedAt: "2026-11-25T00:00:00Z",
+      mode: "saved", articles: [article], sources: [{ id: "ascn-exact", status: "unavailable" }],
+    } });
+  });
+  await page.goto("/#news/discovery");
+  const status = page.locator("#discovery-status");
+  const refresh = page.locator("#discovery-refresh");
+  await expect(status).toContainText("Checking index");
+  await expect(status).toContainText("Saved snapshot:");
+  const search = page.locator("#discovery-search");
+  await search.fill("transport");
+  await expect(page.locator("#discovery-results article")).toHaveCount(1);
+  // A pending check uses aria-disabled so its button remains a stable focus target.
+  await refresh.focus();
+  finish();
+  await expect(status).toContainText("Saved index; live check unavailable");
+  await expect(status).toContainText("Last check:");
+  await expect(status).toContainText("1 search feeds unavailable");
+  await expect(search).toHaveValue("transport");
+  await expect(refresh).toBeFocused();
 });
 
 test("archive and discovery survive official report failure", async ({ page }) => {

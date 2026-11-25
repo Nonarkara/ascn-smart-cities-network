@@ -8,6 +8,7 @@
 // A gate that cannot fail on the defect it was written for is not evidence.
 // So this test plants that defect, and a second one, and asserts the
 // instrument reports both — then asserts the shipped pages are clean.
+import { auditRoutes, waitForAuditRoute } from '../scripts/audit-routes.mjs';
 import { test, expect } from '@playwright/test';
 import { auditView } from '../scripts/audit-composition.mjs';
 
@@ -92,4 +93,12 @@ test.describe('composition bands', () => {
     expect(after.failures.length, 'the planted framed band was not reported').toBeGreaterThan(0);
     expect(after.failures.some((f) => f.framedShort)).toBe(true);
   });
+});
+
+test('audit navigation includes secondary routes and rejects a wrong panel', async ({ page }) => {
+  await page.goto('/#news/discovery');
+  await waitForAuditRoute(page, 'news/discovery');
+  expect(await auditRoutes(page)).toEqual(expect.arrayContaining(['archive', 'ascn9', 'news/archive', 'news/discovery', 'news/regional']));
+  await expect(waitForAuditRoute(page, 'news/archive', 200)).rejects.toThrow();
+  await expect(waitForAuditRoute(page, 'typo-route', 200)).rejects.toThrow();
 });

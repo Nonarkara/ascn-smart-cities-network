@@ -4,7 +4,7 @@ import { REVIEW_STAGES, REVIEW_MANDATES, SOURCE_TYPES, validateArchive, filterRe
 import { validateDiscovery, mergeDiscovery } from "./lib/ascn-discovery.mjs";
 
 const $ = (selector) => document.querySelector(selector);
-const state = { archive: null, cities: [], engine: null, page: 0, discoveryPage: 0, candidates: [], discoveryQuery: "", checkedAt: null, discoveryMode: "saved", discoverySources: [], loading: false,
+const state = { archive: null, cities: [], engine: null, page: 0, discoveryPage: 0, candidates: [], discoveryQuery: "", snapshotAt: null, attemptAt: null, discoveryStarted: false, discoveryMode: "saved", discoverySources: [], loading: false,
   filters: { query: "", city: "all", year: "all", stage: "all", sourceType: "all", mandate: "all" } };
 const format = new Intl.NumberFormat("en-GB");
 const date = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
@@ -27,6 +27,10 @@ function route() {
   document.querySelectorAll("[data-news-view]").forEach((link) => { if (link.dataset.newsView === selected) link.setAttribute("aria-current", "page"); else link.removeAttribute("aria-current"); });
   $("#review-controls").hidden = !["review", "archive"].includes(selected);
   $("#review-status").hidden = !["review", "archive"].includes(selected);
+  if (tab === "news" && selected === "discovery" && !state.discoveryStarted) {
+    state.discoveryStarted = true;
+    void initDiscovery();
+  }
   const city = new URLSearchParams(query).get("city");
   if (tab === "news" && city && state.cities.some((item) => item.name === city)) { state.filters.city = city; $("#review-city").value = city; state.page = 0; render(); }
 }
@@ -124,27 +128,60 @@ function render() {
 }
 
 function renderDiscovery() {
+  const focused = document.activeElement;
+  const pageControl = focused?.closest("#discovery-pagination button")?.getAttribute("aria-label");
+  const leadHref = focused?.closest("#discovery-results h2 a")?.getAttribute("href");
   const inbox = discoveryInbox(state.candidates, state.archive?.records || []);
   const search = state.discoveryQuery.toLowerCase().trim();
   const rows = inbox.filter((row) => !search || `${row.title} ${row.publisher}`.toLowerCase().includes(search));
   state.discoveryPage = Math.min(state.discoveryPage, Math.max(0, Math.ceil(rows.length / pageSize) - 1));
   const unavailable = state.discoverySources.filter((source) => source.status !== "ok").length;
-  $("#discovery-status").textContent = `${state.loading ? tx("Checking index") : state.discoveryMode === "live" ? tx("Index checked") : tx("Saved index; live check unavailable")}\u00A0· ${state.checkedAt ? showDate(state.checkedAt) : tx("check date unknown")}\u00A0· ${rows.length} ${tx("matching leads")}\u00A0· ${state.candidates.length - inbox.length} ${tx("title matches already reviewed")}${unavailable ? `\u00A0· ${unavailable} ${tx("search feeds unavailable")}` : ""}`;
-  $("#discovery-refresh").disabled = state.loading;
+  const status = state.loading ? tx("Checking index") :
+    state.discoveryMode === "live" ? tx("Index checked") :
+    state.candidates.length ? tx("Saved index; live check unavailable") : tx("Discovery index unavailable");
+  const time = new Intl.DateTimeFormat(document.documentElement.lang, {
+    dateStyle: "medium", timeStyle: "short"
+  });
+  $("#discovery-status").textContent = [
+    status,
+    state.snapshotAt && `${tx("Saved snapshot:")} ${showDate(state.snapshotAt)}`,
+    state.attemptAt && `${tx("Last check:")} ${time.format(new Date(state.attemptAt))}`,
+    `${rows.length} ${tx("matching leads")}`,
+    `${state.candidates.length - inbox.length} ${tx("title matches already reviewed")}`,
+    unavailable && `${unavailable} ${tx("search feeds unavailable")}`,
+  ].filter(Boolean).join("\u00A0· ");
+  $("#discovery-refresh").setAttribute("aria-disabled", String(state.loading));
   $("#discovery-results").innerHTML = rows.slice(state.discoveryPage * pageSize, (state.discoveryPage + 1) * pageSize).map((row) => `<article class="review-record review-record--plain"><div class="news-story-meta"><span>${esc(row.publisher)}</span><span>${esc(tx("Unreviewed search match"))}</span></div><h2>${external(row.url, row.title)}</h2><p class="review-note">${esc(tx("Index date:"))} ${row.publishedAt ? showDate(row.publishedAt) : tx("unknown")}\u00A0· ${esc(tx("Google News link"))}\u00A0· ${esc(tx("not included in findings"))}</p></article>`).join("") || `<p class="review-empty">${esc(tx("No indexed leads match. The reviewed archive remains available."))}</p>`;
   pagination("#discovery-pagination", state.discoveryPage, rows.length, (page) => { state.discoveryPage = page; renderDiscovery(); $("#discovery-results").scrollIntoView(); });
+  if (pageControl || leadHref) {
+    const target = pageControl
+      ? [...$("#discovery-pagination").querySelectorAll("button:not(:disabled)")].find(button => button.getAttribute("aria-label") === pageControl)
+      : [...$("#discovery-results").querySelectorAll("h2 a")].find(link => link.getAttribute("href") === leadHref);
+    (target || $("#discovery-search")).focus({ preventScroll: true });
+  }
 }
 
 async function refreshDiscovery() {
   if (state.loading) return;
-  state.loading = true; renderDiscovery();
+  state.loading = true;
   try {
+    const attempt = new Date().toISOString();
+    state.attemptAt = attempt;
+    renderDiscovery();
     const payload = validateDiscovery(await json("api/ascn-news"));
     if (!payload.articles.length) throw new Error("Index unavailable");
     state.candidates = mergeDiscovery([payload.articles, state.candidates]);
-    state.checkedAt = payload.checkedAt; state.discoverySources = payload.sources; state.discoveryMode = "live";
-  } catch { state.discoveryMode = "saved"; }
-  finally { state.loading = false; renderDiscovery(); }
+    state.snapshotAt = payload.snapshotAt || state.snapshotAt;
+    state.attemptAt = payload.attemptedAt || (payload.live ? payload.checkedAt : attempt);
+    state.discoverySources = payload.sources;
+    state.discoveryMode = payload.mode;
+  } catch {
+    state.discoveryMode = "saved";
+    state.discoverySources = [];
+  } finally {
+    state.loading = false;
+    renderDiscovery();
+  }
 }
 
 function exportEvidence() {
@@ -169,7 +206,7 @@ async function initArchive() {
 }
 
 async function initDiscovery() {
-  try { const saved = validateDiscovery(await json("data/ascn-news-discovery.json")); state.candidates = saved.articles; state.checkedAt = saved.checkedAt; } catch { /* A live index check may recover independently. */ }
+  try { const saved = validateDiscovery(await json("data/ascn-news-discovery.json")); state.candidates = saved.articles; state.snapshotAt = saved.checkedAt; } catch { /* A live index check may recover independently. */ }
   renderDiscovery(); await refreshDiscovery();
 }
 
@@ -192,4 +229,4 @@ window.addEventListener("hashchange", route);
 window.addEventListener("ascn:tabchange", route);
 // A language switch must repaint the generated copy, not only the [data-i18n] shell.
 document.addEventListener("ascn:lang", () => { if (state.archive) render(); renderDiscovery(); });
-route(); initArchive(); initDiscovery();
+route(); initArchive();

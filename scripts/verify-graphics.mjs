@@ -1,3 +1,4 @@
+import { auditRoutes, waitForAuditRoute } from "./audit-routes.mjs";
 import { chromium, devices } from "@playwright/test";
 import { createHash } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -380,31 +381,21 @@ try {
   // measure on one screen breaks it on the next, and a sweep at a single
   // width cannot see that.
   const sweepViewports = [{ width: 1440, height: 900 }, { width: 1024, height: 768 }, { width: 390, height: 844 }];
-  const views = ["overview", "innovation", "record", "news", "news/archive",
-    "news/discovery", "news/regional", "archive", "history", "cities",
-    "projects", "framework", "partners", "contacts", "insights", "data",
-    "research", "essay", "ascn9"];
   let worst = { chars: 0, where: "—" };
   const offenders = [];
   for (const vp of sweepViewports) {
   const { page } = await newPage(vp);
+  await page.goto(`${BASE}/#overview`, { waitUntil: "domcontentloaded" });
+  await page.locator('#kpi-grid .kpi').first().waitFor({ state: 'attached' });
+  const views = await auditRoutes(page);
+  if (!views.length) throw new Error("Reading measure could not read the navigation");
   for (const v of views) {
-    await page.goto(`${BASE}/#${v}`, { waitUntil: "networkidle" });
-    await page.waitForTimeout(500);
+    await page.goto(`${BASE}/#${v}`, { waitUntil: "domcontentloaded" });
+    await waitForAuditRoute(page, v);
     const found = await page.evaluate(() => {
       const out = [];
-      // The average advance of the font, measured rather than assumed. Jost's
-      // average character is about 0.45em, not 0.5em: assuming half an em
-      // under-counted every line by about a tenth, and a 100-character line
-      // read as 89 and passed.
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      const SAMPLE = "the quick brown fox jumps over the lazy dog, and then it does it again";
-      const avgAdvance = (cs) => {
-        ctx.font = `${cs.fontSize} ${cs.fontFamily}`;
-        const w = ctx.measureText(SAMPLE).width;
-        return w > 0 ? w / SAMPLE.length : parseFloat(cs.fontSize) * 0.5;
-      };
+      const segmenter = new Intl.Segmenter(document.documentElement.lang, { granularity: "grapheme" });
+      const range = document.createRange();
       // A prose block is a paragraph, a list item, a quote, a caption — or a
       // div whose content is inline text and nothing else. The Research
       // view's Insider FAQ is a stack of divs: the widest prose on the site,
@@ -432,36 +423,36 @@ try {
         if ((el.textContent || "").trim().length < 120) continue; // labels are not prose
         const cs = getComputedStyle(el);
         if (cs.display === "none" || cs.visibility === "hidden") continue;
-        // The measure of a prose block is the length of its LONGEST
-        // RENDERED LINE, not the width of its box. A paragraph that runs in
-        // two columns has a box as wide as the band and a line as wide as
-        // the column; asking the box gave 154 characters for a line of 73.
-        // The line boxes come from a Range, grouped by their top edge and
-        // split again wherever the text jumps to the next column.
-        const range = document.createRange();
-        range.selectNodeContents(el);
-        const byTop = new Map();
-        for (const rect of range.getClientRects()) {
-          if (rect.width <= 0 || rect.height <= 0) continue;
-          const key = Math.round(rect.top);
-          const runs = byTop.get(key) || [];
-          let placed = false;
-          for (const run of runs) {
-            if (rect.left >= run.left - 2 && rect.left <= run.right + 2) {
-              run.left = Math.min(run.left, rect.left);
-              run.right = Math.max(run.right, rect.right);
-              placed = true;
-              break;
-            }
+        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+        const rows = new Map();
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          for (const { segment, index } of segmenter.segment(node.data)) {
+            range.setStart(node, index);
+            range.setEnd(node, index + segment.length);
+            const { top, width, left, right } = range.getBoundingClientRect();
+            if (!width) continue;
+            const y = Math.round(top);
+            if (!rows.has(y)) rows.set(y, []);
+            rows.get(y).push({ left, right, segment });
           }
-          if (!placed) runs.push({ left: rect.left, right: rect.right });
-          byTop.set(key, runs);
         }
-        let lineW = 0;
-        for (const runs of byTop.values()) for (const run of runs) lineW = Math.max(lineW, run.right - run.left);
-        if (!lineW) lineW = r.width;
+        // Text in two columns can share a baseline. The gutter separates runs.
+        let longest = 0;
+        for (const row of rows.values()) {
+          row.sort((a, b) => a.left - b.left);
+          let run = [], right = -Infinity;
+          for (const box of row) {
+            if (box.left - right > cs.fontSize && run.length) {
+              longest = Math.max(longest, run.length);
+              run = [];
+            }
+            run.push(box.segment);
+            right = box.right;
+          }
+          longest = Math.max(longest, run.length);
+        }
         out.push({
-          chars: Math.round(lineW / avgAdvance(cs)),
+          chars: longest,
           sel: el.tagName.toLowerCase() + "." + (el.className || "").toString().split(" ")[0],
           px: Math.round(parseFloat(cs.fontSize)),
         });

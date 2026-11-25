@@ -112,3 +112,59 @@ test("index failures are not cached; cached HEAD requests have no body", async (
   mock.method(globalThis, "fetch", async () => { throw new Error("Should use cache"); });
   const head = await onRequest(context("HEAD")); assert.equal(head.status, 200); assert.equal(await head.text(), "");
 });
+
+// The search index refuses Cloudflare's address (measured 2026-11-22: the
+// RSS endpoint answers 503 with Google's "unusual traffic" page; the same
+// feed answers from a workstation). The published snapshot is this site's
+// list of record, so a refused live check must still deliver the list and
+// say that it was not checked live — not answer 503 with no body.
+test("a refused index answers with the published snapshot and says it was not checked live", async (t) => {
+  t.after(() => mock.restoreAll());
+  const snapshot = JSON.parse(await readFile(new URL("../data/ascn-news-discovery.json", import.meta.url), "utf8"));
+  const asked = [];
+  const context = () => ({ request: new Request("https://ascn.example/api/ascn-news"),
+    env: { ASSETS: { fetch: async (url) => { asked.push(new URL(url).pathname); return new Response(JSON.stringify(snapshot), { headers: { "Content-Type": "application/json" } }); } } },
+    waitUntil: () => {} });
+  mock.method(globalThis, "fetch", async () => new Response("<html>unusual traffic</html>", { status: 503, headers: { "Content-Type": "text/html" } }));
+  const response = await onRequest(context());
+  assert.equal(response.status, 200);
+  const body = await response.json();
+  assert.equal(body.mode, "saved"); assert.equal(body.live, false);
+  assert.equal(body.checkedAt, snapshot.checkedAt);
+  assert.equal(body.articles.length, snapshot.articles.length);
+  assert.ok(body.sources.length >= 1);
+  for (const source of body.sources) { assert.equal(source.status, "unavailable"); assert.equal(source.reason.code, "refused"); assert.equal(source.reason.status, 503); }
+  assert.deepEqual(asked, ["/data/ascn-news-discovery.json"]);
+});
+
+test("the endpoint refuses to serve anything but the published snapshot path", async (t) => {
+  t.after(() => mock.restoreAll());
+  const asked = [];
+  const context = () => ({ request: new Request("https://ascn.example/api/ascn-news"),
+    env: { ASSETS: { fetch: async (url) => { asked.push(new URL(url).pathname); return new Response("[]", { status: 404 }); } } },
+    waitUntil: () => {} });
+  mock.method(globalThis, "fetch", async () => new Response("nope", { status: 503 }));
+  const response = await onRequest(context());
+  assert.equal(response.status, 503);
+  const body = await response.json();
+  assert.equal(body.articles.length, 0); assert.equal(body.mode, "unavailable");
+  assert.equal(body.sources[0].reason.status, 503);
+  assert.deepEqual(asked, ["/data/ascn-news-discovery.json"]);
+  assert.equal(response.headers.get("cache-control"), "no-store");
+});
+
+test("a live index is reported as live, and a snapshot as saved", async (t) => {
+  t.after(() => mock.restoreAll());
+  const snapshot = JSON.parse(await readFile(new URL("../data/ascn-news-discovery.json", import.meta.url), "utf8"));
+  const context = () => ({ request: new Request("https://ascn.example/api/ascn-news"),
+    env: { ASSETS: { fetch: async () => new Response(JSON.stringify(snapshot)) } },
+    waitUntil: () => {} });
+  mock.method(globalThis, "fetch", async () => new Response('<rss><channel><item><title>Live ASCN lead</title><link>https://news.google.com/rss/articles/abc</link><pubDate>Sun, 29 Apr 2018 00:00:00 GMT</pubDate></item></channel></rss>'));
+  const live = await (await onRequest(context())).json();
+  assert.equal(live.mode, "live"); assert.equal(live.live, true); assert.equal(live.articles.length, 1);
+  assert.equal(live.sources[0].status, "ok");
+  const validated = validateDiscovery(live);
+  assert.equal(validated.mode, "live"); assert.equal(validated.live, true);
+  const saved = validateDiscovery({ checkedAt: snapshot.checkedAt, articles: snapshot.articles, sources: live.sources });
+  assert.equal(saved.mode, "saved"); assert.equal(saved.live, false);
+});

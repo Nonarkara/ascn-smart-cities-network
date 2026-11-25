@@ -60,6 +60,7 @@
 //   ASCN_TEST_URL=http://127.0.0.1:4187 node scripts/audit-composition.mjs
 // ---------------------------------------------------------------------------
 
+import { auditRoutes, waitForAuditRoute } from './audit-routes.mjs';
 import { chromium } from '@playwright/test';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
@@ -67,12 +68,6 @@ import { pathToFileURL } from 'node:url';
 const base = process.env.ASCN_TEST_URL || 'http://127.0.0.1:4187';
 const outDir = process.env.ASCN_COMPOSITION_OUT || 'artifacts/composition';
 const strict = process.env.ASCN_COMPOSITION_STRICT === '1';
-
-const VIEWS = [
-  'overview', 'innovation', 'record', 'news', 'news/regional', 'news/archive',
-  'news/discovery', 'history', 'cities', 'projects', 'framework', 'partners',
-  'insights', 'research', 'essay', 'data', 'contacts',
-];
 
 const VIEWPORTS = [
   { name: '1440', width: 1440, height: 900 },
@@ -376,13 +371,6 @@ export async function auditView(page, surface) {
   return { contentWidth: Math.round(width), contentHeight: Math.round(height), failures, margins };
 }
 
-async function show(page, surface) {
-  return page.waitForFunction((v) => {
-    const el = document.getElementById('view-' + v);
-    return !!el && !el.hidden;
-  }, surface, { timeout: 20000 });
-}
-
 async function main() {
   await mkdir(outDir, { recursive: true });
   const browser = await chromium.launch();
@@ -390,17 +378,27 @@ async function main() {
 
   for (const vp of VIEWPORTS) {
     const page = await browser.newPage({ viewport: { width: vp.width, height: vp.height } });
-    for (const route of VIEWS) {
+    await page.route('**/api/{news,ascn-news}', route => route.fulfill({ status: 503, json: {} }));
+    await page.goto(`${base}/#overview`, { waitUntil: 'domcontentloaded' });
+    await page.locator('#kpi-grid .kpi').first().waitFor({ state: 'attached' });
+    const routes = await auditRoutes(page);
+    if (!routes.length) throw new Error('Composition audit could not read the navigation');
+    for (const route of routes) {
       const surface = route.split('/')[0];
       await page.goto(`${base}/#${route}`, { waitUntil: 'domcontentloaded' });
-      try { await show(page, surface); }
-      catch {
-        await page.reload({ waitUntil: 'domcontentloaded' });
-        await show(page, surface);
+      await waitForAuditRoute(page, route);
+      if (surface === 'news') {
+        const panel = route.split('/')[1] || 'review';
+        const ready = {
+          review: '#review-verdict h2',
+          archive: '#review-archive article',
+          discovery: '#discovery-results article',
+          regional: '#news-panel-regional article',
+        };
+        await page.locator(ready[panel]).first().waitFor({ state: 'attached' });
       }
-      await page.waitForTimeout(700);
       const result = await auditView(page, surface);
-      if (!result) continue;
+      if (!result) throw new Error(`Composition audit did not measure ${route} at ${vp.name}`);
       const entry = { route, viewport: vp.name, ...result };
       report.views.push(entry);
       for (const f of result.failures) report.failures.push({ route, viewport: vp.name, ...f });
@@ -417,7 +415,7 @@ async function main() {
   if (!report.failures.length) console.log('  none');
   for (const f of report.failures) {
     const why = f.interior ? 'interior hole' : f.framedShort ? `a rule frames a row whose content stops short (${f.framingRule || 'unknown rule'})` : 'a heavy rule crosses it';
-    console.log(`  ${f.route} @${f.viewport}: ${f.widthPx}px (${f.widthPct}%) x ${f.heightPx}px at x=${f.x0}..${f.x1} — ${why}`);
+    console.log(`  ${f.route} @${f.viewport}: ${f.widthPx}px (${f.widthPct}%) x ${f.heightPx}px at x=${f.x0}..${f.x1}, y=${f.topPx} — ${why}`);
   }
   console.log('\nComposition bands — margins (answered, not failed)');
   if (!report.margins.length) console.log('  none');
