@@ -3,6 +3,7 @@
 import { execFileSync, spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { releaseFiles } from './verify-publication.mjs';
 
 const port = process.env.ASCN_RELEASE_PORT || '4197';
 const base = `http://127.0.0.1:${port}`;
@@ -10,6 +11,10 @@ const env = { ...process.env, ASCN_TEST_URL: base, ASCN_SH_LABEL: 'release', ASC
 const output = 'artifacts/release';
 await mkdir(output, { recursive: true });
 const report = { revision: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), startedAt: new Date().toISOString(), base, checks: [], passed: false, independentVisualReview: 'Required for visual changes; inspect local screenshots against DESIGN-ANTI-SLOP.md and DESIGN-MSH.md.' };
+const requireCommittedData = process.argv.includes('--require-committed-data');
+const fingerprint = async () => Object.fromEntries(await Promise.all(releaseFiles.map(async file => [
+  file, createHash('sha256').update(await readFile(`dist/${file}`)).digest('hex'),
+])));
 let preview;
 let active;
 function run(command, args) {
@@ -36,7 +41,16 @@ try {
   await writeFile(`${output}/checks.json`, JSON.stringify(report, null, 2) + '\n');
   await check('Dependency security', 'npm', ['audit', '--audit-level=high']);
   await check('Design, data, unit and public artifact checks', 'npm', ['run', 'check']);
-  report.indexSha256 = createHash('sha256').update(await readFile('dist/index.html')).digest('hex');
+  report.releaseSha256 = await fingerprint();
+  report.indexSha256 = report.releaseSha256['index.html'];
+  if (requireCommittedData) {
+    for (const file of releaseFiles.filter(path => path.startsWith('data/'))) {
+      const reviewed = execFileSync('git', ['show', `${report.revision}:${file}`], { maxBuffer: 25 * 1024 * 1024 });
+      if (createHash('sha256').update(reviewed).digest('hex') !== report.releaseSha256[file]) {
+        throw new Error(`Commit the reviewed dataset before deploying: ${file}`);
+      }
+    }
+  }
   // Refuse an occupied port: a different or stale preview cannot stand in for
   // the artifact whose upload this gate is authorising.
   const occupied = await fetch(base, { signal: AbortSignal.timeout(1000) }).then(() => true, () => false);
@@ -63,6 +77,9 @@ try {
   ]) {
     await check(name, command, args);
   }
+  const after = await fingerprint();
+  const changed = releaseFiles.find(file => after[file] !== report.releaseSha256[file]);
+  if (changed) throw new Error(`Release file changed during verification: ${changed}`);
   report.passed = true;
   console.log('Release automation passed. Visual changes still require independent screenshot review.');
 } catch (error) {

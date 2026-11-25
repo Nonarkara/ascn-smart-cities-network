@@ -11,10 +11,10 @@ npm run deploy
 then starts a fresh local Pages preview. It runs the browser suite, strict spatial
 audit, composition, graphics and rendered reading measure, and both capture
 passes against that build. Its report records the Git revision and built index
-SHA-256. A failed step stops
-the release. `deploy` runs this gate again after refreshing discovery, uploads
-only on success, then verifies exact live bytes and no-store 404 responses for
-private paths. CI runs the same pre-upload checks.
+SHA-256, along with the hashes of release scripts and public datasets. A failed
+step stops the release. `deploy` runs the gate with a committed-dataset check,
+uploads only on success, then verifies live bytes and no-store 404 responses
+for private paths. CI runs the same design, data and browser checks.
 
 The browser suite includes an intercepted dataset with 220 additional projects,
 long prose and an unbroken title token. It verifies complete table rows, matching
@@ -48,6 +48,11 @@ the actual screenshots. Keep screenshots local. Confirm live map selection,
 project filters/export, source records and navigation after upload.
 
 ## When data changes
+
+Refresh the snapshot explicitly, review the diff and commit the public data
+before deploying. Use `npm run refresh:ascn-news` for Discovery and
+`npm run refresh:news` for the Regional reading list. Deploy uses the committed
+snapshots. Live publisher checks remain available in the browser.
 
 Check the public source and its cut-off first. Keep official totals, searchable
 appendix rows, announcements, delivered outputs and measured outcomes distinct.

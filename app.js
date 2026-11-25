@@ -392,23 +392,34 @@ function mountLocatorNext(tab) {
 
 /* ---------------- Innovation ---------------- */
 function renderInnovation() {
-  // Static content in view-innovation is rendered from HTML and styled via CSS.
   mountTwinPeeks();
-  // The hero video is the one asset on this view that must not be fetched on
-  // arrival: it stays on preload="none" until the tab is actually opened.
-  const video = document.getElementById("iaas-hero-video");
-  if (!video) return;
-  if (!video.dataset.navigationPause) {
-    const pauseOnLeave = () => { if (state.tab !== "innovation") video.pause(); };
-    window.addEventListener("hashchange", pauseOnLeave);
-    window.addEventListener("ascn:tabchange", pauseOnLeave);
-    video.dataset.navigationPause = "true";
-  }
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-  if (reduced.matches) return; // poster alone; never force motion on request.
-  // preload="none" means nothing is fetched yet — play() is what pulls it in,
-  // so the request happens here, on tab open, and never on arrival.
-  video.play().then(() => { if (state.tab !== "innovation") video.pause(); }).catch(() => {});
+}
+
+function wireInnovationPlayback() {
+  const video = $("#iaas-hero-video");
+  const button = $("#iaas-video-toggle");
+  const error = $("#iaas-video-error");
+  const pause = () => video.pause();
+  const sync = () => {
+    button.dataset.i18n = video.paused ? "news.ui.play-video" : "news.ui.pause-video";
+    button.textContent = t(button.dataset.i18n);
+  };
+  button.addEventListener("click", async () => {
+    if (!video.paused) { pause(); return; }
+    error.hidden = true;
+    try {
+      await video.play();
+      if (document.hidden || state.tab !== "innovation" || !video.getClientRects().length) pause();
+    } catch (failure) {
+      if (failure.name !== "AbortError") error.hidden = false;
+    }
+  });
+  for (const event of ["play", "pause", "ended"]) video.addEventListener(event, sync);
+  window.addEventListener("ascn:tabchange", () => { if (state.tab !== "innovation") pause(); });
+  window.addEventListener("pagehide", pause);
+  document.addEventListener("visibilitychange", () => { if (document.hidden) pause(); });
+  matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", event => { if (event.matches) pause(); });
+  new IntersectionObserver(([entry]) => { if (!entry.isIntersecting) pause(); }).observe(video);
 }
 
 /* ---------------- Twin previews ----------------
@@ -3343,6 +3354,7 @@ function wireIndexSearch() {
 
 async function init() {
   wireNav();
+  wireInnovationPlayback();
   wireTheme();
   wireIndexSearch();
   wireShellChrome();

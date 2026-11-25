@@ -12,7 +12,7 @@ export const publishedDatasets = new Set([
   "ascn-news-discovery.json", "ascn-v2-data.json", "city-stats-merged.json", "news-snapshot.json",
 ]);
 
-const runtimeModules = new Set(["security.mjs", "i18n.mjs", "ascn-review.mjs", "ascn-discovery.mjs", "news-feed.mjs", "news-sources.mjs"]);
+export const runtimeModules = new Set(["security.mjs", "i18n.mjs", "ascn-review.mjs", "ascn-discovery.mjs", "news-feed.mjs", "news-sources.mjs"]);
 const publicAssets = new Set(JSON.parse(await readFile(new URL("./public-assets.json", import.meta.url), "utf8")));
 const assetFolders = new Set(["docs", "Photos", "logos", "media"]);
 const extensions = {

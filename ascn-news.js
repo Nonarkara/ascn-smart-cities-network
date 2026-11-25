@@ -1,5 +1,5 @@
 import { escapeHtml as esc, safeUrl, csvCell, validateDataset } from "./lib/security.mjs";
-import { tx, fill, keyFor } from "./lib/i18n.mjs";
+import { tx, fill, keyFor, currentLang } from "./lib/i18n.mjs";
 import { REVIEW_STAGES, REVIEW_MANDATES, SOURCE_TYPES, validateArchive, filterRecords, summarizeEvidence, cityEvidence, linkProjects, discoveryInbox } from "./lib/ascn-review.mjs";
 import { validateDiscovery, mergeDiscovery } from "./lib/ascn-discovery.mjs";
 
@@ -7,14 +7,13 @@ const $ = (selector) => document.querySelector(selector);
 const state = { archive: null, cities: [], engine: null, page: 0, discoveryPage: 0, candidates: [], discoveryQuery: "", snapshotAt: null, attemptAt: null, discoveryStarted: false, discoveryMode: "saved", discoverySources: [], loading: false,
   filters: { query: "", city: "all", year: "all", stage: "all", sourceType: "all", mandate: "all" } };
 const format = new Intl.NumberFormat("en-GB");
-const date = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
-const showDate = (value) => value ? date.format(new Date(value)) : "Publication date unknown";
+const showDate = (value) => value ? new Intl.DateTimeFormat(currentLang() === "en" ? "en-GB" : currentLang(), { dateStyle: "medium", timeZone: "UTC" }).format(new Date(value)) : tx("Publication date unknown");
 const external = (url, label) => `<a class="ext-link" href="${esc(safeUrl(url))}" target="_blank" rel="noopener noreferrer">${esc(label)} ↗</a>`;
 const slug = (name) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 const pageSize = 10;
 
 async function json(path) {
-  const response = await fetch(path, { signal: AbortSignal.timeout(15000), credentials: "omit" });
+  const response = await fetch(path, { cache: "no-cache", signal: AbortSignal.timeout(15000), credentials: "omit" });
   if (!response.ok) throw new Error(`Cannot load ${path}`);
   return response.json();
 }
@@ -37,7 +36,7 @@ function route() {
 
 function bars(rows, key, label) {
   const max = Math.max(1, ...rows.map((row) => row.count));
-  return `<div class="review-bars" role="img" aria-label="${esc(label)}">${rows.map((row) => `<div class="review-bar-row"><span>${esc(row[key])}</span><span class="review-bar-track"><span style="width:${row.count / max * 100}%"></span></span><strong>${row.count}</strong></div>`).join("")}</div>`;
+  return `<div class="review-bars" role="img" aria-label="${esc(label)}">${rows.map((row) => `<div class="review-bar-row"><span>${esc(key === "stage" ? tx(row[key]) : row[key])}</span><span class="review-bar-track"><span style="width:${row.count / max * 100}%"></span></span><strong>${row.count}</strong></div>`).join("")}</div>`;
 }
 
 function pagination(selector, page, length, change) {
@@ -54,7 +53,7 @@ function record(row) {
   // it assigned, the review's reading, what evidence is still missing — is
   // authored prose, and it is translated.
   return `<article class="review-record" id="evidence-${esc(row.id)}">
-    <div class="news-story-meta"><span>${esc(row.publisher)}</span><span>${esc(tx(row.sourceType))}</span><span>${esc(tx(row.stage))}</span><span>${esc(row.language)}</span></div>
+    <div class="news-story-meta"><span>${esc(row.publisher)}</span><span>${esc(tx(row.sourceType))}</span><span>${esc(tx(row.stage))}</span><span>${esc(tx(row.language))}</span></div>
     <h2>${external(row.url, row.title)}</h2>
     <p class="review-note">${esc(showDate(row.publishedAt))}${!row.publishedAt ? `\u00A0· ${esc(fill("{year} context", { year: row.year }))}` : ""}\u00A0· ${esc(tx(row.access))}\u00A0· ${esc(fill("reviewed {date}", { date: showDate(state.archive.reviewedAt) }))}</p>
     <p>${esc(tx(row.claim))}</p>
@@ -73,7 +72,7 @@ function renderBaseline() {
   if (!reports) { $("#review-baseline").innerHTML = `<p class="review-note">${esc(tx("Official project comparison unavailable. News evidence remains readable; no status figures are inferred from headlines."))}</p>`; return; }
   const latest = reports.at(-1);
   const maximum = Math.max(...reports.map((report) => report.total_projects));
-  $("#review-baseline").innerHTML = `<h2>${esc(tx("Official portfolio baseline"))}</h2><p>${esc(fill(tx("{projects} projects at {date}: {completed} completed, {ongoing} ongoing, {planning} planning."), { projects: latest.total_projects, date: showDate(latest.as_of), completed: latest.status.completed, ongoing: latest.status.ongoing, planning: latest.status.planning }))}</p>
+  $("#review-baseline").innerHTML = `<h2>${esc(tx("Official portfolio baseline"))}</h2><p>${esc(fill("{projects} projects at {date}: {completed} completed, {ongoing} ongoing, {planning} planning.", { projects: latest.total_projects, date: showDate(latest.as_of), completed: latest.status.completed, ongoing: latest.status.ongoing, planning: latest.status.planning }))}</p>
     <div class="review-bars" role="img" aria-label="${esc(tx("Official project totals by reporting year"))}">${reports.map((report) => `<div class="review-bar-row"><span>${report.year}</span><span class="review-bar-track"><span style="width:${report.total_projects / maximum * 100}%"></span></span><strong>${report.total_projects}</strong></div>`).join("")}</div>
     <p class="review-note">${esc(tx("Official M&E status, not independently audited impact."))} ${reports.map((report) => external(report.url, String(report.year))).join("\u00A0· ")}. ${esc(tx("The news archive never overwrites these figures."))}</p>`;
 }
@@ -96,7 +95,7 @@ function render() {
   const shownCities = matrix.filter((city) => state.filters.city === "all" || city.name === state.filters.city);
   const gapCount = shownCities.filter((city) => !city.delivery).length;
   $("#review-status").textContent = fill("{n} of {m} reviewed records\u00A0· {k} distinct topics/events\u00A0· reviewed {date}", { n: rows.length, m: all.records, k: summary.events, date: showDate(state.archive.reviewedAt) });
-  $("#review-verdict").innerHTML = `<h2>${esc(tx(!rows.length ? "No evidence matches this selection" : summary.outcomeEvents ? "Outcome claims need their comparison evidence" : tx("Activity is documented. Citizen impact remains an evidence gap.")))}</h2>
+  $("#review-verdict").innerHTML = `<h2>${esc(tx(!rows.length ? "No evidence matches this selection" : summary.outcomeEvents ? "Outcome claims need their comparison evidence" : "Activity is documented. Citizen impact remains an evidence gap."))}</h2>
     <p>${esc(fill("{n} records across {k} distinct topics/events in this selection. {o} events have a reviewed outcome comparison; that is a limit of this archive, not proof that cities produced no benefits.", { n: summary.records, k: summary.events, o: summary.outcomeEvents }))}</p>
     <dl class="review-measures"><div><dt>${esc(tx("City-specific evidence"))}</dt><dd>${summary.cityCount}</dd></div><div><dt>${esc(tx("Selected cities without delivery coverage"))}</dt><dd>${gapCount} / ${shownCities.length}</dd></div><div><dt>${esc(tx("Outcome comparison events"))}</dt><dd>${summary.outcomeEvents}</dd></div></dl>`;
   $("#review-stage-chart").innerHTML = bars(summary.stages, "stage", tx("Reviewed records by evidence stage; counts start at zero"));
@@ -129,7 +128,7 @@ function render() {
 
 function renderDiscovery() {
   const focused = document.activeElement;
-  const pageControl = focused?.closest("#discovery-pagination button")?.getAttribute("aria-label");
+  const pageControl = focused?.closest("#discovery-pagination button")?.dataset.page;
   const leadHref = focused?.closest("#discovery-results h2 a")?.getAttribute("href");
   const inbox = discoveryInbox(state.candidates, state.archive?.records || []);
   const search = state.discoveryQuery.toLowerCase().trim();
@@ -155,7 +154,7 @@ function renderDiscovery() {
   pagination("#discovery-pagination", state.discoveryPage, rows.length, (page) => { state.discoveryPage = page; renderDiscovery(); $("#discovery-results").scrollIntoView(); });
   if (pageControl || leadHref) {
     const target = pageControl
-      ? [...$("#discovery-pagination").querySelectorAll("button:not(:disabled)")].find(button => button.getAttribute("aria-label") === pageControl)
+      ? [...$("#discovery-pagination").querySelectorAll("button:not(:disabled)")].find(button => button.dataset.page === pageControl)
       : [...$("#discovery-results").querySelectorAll("h2 a")].find(link => link.getAttribute("href") === leadHref);
     (target || $("#discovery-search")).focus({ preventScroll: true });
   }
@@ -202,7 +201,7 @@ async function initArchive() {
     $("#review-city").insertAdjacentHTML("beforeend", state.cities.map((city) => `<option>${esc(city.name)}</option>`).join(""));
     render(); route(); renderDiscovery();
     try { state.engine = validateDataset("ascn-v2-data.json", await json("data/ascn-v2-data.json")); render(); } catch { renderBaseline(); }
-  } catch { $("#review-status").textContent = tx("ASCN evidence archive unavailable. Regional news and discovery remain available."); }
+  } catch { state.archiveFailed = true; renderReviewStatus(); }
 }
 
 async function initDiscovery() {
@@ -215,7 +214,7 @@ for (const [key, values] of [["stage", REVIEW_STAGES], ["sourceType", SOURCE_TYP
   // language switch re-translate them.
   $(`#review-${key}`).insertAdjacentHTML("beforeend", values.map((value) => {
     const labelKey = keyFor(value);
-    return `<option${labelKey ? ` data-i18n="${labelKey}"` : ""}>${esc(value)}</option>`;
+    return `<option value="${esc(value)}"${labelKey ? ` data-i18n="${labelKey}"` : ""}>${esc(value)}</option>`;
   }).join(""));
 }
 for (const key of ["city", "year", "stage", "sourceType", "mandate"]) $(`#review-${key}`).addEventListener("change", (event) => { state.filters[key] = event.target.value; state.page = 0; render(); });
@@ -228,5 +227,24 @@ $("#review-mandates").addEventListener("click", (event) => { const link = event.
 window.addEventListener("hashchange", route);
 window.addEventListener("ascn:tabchange", route);
 // A language switch must repaint the generated copy, not only the [data-i18n] shell.
-document.addEventListener("ascn:lang", () => { if (state.archive) render(); renderDiscovery(); });
+function renderReviewStatus() {
+  if (state.archive) render();
+  else $("#review-status").textContent = tx(state.archiveFailed
+    ? "ASCN evidence archive unavailable. Regional news and discovery remain available." : "Loading ASCN evidence…");
+}
+
+function localizeNews() {
+  $("#review-search").placeholder = tx("City, project or claim");
+  $("#discovery-search").placeholder = tx("Search indexed titles or publishers");
+  for (const selector of [".review-tabs", "#review-export", "#discovery-refresh"]) {
+    const node = $(selector);
+    const label = tx(node.dataset.label);
+    node.setAttribute("aria-label", label);
+    if (node.hasAttribute("title")) node.title = label;
+  }
+  renderReviewStatus();
+  if (state.discoveryStarted) renderDiscovery();
+}
+document.addEventListener("ascn:lang", localizeNews);
+localizeNews();
 route(); initArchive();

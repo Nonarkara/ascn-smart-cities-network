@@ -2,6 +2,30 @@ import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 
 const engine = JSON.parse(await readFile(new URL('../data/ascn-v2-data.json', import.meta.url)));
+const roster = JSON.parse(await readFile(new URL('../data/ascn-cities.json', import.meta.url)));
+
+test('an expanded city roster renders long names and unlisted officers with optional data offline', async ({ page }) => {
+  const future = structuredClone(roster);
+  const name = 'Metropolitan ' + 'LongCityName'.repeat(8);
+  future.cities.push({ ...future.cities[0], name, year: 2027, flagship: [], summary: 'Fixture record awaiting project details.' });
+  await page.route('**/data/ascn-cities.json*', route => route.fulfill({ json: future }));
+  await page.route('**/data/{ascn-library-full,city-stats-merged}.json*', route => route.fulfill({ status: 503 }));
+  for (const [tab, picker, record] of [['cities', '#city-pick', '#city-detail'], ['contacts', '#contact-city', '#contact-detail']]) {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`/#${tab}`);
+    await expect(page.locator(`${picker} option`)).toHaveCount(future.cities.length);
+    await page.locator(picker).selectOption(name);
+    await expect(page.locator(`${record} h2`)).toHaveText(name);
+    if (tab === 'contacts') await expect(page.locator('#contact-record')).toContainText('Name unavailable in the source list.');
+    else await expect(page.locator('#city-directory-title')).toContainText(`${future.cities.length} cities`);
+    for (const width of [390, 1024, 1440]) {
+      await page.setViewportSize({ width, height: width === 1024 ? 768 : 900 });
+      await expect.poll(() => page.locator(`${record} h2`).evaluate(el =>
+        el.scrollWidth <= el.clientWidth + 1 && document.querySelector('#plate').scrollWidth <= document.querySelector('#plate').clientWidth + 1
+      )).toBe(true);
+    }
+  }
+});
 
 // Test the next import, not only today's 121 searchable rows. This dataset
 // exists only in the intercepted response and is never a publication asset.

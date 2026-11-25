@@ -4,12 +4,12 @@ import { mkdtemp, mkdir, readFile, writeFile, symlink, rm } from 'node:fs/promis
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { siteEntries, isPublishedFile } from '../scripts/site-assets.mjs';
-import { assertPublicBuild, verifyLivePublication, privateProbes } from '../scripts/verify-publication.mjs';
+import { assertPublicBuild, verifyLivePublication, privateProbes, releaseFiles } from '../scripts/verify-publication.mjs';
 
 async function fixture(t) {
   const directory = await mkdtemp(join(tmpdir(), 'ascn-publication-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
-  const files = new Map(siteEntries.filter(isPublishedFile).map(x => [x, Buffer.from(`public ${x}`)]));
+  const files = new Map([...siteEntries.filter(isPublishedFile), ...releaseFiles].map(x => [x, Buffer.from(`public ${x}`)]));
   files.set('data/ascn-archive.json', await readFile(new URL('../data/ascn-archive.json', import.meta.url)));
   for (const [path, bytes] of files) {
     await mkdir(join(directory, path, '..'), { recursive: true });
@@ -48,8 +48,8 @@ test('finished artifact refuses symlinks and changed archive content', async t =
 
 test('live guard checks exact release bytes and GETs every private route without redirects', async t => {
   const f = await fixture(t);
-  assert.deepEqual(await verifyLivePublication('https://example.org',{...f}),{publicFiles:4,privateRoutes:privateProbes.length});
-  assert.equal(f.calls.length,4+privateProbes.length);
+  assert.deepEqual(await verifyLivePublication('https://example.org',{...f}),{publicFiles:releaseFiles.length,privateRoutes:privateProbes.length});
+  assert.equal(f.calls.length,releaseFiles.length+privateProbes.length);
   assert.ok(f.calls.every(x => !x.options.method && x.options.redirect === 'manual'));
 });
 
@@ -70,6 +70,10 @@ test('live guard rejects stale public assets and transport errors', async t => {
     directory:f.directory,
     fetchImpl:async (url,options) => url.pathname === '/app.js' ? new Response('stale') : f.fetchImpl(url,options),
   }),/Live release differs: app.js/);
+  await assert.rejects(verifyLivePublication('https://example.org',{
+    directory:f.directory,
+    fetchImpl:async (url,options) => url.pathname === '/data/ascn-news-discovery.json' ? new Response('previous snapshot') : f.fetchImpl(url,options),
+  }),/Live release differs: data\/ascn-news-discovery.json/);
   await assert.rejects(verifyLivePublication('https://example.org',{
     directory:f.directory, fetchImpl:async () => {throw new Error('network unavailable');},
   }),/network unavailable/);
