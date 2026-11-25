@@ -1115,39 +1115,44 @@
       </section>
 
       <!-- CITIES -->
-      <section class="view" id="view-cities" data-view="cities" hidden>
-        <div class="section-head split">
-          <div>
-            <p data-i18n="hd.member.cities" class="label">Member Cities</p>
-            <h1 data-i18n="h.cities-title">38 cities, 11 countries — and what each is building</h1>
-            <div class="cities-related">
-              <a href="https://slic.nonarkara.org/" target="_blank" rel="noopener" class="cities-rel-link">
-                <span class="cities-rel-label">SLIC Index</span>
-                <span data-i18n="hd.southeast.asia.s.city.liveability.and.competitiveness" class="cities-rel-desc">Southeast Asia's city liveability and competitiveness index — 174 cities ranked across 5 pillars</span>
-              </a>
-              <a href="https://sciti.nonarkara.org/" target="_blank" rel="noopener" class="cities-rel-link">
-                <span class="cities-rel-label">SCITI Index</span>
-                <span data-i18n="hd.smart.city.thailand.index.tracking.thailand.s" class="cities-rel-desc">Smart City Thailand Index — tracking Thailand's 30 smart city candidates against the global frontier</span>
-              </a>
+      <section class="view map-view" id="view-cities" data-view="cities" hidden>
+        <div class="map-frame">
+          <div id="sea-map" class="map-stage sea-map" role="region" aria-labelledby="member-cities-title"></div>
+          <p class="map-legend" id="map-legend"></p>
+        </div>
+        <div id="city-detail">
+          <div class="map-exit">
+            <div class="map-edge">
+              <h1 id="member-cities-title" class="map-title" data-i18n="hd.member.cities">Member Cities</h1>
+              <select id="city-pick" aria-label="Choose a city"></select>
+              <div class="segmented" id="map-mode">
+                <button data-i18n="hd.map" type="button" class="active" data-mode="map" aria-pressed="true">Map</button>
+                <button data-i18n="hd.night" type="button" data-mode="night" aria-pressed="false">Night</button>
+              </div>
             </div>
+            <div id="city-selection" class="map-selection"></div>
           </div>
+          <p class="map-notice" role="status" data-i18n="map.tiles.unavailable" hidden>Some map tiles are unavailable. You can still choose a city.</p>
+          <div id="city-record" class="city-detail"></div>
+        </div>
+        <div class="map-directory">
+          <h2 id="city-directory-title">City directory</h2>
           <div class="controls">
             <input id="city-search" type="search" placeholder="Search a city" aria-label="Search a city" />
             <select id="city-country" aria-label="Filter by country"><option data-i18n="flt.all.countries" value="all">All countries</option></select>
-            <div class="segmented" id="map-mode">
-              <button data-i18n="hd.map" type="button" class="active" data-mode="map">Map</button>
-              <button data-i18n="hd.night" type="button" data-mode="night">Night</button>
-            </div>
           </div>
+          <div class="city-cards" id="city-cards"></div>
         </div>
-        <div class="cities-layout">
-          <div class="map-col">
-            <div id="sea-map" class="sea-map"></div>
-            <p class="map-legend" id="map-legend"></p>
-          </div>
-          <div class="city-detail" id="city-detail"></div>
+        <div class="cities-related">
+          <a href="https://slic.nonarkara.org/" target="_blank" rel="noopener" class="cities-rel-link">
+            <span class="cities-rel-label">SLIC Index</span>
+            <span data-i18n="hd.southeast.asia.s.city.liveability.and.competitiveness" class="cities-rel-desc">Southeast Asia's city liveability and competitiveness index — 174 cities ranked across 5 pillars</span>
+          </a>
+          <a href="https://sciti.nonarkara.org/" target="_blank" rel="noopener" class="cities-rel-link">
+            <span class="cities-rel-label">SCITI Index</span>
+            <span data-i18n="hd.smart.city.thailand.index.tracking.thailand.s" class="cities-rel-desc">Smart City Thailand Index — tracking Thailand's 30 smart city candidates against the global frontier</span>
+          </a>
         </div>
-        <div class="city-cards" id="city-cards"></div>
       </section>
 
       <!-- PROJECTS -->
@@ -1437,7 +1442,7 @@
         <section class="archive-withheld" id="archive-withheld"></section>
       </section>
       <!-- CONTACTS -->
-      <section class="view" id="view-contacts" data-view="contacts" hidden>
+      <section class="view map-view" id="view-contacts" data-view="contacts" hidden>
         <div id="contacts-content"></div>
       </section>
 

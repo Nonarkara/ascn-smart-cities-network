@@ -2436,10 +2436,63 @@ body .view p.record-actions { max-width: 100%; }
 .cities-rel-link:hover { border-color: var(--navy); }
 .cities-rel-label { display: block; font-size:var(--t-micro); font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--navy); }
 .cities-rel-desc { display: block; font-size:var(--t-small); color: var(--ink-2); margin-top: 0.2rem; }
-.cities-layout { display: grid; grid-template-columns: 1.45fr 1fr; gap: 1.4rem; margin-bottom: 1.6rem; }
-.map-col { display: grid; gap: 0.5rem; align-content: start; }
-.sea-map { width: 100%; height: 30rem; border: 1px solid var(--line-soft); background: var(--surface); }
+/* Map-first column. The native controls and selected record sit on its exit. */
+.plate-scroll #main-content:has(> .map-view:not([hidden])) { padding-top: 0.5rem; }
+.view.map-view { padding-top: 0; animation: none; }
+.map-stage { width: 100%; height: 73dvh; border: 1px solid var(--line-soft); background: var(--surface); }
+@media (min-width: 1800px) {
+  .map-stage { height: 81dvh; }
+}
+@media (max-width: 1150px) and (min-width: 861px) {
+  .map-stage { height: 78dvh; }
+}
+@media (max-width: 860px) {
+  .map-stage { height: 69dvh; }
+}
+.map-edge, .map-selection {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+}
+.map-edge { margin: 0.15rem 0; }
+.map-title, .map-selection h2 { line-height: 1.15; margin: 0; }
+.map-title { font-size: max(var(--t-h2), calc(1.5 * var(--t-lede))); }
+.map-view h2 { font-size: var(--t-lede); }
+.map-edge select { min-height: 44px; max-width: 100%; min-width: 0; }
+.map-edge .segmented { padding: 0; border: 0; box-shadow: inset 0 0 0 1px var(--line-soft); }
+@media (max-width: 530px) {
+  #view-cities .map-title { flex-basis: 100%; }
+}
+.map-notice { color: var(--muted); margin: 0.25rem 0; }
+.map-selection .cd-portal { margin: 0; }
+@container view (min-width: 730px) {
+  .map-exit {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 1.25rem;
+  }
+}
+.map-directory { margin-top: 1.5rem; }
+.map-directory h2 { margin-bottom: 0.4rem; }
+.map-directory .controls { margin-bottom: 0.75rem; }
+.map-frame { position: relative; }
+.map-view .map-legend {
+  position: absolute;
+  z-index: 401;
+  inset: auto auto 1.35rem 0.4rem;
+  max-width: calc(100% - 0.8rem);
+  gap: 0.1rem 0.55rem;
+  padding: 0.2rem 0.35rem;
+  color: var(--ink);
+  background: var(--paper);
+  pointer-events: none;
+}
+
 .leaflet-container { font-family: var(--font); }
+/* Keep basemap tile seams from reading as boundaries at fractional zoom. */
+.map-stage .leaflet-tile { outline: 1px solid transparent; }
 .map-legend { display: flex; flex-wrap: wrap; gap: 0.9rem; margin: 0; color: var(--muted); font-size:var(--t-small); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
 .map-legend i { display: inline-block; width: 0.6rem; height: 0.6rem; border-radius: 50%; margin-right: 0.3rem; vertical-align: middle; /* The key is drawn the way the map draws the mark: a filled
      circle with a light ring. Without the ring the 2026 cohort's swatch
@@ -2447,9 +2500,9 @@ body .view p.record-actions { max-width: 100%; }
      four keys were invisible, and a key that cannot be seen is not a key. */
   box-shadow: inset 0 0 0 1.5px #ffffff; }
 
-.city-detail { border-top: 1px solid var(--line); padding-top: 0.9rem; min-height: 18rem; }
+.city-detail { border-top: 1px solid var(--line); padding-top: 0.15rem; }
 .city-detail .cd-place { color: var(--muted); font-weight: 800; font-size:var(--t-micro); letter-spacing: 0.1em; text-transform: uppercase; }
-.city-detail h2 { margin: 0.1rem 0 0.5rem; }
+
 .cd-meta { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; color: var(--ink-2); font-size:var(--t-body); margin-bottom: 0.5rem; }
 .cd-meta b { color: var(--ink); }
 .cd-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.7rem; }
@@ -2458,7 +2511,7 @@ body .view p.record-actions { max-width: 100%; }
 .cd-chip--conn.cd-chip--advanced { border-color: var(--navy); color: var(--navy); }
 .cd-chip--conn.cd-chip--limited { color: var(--muted); }
 .cd-chip--imd { background: var(--navy); color: var(--on-solid); }
-.cd-chip--outcome { background: color-mix(in srgb, var(--amber) 12%, transparent); color: var(--amber); border: 1px solid color-mix(in srgb, var(--amber) 30%, transparent); max-width: 18rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: none; letter-spacing: 0; }
+.cd-chip--outcome { background: color-mix(in srgb, var(--amber) 12%, transparent); color: var(--amber); border: 1px solid color-mix(in srgb, var(--amber) 30%, transparent); max-width: 100%; overflow-wrap: anywhere; text-transform: none; letter-spacing: 0; }
 .cd-section-label { font-weight: 800; font-size:var(--t-micro); letter-spacing: 0.1em; text-transform: uppercase; color: var(--navy); margin: 0.9rem 0 0.4rem; }
 .cd-projects { display: grid; gap: 0; }
 .cd-project { display: grid; grid-template-columns: 1fr auto; gap: 0.5rem; padding: 0.5rem 0; border-top: 1px solid var(--line-soft); }
@@ -2920,10 +2973,10 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .lib-item p { margin: 0; color: var(--ink-2); font-size:var(--t-body); }
 
 /* ---------- Contacts ---------- */
-.contacts-wrap { width: 100%; max-width: var(--content); margin: 0 auto; padding: 2.5rem 0 4rem; }
-.contacts-header { padding-bottom: 2rem; border-bottom: 1px solid var(--line); margin-bottom: 2.5rem; }
-.contacts-header h2 { font-size:var(--t-h1); font-weight: 700; letter-spacing: -0.02em; margin: 0.5rem 0 0.75rem; }
-.contacts-header .lede { max-width: 600px; margin-bottom: 1.25rem; }
+.contacts-header { margin: 1rem 0; }
+.contacts-header .lede { margin-bottom: 0.2rem; }
+.contact-roles { display: flex; flex-wrap: wrap; align-items: start; gap: 0 1.5rem; }
+.contact-roles .cpop-block { flex: 0 1 24rem; }
 
 .contact-secretariat { margin-bottom: 2.5rem; }
 .contact-secretariat .label { margin-bottom: 0.75rem; }
@@ -2955,7 +3008,6 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .contacts-source-note a { color: var(--ink-2); }
 
 @media (max-width: 640px) {
-  .contacts-header h2 { font-size:var(--t-h2); }
   .contacts-grid { grid-template-columns: 1fr; }
   .contact-card { padding: 1rem 0; }
 }
@@ -3187,7 +3239,7 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
   .site-nav { align-items: flex-start; flex-direction: column; gap: 0.5rem; }
   .site-nav nav { width: 100%; overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
   .site-nav nav::-webkit-scrollbar { display: none; }
-  .hero, .overview-grid, .history-grid, .cities-layout, .info-grid,
+  .hero, .overview-grid, .history-grid, .info-grid,
   .analytics-grid, .framework-grid, .gov-grid, .focus-detail,
   .dq-grid { grid-template-columns: 1fr; }
   .footer-content { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -3216,7 +3268,6 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
   .site-nav nav { width: 100%; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 0.2rem; scrollbar-width: none; }
   .site-nav nav::-webkit-scrollbar { display: none; }
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-  .sea-map { height: 22rem; }
   .ascap-panel .pillars { grid-template-columns: 1fr; }
   .footer-logos { flex-wrap: wrap; }
   .section-head.split { flex-direction: column; }
@@ -4202,22 +4253,6 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 .site-notice a:hover { text-decoration: underline; }
 
 /* ── Contacts map ───────────────────────────────────────────────────── */
-.contacts-map-wrap { margin: 2rem 0 0.5rem; }
-.contacts-map {
-  width: 100%;
-  height: 480px;
-  border: 1px solid var(--rule);
-  background: var(--deep);
-}
-.contacts-map-hint {
-  font-size:var(--t-small);
-  color: var(--muted);
-  text-align: right;
-  margin: 0.35rem 0 0;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
 /* Contact cards — updated for NR name */
 .cc-nr-name {
   font-size:var(--t-body);
@@ -4235,30 +4270,11 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
   vertical-align: middle;
 }
 
-/* City contact popup */
-.cpop-wrap .leaflet-popup-content-wrapper {
-  background: var(--deep);
-  border: 1px solid var(--line);
-  border-radius: 0;
-  box-shadow: none; /* override Leaflet's default drop shadow — §11.6 */
-  color: var(--ink);
-  padding: 0;
-}
-.cpop-wrap .leaflet-popup-tip-container { display: none; }
-.cpop-wrap .leaflet-popup-content { margin: 0; width: auto !important; }
-.cpop-wrap .leaflet-popup-close-button { color: color-mix(in srgb, var(--ink) 40%, transparent) !important; top: 6px !important; right: 8px !important; font-size: 16px !important; }
-.cpop { padding: 1rem 1.1rem 0.9rem; min-width: 220px; }
-.cpop-city {
-  font-size:var(--t-lede);
-  font-weight: 700;
-  color: var(--ink);
-  line-height: 1.2;
-  margin-bottom: 0.75rem;
-}
+/* Selected city contacts */
 .cpop-ctry {
   font-size:var(--t-small);
   font-weight: 400;
-  color: color-mix(in srgb, var(--ink) 50%, transparent);
+  color: var(--muted);
 }
 .cpop-block {
   border-top: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
@@ -4291,7 +4307,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
   margin-top: 0.15rem;
   line-height: 1.4;
 }
-.cpop-org a { color: rgba(230,237,243,0.55); text-decoration: none; }
+.cpop-org a { display: inline-flex; min-height: 44px; align-items: center; color: var(--navy); text-underline-offset: 0.2em; }
 .cpop-org a:hover { color: var(--amber); }
 .cpop-badge {
   display: inline-block;
@@ -4305,19 +4321,6 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
   margin-left: 0.4rem;
   vertical-align: middle;
 }
-.cpop-verify { margin-top: 0.3rem; }
-.cpop-verify a {
-  font-size:var(--t-micro);
-  color: var(--amber);
-  text-decoration: none;
-  opacity: 0.8;
-}
-.cpop-verify a:hover { opacity: 1; }
-
-@media (max-width: 640px) {
-  .contacts-map { height: 460px; }
-}
-
 /* ---- Research tab ---- */
 /* The research view's sections are a centred band. At full width the paper cards held 359px of text inside a 769px
    box, so each card had a 410px hole in it, the two columns of the grid
@@ -5826,7 +5829,6 @@ button:active { transform: scale(0.97); }
 
 .spotlight-tag { color: var(--on-solid); }
 .spotlight-actions .text-button.primary { background: var(--amber); color: var(--on-solid); border-color: var(--amber); }
-.cpop-wrap .leaflet-popup-content { color: var(--ink); }
 #corr-more[hidden] { display: none; }
 
 .rec-public-context { margin-top: 1.5rem; border-top: 1px solid var(--line); padding-top: 1rem; }
