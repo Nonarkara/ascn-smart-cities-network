@@ -114,9 +114,16 @@ test("outages without saved data remain distinct from a filter with no matches",
 test("a published reading list outranks an older browser cache and stale feed response", async ({ page }) => {
   const older = { ...fixture, checkedAt: "2026-09-01", articles: fixture.articles.slice(0, 1) };
   await page.addInitScript(saved => localStorage.setItem("ascn-news-v1", JSON.stringify(saved)), older);
-  await page.route("**/data/news-snapshot.json", route => route.fulfill({ json: fixture }));
+  let release;
+  const pending = new Promise(resolve => { release = resolve; });
+  await page.route("**/data/news-snapshot.json", async route => {
+    await pending;
+    await route.fulfill({ json: fixture });
+  });
   await page.route("**/api/news", route => route.fulfill({ json: { ...older, mode: "live", sources: [null] } }));
   await page.goto("/#news/regional");
+  await expect(page.locator("#news-results h2")).toHaveCount(1);
+  release();
   await expect(page.locator("#news-status")).toContainText("newer than the feed response");
   await expect(page.locator("#news-results h2")).toHaveCount(fixture.articles.length);
   await page.locator('[data-lang-set="th"]').click();

@@ -121,16 +121,20 @@ async function init() {
     const raw = localStorage.getItem("ascn-news-v1");
     if (raw && raw.length < 250000) saved = validateNewsPayload(JSON.parse(raw));
   } catch { /* Invalid saved data is replaced by the checked reading list. */ }
+  if (saved?.articles.length) {
+    Object.assign(state, { articles: saved.articles, checkedAt: saved.checkedAt });
+    updatePublishers();
+    render();
+  }
   try {
-    const response = await fetch("data/news-snapshot.json", { cache: "no-cache" });
+    const response = await fetch("data/news-snapshot.json", { cache: "no-cache", signal: AbortSignal.timeout(15_000) });
     if (!response.ok) throw new Error("Reading list unavailable");
     const published = validateNewsPayload(await response.json());
-    if (published.articles.length && (!saved?.articles.length || Date.parse(published.checkedAt) >= Date.parse(saved.checkedAt))) saved = published;
+    if (published.articles.length && (!state.checkedAt || Date.parse(published.checkedAt) >= Date.parse(state.checkedAt))) {
+      Object.assign(state, { articles: published.articles, checkedAt: published.checkedAt });
+      updatePublishers();
+    }
   } catch { /* Browser storage and publisher feeds can still supply headlines. */ }
-  if (saved?.articles.length) {
-    Object.assign(state, { articles: saved.articles, checkedAt: saved.checkedAt, mode: "saved" });
-    updatePublishers();
-  }
   state.ready = true;
   await refresh();
 }
