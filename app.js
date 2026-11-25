@@ -2137,7 +2137,7 @@ function renderResearch() {
     },
     {
       n: "05", label: tx("The Measurement Problem"),
-      heading: "Output vs outcome: what the M&amp;E framework counts",
+      heading: "Output vs outcome: what the M&E framework counts",
       body: "Four M&amp;E cycles. 134 projects. What do we know about whether any of them worked? Hollands (2008) identified the central gap in smart city reporting a decade before ASCN was founded: the record consistently documents what was deployed, not whether deployment produced better lives. Kitchin (2014) confirmed the pattern globally. ASCN's M&amp;E framework is more sophisticated than most — it tracks implementation status and strategic target progress across six focus areas. But it does not yet systematically measure outcomes: whether Phnom Penh's waste management reduced illness rates; whether Da Nang's transport system cut commute times; whether Bangkok's digital platform produced decisions city officials could not previously make.",
       tags: ["Hollands 2008", "Kitchin 2014", "Costoya 2022"],
     },

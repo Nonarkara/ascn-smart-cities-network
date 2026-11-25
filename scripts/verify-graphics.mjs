@@ -436,15 +436,16 @@ try {
   // the real offender. Range client rects come back one per line box.
   const { page } = await newPage();
   await page.addInitScript(`window.longestHeadingLine = ${longestHeadingLine.toString()}`);
-  const views = ["overview", "innovation", "record", "news", "history", "cities",
-    "projects", "framework", "partners", "insights", "library", "research", "essay"];
+  await page.goto(`${BASE}/#overview`, { waitUntil: "domcontentloaded" });
+  await page.locator('#kpi-grid .kpi').first().waitFor({ state: 'attached' });
+  const views = await auditRoutes(page);
   const long = [];
   let smallHeadings = [];
   let measured = 0;
   const perView = [];
   for (const v of views) {
-    await page.goto(`${BASE}/#${v}`, { waitUntil: "networkidle" });
-    await page.waitForTimeout(450);
+    await page.goto(`${BASE}/#${v}`, { waitUntil: "domcontentloaded" });
+    await waitForAuditRoute(page, v);
     const f = await page.evaluate((route) => {
       const over = [], tiny = [];
       let n = 0;
