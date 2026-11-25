@@ -9,7 +9,9 @@ npm run deploy
 
 `check:release` audits dependencies and validates design, datasets, units and the finished public artifact,
 then starts a fresh local Pages preview. It runs the browser suite, strict spatial
-audit, visual captures and complete reading-path captures in sequence against that build. A failed step stops
+audit, composition, graphics and rendered reading measure, and both capture
+passes against that build. Its report records the Git revision and built index
+SHA-256. A failed step stops
 the release. `deploy` runs this gate again after refreshing discovery, uploads
 only on success, then verifies exact live bytes and no-store 404 responses for
 private paths. CI runs the same pre-upload checks.
@@ -62,8 +64,8 @@ history to make an update pass.
 ## Current limits
 
 Thai and Chinese authored translations remain incomplete; the footer states that
-limit. `npm run audit:graphics` reports that broader editorial debt separately;
-`check:release` does not certify translation completeness or native-speaker review.
+limit. The graphics audit checks the defined locale surfaces and reading measure.
+Translation completeness and native-speaker review remain separate.
 Source-issued names and titles retain their published wording.
 
 The contents rail scrolls on shorter screens to preserve fifteen 44px links.

@@ -1,14 +1,15 @@
 // One pre-upload path for data and interface changes. Keep the preview alive
 // across browser tests and screenshot audits so they examine the same build.
-import { spawn } from 'node:child_process';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { execFileSync, spawn } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 
 const port = process.env.ASCN_RELEASE_PORT || '4197';
 const base = `http://127.0.0.1:${port}`;
 const env = { ...process.env, ASCN_TEST_URL: base, ASCN_SH_LABEL: 'release', ASCN_SH_STRICT: '1', ASCN_SCREENSHOTS: 'artifacts/release/views' };
 const output = 'artifacts/release';
 await mkdir(output, { recursive: true });
-const report = { startedAt: new Date().toISOString(), base, checks: [], passed: false, independentVisualReview: 'Required for visual changes; inspect local screenshots against DESIGN-ANTI-SLOP.md and DESIGN-MSH.md.' };
+const report = { revision: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), startedAt: new Date().toISOString(), base, checks: [], passed: false, independentVisualReview: 'Required for visual changes; inspect local screenshots against DESIGN-ANTI-SLOP.md and DESIGN-MSH.md.' };
 let preview;
 let active;
 function run(command, args) {
@@ -35,6 +36,7 @@ try {
   await writeFile(`${output}/checks.json`, JSON.stringify(report, null, 2) + '\n');
   await check('Dependency security', 'npm', ['audit', '--audit-level=high']);
   await check('Design, data, unit and public artifact checks', 'npm', ['run', 'check']);
+  report.indexSha256 = createHash('sha256').update(await readFile('dist/index.html')).digest('hex');
   // Refuse an occupied port: a different or stale preview cannot stand in for
   // the artifact whose upload this gate is authorising.
   const occupied = await fetch(base, { signal: AbortSignal.timeout(1000) }).then(() => true, () => false);
@@ -55,6 +57,7 @@ try {
     ['Browser flows and incoming-data regressions', 'npx', ['playwright', 'test']],
     ['Spatial geometry and map readiness', 'npm', ['run', 'audit:spatial']],
     ['Composition bands — empty content area beside content', 'npm', ['run', 'audit:composition']],
+    ['Graphics and rendered reading measure', 'npm', ['run', 'audit:graphics']],
     ['All-view visual captures', 'npm', ['run', 'audit:visual']],
     ['Complete reading-path captures', 'npm', ['run', 'audit:reading']],
   ]) {

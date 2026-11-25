@@ -3,7 +3,7 @@ import { chromium, devices } from "@playwright/test";
 import { createHash } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
-import { outsidePalette, shorterMeasure, longestHeadingLine, mediaCaptionFits, renderedTypeSizes } from "./visual-audit-rules.mjs";
+import { outsidePalette, shorterMeasure, longestHeadingLine, mediaCaptionFits, renderedTypeSizes, measureRenderedProse } from "./visual-audit-rules.mjs";
 
 const BASE = process.env.ASCN_TEST_URL || "http://127.0.0.1:4187";
 const fetch = (input, options = {}) => globalThis.fetch(input, { ...options, signal: options.signal || AbortSignal.timeout(20000) });
@@ -392,73 +392,7 @@ try {
   for (const v of views) {
     await page.goto(`${BASE}/#${v}`, { waitUntil: "domcontentloaded" });
     await waitForAuditRoute(page, v);
-    const found = await page.evaluate(() => {
-      const out = [];
-      const segmenter = new Intl.Segmenter(document.documentElement.lang, { granularity: "grapheme" });
-      const range = document.createRange();
-      // A prose block is a paragraph, a list item, a quote, a caption — or a
-      // div whose content is inline text and nothing else. The Research
-      // view's Insider FAQ is a stack of divs: the widest prose on the site,
-      // 175 characters to a line, and a sweep that selects only p/li/dd/
-      // blockquote/figcaption never saw it.
-      // A prose block is an element whose text is its OWN: no block-level
-      // descendant, and not a row of columns. A flex row's text is its
-      // children's text laid out side by side, and measuring the row measures
-      // the whole row as one sentence — 139 characters for a strip of four
-      // filter labels.
-      const isProse = (el) => {
-        const cs = getComputedStyle(el);
-        if (cs.display.includes("flex") || cs.display.includes("grid")) return false;
-        for (const node of el.querySelectorAll("*")) {
-          const d = getComputedStyle(node).display;
-          if (d === "block" || d === "flex" || d === "grid" || d === "list-item" ||
-              d === "table" || d === "table-row" || d === "table-cell") return false;
-        }
-        return true;
-      };
-      for (const el of document.querySelectorAll("p, li, dd, blockquote, figcaption, div, span")) {
-        if (!isProse(el)) continue;
-        const r = el.getBoundingClientRect();
-        if (r.width < 200 || r.height < 8) continue;
-        if ((el.textContent || "").trim().length < 120) continue; // labels are not prose
-        const cs = getComputedStyle(el);
-        if (cs.display === "none" || cs.visibility === "hidden") continue;
-        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-        const rows = new Map();
-        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-          for (const { segment, index } of segmenter.segment(node.data)) {
-            range.setStart(node, index);
-            range.setEnd(node, index + segment.length);
-            const { top, width, left, right } = range.getBoundingClientRect();
-            if (!width) continue;
-            const y = Math.round(top);
-            if (!rows.has(y)) rows.set(y, []);
-            rows.get(y).push({ left, right, segment });
-          }
-        }
-        // Text in two columns can share a baseline. The gutter separates runs.
-        let longest = 0;
-        for (const row of rows.values()) {
-          row.sort((a, b) => a.left - b.left);
-          let run = [], right = -Infinity;
-          for (const box of row) {
-            if (box.left - right > cs.fontSize && run.length) {
-              longest = Math.max(longest, run.length);
-              run = [];
-            }
-            run.push(box.segment);
-            right = box.right;
-          }
-          longest = Math.max(longest, run.length);
-        }
-        out.push({
-          chars: longest,
-          sel: el.tagName.toLowerCase() + "." + (el.className || "").toString().split(" ")[0],
-          px: Math.round(parseFloat(cs.fontSize)),
-        });
-      }
-      return out;
-    });
+    const found = await page.evaluate(measureRenderedProse, "p, li, dd, blockquote, figcaption, div, span");
     for (const f of found) {
       if (f.chars > worst.chars) worst = { chars: f.chars, where: `${v} ${f.sel} @${f.px}px @${vp.width}` };
       if (f.chars > 75) offenders.push(`${v} ${f.sel}=${f.chars} @${vp.width}px`);
@@ -699,10 +633,11 @@ try {
   ok("the discovery snapshot is recent enough to be useful", ageDays <= 45,
     `${ageDays.toFixed(1)} days old (checkedAt ${snap.checkedAt})`);
 
-  // And the page must actually render them, whichever path it took.
+  // Discovery initializes on first entry. Wait for the visible route and saved results.
   const { page, failures } = await newPage();
-  await page.goto(`${BASE}/#news`, { waitUntil: "networkidle" });
-  await page.waitForTimeout(1800);
+  await page.goto(`${BASE}/#news/discovery`, { waitUntil: "domcontentloaded" });
+  await waitForAuditRoute(page, "news/discovery");
+  await page.locator("#discovery-results article").first().waitFor();
   const shown = await page.locator("#discovery-results article").count();
   ok("the reader sees discovery leads", shown > 0, `${shown} rendered`);
   ok("no unhandled page errors on the News view", failures.length === 0,
