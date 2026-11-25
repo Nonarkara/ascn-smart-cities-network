@@ -2491,6 +2491,8 @@ body .view p.record-actions { max-width: 100%; }
 }
 
 .leaflet-container { font-family: var(--font); }
+/* Keep basemap tile seams from reading as boundaries at fractional zoom. */
+.map-stage .leaflet-tile { outline: 1px solid transparent; }
 .map-legend { display: flex; flex-wrap: wrap; gap: 0.9rem; margin: 0; color: var(--muted); font-size:var(--t-small); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
 .map-legend i { display: inline-block; width: 0.6rem; height: 0.6rem; border-radius: 50%; margin-right: 0.3rem; vertical-align: middle; /* The key is drawn the way the map draws the mark: a filled
      circle with a light ring. Without the ring the 2026 cohort's swatch
