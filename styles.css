@@ -2456,7 +2456,9 @@ body .view p.record-actions { max-width: 100%; }
   gap: 0.25rem 0.75rem;
 }
 .map-edge { margin: 0.15rem 0; }
-.map-title, .map-selection h2 { font-size: var(--t-h2); line-height: 1.15; margin: 0; }
+.map-title, .map-selection h2 { line-height: 1.15; margin: 0; }
+.map-title { font-size: max(var(--t-h2), calc(1.5 * var(--t-lede))); }
+.map-view h2 { font-size: var(--t-lede); }
 .map-edge select { min-height: 44px; max-width: 100%; min-width: 0; }
 .map-edge .segmented { padding: 0; border: 0; box-shadow: inset 0 0 0 1px var(--line-soft); }
 @media (max-width: 530px) {
@@ -4303,7 +4305,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
   margin-top: 0.15rem;
   line-height: 1.4;
 }
-.cpop-org a { color: var(--navy); text-underline-offset: 0.2em; }
+.cpop-org a { display: inline-flex; min-height: 44px; align-items: center; color: var(--navy); text-underline-offset: 0.2em; }
 .cpop-org a:hover { color: var(--amber); }
 .cpop-badge {
   display: inline-block;

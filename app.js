@@ -690,6 +690,7 @@ function projectsForCity(name) {
 function renderCitiesView() {
   const countries = [...new Set(state.C.map((c) => c.country))].sort();
   const countryFilter = $("#city-country");
+  countryFilter.setAttribute("aria-label", t("map.country"));
   countryFilter.length = 1;
   countryFilter.insertAdjacentHTML("beforeend", countries.map((c) => `<option value="${esc(c)}">${esc(c)}</option>`).join(""));
   countryFilter.value = state.cityCountry;
@@ -697,13 +698,16 @@ function renderCitiesView() {
     .map(([col, lab]) => `<span><i style="background:${col}"></i>${esc(lab)}</span>`).join("");
   $("#city-directory-title").textContent = cityRosterLabel();
   const picker = $("#city-pick");
+  picker.setAttribute("aria-label", t("map.choose"));
   picker.innerHTML = cityOptions(state.C);
   renderCityCards();
   const sub = (location.hash || "").split("/")[1];
   const routed = sub && state.C.find((c) => citySlug(c.name) === sub);
   selectCity(routed || state.C.find((c) => c.name === "Bangkok") || state.C[0]);
-  $("#city-search").setAttribute("aria-label", t("map.search"));
-  $("#city-search").oninput = (e) => { state.citySearch = e.target.value; renderCityCards(); syncMarkers(); };
+  const search = $("#city-search");
+  search.placeholder = t("map.search");
+  search.setAttribute("aria-label", search.placeholder);
+  search.oninput = (e) => { state.citySearch = e.target.value; renderCityCards(); syncMarkers(); };
   countryFilter.onchange = (e) => { state.cityCountry = e.target.value; renderCityCards(); syncMarkers(); };
   picker.onchange = (e) => {
     const city = state.C.find(item => item.name === e.target.value);

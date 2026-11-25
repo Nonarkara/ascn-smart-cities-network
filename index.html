@@ -1117,14 +1117,14 @@
       <!-- CITIES -->
       <section class="view map-view" id="view-cities" data-view="cities" hidden>
         <div class="map-frame">
-          <div id="sea-map" class="map-stage sea-map" role="region" aria-label="Member Cities" data-i18n="hd.member.cities" data-i18n-attr="aria-label"></div>
+          <div id="sea-map" class="map-stage sea-map" role="region" aria-labelledby="member-cities-title"></div>
           <p class="map-legend" id="map-legend"></p>
         </div>
         <div id="city-detail">
           <div class="map-exit">
             <div class="map-edge">
-              <h1 class="map-title" data-i18n="hd.member.cities">Member Cities</h1>
-              <select id="city-pick" aria-label="Choose a city" data-i18n="map.choose" data-i18n-attr="aria-label"></select>
+              <h1 id="member-cities-title" class="map-title" data-i18n="hd.member.cities">Member Cities</h1>
+              <select id="city-pick" aria-label="Choose a city"></select>
               <div class="segmented" id="map-mode">
                 <button data-i18n="hd.map" type="button" class="active" data-mode="map" aria-pressed="true">Map</button>
                 <button data-i18n="hd.night" type="button" data-mode="night" aria-pressed="false">Night</button>
@@ -1138,8 +1138,8 @@
         <div class="map-directory">
           <h2 id="city-directory-title">City directory</h2>
           <div class="controls">
-            <input id="city-search" type="search" placeholder="Search a city" aria-label="Search a city" data-i18n="map.search" data-i18n-attr="placeholder" />
-            <select id="city-country" aria-label="Filter by country" data-i18n="map.country" data-i18n-attr="aria-label"><option data-i18n="flt.all.countries" value="all">All countries</option></select>
+            <input id="city-search" type="search" placeholder="Search a city" aria-label="Search a city" />
+            <select id="city-country" aria-label="Filter by country"><option data-i18n="flt.all.countries" value="all">All countries</option></select>
           </div>
           <div class="city-cards" id="city-cards"></div>
         </div>
