@@ -1919,8 +1919,8 @@ body .view .review-followup .review-note { max-width: 54ch; }
   }
 }
 @container view (560px < width < 840px) {
-  /* The tablet directory rule ends at its picture, gutter and copy measure. */
-  .twins-showcase { max-width: calc(260px + 1.5rem + var(--measure)); }
+  /* The directory has its own rules. Keep the tablet introduction unframed. */
+  .twins-showcase { max-width: calc(260px + 1.5rem + var(--measure)); border-block: 0; }
 }
 @container view (max-width: 839px) {
   .twins-grid { grid-template-columns: 1fr; }
@@ -2981,6 +2981,10 @@ td { color: var(--ink-2); font-size:var(--t-body); }
   .essay-subtitle { grid-area: sub; }
   .essay-header > .essay-bio { grid-area: bio; margin-bottom: 0; min-width: 0; }
   .essay-header > .essay-pilot-note { grid-area: note; margin-block: 0; }
+  .essay-header .essay-bio-body {
+    grid-template-columns: minmax(0, 200px) minmax(0, var(--measure));
+    justify-content: center;
+  }
   .essay-header:has(> .essay-bio[open]) {
     grid-template-areas: "bar bar" "title title" "sub sub" "bio bio" "note note";
     row-gap: 0.65rem;
