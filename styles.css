@@ -5271,7 +5271,18 @@ body .view .iaas-hero-media figcaption {
    The Record — a ledger, not a highlight reel.
    Every figure carries a status. Committed ≠ disbursed. Output ≠ outcome.
    ══════════════════════════════════════════════════════════════════════════ */
-.rec-finding { margin-top: 2.5rem; }
+.record-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.65rem 1.5rem;
+  align-items: start;
+}
+.record-method { font-size: var(--t-small); }
+.record-method p { margin: 0.15rem 0 0; }
+@container view (min-width: 700px) {
+  .record-intro { grid-template-columns: minmax(0, var(--measure)) minmax(0, 22rem); }
+}
+.rec-finding { margin-top: 2rem; }
 .rec-finding h2 { font-size: var(--t-h2); line-height: 1.2; margin: 0 0 0.6rem; }
 .rec-finding > p { max-width: 52rem; margin: 0 0 1.5rem; color: var(--ink-2); }
 .rec-finding-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; align-items: start; }

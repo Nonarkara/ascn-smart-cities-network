@@ -119,6 +119,49 @@ const readInnovation = () => {
   return { height: hero.height, readingSlack: hero.bottom - Math.max(copy.bottom, method.bottom), copyHeight: copy.height, methodHeight: method.height, figureWidth: figure.width, figureHeight: figure.height };
 };
 
+const readRecordIntro = () => {
+  const rect = selector => document.querySelector(selector).getBoundingClientRect();
+  const scope = rect('#view-record .lede');
+  const method = rect('#view-record [data-i18n="hd.method"]');
+  return {
+    rowOffset: Math.abs(scope.top - method.top),
+    horizontalGap: method.left - scope.right,
+    stackGap: method.top - scope.bottom,
+    findingTop: rect('#view-record .rec-finding-grid').top,
+  };
+};
+
+test('the Record scope and method share a reading row before the accounting findings', async ({ page }) => {
+  await page.goto('/#record');
+  await expect(page.locator('#rec-stack-chart .rec-col').first()).toBeVisible();
+  await page.evaluate(() => document.fonts.ready);
+  for (const [width, height] of [[390, 844], [1024, 768], [1440, 900]]) {
+    await page.setViewportSize({ width, height });
+    const intro = await page.evaluate(readRecordIntro);
+    if (width === 390) {
+      expect(intro.stackGap).toBeGreaterThanOrEqual(0);
+      expect(intro.stackGap).toBeLessThanOrEqual(14);
+    } else {
+      expect(intro.rowOffset).toBeLessThanOrEqual(4);
+      expect(intro.horizontalGap).toBeGreaterThanOrEqual(0);
+      expect(intro.horizontalGap).toBeLessThanOrEqual(36);
+    }
+    expect(intro.findingTop).toBeLessThan(520);
+  }
+  // Restore the published detached note and prove the same row budget fails.
+  await page.locator('.record-head').evaluate(header => {
+    const title = document.createElement('div');
+    title.append(header.querySelector('p.label'), header.querySelector('h1'), header.querySelector('.lede'));
+    const method = header.querySelector('.record-method');
+    method.className = 'innovation-status-badge';
+    header.className = 'section-head split';
+    header.replaceChildren(title, method);
+  });
+  const original = await page.evaluate(readRecordIntro);
+  expect(original.rowOffset).toBeGreaterThan(60);
+  expect(original.horizontalGap).toBeGreaterThan(250);
+});
+
 test('News introduction gives the first screen to evidence and rejects the old hero', async ({ page }) => {
   await page.goto('/#news');
   await expect(page.locator('#review-baseline h2')).toBeVisible();
