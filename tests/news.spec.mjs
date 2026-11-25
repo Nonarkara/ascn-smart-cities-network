@@ -67,6 +67,62 @@ test("news and the meeting record remain usable when report data is unavailable"
   await expect(page.locator("#view-ascn9")).toBeVisible();
 });
 
+test("Thai and Chinese News keep filter values, source titles, and fallback meanings across four panels", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.route("**/data/news-snapshot.json", route => route.fulfill({ json: fixture }));
+  await page.route("**/api/{news,ascn-news}", route => route.fulfill({ status: 503, json: {} }));
+  await page.goto("/#news");
+  await expect(page.locator("#review-baseline h2")).toBeVisible();
+  await page.locator("#review-filter-panel summary").click();
+  await page.locator("#review-stage").selectOption("Output");
+  const reviewStatus = page.locator("#review-status");
+  const archiveTitle = await page.locator("#review-archive .review-record h2").first().textContent();
+  await page.locator('[data-lang-set="th"]').click();
+  await expect(page.locator("#review-stage")).toHaveValue("Output");
+  await expect(reviewStatus).toContainText(/รายการ/);
+  await page.locator('[data-news-view="archive"]').click();
+  await expect(page.locator("#review-archive .review-record h2").first()).toHaveText(archiveTitle);
+  await page.locator('[data-news-view="discovery"]').click();
+  await expect(page.locator("#discovery-status")).toContainText(/ดัชนีที่บันทึกไว้/);
+  await page.locator('[data-lang-set="zh"]').click();
+  await expect(page.locator("#discovery-status")).toContainText(/已保存的索引/);
+  await page.locator('[data-news-view="regional"]').click();
+  await expect(page.locator("#news-status")).toContainText(/已保存的阅读列表/);
+  await page.locator("#news-filter-summary").click();
+  await page.locator("#news-mobile-topic").selectOption({ label: "数字政务" });
+  await expect(page.locator("#news-results h2")).toHaveText("Malaysia digital government programme ↗");
+  await page.locator('[data-lang-set="th"]').click();
+  await expect(page.locator("#news-mobile-topic")).toHaveValue("Digital Government");
+  await expect(page.locator("#news-results h2")).toHaveText("Malaysia digital government programme ↗");
+});
+
+test("outages without saved data remain distinct from a filter with no matches", async ({ page }) => {
+  await page.route("**/data/{news-snapshot,ascn-news-archive,ascn-news-discovery}.json", route => route.fulfill({ status: 503 }));
+  await page.route("**/api/{news,ascn-news}", route => route.fulfill({ status: 503, json: {} }));
+  await page.goto("/#news");
+  await expect(page.locator("#review-status")).toContainText("archive unavailable");
+  await page.locator('[data-lang-set="zh"]').click();
+  await expect(page.locator("#review-status")).toContainText(/证据档案暂不可用/);
+  await page.locator('[data-news-view="discovery"]').click();
+  await expect(page.locator("#discovery-refresh")).toHaveAttribute("aria-disabled", "false");
+  await expect(page.locator("#discovery-status")).toContainText(/不可用/);
+  await page.locator('[data-news-view="regional"]').click();
+  await expect(page.locator("#news-status")).toHaveText("暂无区域新闻标题");
+  await expect(page.locator("#news-clear")).toHaveCount(0);
+});
+
+test("a published reading list outranks an older browser cache and stale feed response", async ({ page }) => {
+  const older = { ...fixture, checkedAt: "2026-09-01", articles: fixture.articles.slice(0, 1) };
+  await page.addInitScript(saved => localStorage.setItem("ascn-news-v1", JSON.stringify(saved)), older);
+  await page.route("**/data/news-snapshot.json", route => route.fulfill({ json: fixture }));
+  await page.route("**/api/news", route => route.fulfill({ json: { ...older, mode: "live", sources: [null] } }));
+  await page.goto("/#news/regional");
+  await expect(page.locator("#news-status")).toContainText("newer than the feed response");
+  await expect(page.locator("#news-results h2")).toHaveCount(fixture.articles.length);
+  await page.locator('[data-lang-set="th"]').click();
+  await expect(page.locator("#news-status")).toContainText("ใหม่กว่าข้อมูลจากฟีด");
+});
+
 for (const width of [1280, 768, 390, 375]) {
   test(`news layout fits ${width}px`, async ({ page }, testInfo) => {
     await page.route("**/api/news", (route) => route.fulfill({ status: 503, json: { checkedAt: "2026-10-07", articles: [], sources: [] } }));

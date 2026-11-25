@@ -70,6 +70,17 @@ const shortHash = async (rel) => {
   return createHash("sha256").update(buf).digest("hex").slice(0, 10);
 };
 
+// Every entry point must import the same dictionary URL. A cached dictionary
+// can otherwise leave new labels untranslated, and different URLs would split
+// the locale state across multiple browser module instances.
+const dictionaryVersion = await shortHash("lib/i18n.mjs");
+for (const entry of entries.filter(file => file.endsWith(".js"))) {
+  const path = new URL(entry, dist);
+  const source = await readFile(path, "utf8");
+  const revised = source.replaceAll('from "./lib/i18n.mjs"', `from "./lib/i18n.mjs?v=${dictionaryVersion}"`);
+  if (revised !== source) await writeFile(path, revised);
+}
+
 const htmlPath = new URL("index.html", dist);
 let html = await readFile(htmlPath, "utf8");
 const cacheable = new Map();

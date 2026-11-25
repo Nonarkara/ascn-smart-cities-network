@@ -2,11 +2,16 @@ import { lstat, readdir, readFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
-import { isPublishedFile, siteEntries } from './site-assets.mjs';
+import { isPublishedFile, publishedDatasets, runtimeModules, siteEntries } from './site-assets.mjs';
 import { assertPublicArchive } from './publication-policy.mjs';
 
 const defaultArtifact = new URL('../dist/', import.meta.url);
 const digest = (bytes) => createHash('sha256').update(bytes).digest('hex');
+export const releaseFiles = [
+  ...siteEntries.filter(file => /\.(html|js|css)$/.test(file)),
+  ...[...runtimeModules].map(file => `lib/${file}`),
+  ...[...publishedDatasets].map(file => `data/${file}`),
+];
 export const privateProbes = [
   '/data/ascn-correspondence.json', '/data/ascn-email-evidence.json',
   '/data/ascn%2dcorrespondence.json', '/lib/ascn-record.mjs',
@@ -42,6 +47,9 @@ export async function assertPublicBuild(directory = defaultArtifact) {
   for (const file of siteEntries.filter(isPublishedFile)) {
     if (!(await lstat(join(folder, file))).isFile()) throw new Error(`Missing publication entry: ${file}`);
   }
+  for (const file of releaseFiles) {
+    if (!(await lstat(join(folder, file))).isFile()) throw new Error(`Missing release input: ${file}`);
+  }
   assertPublicArchive(JSON.parse(await readFile(join(folder, 'data/ascn-archive.json'), 'utf8')));
   return { files: count };
 }
@@ -55,7 +63,7 @@ export async function verifyLivePublication(base, { directory = defaultArtifact,
   await assertPublicBuild(directory);
   const folder = directory instanceof URL ? fileURLToPath(directory) : resolve(directory);
   const request = (path) => fetchImpl(new URL(path, url), { redirect: 'manual', signal: AbortSignal.timeout(20000) });
-  for (const file of ['index.html', 'app.js', 'styles.css', 'data/ascn-archive.json']) {
+  for (const file of releaseFiles) {
     const response = await request(file === 'index.html' ? '/' : `/${file}`);
     if (response.status !== 200) { await response.body?.cancel(); throw new Error(`Public release probe failed: ${file} (${response.status})`); }
     const expected = await readFile(join(folder, file));
@@ -77,7 +85,7 @@ export async function verifyLivePublication(base, { directory = defaultArtifact,
       throw new Error(`Private route is not a no-store 404: ${path} (${response.status})`);
     }
   }
-  return { publicFiles: 4, privateRoutes: privateProbes.length };
+  return { publicFiles: releaseFiles.length, privateRoutes: privateProbes.length };
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {

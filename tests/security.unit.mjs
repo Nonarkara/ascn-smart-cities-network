@@ -33,6 +33,7 @@ test("runtime contracts reject missing rows, malicious numeric fields, and inval
   const cities = JSON.parse(await readFile(new URL("../data/ascn-cities.json", import.meta.url)));
   assert.equal(validateDataset("data/ascn-cities.json", cities), cities);
   assert.throws(() => validateDataset("data/ascn-cities.json", { cities: null }), /invalid cities/);
+  assert.throws(() => validateDataset("data/ascn-cities.json", { cities: [] }), /invalid cities/);
   const invalid = structuredClone(cities); invalid.cities[0].lat = 999;
   assert.throws(() => validateDataset("data/ascn-cities.json", invalid), /city.lat/);
   const engine = JSON.parse(await readFile(new URL("../data/ascn-v2-data.json", import.meta.url)));

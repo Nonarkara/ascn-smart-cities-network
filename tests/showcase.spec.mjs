@@ -109,20 +109,38 @@ for (const width of [1280, 768, 390, 375]) {
   });
 }
 
-test('innovation playback pauses on internal navigation and direct hash changes', async ({ page }) => {
+test('innovation playback is intentional and stops on pause, visibility changes, and navigation', async ({ page }) => {
   test.setTimeout(90000);
-  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/#innovation');
   await expect(page.locator('#view-innovation .path-band')).toHaveCount(1);
   const player = page.locator('#iaas-hero-video');
+  const toggle = page.locator('#iaas-video-toggle');
   await expect.poll(() => player.evaluate((video) => video.paused)).toBe(true);
-  await player.evaluate(async (video) => { video.muted = true; await video.play(); });
+  await expect(player).not.toHaveAttribute('loop');
+  await toggle.focus();
+  await page.keyboard.press('Enter');
   await expect.poll(() => player.evaluate((video) => video.currentTime)).toBeGreaterThan(0);
+  await expect(toggle).toHaveText('Pause video');
+  await page.keyboard.press('Space');
+  await expect(toggle).toHaveText('Play video');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await toggle.click();
+  await expect(toggle).toHaveText('Pause video');
+  await page.evaluate(() => {
+    Object.defineProperty(document, 'hidden', { configurable: true, value: true });
+    document.dispatchEvent(new Event('visibilitychange'));
+    delete document.hidden;
+  });
+  await expect(toggle).toHaveText('Play video');
+  await toggle.click();
+  await expect(toggle).toHaveText('Pause video');
   await page.locator('#locatorNext').click();
   await expect(page.locator('#view-record')).toBeVisible();
   await expect.poll(() => player.evaluate((video) => video.paused)).toBe(true);
   await page.goto('/#innovation');
-  await player.evaluate(async (video) => { video.muted = true; await video.play(); });
+  await expect(toggle).toHaveText('Play video');
+  await toggle.click();
+  await expect(toggle).toHaveText('Pause video');
   await page.goto('/#overview');
   await expect.poll(() => player.evaluate((video) => video.paused)).toBe(true);
 });
