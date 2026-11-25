@@ -1993,11 +1993,12 @@ function renderContacts() {
             <select id="contact-city" aria-label="${esc(t("map.choose"))}">${cityOptions(state.C)}</select>
           </div>
           <div class="map-selection">
-            <h2 id="contact-name"></h2><span class="cpop-ctry" id="contact-country"></span>
+            <h2 id="contact-name"></h2>
             <a class="cd-portal" href="https://asean.org/body/asean-smart-cities-network/" target="_blank" rel="noopener">${esc(t("map.contacts.official"))} ↗</a>
           </div>
         </div>
         <p class="map-notice" role="status" data-i18n="map.tiles.unavailable" hidden>${esc(t("map.tiles.unavailable"))}</p>
+        <div class="cpop-ctry" id="contact-country"></div>
         <div id="contact-record"></div>
       </div>
       <div class="contacts-header">

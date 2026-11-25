@@ -66,6 +66,9 @@ test("the first screen is a map and its selection is at the lower edge", async (
       await expect.poll(visibleArea).toBeGreaterThanOrEqual(0.60);
       await expect(page.locator(action)).toBeInViewport({ ratio: 0.95 });
       await expect(page.locator(`${result} .map-selection a`)).toBeInViewport({ ratio: 0.95 });
+      await page.locator(action).selectOption("Bandar Seri Begawan");
+      await expect(page.locator(`${result} h2`)).toHaveText("Bandar Seri Begawan");
+      await expect(page.locator(`${result} .map-selection a`)).toBeInViewport({ ratio: 0.95 });
       const old = await page.addStyleTag({ content: `${map} { height: 22rem !important; }` });
       expect(await visibleArea()).toBeLessThan(0.60);
       await old.evaluate(element => element.remove());
