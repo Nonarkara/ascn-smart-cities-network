@@ -8,6 +8,7 @@
 // A gate that cannot fail on the defect it was written for is not evidence.
 // So this test plants that defect, and a second one, and asserts the
 // instrument reports both — then asserts the shipped pages are clean.
+import { auditRoutes, waitForAuditRoute } from '../scripts/audit-routes.mjs';
 import { test, expect } from '@playwright/test';
 import { auditView } from '../scripts/audit-composition.mjs';
 
@@ -92,4 +93,38 @@ test.describe('composition bands', () => {
     expect(after.failures.length, 'the planted framed band was not reported').toBeGreaterThan(0);
     expect(after.failures.some((f) => f.framedShort)).toBe(true);
   });
+});
+
+test('audit navigation includes secondary routes and rejects a wrong panel', async ({ page }) => {
+  await page.goto('/#news/discovery');
+  await waitForAuditRoute(page, 'news/discovery');
+  expect(await auditRoutes(page)).toEqual(expect.arrayContaining(['archive', 'ascn9', 'news/archive', 'news/discovery', 'news/regional']));
+  await expect(waitForAuditRoute(page, 'news/archive', 200)).rejects.toThrow();
+  await expect(waitForAuditRoute(page, 'typo-route', 200)).rejects.toThrow();
+});
+
+test('tablet directory and wide Essay keep their ruled bands within the task width', async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 768 });
+  await page.goto('/#overview');
+  await page.locator('#kpi-grid .kpi').first().waitFor({ state: 'attached' });
+  const directory = page.locator('.twins-showcase');
+  await expect(directory.locator('.twin-row')).toHaveCount(5);
+  const widthOf = el => el.getBoundingClientRect().width;
+  expect(await directory.evaluate(widthOf)).toBeLessThanOrEqual(650);
+  const oldDirectory = await page.addStyleTag({ content: '.twins-showcase { max-width: none !important; }' });
+  expect(await directory.evaluate(widthOf)).toBeGreaterThan(750);
+  await oldDirectory.evaluate(el => el.remove());
+
+  for (const width of [1440, 1920, 2103]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/#essay');
+    const header = page.locator('.essay-header');
+    await expect(header.locator('h1')).toBeVisible();
+    expect(await header.evaluate(widthOf)).toBeLessThanOrEqual(1020);
+    await header.locator('summary').click();
+    await expect(header.locator('.essay-bio-body')).toBeVisible();
+    await header.locator('summary').click();
+  }
+  await page.addStyleTag({ content: '.essay-header { max-width: none !important; }' });
+  expect(await page.locator('.essay-header').evaluate(widthOf)).toBeGreaterThan(1400);
 });

@@ -1,8 +1,9 @@
+import { auditRoutes, waitForAuditRoute } from "./audit-routes.mjs";
 import { chromium, devices } from "@playwright/test";
 import { createHash } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
-import { outsidePalette, shorterMeasure, longestHeadingLine, mediaCaptionFits, renderedTypeSizes } from "./visual-audit-rules.mjs";
+import { outsidePalette, shorterMeasure, longestHeadingLine, mediaCaptionFits, renderedTypeSizes, measureRenderedProse } from "./visual-audit-rules.mjs";
 
 const BASE = process.env.ASCN_TEST_URL || "http://127.0.0.1:4187";
 const fetch = (input, options = {}) => globalThis.fetch(input, { ...options, signal: options.signal || AbortSignal.timeout(20000) });
@@ -380,94 +381,18 @@ try {
   // measure on one screen breaks it on the next, and a sweep at a single
   // width cannot see that.
   const sweepViewports = [{ width: 1440, height: 900 }, { width: 1024, height: 768 }, { width: 390, height: 844 }];
-  const views = ["overview", "innovation", "record", "news", "news/archive",
-    "news/discovery", "news/regional", "archive", "history", "cities",
-    "projects", "framework", "partners", "contacts", "insights", "data",
-    "research", "essay", "ascn9"];
   let worst = { chars: 0, where: "—" };
   const offenders = [];
   for (const vp of sweepViewports) {
   const { page } = await newPage(vp);
+  await page.goto(`${BASE}/#overview`, { waitUntil: "domcontentloaded" });
+  await page.locator('#kpi-grid .kpi').first().waitFor({ state: 'attached' });
+  const views = await auditRoutes(page);
+  if (!views.length) throw new Error("Reading measure could not read the navigation");
   for (const v of views) {
-    await page.goto(`${BASE}/#${v}`, { waitUntil: "networkidle" });
-    await page.waitForTimeout(500);
-    const found = await page.evaluate(() => {
-      const out = [];
-      // The average advance of the font, measured rather than assumed. Jost's
-      // average character is about 0.45em, not 0.5em: assuming half an em
-      // under-counted every line by about a tenth, and a 100-character line
-      // read as 89 and passed.
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      const SAMPLE = "the quick brown fox jumps over the lazy dog, and then it does it again";
-      const avgAdvance = (cs) => {
-        ctx.font = `${cs.fontSize} ${cs.fontFamily}`;
-        const w = ctx.measureText(SAMPLE).width;
-        return w > 0 ? w / SAMPLE.length : parseFloat(cs.fontSize) * 0.5;
-      };
-      // A prose block is a paragraph, a list item, a quote, a caption — or a
-      // div whose content is inline text and nothing else. The Research
-      // view's Insider FAQ is a stack of divs: the widest prose on the site,
-      // 175 characters to a line, and a sweep that selects only p/li/dd/
-      // blockquote/figcaption never saw it.
-      // A prose block is an element whose text is its OWN: no block-level
-      // descendant, and not a row of columns. A flex row's text is its
-      // children's text laid out side by side, and measuring the row measures
-      // the whole row as one sentence — 139 characters for a strip of four
-      // filter labels.
-      const isProse = (el) => {
-        const cs = getComputedStyle(el);
-        if (cs.display.includes("flex") || cs.display.includes("grid")) return false;
-        for (const node of el.querySelectorAll("*")) {
-          const d = getComputedStyle(node).display;
-          if (d === "block" || d === "flex" || d === "grid" || d === "list-item" ||
-              d === "table" || d === "table-row" || d === "table-cell") return false;
-        }
-        return true;
-      };
-      for (const el of document.querySelectorAll("p, li, dd, blockquote, figcaption, div, span")) {
-        if (!isProse(el)) continue;
-        const r = el.getBoundingClientRect();
-        if (r.width < 200 || r.height < 8) continue;
-        if ((el.textContent || "").trim().length < 120) continue; // labels are not prose
-        const cs = getComputedStyle(el);
-        if (cs.display === "none" || cs.visibility === "hidden") continue;
-        // The measure of a prose block is the length of its LONGEST
-        // RENDERED LINE, not the width of its box. A paragraph that runs in
-        // two columns has a box as wide as the band and a line as wide as
-        // the column; asking the box gave 154 characters for a line of 73.
-        // The line boxes come from a Range, grouped by their top edge and
-        // split again wherever the text jumps to the next column.
-        const range = document.createRange();
-        range.selectNodeContents(el);
-        const byTop = new Map();
-        for (const rect of range.getClientRects()) {
-          if (rect.width <= 0 || rect.height <= 0) continue;
-          const key = Math.round(rect.top);
-          const runs = byTop.get(key) || [];
-          let placed = false;
-          for (const run of runs) {
-            if (rect.left >= run.left - 2 && rect.left <= run.right + 2) {
-              run.left = Math.min(run.left, rect.left);
-              run.right = Math.max(run.right, rect.right);
-              placed = true;
-              break;
-            }
-          }
-          if (!placed) runs.push({ left: rect.left, right: rect.right });
-          byTop.set(key, runs);
-        }
-        let lineW = 0;
-        for (const runs of byTop.values()) for (const run of runs) lineW = Math.max(lineW, run.right - run.left);
-        if (!lineW) lineW = r.width;
-        out.push({
-          chars: Math.round(lineW / avgAdvance(cs)),
-          sel: el.tagName.toLowerCase() + "." + (el.className || "").toString().split(" ")[0],
-          px: Math.round(parseFloat(cs.fontSize)),
-        });
-      }
-      return out;
-    });
+    await page.goto(`${BASE}/#${v}`, { waitUntil: "domcontentloaded" });
+    await waitForAuditRoute(page, v);
+    const found = await page.evaluate(measureRenderedProse, "p, li, dd, blockquote, figcaption, div, span");
     for (const f of found) {
       if (f.chars > worst.chars) worst = { chars: f.chars, where: `${v} ${f.sel} @${f.px}px @${vp.width}` };
       if (f.chars > 75) offenders.push(`${v} ${f.sel}=${f.chars} @${vp.width}px`);
@@ -511,15 +436,16 @@ try {
   // the real offender. Range client rects come back one per line box.
   const { page } = await newPage();
   await page.addInitScript(`window.longestHeadingLine = ${longestHeadingLine.toString()}`);
-  const views = ["overview", "innovation", "record", "news", "history", "cities",
-    "projects", "framework", "partners", "insights", "library", "research", "essay"];
+  await page.goto(`${BASE}/#overview`, { waitUntil: "domcontentloaded" });
+  await page.locator('#kpi-grid .kpi').first().waitFor({ state: 'attached' });
+  const views = await auditRoutes(page);
   const long = [];
   let smallHeadings = [];
   let measured = 0;
   const perView = [];
   for (const v of views) {
-    await page.goto(`${BASE}/#${v}`, { waitUntil: "networkidle" });
-    await page.waitForTimeout(450);
+    await page.goto(`${BASE}/#${v}`, { waitUntil: "domcontentloaded" });
+    await waitForAuditRoute(page, v);
     const f = await page.evaluate((route) => {
       const over = [], tiny = [];
       let n = 0;
@@ -708,10 +634,11 @@ try {
   ok("the discovery snapshot is recent enough to be useful", ageDays <= 45,
     `${ageDays.toFixed(1)} days old (checkedAt ${snap.checkedAt})`);
 
-  // And the page must actually render them, whichever path it took.
+  // Discovery initializes on first entry. Wait for the visible route and saved results.
   const { page, failures } = await newPage();
-  await page.goto(`${BASE}/#news`, { waitUntil: "networkidle" });
-  await page.waitForTimeout(1800);
+  await page.goto(`${BASE}/#news/discovery`, { waitUntil: "domcontentloaded" });
+  await waitForAuditRoute(page, "news/discovery");
+  await page.locator("#discovery-results article").first().waitFor();
   const shown = await page.locator("#discovery-results article").count();
   ok("the reader sees discovery leads", shown > 0, `${shown} rendered`);
   ok("no unhandled page errors on the News view", failures.length === 0,

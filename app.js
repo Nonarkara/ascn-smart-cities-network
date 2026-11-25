@@ -179,7 +179,7 @@ const TAB_META = {
   essay: { num: "15" },
 };
 
-function setTab(tab, push = true) {
+function setTab(tab, push = true, { preserveIndex = false } = {}) {
   if (!TABS.includes(tab)) tab = "overview";
   const changingTab = state.tab !== tab;
   state.tab = tab;
@@ -223,7 +223,7 @@ function setTab(tab, push = true) {
   if (plate && (changingTab || push)) plate.scrollTop = 0;
 
   const shell = $("#shell");
-  if (shell && window.matchMedia("(max-width: 860px)").matches) {
+  if (shell && window.matchMedia("(max-width: 860px)").matches && !preserveIndex) {
     const opening = !shell.classList.contains("is-open");
     shell.classList.add("is-open");
     if (plate && (changingTab || opening)) plate.focus();
@@ -243,9 +243,9 @@ function setTab(tab, push = true) {
 }
 
 // Parse hash into tab + optional sub-route (e.g. #cities/jakarta)
-function routeFromHash() {
+function routeFromHash({ preserveIndex = false } = {}) {
   const [tab, sub] = (location.hash || "#overview").slice(1).split("/");
-  setTab(tab, false);
+  setTab(tab, false, { preserveIndex });
   if (tab === "cities" && sub && state.data && state.C) {
     const city = state.C.find((c) => citySlug(c.name) === sub);
     if (city) {
@@ -2137,7 +2137,7 @@ function renderResearch() {
     },
     {
       n: "05", label: tx("The Measurement Problem"),
-      heading: "Output vs outcome: what the M&amp;E framework counts",
+      heading: "Output vs outcome: what the M&E framework counts",
       body: "Four M&amp;E cycles. 134 projects. What do we know about whether any of them worked? Hollands (2008) identified the central gap in smart city reporting a decade before ASCN was founded: the record consistently documents what was deployed, not whether deployment produced better lives. Kitchin (2014) confirmed the pattern globally. ASCN's M&amp;E framework is more sophisticated than most — it tracks implementation status and strategic target progress across six focus areas. But it does not yet systematically measure outcomes: whether Phnom Penh's waste management reduced illness rates; whether Da Nang's transport system cut commute times; whether Bangkok's digital platform produced decisions city officials could not previously make.",
       tags: ["Hollands 2008", "Kitchin 2014", "Costoya 2022"],
     },
@@ -3290,7 +3290,8 @@ async function init() {
     ]);
     state.data = data; state.K = K; state.C = cities.cities; state.L = library; state.LF = libraryFull; state.CS = Array.isArray(cityStats) ? cityStats : [];
     state.CORR = correspondence;
-    routeFromHash();
+    // Loading may finish while a phone reader is choosing from the index.
+    routeFromHash({ preserveIndex: true });
   } catch (err) {
     console.error(err);
     document.body.classList.add("boot-error");

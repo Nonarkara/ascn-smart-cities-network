@@ -66,3 +66,21 @@ test('finishing data loading retains the focused onward link', async ({ page }) 
   await page.keyboard.press('Enter');
   await expect(page.locator('#view-innovation')).toBeVisible();
 });
+
+test('late report data keeps the phone index open', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  let release;
+  const pending = new Promise(resolve => { release = resolve; });
+  await page.route('**/data/ascn-v2-data.json*', async route => {
+    await pending;
+    await route.continue();
+  });
+  await page.goto('/#overview');
+  await page.locator('#backBtn').click();
+  await expect(page.locator('#tab-nav')).toBeVisible();
+  release();
+  await page.locator('#kpi-grid .kpi').first().waitFor({ state: 'attached' });
+  await expect(page.locator('#tab-nav')).toBeVisible();
+  await page.locator('#tab-nav [data-tab="record"]').click();
+  await expect(page.locator('#view-record')).toBeVisible();
+});

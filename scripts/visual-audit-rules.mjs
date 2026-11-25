@@ -53,3 +53,73 @@ export function longestHeadingLine(element) {
   }
   return Math.max(0, ...lines.values());
 }
+
+// Run in the page. Count each reading line, with independent column runs.
+export function measureRenderedProse(selector) {
+  const out = [];
+  const segmenter = new Intl.Segmenter(document.documentElement.lang || "en", { granularity: "grapheme" });
+  const range = document.createRange();
+  // A prose block is a paragraph, a list item, a quote, a caption — or a
+  // div whose content is inline text and nothing else. The Research
+  // view's Insider FAQ is a stack of divs: the widest prose on the site,
+  // 175 characters to a line, and a sweep that selects only p/li/dd/
+  // blockquote/figcaption never saw it.
+  // A prose block is an element whose text is its OWN: no block-level
+  // descendant, and not a row of columns. A flex row's text is its
+  // children's text laid out side by side, and measuring the row measures
+  // the whole row as one sentence — 139 characters for a strip of four
+  // filter labels.
+  const isProse = (el) => {
+    const cs = getComputedStyle(el);
+    if (cs.display.includes("flex") || cs.display.includes("grid")) return false;
+    for (const node of el.querySelectorAll("*")) {
+      const d = getComputedStyle(node).display;
+      if (d === "block" || d === "flex" || d === "grid" || d === "list-item" ||
+          d === "table" || d === "table-row" || d === "table-cell") return false;
+    }
+    return true;
+  };
+  for (const el of document.querySelectorAll(selector)) {
+    if (!isProse(el)) continue;
+    const r = el.getBoundingClientRect();
+    if (r.width < 200 || r.height < 8) continue;
+    if ((el.textContent || "").trim().length < 120) continue; // labels are not prose
+    const cs = getComputedStyle(el);
+    if (cs.display === "none" || cs.visibility === "hidden") continue;
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    const rows = new Map();
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      for (const { segment, index } of segmenter.segment(node.data)) {
+        range.setStart(node, index);
+        range.setEnd(node, index + segment.length);
+        const { top, width, left, right } = range.getBoundingClientRect();
+        if (!width) continue;
+        const y = Math.round(top);
+        if (!rows.has(y)) rows.set(y, []);
+        rows.get(y).push({ left, right, segment });
+      }
+    }
+    // Text in two columns can share a baseline. The gutter separates runs.
+    let longest = 0;
+    const gap = Number.parseFloat(cs.fontSize);
+    for (const row of rows.values()) {
+      row.sort((a, b) => a.left - b.left);
+      let run = [], right = -Infinity;
+      for (const box of row) {
+        if (box.left - right > gap && run.length) {
+          longest = Math.max(longest, run.length);
+          run = [];
+        }
+        run.push(box.segment);
+        right = box.right;
+      }
+      longest = Math.max(longest, run.length);
+    }
+    out.push({
+      chars: longest,
+      sel: el.tagName.toLowerCase() + "." + (el.className || "").toString().split(" ")[0],
+      px: Math.round(parseFloat(cs.fontSize)),
+    });
+  }
+  return out;
+}
