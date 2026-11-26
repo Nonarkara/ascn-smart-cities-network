@@ -111,7 +111,7 @@ const COPY = {
   },
   zh: {
     kicker: "记录",
-    title: "ASCN, 2018–2026",
+    title: "ASCN，2018–2026",
     subtitle: "公开来源",
     medium: "中等可信度",
     selfReported: "自行报告",
@@ -186,6 +186,28 @@ function phrase(value) {
   return value[state.lang] || value.en || "";
 }
 
+/* A field is issued when the reader is seeing the English.
+
+   The archive record holds two kinds of text. A field that carries language
+   arms is the platform's prose and the reader gets their own language. A
+   field that is a plain string — a domain, an institutional label, a figure
+   quoted from a document, a journal's name — is the wording the source
+   issued, and it keeps that wording in every language.
+
+   The arms are not always the whole story. A journal's name carries arms,
+   and both arms are the English, because a journal's name is not the
+   platform's to translate. So the test is not "does the field have an
+   arm"; it is "what the reader is actually looking at". If what they see
+   is the English, the English is the source's wording, and the markup
+   says so and the i18n audit does not read it as a sentence the platform
+   forgot to translate. */
+function issued(value) {
+  if (!value) return "";
+  const shown = typeof value === "string" ? value : (value[state.lang] || value.en || "");
+  const english = typeof value === "string" ? value : (value.en || "");
+  return shown && shown === english ? " data-source-issued" : "";
+}
+
 function yearsOf(items) {
   const years = items.map((item) => Number(String(item.date).slice(0, 4))).filter((year) => Number.isInteger(year));
   const last = Math.max(2026, 2018, ...years);
@@ -210,7 +232,7 @@ function sourceCell(item) {
   if (href === "#") return esc(copy().cleared);
   let host = item.source;
   try { host = new URL(href).host.replace(/^www\./, ""); } catch { /* Keep the safe URL text. */ }
-  return `<a href="${esc(href)}" target="_blank" rel="noopener noreferrer">${esc(host)}</a>`;
+  return `<a href="${esc(href)}" target="_blank" rel="noopener noreferrer" data-source-issued>${esc(host)}</a>`;
 }
 
 function flagLine(item) {
@@ -273,9 +295,9 @@ function renderTable(items) {
   const rows = items.filter(matches);
   const body = rows.map((item) => `<tr data-id="${esc(item.id)}">
     <td data-label="${esc(text.columns.date)}"><time datetime="${esc(item.date)}">${esc(item.date)}</time></td>
-    <td data-label="${esc(text.columns.item)}"><strong>${esc(phrase(item.title))}</strong><span class="archive-kind">${esc(text.types[item.type] || item.type)}</span>${flagLine(item)}</td>
-    <td data-label="${esc(text.columns.counterpart)}">${esc(phrase(item.counterpart) || text.noCounterpart)}${amountLine(item)}</td>
-    <td data-label="${esc(text.columns.outcome)}"><span class="archive-outcome">${esc(text.outcomes[item.outcome] || item.outcome)}</span><p>${esc(phrase(item.note))}</p></td>
+    <td data-label="${esc(text.columns.item)}"><strong${issued(item.title)}>${esc(phrase(item.title))}</strong><span class="archive-kind">${esc(text.types[item.type] || item.type)}</span>${flagLine(item)}</td>
+    <td data-label="${esc(text.columns.counterpart)}"><span${issued(item.counterpart)}>${esc(phrase(item.counterpart) || text.noCounterpart)}</span>${amountLine(item)}</td>
+    <td data-label="${esc(text.columns.outcome)}"><span class="archive-outcome">${esc(text.outcomes[item.outcome] || item.outcome)}</span><p${issued(item.note)}>${esc(phrase(item.note))}</p></td>
     <td data-label="${esc(text.columns.source)}">${sourceCell(item)}</td>
   </tr>`).join("");
   const empty = `<tr><td class="archive-empty" colspan="5">${esc(items.length ? text.none : text.empty)}</td></tr>`;
@@ -289,7 +311,7 @@ function renderOutcomes(items) {
   const text = copy();
   const rows = OUTCOMES.map((outcome) => {
     const matched = items.filter((item) => item.outcome === outcome);
-    const titles = matched.map((item) => `<li>${esc(phrase(item.title))}</li>`).join("");
+    const titles = matched.map((item) => `<li${issued(item.title)}>${esc(phrase(item.title))}</li>`).join("");
     // The label and the count sit on their own line, and the titles run
     // underneath in columns. They used to share one row with the titles —
     // label, count, and a third track so narrow that the titles measured 29
@@ -316,7 +338,7 @@ function totalFigure(kind, total) {
     : `<strong class="archive-figure">${esc(total.currency)} ${esc(groupDigits(total.amount))}</strong>`
       + (total.includesMedium ? `<span class="archive-flag">${esc(text.medium)}</span>` : "")
       + (total.includesSelfReported ? `<span class="archive-flag">${esc(text.selfReported)}</span>` : "")
-      + (total.limit ? `<span class="archive-flag">${esc(phrase(total.limit))}</span>` : "");
+      + (total.limit ? `<span class="archive-flag"${issued(total.limit)}>${esc(phrase(total.limit))}</span>` : "");
   return `<div><span class="label">${esc(kind)}</span>${body}</div>`;
 }
 
@@ -336,19 +358,19 @@ function renderFunding() {
   }
   const text = copy();
   const donors = funding.donors.map((donor) => `<article class="archive-donor">
-    <h3>${esc(phrase(donor.name))}</h3>
+    <h3${issued(donor.name)}>${esc(phrase(donor.name))}</h3>
     ${totalFigure(text.committed, donor.committed)}
     ${totalFigure(text.disbursed, donor.disbursed)}
   </article>`).join("");
   const rows = funding.donors.flatMap((donor) => donor.rows.map((row) => `<li>
-    <span class="label">${esc(phrase(donor.name))}</span>
+    <span class="label"${issued(donor.name)}>${esc(phrase(donor.name))}</span>
     <span class="label">${esc(kindLabel(row.kind))}</span>
     <strong>${citedFigure(row)}</strong>
     ${row.confidence === "medium" ? `<span class="archive-flag">${esc(text.medium)}</span>` : ""}
     ${row.selfReported ? `<span class="archive-flag">${esc(text.selfReported)}</span>` : ""}
     ${row.amount != null && !row.counts ? `<span class="archive-flag">${esc(text.notAdded)}</span>` : ""}
-    <p>${esc(phrase(row.title))}</p>
-    <p class="col-flow">${esc(phrase(row.note))}</p>
+    <p${issued(row.title)}>${esc(phrase(row.title))}</p>
+    <p class="col-flow"${issued(row.note)}>${esc(phrase(row.note))}</p>
     <p>${sourceCell(row)}</p>
   </li>`)).join("");
   host.innerHTML = `<h2 class="archive-funding-title" id="archive-funding-title">${esc(text.funding)}</h2><p>${esc(text.fundingLede)}</p><div>${donors}</div>${renderReconciliation()}${rows ? `<details><summary>${esc(text.breakdown)}</summary><ul>${rows}</ul></details>` : ""}`;
@@ -360,11 +382,11 @@ function renderReconciliation() {
   const text = copy();
   const conflicts = (rec.conflicts || []).map((conflict) => `<div class="archive-conflict">
     <p class="label">${esc(text.conflict)}</p>
-    <p>${esc(phrase(conflict.text))}</p>
+    <p${issued(conflict.text)}>${esc(phrase(conflict.text))}</p>
     <p>${(conflict.sources || []).map((source) => sourceCell({ source })).join(" ")}</p>
   </div>`).join("");
   const kept = rec.kept?.length
-    ? `<details><summary>${esc(text.keptHeading)}</summary><ul>${rec.kept.map((line) => `<li>${esc(phrase(line))}</li>`).join("")}</ul></details>`
+    ? `<details><summary>${esc(text.keptHeading)}</summary><ul>${rec.kept.map((line) => `<li${issued(line)}>${esc(phrase(line))}</li>`).join("")}</ul></details>`
     : "";
   return `${conflicts}${kept}`;
 }
@@ -374,13 +396,13 @@ function claimItem(claim) {
   const scope = claim.scope === "ascn" ? text.ascnScope : text.generalScope;
   const medium = claim.confidence === "medium" ? `<span class="archive-flag">${esc(text.medium)}</span>` : "";
   const figure = [claim.year, claim.figure].filter(Boolean).join(". ");
-  const qualifier = claim.qualifier ? `<p>${esc(phrase(claim.qualifier))}</p>` : "";
+  const qualifier = claim.qualifier ? `<p${issued(claim.qualifier)}>${esc(phrase(claim.qualifier))}</p>` : "";
   return `<li>
     <span class="label">${esc(scope)}</span>
-    <span class="label">${esc(claim.donor || "")}</span>
+    <span class="label"${issued(claim.donor)}>${esc(claim.donor || "")}</span>
     ${medium}
-    <strong>${esc(phrase(claim.claim))}</strong>
-    ${figure ? `<p>${esc(figure)}</p>` : ""}
+    <strong${issued(claim.claim)}>${esc(phrase(claim.claim))}</strong>
+    ${figure ? `<p${issued(claim.year) || issued(claim.figure)}>${esc(figure)}</p>` : ""}
     ${qualifier}
     <p>${sourceCell({ source: claim.source })}</p>
   </li>`;
@@ -404,13 +426,13 @@ function renderMoney() {
   } else if (flows.length) {
     claims = `<ul class="col-flow">${flows.map((item) => `<li>
       <span class="label">${esc(item.flow === "tied-aid" ? text.tiedAid : text.phantomAid)}</span>
-      <strong>${esc(phrase(item.title))}</strong>
-      <p>${esc(phrase(item.note))}</p>
+      <strong${issued(item.title)}>${esc(phrase(item.title))}</strong>
+      <p${issued(item.note)}>${esc(phrase(item.note))}</p>
       <p>${sourceCell(item)}</p>
     </li>`).join("")}</ul>`;
   } else claims = `<p>${esc(text.noFlow)}</p>`;
   const account = state.doc?.account;
-  const accountHtml = account ? `<div class="archive-account-block"><p class="label">${esc(phrase(account.label))}</p><p class="archive-account">${esc(phrase(account.text))}</p></div>` : "";
+  const accountHtml = account ? `<div class="archive-account-block"><p class="label"${issued(account.label)}>${esc(phrase(account.label))}</p><p class="archive-account"${issued(account.text)}>${esc(phrase(account.text))}</p></div>` : "";
   host.innerHTML = `<h2 class="archive-funding-title" id="archive-money-title">${esc(text.moneyHeading)}</h2>${claims}${accountHtml}`;
 }
 
@@ -424,12 +446,12 @@ function renderPending() {
   }
   const items = rows.map((row) => `<li>
     <div class="archive-pending-head">
-      <strong>${esc(phrase(row.title))}</strong>
+      <strong${issued(row.title)}>${esc(phrase(row.title))}</strong>
       ${flagLine(row)}
       <span class="archive-flag">${esc(text.pending)}</span>
       <p>${sourceCell(row)}</p>
     </div>
-    <p class="archive-pending-note">${esc(phrase(row.note))}</p>
+    <p class="archive-pending-note"${issued(row.note)}>${esc(phrase(row.note))}</p>
   </li>`).join("");
   host.innerHTML = `<h3 class="archive-subhead">${esc(text.pending)} ${rows.length}</h3><ul>${items}</ul>`;
 }
@@ -437,7 +459,7 @@ function renderPending() {
 function renderWithheld() {
   const text = copy();
   const rows = state.doc?.withheld || [];
-  const reasons = rows.map((row) => `<li>${esc(phrase(row.reason))}</li>`).join("");
+  const reasons = rows.map((row) => `<li${issued(row.reason)}>${esc(phrase(row.reason))}</li>`).join("");
   const limits = [
     itemsHave(state.doc.items, "mou") ? "" : `<p>${esc(text.noMou)}</p>`,
     (state.doc.items || []).some((item) => item.amount != null) ? "" : `<p>${esc(text.noAmount)}</p>`,

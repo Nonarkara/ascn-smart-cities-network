@@ -29,6 +29,8 @@
     "audit:spatial": "node scripts/audit-sh.mjs",
     "audit:composition": "node scripts/audit-composition.mjs",
     "audit:cost": "node scripts/audit-cost.mjs",
+    "audit:i18n": "node scripts/audit-i18n.mjs",
+    "audit:measure": "node scripts/audit-measure.mjs",
     "check:release": "node scripts/check-release.mjs",
     "audit:reading": "node scripts/capture-reading-path.mjs"
   },

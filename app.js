@@ -78,10 +78,13 @@ function markerColor(year) {
   if (year >= 2023) return "#986f2d";
   return "#064f6e";
 }
+// The label is prose the reader sees, so it goes through tx(). A label the
+// dictionary does not carry — a year, a city name, a truncated project title
+// — comes back unchanged, so this cannot mangle an issued name.
 function bar(label, value, max, cls = "", suffix = "", wide = false, color = "") {
   const w = max ? Math.max(2, (value / max) * 100) : 0;
   const fill = color ? ` style="width:${w}%;background:${color}"` : ` style="width:${w}%"`;
-  return `<div class="bar-row${wide ? " wide-label" : ""}"><span>${esc(label)}</span><div class="bar-track"><div class="bar-fill ${cls}"${fill}></div></div><strong>${fmt.format(value)}${suffix}</strong></div>`;
+  return `<div class="bar-row${wide ? " wide-label" : ""}"><span>${esc(tx(label))}</span><div class="bar-track"><div class="bar-fill ${cls}"${fill}></div></div><strong>${fmt.format(value)}${suffix}</strong></div>`;
 }
 
 function countBy(list, key) {
@@ -546,20 +549,23 @@ function renderRecordCharts() {
 function renderOverview() {
   const s = state.K.summary;
   const kpis = [
-    [s.cities, "Cities", "across 11 countries"],
-    [s.countries, "Countries", "10 AMS + Timor-Leste"],
-    [s.projects, tx("Projects"), "latest M&E cycle"],
-    [s.ongoing, "Ongoing", "in implementation"],
-    [s.completed, "Completed", "concluded"],
+    [s.cities, tx("Cities"), tx("across 11 countries")],
+    [s.countries, tx("Countries"), tx("10 AMS + Timor-Leste")],
+    [s.projects, tx("Projects"), tx("latest M&E cycle")],
+    [s.ongoing, tx("Ongoing"), tx("in implementation")],
+    [s.completed, tx("Completed"), tx("concluded")],
   ];
-  $("#kpi-grid").innerHTML = kpis.map(([v, l, n]) => `<article class="kpi"><strong>${fmt.format(v)}</strong><span>${l} — ${n}</span></article>`).join("");
+  // The label and the note are translated separately and joined by a bound
+  // em dash. The composed sentence was looked up as one string, and no
+  // dictionary carried it, so the whole line stayed English.
+  $("#kpi-grid").innerHTML = kpis.map(([v, l, n]) => `<article class="kpi"><strong>${fmt.format(v)}</strong><span>${esc(l)}\u00A0— ${esc(n)}</span></article>`).join("");
   $("#gap-headline").textContent = tx("The performance question no official report asks.");
   $("#gap-body").textContent = tx(s.the_gap);
   $("#evidence-status").textContent = fillText("{reports} M&E reports · {rows} appendix rows · {documents} source documents.", { reports: state.data.reports.length, rows: state.data.projects.length, documents: state.K.documents.length });
   const fa = [...state.K.framework.focus_areas].sort((a, b) => b.share - a.share);
   const max = Math.max(...fa.map((f) => f.share));
   $("#focus-mini").innerHTML = fa.map((f) => bar(f.name, f.share, max, f.name.includes("Built") ? "red" : "", "%")).join("");
-  $("#glance-note").innerHTML = `<strong>Established</strong>${esc(s.established)}\u00A0· ${esc(s.established_event)}.<br><strong>Framework</strong>${esc(s.framework_adopted)}.<br><strong>Mission</strong>${esc(s.mission)}`;
+  $("#glance-note").innerHTML = `<strong>${esc(tx("Established"))}</strong>${esc(tx(`${s.established}\u00A0· ${s.established_event}.`))}<br><strong>${esc(tx("Framework"))}</strong>${esc(tx(s.framework_adopted))}.<br><strong>${esc(tx("Mission"))}</strong>${esc(tx(s.mission))}`;
   renderPerspective();
 }
 
@@ -577,7 +583,7 @@ function renderPerspective() {
       <h2>${esc(tx(st.headline))}</h2>
       <p class="lede">${esc(tx(st.body))}</p>
       <p class="persp-byline">${esc(p.author)}</p>
-      <p class="persp-role">${esc(p.role)}\u00A0· ${esc(p.credentials)}</p>
+      <p class="persp-role">${esc(tx(`${p.role}\u00A0· ${p.credentials}`))}</p>
       <blockquote class="persp-quote">
         <p>${esc(tx(p.pull_quote))}</p>
         <cite>${esc(p.author)}, <i>The ASEAN Magazine</i>, Issue 14, ${esc(p.year)}</cite>
@@ -639,14 +645,14 @@ function renderHistory() {
         <figure><img src="${esc(safeUrl(m.photo, location.href))}" alt="${esc(m.label)}" loading="lazy" /></figure>
         <div class="moment-body">
           <span class="moment-year">${esc(m.year)}</span>
-          <span class="moment-label">${esc(tx(m.label))}</span>
+          <span class="moment-label" data-source-issued>${esc(tx(m.label))}</span>
           <p class="moment-caption">${esc(tx(m.caption))}</p>
         </div>
       </div>`).join("");
   }
 
   $("#meetings-grid").innerHTML = h.annual_meetings.map((m) => `
-    <article class="meeting-card"><span class="yr">${esc(m.year)}</span><b>${esc(m.n)} ASCN</b><p>${esc(m.host)} — ${esc(m.outcome)}</p></article>`).join("");
+    <article class="meeting-card"><span class="yr">${esc(m.year)}</span><b>${esc(m.n)} ASCN</b><p>${esc(m.host)} — ${esc(tx(m.outcome))}</p></article>`).join("");
   $("#ascap-panel").innerHTML = ascapHtml();
 }
 
@@ -771,14 +777,14 @@ function selectCity(city) {
   const flagshipNames = new Set((city.flagship || []).map((f) => f.name.toLowerCase()));
   const extra = projects.filter((p) => !flagshipNames.has(`${p.project}`.toLowerCase()));
   const flagHtml = (city.flagship || []).map((f) => `
-    <div class="cd-project"><div><div class="p-name">${esc(f.name)}</div><div class="p-focus">${esc(f.focus || "")}${f.note ? ` · ${esc(f.note)}` : ""}</div></div><span class="cd-tag">Flagship</span></div>`).join("");
+    <div class="cd-project"><div><div class="p-name">${esc(f.name)}</div><div class="p-focus">${esc(tx(f.focus || ""))}${f.note ? ` · ${esc(f.note)}` : ""}</div></div><span class="cd-tag">${esc(tx("Flagship"))}</span></div>`).join("");
   const extraHtml = extra.slice(0, 14).map((p) => `
-    <div class="cd-project"><div><div class="p-name">${esc(p.project)}</div><div class="p-focus">${esc(p.focus_area || "")}</div></div><span class="cd-tag" style="color:var(--muted)">${esc(p.report_year)}</span></div>`).join("");
-  const connLabel = { advanced: "Advanced", expanding: "Expanding", limited: "Limited" };
-  const connTip   = { advanced: "5G broadly deployed", expanding: "5G rolling out in major areas", limited: "Pre-5G / early deployment" };
-  const connChip  = city.connectivity ? `<span class="cd-chip cd-chip--conn cd-chip--${city.connectivity}" title="${connTip[city.connectivity] || ""}">${connLabel[city.connectivity] || city.connectivity} connectivity</span>` : "";
-  const imdChip   = city.imd_rank ? `<span class="cd-chip cd-chip--imd" title="IMD Smart City Index 2024">#${esc(city.imd_rank)} IMD ${esc(city.imd_rating || "")}</span>` : "";
-  const outcomeChip = city.key_outcome ? `<span class="cd-chip cd-chip--outcome" title="Documented citizen outcome">${esc(city.key_outcome)}</span>` : "";
+    <div class="cd-project"><div><div class="p-name">${esc(p.project)}</div><div class="p-focus">${esc(tx(p.focus_area || ""))}</div></div><span class="cd-tag" style="color:var(--muted)">${esc(p.report_year)}</span></div>`).join("");
+  const connLabel = { advanced: tx("Advanced"), expanding: tx("Expanding"), limited: tx("Limited") };
+  const connTip   = { advanced: tx("5G broadly deployed"), expanding: tx("5G rolling out in major areas"), limited: tx("Pre-5G / early deployment") };
+  const connChip  = city.connectivity ? `<span class="cd-chip cd-chip--conn cd-chip--${city.connectivity}" title="${esc(connTip[city.connectivity] || "")}">${esc(connLabel[city.connectivity] || city.connectivity)} ${esc(tx("connectivity"))}</span>` : "";
+  const imdChip   = city.imd_rank ? `<span class="cd-chip cd-chip--imd" title="${esc(tx("IMD Smart City Index 2024"))}">#${esc(city.imd_rank)} IMD ${esc(city.imd_rating || "")}</span>` : "";
+  const outcomeChip = city.key_outcome ? `<span class="cd-chip cd-chip--outcome" title="${esc(tx("Documented citizen outcome"))}">${esc(city.key_outcome)}</span>` : "";
   const chipsHtml = (connChip || imdChip || outcomeChip) ? `<div class="cd-chips">${connChip}${imdChip}${outcomeChip}</div>` : "";
 
   $("#city-selection").innerHTML = `
@@ -786,12 +792,12 @@ function selectCity(city) {
     <a class="cd-portal" href="#news/archive?city=${encodeURIComponent(city.name)}">${esc(t("map.evidence"))} ↗</a>`;
   $("#city-record").innerHTML = `
     <div class="cd-place">${esc(city.country)} · ${esc(tx("Joined"))} ${esc(city.year)}</div>
-    <div class="cd-meta"><span>Population <b>${esc(city.pop)}</b></span><span>Documented projects <b>${projects.length || city.flagship.length}</b></span></div>
+    <div class="cd-meta"><span>${esc(tx("Population"))} <b>${esc(city.pop)}</b></span><span>${esc(tx("Documented projects"))} <b>${projects.length || city.flagship.length}</b></span></div>
     ${chipsHtml}
-    <p style="color:var(--ink-2);margin:0 0 0.4rem">${esc(city.summary)}</p>
-    ${flagHtml ? `<div class="cd-section-label">Flagship work</div><div class="cd-projects">${flagHtml}</div>` : ""}
-    ${extraHtml ? `<div class="cd-section-label">From the M&E appendix</div><div class="cd-projects">${extraHtml}</div>` : (projects.length ? "" : `<p class="cd-empty" data-i18n="a.detailed.project.rows.pending.in">Detailed project rows pending in the public appendix.</p>`)}
-    ${city.portal ? `<a class="cd-portal" href="${esc(safeUrl(city.portal))}" target="_blank" rel="noopener noreferrer">Open city data portal ↗</a>` : ""}`;
+    <p style="color:var(--ink-2);margin:0 0 0.4rem">${esc(tx(city.summary))}</p>
+    ${flagHtml ? `<div class="cd-section-label">${esc(tx("Flagship work"))}</div><div class="cd-projects">${flagHtml}</div>` : ""}
+    ${extraHtml ? `<div class="cd-section-label">${esc(tx("From the M&E appendix"))}</div><div class="cd-projects">${extraHtml}</div>` : (projects.length ? "" : `<p class="cd-empty" data-i18n="a.detailed.project.rows.pending.in">Detailed project rows pending in the public appendix.</p>`)}
+    ${city.portal ? `<a class="cd-portal" href="${esc(safeUrl(city.portal))}" target="_blank" rel="noopener noreferrer">${esc(tx("Open city data portal ↗"))}</a>` : ""}`;
   const picker = $("#city-pick");
   if (picker) picker.value = city.name;
   syncMarkers();
@@ -946,7 +952,7 @@ function renderDataQuality() {
         <div class="dq-bar dq-bar--official" style="width:${Math.max(2, row.total / maxTotal * 100)}%"></div>
         <div class="dq-bar dq-bar--appendix" style="width:${Math.max(2, row.appendixRows / maxTotal * 100)}%"></div>
       </div>
-      <span class="dq-count"><b>${row.appendixRows}</b> / ${row.total}<em>${row.gap ? `${row.gap} unlisted` : "complete"}</em></span>
+      <span class="dq-count"><b>${row.appendixRows}</b> / ${row.total}<em>${row.gap ? fillText("{n} unlisted", { n: row.gap }) : esc(tx("complete"))}</em></span>
     </div>`).join("");
   const uniq = uniqueProjectStats();
   const latestRows = projectsForYear(latestYear());
@@ -955,20 +961,20 @@ function renderDataQuality() {
   const impactCities = new Set((state.K.citizen_impact || []).map((item) => item.city));
   const impactFocus = new Set((state.K.citizen_impact || []).map((item) => item.focus).filter(Boolean));
   const stats = [
-    [uniq.total, "unique city-project records", `${uniq.allCycles} tracked through all ${reports.length} cycles`],
-    [uniq.latestOnly, `new in ${latestYear()}`, `${uniq.intermittent} intermittent records`],
-    [silentCountries.length, tx("countries silent in latest appendix"), silentCountries.length ? silentCountries.join(", ") : "All countries represented"],
-    [impactCities.size, tx("cities with outcome examples"), `${impactFocus.size} focus areas have at least one citizen impact data point`],
+    [uniq.total, tx("unique city-project records"), fillText("{n} tracked through all {m} cycles", { n: uniq.allCycles, m: reports.length })],
+    [uniq.latestOnly, fillText("new in {year}", { year: latestYear() }), fillText("{n} intermittent records", { n: uniq.intermittent })],
+    [silentCountries.length, tx("countries silent in latest appendix"), silentCountries.length ? silentCountries.join(", ") : tx("All countries represented")],
+    [impactCities.size, tx("cities with outcome examples"), fillText("{n} focus areas have at least one citizen impact data point", { n: impactFocus.size })],
   ];
   $("#ig-data-quality").innerHTML = `
     <div class="dq-grid">
       <div class="dq-panel">
         <p class="ig-subhead" data-i18n="a.official.totals.vs.extracted.app">Official totals vs extracted appendix rows</p>
-        <div class="dq-legend"><span class="dq-leg-official">Report total</span><span class="dq-leg-appendix">Row evidence</span></div>
+        <div class="dq-legend"><span class="dq-leg-official">${esc(tx("Report total"))}</span><span class="dq-leg-appendix">${esc(tx("Row evidence"))}</span></div>
         <div class="dq-cycles">${cyclesHtml}</div>
       </div>
       <div class="dq-panel">
-        <p class="ig-subhead">Verification structure</p>
+        <p class="ig-subhead">${esc(tx("Verification structure"))}</p>
         <div class="dq-stats">${stats.map(([value, label, note]) => `<div class="dq-stat"><strong>${esc(String(value))}</strong><span>${esc(label)}</span><em>${esc(note)}</em></div>`).join("")}</div>
       </div>
     </div>
@@ -977,16 +983,16 @@ function renderDataQuality() {
 
 function renderProjects() {
   const r = latestReport();
-  const k = [[r.total_projects, tx("Projects")], [r.status.ongoing, "Ongoing"], [r.status.completed, "Completed"], [r.status.planning, "Planning"]];
+  const k = [[r.total_projects, tx("Projects")], [r.status.ongoing, tx("Ongoing")], [r.status.completed, tx("Completed")], [r.status.planning, tx("Planning")]];
   $("#project-kpis").innerHTML = k.map(([v, l]) => `<article class="kpi"><strong>${fmt.format(v)}</strong><span>${l}</span></article>`).join("");
-  $("#status-count").textContent = `${r.total_projects} projects`;
+  $("#status-count").textContent = fillText("{n} projects", { n: r.total_projects });
   const fe = Object.entries(r.focus_share);
   const fmax = Math.max(...fe.map(([, v]) => v));
   $("#focus-bars").innerHTML = fe.map(([l, v]) => bar(l, v, fmax, "", "%", true, focusColor(l))).join("");
   // A full bar here is the LARGEST focus area, not 100%. Say so, or the
   // chart lies: "Civic & Social" reads as a full bar beside "25%".
   const scaleNote = $("#focus-scale-note");
-  if (scaleNote) scaleNote.textContent = `latest cycle · longest bar = ${fmax}%`;
+  if (scaleNote) scaleNote.textContent = fillText("latest cycle · longest bar = {pct}%", { pct: fmax });
   $("#status-bars").innerHTML = [["Ongoing", r.status.ongoing, "green"], ["Completed", r.status.completed, ""], ["Planning", r.status.planning, "amber"]]
     .map(([l, v, cls]) => bar(l, v, r.total_projects, cls)).join("");
   const countries = [...new Set(state.C.map((c) => c.country))].sort();
@@ -996,11 +1002,11 @@ function renderProjects() {
   countryFilter.length = 1;
   focusFilter.length = 1;
   countryFilter.insertAdjacentHTML("beforeend", countries.map((c) => `<option value="${esc(c)}">${esc(c)}</option>`).join(""));
-  focusFilter.insertAdjacentHTML("beforeend", Object.keys(r.focus_share).map((f) => `<option value="${esc(f)}">${esc(f)}</option>`).join(""));
+  focusFilter.insertAdjacentHTML("beforeend", Object.keys(r.focus_share).map((f) => `<option value="${esc(f)}">${esc(tx(f))}</option>`).join(""));
   countryFilter.value = state.country;
   focusFilter.value = state.focus;
   $("#big-projects").innerHTML = state.K.financing.big_projects.map((p) => `
-    <div class="big-project"><div><b>${esc(p.project)}</b><div class="bp-city">${esc(p.city)}</div><div class="bp-fund">${esc(p.funders)}</div></div><div class="bp-amt">${usd(p.investment_usd)}</div></div>`).join("");
+    <div class="big-project"><div><b>${esc(p.project)}</b><div class="bp-city">${esc(p.city)}</div><div class="bp-fund">${esc(tx(p.funders))}</div></div><div class="bp-amt">${usd(p.investment_usd)}</div></div>`).join("");
   $("#search-filter").oninput = (e) => { state.search = e.target.value; renderProjectTables(); };
   countryFilter.onchange = (e) => { state.country = e.target.value; renderProjectTables(); };
   focusFilter.onchange = (e) => { state.focus = e.target.value; renderProjectTables(); };
@@ -1011,7 +1017,7 @@ function renderProjects() {
 function statusPill(s) {
   const v = `${s}`.toLowerCase();
   const cls = v.includes("complete") ? "completed" : v.includes("plan") ? "planning" : "ongoing";
-  return `<span class="status-pill ${cls}">${esc(s)}</span>`;
+  return `<span class="status-pill ${cls}">${esc(tx(s))}</span>`;
 }
 function renderProjectTables() {
   const rows = filteredProjects();
@@ -1019,10 +1025,10 @@ function renderProjectTables() {
   rows.forEach((p) => counts.set(p.city, (counts.get(p.city) || 0) + 1));
   const top = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, 12);
   const cmax = Math.max(...top.map((t) => t[1]), 1);
-  $("#city-load").innerHTML = top.map(([c, n]) => bar(c, n, cmax, "red")).join("") || `<p class="muted">No rows.</p>`;
-  $("#project-count").textContent = `${rows.length} rows`;
+  $("#city-load").innerHTML = top.map(([c, n]) => bar(c, n, cmax, "red")).join("") || `<p class="muted">${esc(tx("No rows."))}</p>`;
+  $("#project-count").textContent = fillText("{n} rows", { n: rows.length });
   $("#project-table").innerHTML = rows.map((p) => `
-    <tr><td>${esc(p.city)}</td><td>${esc(p.country)}</td><td>${esc(p.project)}</td><td>${esc(p.focus_area)}</td><td>${statusPill(p.status)}</td></tr>`).join("");
+    <tr><td data-source-issued>${esc(p.city)}</td><td data-source-issued>${esc(p.country)}</td><td data-source-issued>${esc(p.project)}</td><td>${esc(tx(p.focus_area))}</td><td>${statusPill(p.status)}</td></tr>`).join("");
 }
 
 /* ---------------- Framework ---------------- */
@@ -1060,12 +1066,12 @@ function renderFramework() {
   }
   const fmax = Math.max(...f.focus_areas.map((a) => a.share));
   $("#focus-detail").innerHTML = f.focus_areas.map((a) => `
-    <div class="focus-item"><div class="fi-head"><b>${esc(a.name)}</b><span class="fi-share">${esc(a.share)}%</span></div>
+    <div class="focus-item"><div class="fi-head"><b>${esc(tx(a.name))}</b><span class="fi-share">${esc(a.share)}%</span></div>
       <p>${esc(tx(a.blurb))}</p><div class="bar-track"><div class="bar-fill${a.name.includes("Built") ? " red" : ""}" style="width:${(a.share / fmax) * 100}%"></div></div></div>`).join("");
   $("#gov-grid").innerHTML = `
     <article class="gov-card"><h3 data-i18n="hd.leadership.model">Leadership model</h3><p>${esc(tx(g.model))}</p></article>
-    <article class="gov-card"><h3 data-i18n="hd.decisions.legal.status">Decisions &amp; legal status</h3><p>${esc(tx(g.decision_making))}</p><p class="muted" style="text-transform:none;letter-spacing:0;margin-top:0.5rem">Reporting: ${esc(g.reporting_chain)}</p></article>
-    <article class="gov-card"><h3 data-i18n="hd.open.challenges">Open challenges</h3><ul>${g.challenges.map((c) => `<li>${esc(c)}</li>`).join("")}</ul></article>`;
+    <article class="gov-card"><h3 data-i18n="hd.decisions.legal.status">Decisions &amp; legal status</h3><p>${esc(tx(g.decision_making))}</p><p class="muted" style="text-transform:none;letter-spacing:0;margin-top:0.5rem">${esc(tx(`Reporting: ${g.reporting_chain}`))}</p></article>
+    <article class="gov-card"><h3 data-i18n="hd.open.challenges">Open challenges</h3><ul>${g.challenges.map((c) => `<li>${esc(tx(c))}</li>`).join("")}</ul></article>`;
   $("#framework-ascap").innerHTML = ascapHtml();
 
   // ── Capacity building — training, scholarships, knowledge ────────────────
@@ -1093,13 +1099,13 @@ function renderFramework() {
       name: "ASCN Planning Guidebook",
       by: "Japan · SmartJAMP-funded",
       desc: "A shared methodology resource produced under Japan's SmartJAMP programme, giving cities a common reference for scoping and planning smart-city action plans.",
-      stat: "Network-wide knowledge resource",
+      stat: tx("Network-wide knowledge resource"),
     },
   ];
   $("#capacity-building").innerHTML = `<div class="cap-grid">${CAPACITY.map((c) => `
     <article class="cap-card">
-      <b class="cap-name">${esc(c.name)}</b>
-      <span class="cap-by">${c.by}</span>
+      <b class="cap-name" data-source-issued>${esc(c.name)}</b>
+      <span class="cap-by" data-source-issued>${c.by}</span>
       <p class="cap-desc">${tx(c.desc)}</p>
       <span class="cap-stat">${esc(tx(c.stat))}</span>
     </article>`).join("")}</div>
@@ -1109,10 +1115,10 @@ function renderFramework() {
 /* ---------------- Partners ---------------- */
 function renderPartners() {
   $("#partner-cards").innerHTML = state.K.partnerships.map((p) => `
-    <article class="partner-card"><div class="pc-head"><b>${esc(p.partner)}</b><span class="pc-prog">${esc(tx(p.programme))}</span></div>
+    <article class="partner-card"><div class="pc-head"><b>${esc(p.partner)}</b><span class="pc-prog" data-source-issued>${esc(tx(p.programme))}</span></div>
       <div class="pc-budget">${esc(tx(p.budget))}</div><div class="pc-cov">${esc(tx(p.coverage))}</div><p>${esc(tx(p.note))}</p></article>`).join("");
   $("#multi-list").innerHTML = state.K.multilateral_partners.map((m) => `
-    <div class="def-row"><b>${esc(m.org)}</b><span>${esc(tx(m.role))} — </span><em>${esc(tx(m.activity))}</em></div>`).join("");
+    <div class="def-row"><b>${esc(m.org)}</b><span>${esc(tx(m.role))}\u00A0— </span><em>${esc(tx(m.activity))}</em></div>`).join("");
   const f = state.K.financing;
   $("#finance-block").innerHTML = `
     <div class="finance-stat">${esc(tx(f.scale_note))}</div>
@@ -1156,7 +1162,7 @@ function renderPartners() {
       </div>
       <p class="prog-tagline">${esc(tx(p.tagline))}</p>
       <p class="prog-desc">${tx(p.desc)}</p>
-      <div class="prog-cities">${p.cities.map((c) => `<span>${esc(c)}</span>`).join("")}</div>
+      <div class="prog-cities">${p.cities.map((c) => `<span data-source-issued>${esc(c)}</span>`).join("")}</div>
       <div class="prog-stat">${esc(tx(p.stat))}</div>
     </article>`).join("");
 
@@ -1166,10 +1172,10 @@ function renderPartners() {
     <div class="toolkit-card">
       <div class="toolkit-card-meta">
         <span data-source-issued class="label">ADB · Aus4ASEAN Futures Initiative</span>
-        <a href="https://smartcitytoolkit.asean.org/" target="_blank" rel="noopener" class="toolkit-link">smartcitytoolkit.asean.org ↗</a>
+        <a href="https://smartcitytoolkit.asean.org/" target="_blank" rel="noopener" class="toolkit-link" data-source-issued>smartcitytoolkit.asean.org ↗</a>
       </div>
       <p data-i18n="a.a.web.platform.helping.asean.cit">A web platform helping ASEAN city officials navigate financing options for smart city projects. Core feature: <b>FIRST</b> — a Financial Instrument Recommendation and Selection Tool that maps financing instruments to project characteristics, risk profile, and city capacity. Includes case study library, discussion board, and AI chatbot. Available in all 9 ASEAN languages.</p>
-      <div class="toolkit-tags">${LANGS.map((l) => `<span class="toolkit-tag">${esc(l)}</span>`).join("")}</div>
+      <div class="toolkit-tags">${LANGS.map((l) => `<span class="toolkit-tag" data-source-issued>${esc(l)}</span>`).join("")}</div>
     </div>`;
 
   // ── Jakarta Workshop, November 2024 ───────────────────────────────────────
@@ -1243,13 +1249,13 @@ function renderInsights() {
     const vals = YEARS.map((y) => byYear[y]);
     const { sym, cls } = arrow(vals);
     const delta = vals[3] - vals[0];
-    const deltaStr = delta > 0 ? `+${delta}pp` : delta < 0 ? `${delta}pp` : "flat";
+    const deltaStr = delta > 0 ? `+${delta}pp` : delta < 0 ? `${delta}pp` : tx("flat");
     const color = focusColor(name);
     const yLabels = vals.map((v, i) => `<span>${esc(String(v))}%</span>`).join("");
     // The plot is drawn to the cell's own width, and its points sit at the
     // centres of the same four columns the two label rows use. That is what
     // puts a number on the datum it belongs to.
-    return `<div class="ig-spark-item"><div class="ig-spark-head"><span class="ig-spark-dot" style="background:${color}"></span><span class="ig-spark-name">${esc(name)}</span><span class="ig-spark-pct">${vals[3]}%</span><span class="ig-spark-delta ${cls}">${sym} ${esc(deltaStr)}</span></div><div class="ig-spark-plot" data-vals="${vals.join(",")}" data-color="${color}"></div><div class="ig-spark-vals">${yLabels}</div><div class="ig-spark-yrs"><span>'22</span><span>'23</span><span>'24</span><span>'25</span></div></div>`;
+    return `<div class="ig-spark-item"><div class="ig-spark-head"><span class="ig-spark-dot" style="background:${color}"></span><span class="ig-spark-name">${esc(tx(name))}</span><span class="ig-spark-pct">${vals[3]}%</span><span class="ig-spark-delta ${cls}">${sym} ${esc(deltaStr)}</span></div><div class="ig-spark-plot" data-vals="${vals.join(",")}" data-color="${color}"></div><div class="ig-spark-vals">${yLabels}</div><div class="ig-spark-yrs"><span>'22</span><span>'23</span><span>'24</span><span>'25</span></div></div>`;
   }).join("");
   $("#ig-focus-trends").innerHTML = `<div class="ig-spark-grid">${sparkItems}</div>`;
 
@@ -1266,25 +1272,25 @@ function renderInsights() {
     const curr = vals[3], base = vals[0];
     const silent = curr === 0 && base > 0;
     const delta = curr - base;
-    const dStr = silent ? "SILENT 2025" : delta > 0 ? `+${delta}` : `${delta}`;
+    const dStr = silent ? tx("SILENT 2025") : delta > 0 ? `+${delta}` : `${delta}`;
     const dCls = silent ? "traj-silent" : delta > 0 ? "traj-up" : delta < 0 ? "traj-dn" : "";
     const bgW = cTrajMax ? Math.max(2, (base / cTrajMax) * 100) : 0;
     const fgW = cTrajMax ? Math.max(2, (curr / cTrajMax) * 100) : 0;
     return `<div class="ig-traj-row${silent ? " ig-traj-silent-row" : ""}"><span class="ig-traj-country">${esc(country)}</span><div class="ig-traj-bars"><div class="ig-traj-track"><div class="ig-traj-bg" style="width:${bgW}%"></div><div class="ig-traj-fg${silent ? " silent" : ""}" style="width:${fgW}%"></div></div><span class="ig-traj-n${silent ? " traj-silent" : ""}">${silent ? "—" : curr}</span><span class="ig-traj-delta ${dCls}">${esc(dStr)}</span></div></div>`;
   }).join("");
-  $("#ig-country-traj").innerHTML = `<div class="ig-traj-legend"><span class="ig-traj-swatch ig-traj-swatch--base"></span>2022 baseline &nbsp;·&nbsp; <span class="ig-traj-swatch ig-traj-swatch--curr"></span>2025 (ocher)</div><div class="ig-traj-wrap">${trajHtml}</div>`;
+  $("#ig-country-traj").innerHTML = `<div class="ig-traj-legend"><span class="ig-traj-swatch ig-traj-swatch--base"></span><span class="ig-traj-key">${esc(tx("2022 baseline"))}</span>&nbsp;·&nbsp;<span class="ig-traj-swatch ig-traj-swatch--curr"></span><span class="ig-traj-key">${esc(tx("2025 (ocher)"))}</span></div><div class="ig-traj-wrap">${trajHtml}</div>`;
 
   // ── 4. Country specialisation (stacked bars) ─────────────────────────────
   const cFocus = {};
   projects.filter((p) => p.report_year === 2025).forEach((p) => { if (!cFocus[p.country]) cFocus[p.country] = {}; cFocus[p.country][p.focus_area] = (cFocus[p.country][p.focus_area] || 0) + 1; });
-  const SHORT = { "Industry & Innovation": "Ind. & Innov.", "Quality Environment": "Quality Env.", "Built Infrastructure": "Built Infra.", "Health & Well-Being": "Health & W-B", "Safety & Security": "Safety & Sec.", "Civic & Social": "Civic & Social" };
+  const SHORT = { "Industry & Innovation": tx("Ind. & Innov."), "Quality Environment": tx("Quality Env."), "Built Infrastructure": tx("Built Infra."), "Health & Well-Being": tx("Health & W-B"), "Safety & Security": tx("Safety & Sec."), "Civic & Social": tx("Civic & Social") };
   const specRows = Object.entries(cFocus).sort((a, b) => Object.values(b[1]).reduce((s, v) => s + v, 0) - Object.values(a[1]).reduce((s, v) => s + v, 0)).map(([country, foci]) => {
     const total = Object.values(foci).reduce((s, v) => s + v, 0);
     const segs = Object.entries(foci).sort((a, b) => b[1] - a[1]).map(([fa, n]) => `<div class="ig-spec-seg" style="width:${(n / total * 100).toFixed(1)}%;background:${focusColor(fa)}" title="${fa}: ${n} (${Math.round(n / total * 100)}%)"></div>`).join("");
     const top = Object.entries(foci).sort((a, b) => b[1] - a[1])[0][0];
     return `<div class="ig-spec-row"><span class="ig-spec-country">${esc(country)}</span><div class="ig-spec-bar">${segs}</div><span class="ig-spec-top">${esc(SHORT[top] || top)}</span></div>`;
   }).join("");
-  const specLegend = Object.entries(FOCUS_COLORS).map(([name, color]) => `<span class="ig-spec-leg"><span style="background:${color}"></span>${esc(name)}</span>`).join("");
+  const specLegend = Object.entries(FOCUS_COLORS).map(([name, color]) => `<span class="ig-spec-leg"><span style="background:${color}"></span>${esc(tx(name))}</span>`).join("");
   $("#ig-country-spec").innerHTML = `<div class="ig-spec-legend">${specLegend}</div><div class="ig-spec-wrap">${specRows}</div>`;
 
   // ── 5. Projects per million residents ────────────────────────────────────
@@ -1295,8 +1301,8 @@ function renderInsights() {
   const density = Object.entries(cityPop).filter(([city]) => city2025[city]).map(([city, { pop, country }]) => ({ city, country, pop, n: city2025[city], ratio: +(city2025[city] / (pop / 1e6)).toFixed(1) })).sort((a, b) => b.ratio - a.ratio);
   const dMax = density[0]?.ratio || 1;
   const fmtPop = (p) => p >= 1e6 ? `${(p / 1e6).toFixed(1)}M` : `${Math.round(p / 1e3)}K`;
-  const densityHtml = density.slice(0, 14).map((d) => `<div class="bar-row"><span>${esc(d.city)} <em class="bar-sub">${esc(d.country)}</em></span><div class="bar-track"><div class="bar-fill amber" style="width:${Math.max(2, d.ratio / dMax * 100)}%"></div></div><strong>${d.ratio}/M <em class="bar-sub">${d.n} proj · ${fmtPop(d.pop)}</em></strong></div>`).join("");
-  const tailHtml = density.length > 14 ? `<p class="ig-note" data-i18n="a.large.cities.for.comparison">Large cities for comparison:</p>` + density.slice(-5).reverse().map((d) => `<div class="bar-row"><span>${esc(d.city)} <em class="bar-sub">${esc(d.country)}</em></span><div class="bar-track"><div class="bar-fill" style="width:${Math.max(1, d.ratio / dMax * 100)}%;background:var(--muted)"></div></div><strong class="muted">${d.ratio}/M <em class="bar-sub">${d.n} proj · ${fmtPop(d.pop)}</em></strong></div>`).join("") : "";
+  const densityHtml = density.slice(0, 14).map((d) => `<div class="bar-row"><span>${esc(d.city)} <em class="bar-sub" data-source-issued>${esc(d.country)}</em></span><div class="bar-track"><div class="bar-fill amber" style="width:${Math.max(2, d.ratio / dMax * 100)}%"></div></div><strong>${d.ratio}/M <em class="bar-sub">${esc(fillText("{n} proj · {pop}", { n: d.n, pop: fmtPop(d.pop) }))}</em></strong></div>`).join("");
+  const tailHtml = density.length > 14 ? `<p class="ig-note" data-i18n="a.large.cities.for.comparison">Large cities for comparison:</p>` + density.slice(-5).reverse().map((d) => `<div class="bar-row"><span>${esc(d.city)} <em class="bar-sub">${esc(d.country)}</em></span><div class="bar-track"><div class="bar-fill" style="width:${Math.max(1, d.ratio / dMax * 100)}%;background:var(--muted)"></div></div><strong class="muted">${d.ratio}/M <em class="bar-sub">${esc(fillText("{n} proj · {pop}", { n: d.n, pop: fmtPop(d.pop) }))}</em></strong></div>`).join("") : "";
   $("#ig-density").innerHTML = `<div class="ig-bars">${densityHtml}</div>${tailHtml}`;
 
   // ── 6. Signal flags ───────────────────────────────────────────────────────
@@ -1312,9 +1318,9 @@ function renderInsights() {
   // ── 7–9. Carry-forward panels ─────────────────────────────────────────────
   $("#ig-impact").innerHTML = state.K.citizen_impact.map((c) => {
     const focus = focusColor(c.focus, "var(--muted)");
-    const focusDot = c.focus ? `<span class="impact-dot" style="background:${focus}"></span><span class="impact-focus">${esc(c.focus)}</span>` : "";
+    const focusDot = c.focus ? `<span class="impact-dot" style="background:${focus}"></span><span class="impact-focus">${esc(tx(c.focus))}</span>` : "";
     const noteHtml = c.note ? `<em class="impact-note">${esc(tx(c.note))}</em>` : "";
-    return `<div class="impact-stat"><strong>${esc(bindSeparators(c.metric))}</strong><span>${focusDot}${esc(c.project)}</span><em>${esc(c.city)}</em>${noteHtml}</div>`;
+    return `<div class="impact-stat"><strong>${esc(tx(bindSeparators(c.metric)))}</strong><span>${focusDot}${esc(c.project)}</span><em>${esc(c.city)}</em>${noteHtml}</div>`;
   }).join("");
   const investments = [...state.K.financing.big_projects].sort((a, b) => b.investment_usd - a.investment_usd);
   const invMax = investments[0]?.investment_usd || 1;
@@ -1345,8 +1351,8 @@ function renderInsights() {
   ];
   const planningCount = COMPLETED.filter((p) => p.type === "planning").length;
   const typeColor = { planning: "var(--muted)", digital: "var(--ink-2)", physical: "var(--amber)" };
-  const typeLabel = { planning: "Plan / strategy", digital: "Digital system", physical: "Physical infra" };
-  const compRows = COMPLETED.map((p) => `<div class="comp-row"><span class="comp-city">${esc(p.city)}</span><span class="comp-proj">${esc(p.project)}</span><span class="comp-type" style="color:${typeColor[p.type]}">${typeLabel[p.type]}</span></div>`).join("");
+  const typeLabel = { planning: tx("Plan / strategy"), digital: tx("Digital system"), physical: tx("Physical infra") };
+  const compRows = COMPLETED.map((p) => `<div class="comp-row"><span class="comp-city">${esc(p.city)}</span><span class="comp-proj" data-source-issued>${esc(p.project)}</span><span class="comp-type" style="color:${typeColor[p.type]}">${typeLabel[p.type]}</span></div>`).join("");
   $("#ig-completed").innerHTML = `
     <div class="comp-summary">
       <span class="comp-sum-n" style="color:var(--muted)">${planningCount}/18</span><span data-i18n="hd.are.planning.or.strategy.documents.no.physical" class="comp-sum-label">are planning or strategy documents — no physical delivery, no resident outcomes verifiable</span>
@@ -1367,7 +1373,7 @@ function renderInsights() {
   ];
   const cellIcon = (v) => v === 1 ? `<span class="me-yes">✓</span>` : v === 0.5 ? `<span class="me-partial">~</span>` : `<span class="me-no">✗</span>`;
   const meHead = ME_SYSTEMS.map((s) => `<th class="${s.name === "ASCN" ? "me-ascn-col" : ""}">${esc(s.name)}</th>`).join("");
-  const meRows = ME_FEATURES.map((f) => `<tr><td class="me-feature">${esc(f)}</td>${ME_SYSTEMS.map((s, i) => `<td class="me-cell${s.name === "ASCN" ? " me-ascn-col" : ""}">${cellIcon(s.vals[ME_FEATURES.indexOf(f)])}</td>`).join("")}</tr>`).join("");
+  const meRows = ME_FEATURES.map((f) => `<tr><td class="me-feature">${esc(tx(f))}</td>${ME_SYSTEMS.map((s, i) => `<td class="me-cell${s.name === "ASCN" ? " me-ascn-col" : ""}">${cellIcon(s.vals[ME_FEATURES.indexOf(f)])}</td>`).join("")}</tr>`).join("");
   $("#ig-compare").innerHTML = `<table class="me-table"><thead><tr><th></th>${meHead}</tr></thead><tbody>${meRows}</tbody></table><p class="ig-note" data-i18n="a.source.ascn.dim05.md.11.6.yes.pa">Source: ascn_dim05.md §11.6. ✓ = yes\u00A0· ~ = partial\u00A0· ✗ = no</p>`;
 
   // ── IMD Smart City Index 2024 — ASEAN cities ────────────────────────────
@@ -1416,13 +1422,13 @@ function renderInsights() {
     const count = pillarCoverage[pid] || 0;
     const isGap = ascapGap && pid === ascapGap.pillar_id;
     const barW = isGap ? 0 : Math.max(1, (count / ascapMax) * 100);
-    const tags = (pillarFocusTags[pid] || []).map((f) => `<span class="ascap-cov-tag" style="border-color:${focusColor(f, "var(--muted)")};color:${focusColor(f, "var(--muted)")}">${esc(f)}</span>`).join("");
+    const tags = (pillarFocusTags[pid] || []).map((f) => `<span class="ascap-cov-tag" style="border-color:${focusColor(f, "var(--muted)")};color:${focusColor(f, "var(--muted)")}">${esc(tx(f))}</span>`).join("");
     const countLabel = isGap
       ? `<span class="ascap-cov-gap-label">${esc(tx("No coverage"))}</span>`
       : `<strong>${count}</strong>`;
     return `<div class="ascap-cov-row${isGap ? " ascap-cov-row--gap" : ""}">
       <span class="ascap-cov-pid">P${pid}</span>
-      <span class="ascap-cov-name">${esc(name.slice(0, 38))}</span>
+      <span class="ascap-cov-name" data-source-issued>${esc(name.slice(0, 38))}</span>
       <div class="bar-track ascap-cov-track"><div class="bar-fill${isGap ? " ascap-fill--gap" : ""}" style="width:${barW}%"></div></div>
       <span class="ascap-cov-count">${countLabel}</span>
       <div class="ascap-cov-tags">${tags}</div>
@@ -1448,23 +1454,23 @@ function renderInsights() {
       const compW  = total ? Math.max(0, (s.completed / total) * 100) : 0;
       const color  = focusColor(fa, "var(--ocher)");
       return `<div class="dg-row">
-        <span class="dg-fa">${esc(fa)}</span>
+        <span class="dg-fa">${esc(tx(fa))}</span>
         <div class="dg-track">
           <div class="dg-fill-comp" style="width:${compW}%;background:${color}"></div>
           <div class="dg-fill-ong"  style="width:${100 - compW}%"></div>
         </div>
-        <span class="dg-nums"><strong>${s.completed}</strong><em> done · ${s.ongoing} active</em></span>
+        <span class="dg-nums"><strong>${s.completed}</strong><em>${esc(fillText("done · {n} active", { n: s.ongoing }))}</em></span>
         <span class="dg-rate ${compPct === 0 ? "dg-rate--zero" : ""}">${compPct}%</span>
       </div>`;
     }).join("");
   $("#ig-delivery-gap").innerHTML = `
-    <div class="dg-legend"><span class="dg-leg-solid">Completed</span><span class="dg-leg-ghost">Active / planning</span></div>
+    <div class="dg-legend"><span class="dg-leg-solid">${esc(tx("Completed"))}</span><span class="dg-leg-ghost">${esc(tx("Active / planning"))}</span></div>
     <div class="dg-wrap">${deliveryRows}</div>
     <p class="ig-note" data-i18n="a.civic.social.leads.completions.m">Civic &amp; Social leads completions — mostly app deployments and digital registries. Built Infrastructure has 31 active projects but only 1 completed. Industry &amp; Innovation, Safety &amp; Security, and Health &amp; Well-Being have zero completions after four M&amp;E cycles. Source: ASCN M&amp;E Report 2025 appendix.</p>`;
 
   // ── Digital maturity vs ASCN activity ────────────────────────────────────
   const connTierOrder = { advanced: 0, expanding: 1, limited: 2 };
-  const connLabel = { advanced: "Advanced 5G", expanding: "Expanding 5G", limited: "Pre-5G / limited" };
+  const connLabel = { advanced: tx("Advanced 5G"), expanding: tx("Expanding 5G"), limited: tx("Pre-5G / limited") };
   const imdByCountry = { Singapore: 5, Malaysia: 73, Thailand: 84, "Viet Nam": 97, Indonesia: 103, Philippines: 124 };
   const countryConn = {};
   state.C.forEach((c) => {
@@ -1485,12 +1491,12 @@ function renderInsights() {
         <span class="mat-country">${esc(country)}</span>
         <span class="mat-tier mat-tier--${tier}">${esc(connLabel[tier] || tier)}</span>
         ${imdHtml}
-        <span class="mat-proj">${proj} <em>projects</em></span>
-        <span class="mat-cities">${info.cities} <em>cit${info.cities === 1 ? "y" : "ies"}</em></span>
+        <span class="mat-proj">${proj} <em>${esc(tx("projects"))}</em></span>
+        <span class="mat-cities">${info.cities} <em>${esc(tx(info.cities === 1 ? "city" : "cities"))}</em></span>
       </div>`;
     }).join("");
   $("#ig-maturity").innerHTML = `
-    <div class="mat-head"><span>Country</span><span>5G tier</span><span>IMD rank</span><span>Projects 2025</span><span>ASCN cities</span></div>
+    <div class="mat-head"><span>${esc(tx("Country"))}</span><span>${esc(tx("5G tier"))}</span><span>${esc(tx("IMD rank"))}</span><span>${esc(tx("Projects 2025"))}</span><span>${esc(tx("ASCN cities"))}</span></div>
     <div class="mat-wrap">${matRows}</div>
     <p class="ig-note" data-i18n="a.malaysia.leads.ascn.membership.7">Malaysia leads ASCN membership (7 cities) yet ranks #73 on IMD — advanced 5G infrastructure does not translate directly into project completions. Singapore dominates on IMD (#5) with full 5G but only 1 ASCN city. Timor-Leste and Lao PDR have limited connectivity and minimal project volume. Source: IMD World Competitiveness Center 2024; GSMA Intelligence 2024; ASCN M&amp;E Report 2025.</p>`;
 
@@ -1507,17 +1513,17 @@ function renderInsights() {
   const langMax = LANG_DATA[0].n;
   const langRows = LANG_DATA.map((l) => {
     const barW = Math.max(2, (l.n / langMax) * 100);
-    return `<div class="bar-row"><span>${esc(l.lang)} <em class="bar-sub">${esc(l.countries)}</em></span><div class="bar-track"><div class="bar-fill" style="width:${barW}%"></div></div><strong>${l.n} <em class="bar-sub">${l.share}%</em></strong></div>`;
+    return `<div class="bar-row"><span data-source-issued>${esc(l.lang)} <em class="bar-sub" data-source-issued>${esc(l.countries)}</em></span><div class="bar-track"><div class="bar-fill" style="width:${barW}%"></div></div><strong>${l.n} <em class="bar-sub">${l.share}%</em></strong></div>`;
   }).join("");
   const countrySchol = [
-    { country: "Singapore", n: 45, note: "NUS, LKYSPP, SMU, ISEAS — dominant critical voice" },
-    { country: "Indonesia", n: 35, note: "UGM, UI, Unhas, BINUS — implementation & diplomacy focus" },
-    { country: "UK / Australia", n: 30, note: "Bristol, Cambridge, Sydney, ANU — governance & rights" },
-    { country: "Thailand", n: 18, note: "Chula, Thammasat, KMUTT — city-level & policy studies" },
+    { country: "Singapore", n: 45, note: tx("NUS, LKYSPP, SMU, ISEAS — dominant critical voice") },
+    { country: "Indonesia", n: 35, note: tx("UGM, UI, Unhas, BINUS — implementation & diplomacy focus") },
+    { country: "UK / Australia", n: 30, note: tx("Bristol, Cambridge, Sydney, ANU — governance & rights") },
+    { country: "Thailand", n: 18, note: tx("Chula, Thammasat, KMUTT — city-level & policy studies") },
     { country: "Malaysia / Philippines", n: 16, note: tx("UKM, UP Diliman, De La Salle — digital inclusion, LGU capacity") },
     { country: "Japan / Korea / China", n: 12, note: tx("Partner-country perspectives on investment & technology transfer") },
   ];
-  const csRows = countrySchol.map((c) => `<div class="lang-country-row"><span class="lang-country-n">${c.n}</span><span class="lang-country-name">${esc(c.country)}</span><span class="lang-country-note">${esc(c.note)}</span></div>`).join("");
+  const csRows = countrySchol.map((c) => `<div class="lang-country-row"><span class="lang-country-n">${c.n}</span><span class="lang-country-name" data-source-issued>${esc(c.country)}</span><span class="lang-country-note">${esc(c.note)}</span></div>`).join("");
   $("#ig-language-map").innerHTML = `
     <div class="lang-split">
       <div class="lang-col">
@@ -1546,7 +1552,7 @@ function renderInsights() {
     const labels = segs.filter((s) => s.pct >= 10).map((s) => `<span style="color:var(--on-solid);text-shadow:0 1px 2px rgba(0,0,0,.4)">${s.pct}%</span>`).join("");
     return `<div class="stack-col"><div class="stack-bars">${divs}</div><span class="stack-year">${y}</span></div>`;
   }).join("");
-  const focusLegend = FOCUS_ORDER.map((fa) => `<span class="ig-spec-leg"><span style="background:${focusColor(fa)}"></span>${esc(fa)}</span>`).join("");
+  const focusLegend = FOCUS_ORDER.map((fa) => `<span class="ig-spec-leg"><span style="background:${focusColor(fa)}"></span>${esc(tx(fa))}</span>`).join("");
   $("#ig-focus-stack").innerHTML = `
     <div class="stack-wrap">${focusStack}</div>
     <div class="stack-legend">${focusLegend}</div>
@@ -1586,7 +1592,7 @@ function renderInsights() {
       </div>`;
   }).join("");
   $("#ig-country-slope").innerHTML = `
-    <div class="slope-header"><span class="slope-h-country">Country</span><span class="slope-h-val">2022</span><span class="slope-h-track">→</span><span class="slope-h-val">2025</span><span class="slope-h-delta">Δ</span></div>
+    <div class="slope-header"><span class="slope-h-country">${esc(tx("Country"))}</span><span class="slope-h-val">2022</span><span class="slope-h-track">→</span><span class="slope-h-val">2025</span><span class="slope-h-delta">Δ</span></div>
     <div class="slope-wrap">${slopeHtml}</div>
     <p class="ig-note" data-i18n="a.thailand.and.malaysia.drove.the">Thailand and Malaysia drove the 2024–25 surge. Vietnam is the only country with zero growth across all four cycles. Myanmar kept adding projects despite the 2021 crisis. Source: ASCN M&amp;E Reports 2022–2025.</p>`;
 
@@ -1595,13 +1601,13 @@ function renderInsights() {
   const churn = uniqueProjectStats();
   $("#ig-churn").innerHTML = `
     <div class="churn-funnel">
-      <div class="churn-total"><span class="churn-n">${churn.total}</span><span class="churn-label">unique city+project combinations, 2022–2025</span></div>
+      <div class="churn-total"><span class="churn-n">${churn.total}</span><span class="churn-label">${esc(tx("unique city+project combinations, 2022–2025"))}</span></div>
       <div class="churn-bar churn-bar--total" style="width:100%"></div>
       <div class="churn-segs">
         <div class="churn-seg" style="width:${(churn.allCycles / churn.total) * 100}%"><span class="churn-seg-n">${churn.allCycles}</span><span data-i18n="hd.tracked.all.4.cycles" class="churn-seg-label">Tracked all 4 cycles</span></div>
         <div class="churn-seg churn-seg--new" style="width:${(churn.latestOnly / churn.total) * 100}%"><span class="churn-seg-n">${churn.latestOnly}</span><span data-i18n="hd.new.in.2025.2" class="churn-seg-label">New in 2025</span></div>
         <div class="churn-seg churn-seg--drop" style="width:${(churn.firstOnly / churn.total) * 100}%"><span class="churn-seg-n">${churn.firstOnly}</span><span data-i18n="hd.dropped.after.2022" class="churn-seg-label">Dropped after 2022</span></div>
-        <div class="churn-seg churn-seg--int" style="width:${(churn.intermittent / churn.total) * 100}%"><span class="churn-seg-n">${churn.intermittent}</span><span class="churn-seg-label">Intermittent</span></div>
+        <div class="churn-seg churn-seg--int" style="width:${(churn.intermittent / churn.total) * 100}%"><span class="churn-seg-n">${churn.intermittent}</span><span class="churn-seg-label">${esc(tx("Intermittent"))}</span></div>
       </div>
     </div>
     <p class="ig-note" data-i18n="a.a.project.that.disappears.from.t">A project that disappears from the appendix is not necessarily cancelled — but it cannot be verified or compared across cycles. Source: ASCN M&amp;E appendix rows 2022–2025.</p>`;
@@ -1644,7 +1650,7 @@ function renderInsights() {
   // ── ASCN in global context — vs India / EU / China ───────────────────────
   // Source: state.K.comparative (ascn_dim10.md, ascn_insight.md Insight 3)
   const comp = state.K.comparative;
-  const gcHead = `<tr><th>Dimension</th><th class="me-ascn-col">ASCN</th><th>India</th><th>EU</th><th>China</th></tr>`;
+  const gcHead = `<tr><th>${esc(tx("Dimension"))}</th><th class="me-ascn-col">ASCN</th><th>India</th><th>EU</th><th>China</th></tr>`;
   const gcRows = comp.map((d) => `<tr><td class="me-feature">${esc(tx(d.dimension))}</td><td class="me-cell me-ascn-col">${esc(tx(d.ascn))}</td><td class="me-cell">${esc(tx(d.india))}</td><td class="me-cell">${esc(tx(d.eu))}</td><td class="me-cell">${esc(tx(d.china))}</td></tr>`).join("");
   $("#ig-global-context").innerHTML = `<table class="me-table gc-table"><thead>${gcHead}</thead><tbody>${gcRows}</tbody></table>
     <p class="ig-note" data-i18n="a.ascn.coordinates.38.cities.with">ASCN coordinates 38 cities with no central funding pool; China's smart-city market alone is ~USD 1.1 trillion. The gap is not a failing but a different model — voluntary, people-centric, non-binding — yet it sets the scale of what the network can and can't do. Source: ascn_dim10.md; ascn_insight.md Insight 3.</p>`;
@@ -1668,9 +1674,9 @@ function renderInsights() {
     const trail = r.p
       ? `<div class="bar-track g5-track"><div class="bar-fill" style="width:${r.p}%"></div></div><strong class="g5-pct">${r.p}%</strong>`
       : `<div class="g5-track g5-track--na"></div><span data-i18n="hd.no.projection" class="g5-na">no projection</span>`;
-    return `<div class="g5-row"><span class="g5-country">${esc(r.c)}</span><span class="g5-status">${esc(r.status)}</span><span class="g5-lean g5-lean--${r.lean}">${esc(leanLabel[r.lean])}</span>${trail}</div>`;
+    return `<div class="g5-row"><span class="g5-country">${esc(r.c)}</span><span class="g5-status">${esc(tx(r.status))}</span><span class="g5-lean g5-lean--${r.lean}">${esc(tx(leanLabel[r.lean]))}</span>${trail}</div>`;
   }).join("");
-  $("#ig-5g").innerHTML = `<div class="g5-head"><span>Country</span><span>5G mode</span><span>Dominant vendors</span><span>Projected 2030 penetration</span></div>
+  $("#ig-5g").innerHTML = `<div class="g5-head"><span>${esc(tx("Country"))}</span><span>${esc(tx("5G mode"))}</span><span>${esc(tx("Dominant vendors"))}</span><span>${esc(tx("Projected 2030 penetration"))}</span></div>
     <div class="g5-wrap">${g5Rows}</div>
     <p class="ig-note" data-i18n="a.standalone.sa.vs.non.standalone">Standalone (SA) vs non-standalone (NSA) marks true 5G maturity — only Singapore runs full SA. The vendor split is geopolitical: Chinese vendors dominate Indonesia, Cambodia, Laos, Myanmar and Thailand; Western vendors lead Singapore and Malaysia — an interoperability and cybersecurity divide most ASCN cities have no formal framework for. 2030 projections: LKYSPP/NUS. Source: ascn_dim06.md.</p>`;
 
@@ -1678,7 +1684,7 @@ function renderInsights() {
   // Source: ascn_dim13.md (ascn_insight.md Insight 5)
   $("#ig-dili").innerHTML = `
     <div class="dili-wrap">
-      <div class="dili-stat"><strong>US$1.92<em>&thinsp;/GB</em></strong><span>mobile data cost — vs Cambodia $0.12, Fiji $0.09, Samoa $0.36</span></div>
+      <div class="dili-stat"><strong>US$1.92<em>&thinsp;/GB</em></strong><span>${esc(tx("mobile data cost — vs Cambodia $0.12, Fiji $0.09, Samoa $0.36"))}</span></div>
       <div class="dili-stat"><strong>0.45</strong><span data-i18n="hd.human.capital.index.lowest.in.asean.below">Human Capital Index — lowest in ASEAN, below Laos 0.46, Myanmar 0.48, Cambodia 0.49</span></div>
       <div class="dili-stat"><strong>~40%</strong><span data-i18n="hd.of.timorese.live.below.the.poverty.line">of Timorese live below the poverty line; submarine fibre only from late 2025</span></div>
     </div>
@@ -1697,7 +1703,7 @@ function renderInsights() {
   const fundMax = 2400;
   const fundRows = fundData.map((f) => {
     const w = f.usd ? Math.max(1.2, (f.usd / fundMax) * 100) : 0;
-    return `<div class="fs-row"><span class="fs-name">${esc(f.name)}</span><div class="bar-track fs-track"><div class="bar-fill${f.usd ? "" : " fs-fill--none"}" style="width:${w}%"></div></div><strong class="fs-val${f.usd ? "" : " fs-val--none"}">${esc(f.disp)}</strong><em class="fs-note">${esc(f.note)}</em></div>`;
+    return `<div class="fs-row"><span class="fs-name" data-source-issued>${esc(f.name)}</span><div class="bar-track fs-track"><div class="bar-fill${f.usd ? "" : " fs-fill--none"}" style="width:${w}%"></div></div><strong class="fs-val${f.usd ? "" : " fs-val--none"}">${esc(tx(f.disp))}</strong><em class="fs-note">${esc(tx(f.note))}</em></div>`;
   }).join("");
   $("#ig-funding-scale").innerHTML = `<div class="fs-wrap">${fundRows}</div>
     <p class="ig-note" data-i18n="a.japan.s.smartjamp.usd.2.4b.is.ro">Japan's SmartJAMP (~USD 2.4B) is roughly <strong>170×</strong> Australia's AASCTF (~USD 14M) — the largest bilateral commitment dwarfs every other donor. Separately, the ADB-managed ACGF carries ~USD 3.7B in total project value across ~30 projects. USD-normalised; China's commitment is undisclosed. Source: ascn_cross_verification.md HC-5; programme reports.</p>`;
@@ -1725,9 +1731,9 @@ function renderOpenData() {
   $("#data-lede").textContent = t("library.scope");
 
   const downloads = [
-    ["Project evidence (CSV)", t("library.projects").replace("{rows}", state.data.projects.length).replace("{cycles}", state.data.reports.length), () => downloadBlob("ascn-projects.csv", projectsCsv(state.data.projects, true), "text/csv")],
-    ["City profiles (CSV)", t("library.cities").replace("{cities}", state.C.length), () => downloadBlob("ascn-cities.csv", citiesCsv(), "text/csv")],
-    ["Full dataset (JSON)", tx("The complete knowledge layer, city profiles, and project engine in one bundle."), () => downloadBlob("ascn-open-dataset.json", JSON.stringify({ knowledge: state.K, cities: state.C, engine: state.data }, null, 2), "application/json")],
+    [tx("Project evidence (CSV)"), t("library.projects").replace("{rows}", state.data.projects.length).replace("{cycles}", state.data.reports.length), () => downloadBlob("ascn-projects.csv", projectsCsv(state.data.projects, true), "text/csv")],
+    [tx("City profiles (CSV)"), t("library.cities").replace("{cities}", state.C.length), () => downloadBlob("ascn-cities.csv", citiesCsv(), "text/csv")],
+    [tx("Full dataset (JSON)"), tx("The complete knowledge layer, city profiles, and project engine in one bundle."), () => downloadBlob("ascn-open-dataset.json", JSON.stringify({ knowledge: state.K, cities: state.C, engine: state.data }, null, 2), "application/json")],
   ];
   $("#dataset-downloads").innerHTML = downloads.map(([t, d], i) => `
     <article class="download-card"><b>${esc(t)}</b><p>${esc(d)}</p><button data-i18n="hd.download" class="text-button" type="button" data-dl="${i}">Download</button></article>`).join("");
@@ -1735,18 +1741,18 @@ function renderOpenData() {
 
   $("#document-grid").innerHTML = state.K.documents.map((d) => `
     <article class="doc-card"><span class="dc-kind">${esc(tx(d.kind))} · ${esc(d.year)}</span><b>${esc(d.title)}</b><p>${esc(tx(d.note))}</p>
-      <div class="dc-foot"><span class="dc-size">${esc(d.size || "PDF")}</span><a class="dc-dl" href="${d.file ? `docs/${encodeURIComponent(d.file)}` : esc(safeUrl(d.url))}" ${d.file ? "download" : 'target="_blank" rel="noopener noreferrer"'}>${d.file ? "Download ↓" : "Official source ↗"}</a></div></article>`).join("");
+      <div class="dc-foot"><span class="dc-size">${esc(d.size || "PDF")}</span><a class="dc-dl" href="${d.file ? `docs/${encodeURIComponent(d.file)}` : esc(safeUrl(d.url))}" ${d.file ? "download" : 'target="_blank" rel="noopener noreferrer"'}>${d.file ? esc(tx("Download ↓")) : esc(tx("Official source ↗"))}</a></div></article>`).join("");
 
   $("#source-list").innerHTML = state.K.data_sources.map((s) => `
-    <div class="def-row"><b><a href="${esc(safeUrl(s.url))}" target="_blank" rel="noopener noreferrer">${esc(s.name)} ↗</a></b><em>${esc(s.type)}</em></div>`).join("");
+    <div class="def-row"><b><a href="${esc(safeUrl(s.url))}" target="_blank" rel="noopener noreferrer" data-source-issued>${esc(s.name)} ↗</a></b><em>${esc(tx(s.type))}</em></div>`).join("");
 
   const m = state.data.metadata || {};
   const methods = [
-    ["Source model", t("library.publication")],
-    ["Freshness", `Engine generated ${m.generated_at || "—"}. Knowledge layer synthesized ${state.K.meta.research_date} from official documents.`],
-    ["Counts", tx("Network KPIs use figures stated in report text. Appendix rows are extracted from PDF tables — treat row-level counts as indicative.")],
-    ["The honest limit", tx("ASCN M&E counts projects, not outcomes. This platform surfaces the official record faithfully; it does not invent metrics the network does not yet collect.")],
-    ["Public information", tx("The 2026 contact list is cited as a source, but personal contact details are not exposed in this dataset.")],
+    [tx("Source model"), t("library.publication")],
+    [tx("Freshness"), fillText("Engine generated {a}. Knowledge layer synthesized {b} from official documents.", { a: m.generated_at || "—", b: state.K.meta.research_date })],
+    [tx("Counts"), tx("Network KPIs use figures stated in report text. Appendix rows are extracted from PDF tables — treat row-level counts as indicative.")],
+    [tx("The honest limit"), tx("ASCN M&E counts projects, not outcomes. This platform surfaces the official record faithfully; it does not invent metrics the network does not yet collect.")],
+    [tx("Public information"), tx("The 2026 contact list is cited as a source, but personal contact details are not exposed in this dataset.")],
   ];
   $("#method-list").innerHTML = methods.map(([t, b]) => `<div class="method-row"><b>${esc(t)}</b><span>${esc(b)}</span></div>`).join("");
 
@@ -1770,22 +1776,24 @@ function renderLibrary() {
   });
 
   const total = src.length;
-  $("#lib-count").textContent = filtered.length === total ? `${total} sources` : `${filtered.length} of ${total}`;
+  $("#lib-count").textContent = filtered.length === total
+    ? fillText("{n} sources", { n: total })
+    : fillText("{n} of {m}", { n: filtered.length, m: total });
 
   if (!filtered.length) {
-    $("#lib-results").innerHTML = `<p class="lib-empty">No sources match "${esc(q)}".</p>`;
+    $("#lib-results").innerHTML = `<p class="lib-empty">${esc(fillText("No sources match \"{q}\".", { q }))}</p>`;
     return;
   }
 
   $("#lib-results").innerHTML = filtered.map((e) => {
     const actions = [];
-    if (e.file) actions.push(`<a class="le-dl" href="docs/${encodeURIComponent(e.file)}" download>PDF ↓</a>`);
-    if (e.url) actions.push(`<a class="le-ext" href="${esc(safeUrl(e.url))}" target="_blank" rel="noopener noreferrer">View ↗</a>`);
+    if (e.file) actions.push(`<a class="le-dl" href="docs/${encodeURIComponent(e.file)}" download data-source-issued>PDF ↓</a>`);
+    if (e.url) actions.push(`<a class="le-ext" href="${esc(safeUrl(e.url))}" target="_blank" rel="noopener noreferrer">${esc(tx("View ↗"))}</a>`);
     return `<div class="lib-entry">
-      <span class="le-badge ${esc(e.type)}">${esc(e.type)}</span>
+      <span class="le-badge ${esc(e.type)}">${esc(tx(e.type))}</span>
       <div class="le-body">
-        <div class="le-title">${esc(e.title)}</div>
-        <div class="le-meta">${esc(e.source)}${e.year ? `\u00A0· ${esc(e.year)}` : ""}${e.category ? `\u00A0· ${esc(e.category)}` : ""}</div>
+        <div class="le-title" data-source-issued>${esc(e.title)}</div>
+        <div class="le-meta" data-source-issued>${esc(e.source)}${e.year ? `\u00A0· ${esc(e.year)}` : ""}${e.category ? `\u00A0· ${esc(e.category)}` : ""}</div>
         <p class="le-takeaway">${esc(tx(e.takeaway))}</p>
       </div>
       <div class="le-actions">${actions.join("")}</div>
@@ -1969,10 +1977,10 @@ function renderContacts() {
     h += `<div class="cpop-block">`;
     h += `<div class="cpop-role-label">${esc(t("map.nr"))}</div>`;
     if (nr.name) {
-      h += `<div class="cpop-name">${esc(nr.name)}</div>`;
-      h += `<div class="cpop-detail">${esc(nr.title)}</div>`;
-      const org = nr.url ? `<a href="${esc(safeUrl(nr.url))}" target="_blank" rel="noopener">${esc(nr.org)}</a>` : esc(nr.org);
-      h += `<div class="cpop-org">${org}`;
+      h += `<div class="cpop-name" data-source-issued>${esc(nr.name)}</div>`;
+      h += `<div class="cpop-detail" data-source-issued>${esc(nr.title)}</div>`;
+      const org = nr.url ? `<a data-source-issued href="${esc(safeUrl(nr.url))}" target="_blank" rel="noopener">${esc(nr.org)}</a>` : esc(nr.org);
+      h += `<div class="cpop-org" data-source-issued>${org}`;
       if (nr.badge) h += ` <span class="cpop-badge">${esc(nr.badge)}</span>`;
       h += `</div>`;
     } else {
@@ -1984,13 +1992,13 @@ function renderContacts() {
     h += `<div class="cpop-role-label">${esc(t("map.csco"))}</div>`;
     if (cscos.length && cscos[0].name) {
       cscos.forEach((c) => {
-        h += `<div class="cpop-name">${esc(c.name)}</div>`;
-        if (c.title) h += `<div class="cpop-detail">${esc(c.title)}</div>`;
-        h += `<div class="cpop-org">${esc(c.org)}</div>`;
+        h += `<div class="cpop-name" data-source-issued>${esc(c.name)}</div>`;
+        if (c.title) h += `<div class="cpop-detail" data-source-issued>${esc(c.title)}</div>`;
+        h += `<div class="cpop-org" data-source-issued>${esc(c.org)}</div>`;
       });
     } else {
       h += `<div class="cpop-detail">${esc(t("map.contact.unlisted"))}</div>`;
-      if (cscos[0]?.org) h += `<div class="cpop-org">${esc(cscos[0].org)}</div>`;
+      if (cscos[0]?.org) h += `<div class="cpop-org" data-source-issued>${esc(cscos[0].org)}</div>`;
     }
     h += `</div>`;
     // Staff contacts block (where listed)
@@ -1998,9 +2006,9 @@ function renderContacts() {
       h += `<div class="cpop-block">`;
       h += `<div class="cpop-role-label">${esc(t("map.staff"))}</div>`;
       staff.forEach((s) => {
-        h += `<div class="cpop-name">${esc(s.name)}</div>`;
-        h += `<div class="cpop-detail">${esc(s.title)}</div>`;
-        h += `<div class="cpop-org">${esc(s.org)}</div>`;
+        h += `<div class="cpop-name" data-source-issued>${esc(s.name)}</div>`;
+        h += `<div class="cpop-detail" data-source-issued>${esc(s.title)}</div>`;
+        h += `<div class="cpop-org" data-source-issued>${esc(s.org)}</div>`;
       });
       h += `</div>`;
     }
@@ -2012,10 +2020,10 @@ function renderContacts() {
     <article class="contact-card">
       <div class="cc-head">
         <b class="cc-country">${esc(country)}</b>
-        ${nr.badge ? `<span class="cc-badge">${esc(nr.badge)}</span>` : ""}
+        ${nr.badge ? `<span class="cc-badge">${esc(tx(nr.badge))}</span>` : ""}
       </div>
-      ${nr.name ? `<div class="cc-nr-name">${esc(nr.name)} <span class="cc-nr-role">NR</span></div>` : ""}
-      <a class="cc-inst" href="${esc(safeUrl(nr.url))}" target="_blank" rel="noopener">${esc(nr.org)}</a>
+      ${nr.name ? `<div class="cc-nr-name" data-source-issued>${esc(nr.name)} <span class="cc-nr-role">NR</span></div>` : ""}
+      <a class="cc-inst" data-source-issued href="${esc(safeUrl(nr.url))}" target="_blank" rel="noopener">${esc(nr.org)}</a>
     </article>`).join("");
 
   $("#contacts-content").innerHTML = `
@@ -2165,10 +2173,10 @@ function renderAlumni() {
   const id = "alum-search";
   const rows = ALUMNI.map((a, i) => `
     <div class="alum-row" data-search="${(a.name + " " + a.country + " " + a.org + " " + a.title).toLowerCase()}">
-      <span class="alum-name">${esc(a.name)}</span>
+      <span class="alum-name" data-source-issued>${esc(a.name)}</span>
       <span class="alum-country">${esc(a.country)}</span>
-      <span class="alum-title">${esc(a.title)}, ${esc(a.org)}</span>
-      <span class="alum-role-badge ${ROLE_CLASS[a.role] || "alum-staff"}">${ROLE_LABEL[a.role] || a.role}</span>
+      <span class="alum-title" data-source-issued>${esc(a.title)}, ${esc(a.org)}</span>
+      <span class="alum-role-badge ${ROLE_CLASS[a.role] || "alum-staff"}">${esc(tx(ROLE_LABEL[a.role] || a.role))}</span>
     </div>`).join("");
 
   const html = `
@@ -2181,7 +2189,7 @@ function renderAlumni() {
         </div>
         <div class="alum-controls">
           <input class="alum-search-input" id="${id}" type="search" placeholder="Search by name, country, or organization…" aria-label="Search alumni" />
-          <span class="alum-count muted" id="alum-count">${ALUMNI.length} former officials</span>
+          <span class="alum-count muted" id="alum-count">${esc(fillText("{n} former officials", { n: ALUMNI.length }))}</span>
         </div>
       </div>
       <div class="alum-list" id="alum-list">${rows}</div>
@@ -2201,7 +2209,9 @@ function renderAlumni() {
         row.hidden = !match;
         if (match) visible++;
       });
-      countEl.textContent = q ? `${visible} of ${ALUMNI.length} shown` : `${ALUMNI.length} former officials`;
+      countEl.textContent = q
+        ? fillText("{n} of {m} shown", { n: visible, m: ALUMNI.length })
+        : fillText("{n} former officials", { n: ALUMNI.length });
     });
   }, 0);
 
@@ -2228,7 +2238,7 @@ function renderResearch() {
       tags: ["Crumpton et al. 2021", "Kanaev &amp; Fedorenko 2023"],
     },
     {
-      n: "03", label: "The Singapore Question",
+      n: "03", label: tx("The Singapore Question"),
       heading: "The shepherd that models its own flock",
       body: "Singapore founded ASCN in 2018, held the Shepherd role 2019–2023, and served as the primary source of capacity-building content through its Centre for Liveable Cities. Kong &amp; Woods (2021) named this technocratic regionalism: one member's institutional assumptions packaged as neutral methodology and distributed as shared knowledge. Tan et al. (2021) document how ASCN simultaneously functions as Singapore's soft power extension and international branding vehicle. This is institutional logic, not bad faith. The question is whether Singapore's model — built on state land ownership, unified planning authority, and an 80% public-housing population — transfers to cities where none of those conditions exist.",
       tags: ["Kong &amp; Woods 2021", "Tan et al. 2021", "Kanaev &amp; Fedorenko 2023"],
@@ -2252,13 +2262,13 @@ function renderResearch() {
       tags: ["Prayogo &amp; Juned 2025", "Tan et al. 2021", "Lim 2024"],
     },
     {
-      n: "07", label: "Rights &amp; Surveillance",
+      n: "07", label: tx("Rights & Surveillance"),
       heading: "The rights gap no one wants to name",
       body: "Half of ASEAN's member states rank as authoritarian or semi-authoritarian. The Democracy Index 2023 places Cambodia at rank 121, Vietnam at 136, Laos at 159, Myanmar at 166. Putra (2026), in F1000Research with open international peer review, identifies two structural risks: surveillance and control infrastructure deployed into governance contexts where democratic accountability is already constrained; and development models imposed by external funders (JICA, China BRI/Huawei) whose interests may not align with vulnerable communities. De Jonge (2023), applying a knowledge commons framework to ASCN's transport and energy projects, adds a related finding: the same top-down governance structures administering the network's smart city ambitions have historically treated economic efficiency as a constraint on rights, not the reverse. AI-driven civic participation is not a current feature of any ASCN project. Phnom Penh's experience of forced privatisation disadvantaging low-income residents is documented in the same literature. This is not a fringe concern — it is the convergent finding of the most recent wave of ASCN scholarship.",
       tags: ["Putra 2026", "de Jonge 2023", "Crumpton et al. 2021"],
     },
     {
-      n: "08", label: "Perceptions &amp; Languages",
+      n: "08", label: tx("Perceptions & Languages"),
       heading: "Who writes about ASCN — and from where",
       body: "The academic literature on ASCN is overwhelmingly in English (95% of 229+ catalogued works) and produced from Singaporean, British, Australian, and Indonesian institutions. Local-language scholarship — Indonesian, Thai, Vietnamese, Chinese, Korean — exists but is underrepresented in the critical canon. Country perceptions diverge sharply: Indonesia frames its Shepherd role as regional leadership; Singapore is read as architect and knowledge broker; Thailand treats ASCN as an extension of its national smart-city programme; Vietnam is quiet in both M&amp;E reporting and critical scholarship; Cambodia and Laos emphasize external-partner support; Myanmar's participation persists through crisis. The result is not one ASCN narrative but several — each shaped by national capacity, political system, and proximity to the network's power centre.",
       tags: ["Academic Perspectives Report 2025", "Prayogo &amp; Juned 2025", "Kong &amp; Woods 2021"],
@@ -2349,7 +2359,7 @@ function renderResearch() {
       themes: ["capacity", "measurement", "rights"] },
   ];
 
-  const typeLabel = { journal: "PEER REVIEWED", official: "OFFICIAL DOC" };
+  const typeLabel = { journal: tx("PEER REVIEWED"), official: tx("OFFICIAL DOC") };
 
   el.innerHTML = `
 <div class="section-head">
@@ -2368,7 +2378,7 @@ function renderResearch() {
       </div>
       <h3 class="research-theme-h">${esc(tx(t.heading))}</h3>
       <p class="research-theme-body">${tx(t.body)}</p>
-      <div class="research-theme-tags">${t.tags.map(tag => `<span class="research-tag">${tag}</span>`).join("")}</div>
+      <div class="research-theme-tags">${t.tags.map(tag => `<span class="research-tag" data-source-issued>${tag}</span>`).join("")}</div>
     </article>`).join("")}
   </div>
 </div>
@@ -2392,11 +2402,11 @@ function renderResearch() {
         <span class="paper-type ${p.type === "journal" ? "paper-type--j" : "paper-type--o"}">${typeLabel[p.type]}</span>
         <span class="paper-year">${p.year}</span>
       </div>
-      <p class="paper-author">${p.author}</p>
+      <p class="paper-author" data-source-issued>${p.author}</p>
       <h4 class="paper-title" data-source-issued>${p.title}</h4>
-      <p class="paper-venue">${bindSeparators(p.venue)}</p>
+      <p class="paper-venue" data-source-issued>${bindSeparators(p.venue)}</p>
       <p class="paper-summary">${esc(tx(p.summary))}</p>
-      <div class="paper-themes">${p.themes.map(th => `<span class="paper-theme-tag">${th}</span>`).join("")}</div>
+      <div class="paper-themes">${p.themes.map(th => `<span class="paper-theme-tag">${esc(tx(th))}</span>`).join("")}</div>
     </article>`).join("")}
   </div>
 </div>
@@ -2409,7 +2419,7 @@ function renderResearch() {
       <p class="geo-body" data-i18n="a.of.229.works.catalogued.218.95.a">Of 229+ works catalogued, 218 (95%) are in English. Indonesian/Malay contributes 4, Thai 3, Chinese 2, Korean 1, Vietnamese 1, Japanese-linked English 3. Local-language scholarship is growing — especially in Indonesia and Thailand — but the critical canon is still written largely in English from Singapore, UK, and Australian institutions.</p>
     </div>
     <div class="geo-col">
-      <p class="geo-h">Country narratives</p>
+      <p class="geo-h">${esc(tx("Country narratives"))}</p>
       <ul class="geo-list">
         <li data-i18n="a.indonesia.shepherd.as.smart.cit"><b>Indonesia</b> — Shepherd as smart-city diplomacy; pivot to bankable projects.</li>
         <li data-i18n="a.singapore.architect.knowledge.b"><b>Singapore</b> — Architect, knowledge broker, and object of technocratic-regionalism critique.</li>
@@ -2429,23 +2439,23 @@ function renderResearch() {
     <div class="insider-grid">
       <div class="insider-item insider-item--yes">
         <span class="insider-mark">✓</span>
-        <div><strong>The knowledge transfer problem is real.</strong> Tan et al. (2021) are correct that the network's information sharing is shallow. The annual meeting is where this is most visible: officials leave knowing what Phnom Penh is doing. They do not leave with a system to use it.</div>
+        <div><strong>${esc(tx("The knowledge transfer problem is real."))}</strong> ${esc(tx("Tan et al. (2021) are correct that the network's information sharing is shallow. The annual meeting is where this is most visible: officials leave knowing what Phnom Penh is doing. They do not leave with a system to use it."))}</div>
       </div>
       <div class="insider-item insider-item--yes">
         <span class="insider-mark">✓</span>
-        <div><strong>The capacity gap is structural.</strong> A framework that treats Singapore and Cambodia as starting from the same place has miscalibrated its baseline. Crumpton et al. (2021) are right to flag it. The framework's flexibility is not a flaw — it is how differentiation survives the non-interference principle.</div>
+        <div><strong>${esc(tx("The capacity gap is structural."))}</strong> ${esc(tx("A framework that treats Singapore and Cambodia as starting from the same place has miscalibrated its baseline. Crumpton et al. (2021) are right to flag it. The framework's flexibility is not a flaw — it is how differentiation survives the non-interference principle."))}</div>
       </div>
       <div class="insider-item insider-item--yes">
         <span class="insider-mark">✓</span>
-        <div><strong>The measurement gap matters.</strong> 134 projects documented. We do not know what percentage improved daily life for a resident. Hollands (2008) described this problem before ASCN existed. It persists.</div>
+        <div><strong>${esc(tx("The measurement gap matters."))}</strong> ${esc(tx("134 projects documented. We do not know what percentage improved daily life for a resident. Hollands (2008) described this problem before ASCN existed. It persists."))}</div>
       </div>
       <div class="insider-item insider-item--yes">
         <span class="insider-mark">✓</span>
-        <div><strong>Indonesia's pivot was deliberate.</strong> The shift from framework to bankable projects under Indonesia's shepherdship was a strategic decision, not natural evolution. Prayogo &amp; Juned (2025) document it correctly.</div>
+        <div><strong>${esc(tx("Indonesia's pivot was deliberate."))}</strong> ${esc(tx("The shift from framework to bankable projects under Indonesia's shepherdship was a strategic decision, not natural evolution. Prayogo & Juned (2025) document it correctly."))}</div>
       </div>
       <div class="insider-item insider-item--no">
         <span class="insider-mark">✗</span>
-        <div><strong>What the literature misses: it does not use the project data.</strong> Kong &amp; Woods (2021), the most cited critical paper on ASCN, does not engage the four M&E cycles of city-level project documentation. A critique of what the network builds that does not look at what the network builds is incomplete. That is what this platform exists to correct.</div>
+        <div><strong>${esc(tx("What the literature misses: it does not use the project data."))}</strong> ${esc(tx("Kong & Woods (2021), the most cited critical paper on ASCN, does not engage the four M&E cycles of city-level project documentation. A critique of what the network builds that does not look at what the network builds is incomplete. That is what this platform exists to correct."))}</div>
       </div>
     </div>
   </div>
@@ -2472,23 +2482,23 @@ function renderEssay() {
   const govDiagram = `<figure class="essay-diagram" aria-label="ASCN governance structure">
   <svg viewBox="0 0 680 256" xmlns="http://www.w3.org/2000/svg">
     <rect x="240" y="10" width="200" height="44" fill="none" stroke="currentColor" stroke-width="1.5"/>
-    <text x="340" y="28" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">ASEAN SECRETARIAT</text>
-    <text x="340" y="43" text-anchor="middle" font-size="9.5" class="dg-muted" fill="currentColor">Jakarta · Network coordinator</text>
+    <text x="340" y="28" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor" data-source-issued>ASEAN SECRETARIAT</text>
+    <text x="340" y="43" text-anchor="middle" font-size="9.5" class="dg-muted" fill="currentColor">Jakarta · ${esc(tx("Network coordinator"))}</text>
     <line x1="340" y1="54" x2="340" y2="80" stroke="currentColor" stroke-width="1"/>
     <line x1="340" y1="80" x2="170" y2="80" stroke="currentColor" stroke-width="1"/>
     <line x1="340" y1="80" x2="510" y2="80" stroke="currentColor" stroke-width="1"/>
     <line x1="170" y1="80" x2="170" y2="96" stroke="currentColor" stroke-width="1"/>
     <line x1="510" y1="80" x2="510" y2="96" stroke="currentColor" stroke-width="1"/>
     <rect x="80" y="96" width="180" height="52" class="dg-fill dg-accent" fill="currentColor" stroke="currentColor" stroke-width="1.5"/>
-    <text x="170" y="114" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="0.07em" class="dg-accent-text" fill="currentColor">SHEPHERD 2023–2027</text>
+    <text x="170" y="114" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="0.07em" class="dg-accent-text" fill="currentColor">${esc(tx("SHEPHERD 2023–2027"))}</text>
     <text x="170" y="129" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">Indonesia</text>
-    <text x="170" y="142" text-anchor="middle" font-size="9.5" class="dg-muted" fill="currentColor">Institutional continuity</text>
+    <text x="170" y="142" text-anchor="middle" font-size="9.5" class="dg-muted" fill="currentColor">${esc(tx("Institutional continuity"))}</text>
     <rect x="420" y="96" width="180" height="52" fill="none" stroke="currentColor" stroke-width="1.5"/>
-    <text x="510" y="114" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="0.07em" class="dg-muted" fill="currentColor">ANNUAL CHAIR</text>
-    <text x="510" y="129" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">Malaysia 2025</text>
-    <text x="510" y="142" text-anchor="middle" font-size="9.5" class="dg-muted" fill="currentColor">Rotates annually</text>
+    <text x="510" y="114" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="0.07em" class="dg-muted" fill="currentColor">${esc(tx("ANNUAL CHAIR"))}</text>
+    <text x="510" y="129" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">${esc(tx("Malaysia 2025"))}</text>
+    <text x="510" y="142" text-anchor="middle" font-size="9.5" class="dg-muted" fill="currentColor">${esc(tx("Rotates annually"))}</text>
     <line x1="340" y1="148" x2="340" y2="172" class="dg-rule" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3"/>
-    <text x="340" y="188" text-anchor="middle" font-size="9.5" font-weight="700" letter-spacing="0.06em" fill="currentColor">10 MEMBER STATES · 38 CITIES · 134 PROJECTS</text>
+    <text x="340" y="188" text-anchor="middle" font-size="9.5" font-weight="700" letter-spacing="0.06em" fill="currentColor">${esc(tx("10 MEMBER STATES · 38 CITIES · 134 PROJECTS"))}</text>
     <line x1="30" y1="200" x2="650" y2="200" class="dg-hair" stroke="currentColor" stroke-width="1"/>
     <text x="50" y="216" font-size="8.5" class="dg-muted" fill="currentColor">Brunei</text>
     <text x="104" y="216" font-size="8.5" class="dg-muted" fill="currentColor">Cambodia</text>
@@ -2500,7 +2510,7 @@ function renderEssay() {
     <text x="492" y="216" font-size="8.5" class="dg-muted" fill="currentColor">Singapore</text>
     <text x="554" y="216" font-size="8.5" class="dg-muted" fill="currentColor">Thailand</text>
     <text x="610" y="216" font-size="8.5" class="dg-muted" fill="currentColor">Viet Nam</text>
-    <text x="340" y="244" text-anchor="middle" font-size="8.5" class="dg-quiet" fill="currentColor">Plus Timor-Leste (newest member, city: Dili). Source: ASCN M&amp;E Reports 2022–2025.</text>
+    <text x="340" y="244" text-anchor="middle" font-size="8.5" class="dg-quiet" fill="currentColor">${esc(tx("Plus Timor-Leste (newest member, city: Dili). Source: ASCN M&E Reports 2022–2025."))}</text>
   </svg>
   <figcaption data-i18n="a.ascn.governance.the.secretariat">ASCN governance: the Secretariat coordinates, the Shepherd holds institutional memory, the Chair rotates annually.</figcaption>
 </figure>`;
@@ -2508,17 +2518,17 @@ function renderEssay() {
   /* ---- Focus area bar chart ---- */
   const focusDiagram = `<figure class="essay-diagram" aria-label="ASCN project distribution by focus area">
   <svg viewBox="0 0 580 248" xmlns="http://www.w3.org/2000/svg">
-    <text x="0" y="16" font-size="9.5" font-weight="700" letter-spacing="0.07em" fill="currentColor">FOCUS AREA DISTRIBUTION — 134 PROJECTS · M&amp;E CYCLE 4 (2025)</text>
-    <text x="0" y="32" font-size="9" class="dg-muted" fill="currentColor">Approximate shares derived from ASCN M&amp;E reporting.</text>
-    ${[["Smart Mobility",28,0],["Smart Living",26,28],["Smart Environment",22,56],["Smart Governance",18,84],["Smart Economy",12,112],["Smart People",8,140]].map(([label,pct,y])=>{
+    <text x="0" y="16" font-size="9.5" font-weight="700" letter-spacing="0.07em" fill="currentColor">${esc(tx("FOCUS AREA DISTRIBUTION — 134 PROJECTS · M&E CYCLE 4 (2025)"))}</text>
+    <text x="0" y="32" font-size="9" class="dg-muted" fill="currentColor">${esc(tx("Approximate shares derived from ASCN M&E reporting."))}</text>
+    ${[[tx("Smart Mobility"),28,0],[tx("Smart Living"),26,28],[tx("Smart Environment"),22,56],[tx("Smart Governance"),18,84],[tx("Smart Economy"),12,112],[tx("Smart People"),8,140]].map(([label,pct,y])=>{
       const barW = Math.round(pct*4.0);
       const hi = pct>=26;
       return `<text x="0" y="${52+y+11}" font-size="9.5" class="dg-label" fill="currentColor">${label}</text>
       <rect x="142" y="${52+y}" width="${barW}" height="17" class="${hi?"dg-bar-hi":"dg-bar"}" opacity="${hi?1:0.75}"/>
       <text x="${142+barW+6}" y="${52+y+12}" font-size="9" class="dg-muted" fill="currentColor">${pct}%</text>`;
     }).join("")}
-    <text x="0" y="226" font-size="8.5" class="dg-quiet" fill="currentColor">Smart Mobility + Smart Living account for more than half of documented projects.</text>
-    <text x="0" y="238" font-size="8.5" class="dg-quiet" fill="currentColor">Smart Governance and Smart People remain underrepresented relative to the framework's stated priorities.</text>
+    <text x="0" y="226" font-size="8.5" class="dg-quiet" fill="currentColor">${esc(tx("Smart Mobility + Smart Living account for more than half of documented projects."))}</text>
+    <text x="0" y="238" font-size="8.5" class="dg-quiet" fill="currentColor">${esc(tx("Smart Governance and Smart People remain underrepresented relative to the framework's stated priorities."))}</text>
   </svg>
   <figcaption data-i18n="a.project.distribution.reflects.ci">Project distribution reflects city demand, not network design. Mobility and living services are visible and fundable; governance-strengthening work — which underpins everything else — is harder to count and harder to fund.</figcaption>
 </figure>`;
@@ -2526,26 +2536,26 @@ function renderEssay() {
   /* ---- Timeline diagram ---- */
   const timelineDiagram = `<figure class="essay-diagram" aria-label="ASCN milestones 2018–2025">
   <svg viewBox="0 0 660 136" xmlns="http://www.w3.org/2000/svg">
-    <text x="0" y="16" font-size="9.5" font-weight="700" letter-spacing="0.07em" fill="currentColor">ASCN MILESTONES 2018–2025</text>
+    <text x="0" y="16" font-size="9.5" font-weight="700" letter-spacing="0.07em" fill="currentColor">${esc(tx("ASCN MILESTONES 2018–2025"))}</text>
     <line x1="20" y1="64" x2="640" y2="64" stroke="currentColor" stroke-width="1.5"/>
     ${[
-      [20,"2018","Founded\n26 cities"],
-      [112,"2019","Thailand\nchairs"],
-      [204,"2020","M&E\ncycle 1"],
-      [296,"2021","34 cities"],
-      [388,"2022","M&E\ncycle 2"],
-      [480,"2023","Indonesia\nShepherd"],
-      [572,"2024","38 cities\nLao chairs"],
+      [20,"2018",[tx("Founded"),tx("26 cities")]],
+      [112,"2019",[tx("Thailand"),tx("chairs")]],
+      [204,"2020",["M&E",tx("cycle 1")]],
+      [296,"2021",[tx("34 cities")]],
+      [388,"2022",["M&E",tx("cycle 2")]],
+      [480,"2023",[tx("Indonesia"),tx("Shepherd")]],
+      [572,"2024",[tx("38 cities"),tx("Lao chairs")]],
     ].map(([x,yr,note])=>{
       const hi = yr==="2018"||yr==="2023";
       return `<circle cx="${x}" cy="64" r="${hi?6:4}" class="${hi?"dg-bar-hi":"dg-bar"}""/>
       <text x="${x}" y="80" text-anchor="middle" font-size="8.5" font-weight="700" fill="currentColor">${yr}</text>
-      ${note.split("\n").map((l,i)=>`<text x="${x}" y="${92+i*12}" text-anchor="middle" font-size="7.5" class="dg-muted" fill="currentColor">${l}</text>`).join("")}`;
+      ${note.map((l,i)=>`<text x="${x}" y="${92+i*12}" text-anchor="middle" font-size="7.5" class="dg-muted" fill="currentColor"${l==="M&E"?' data-source-issued':""}>${esc(l)}</text>`).join("")}`;
     }).join("")}
     <text x="640" y="52" text-anchor="end" font-size="8" class="dg-accent-text" fill="currentColor" font-weight="700">2025 →</text>
     <text data-source-issued x="640" y="80" text-anchor="end" font-size="8.5" font-weight="700" fill="currentColor">Malaysia</text>
-    <text x="640" y="92" text-anchor="end" font-size="7.5" class="dg-muted" fill="currentColor">chairs</text>
-    <text x="0" y="124" font-size="8.5" class="dg-quiet" fill="currentColor">Four M&amp;E cycles. Eight annual meetings. Two Shepherds. The measurement framework has not kept pace with the network's growth.</text>
+    <text x="640" y="92" text-anchor="end" font-size="7.5" class="dg-muted" fill="currentColor">${esc(tx("chairs"))}</text>
+    <text x="0" y="124" font-size="8.5" class="dg-quiet" fill="currentColor">${esc(tx("Four M&E cycles. Eight annual meetings. Two Shepherds. The measurement framework has not kept pace with the network's growth."))}</text>
   </svg>
   <figcaption data-i18n="a.seven.years.of.meetings.partners">Seven years of meetings, partnerships, and reports. The network has grown steadily; the accountability architecture has not.</figcaption>
 </figure>`;
@@ -2677,7 +2687,7 @@ function renderEssay() {
   <div class="essay-series-bar">
     <span class="essay-series-label">${tx("ASCN Essays")}</span>
     <span class="essay-series-sep">·</span>
-    <span class="essay-series-num">No. 1</span>
+    <span class="essay-series-num">${esc(tx("No. 1"))}</span>
     <span class="essay-series-date">${tx("June 2026\u00A0· seven years of the author’s participation, 2019–2026")}</span>
     <span class="essay-series-time">${tx("20 min read")}</span>
   </div>
@@ -2690,7 +2700,7 @@ function renderEssay() {
       <img src="Photos/author-bio.jpg" alt="Non Arkaraprasertkul" class="bio-thumb" />
       <div class="bio-summary-text">
         <strong>Non Arkaraprasertkul, PhD</strong>
-        <span>Senior Expert in Smart City Promotion\u00A0· DEPA Thailand\u00A0· ASEAN Smart Cities Network since 2019</span>
+        <span>${esc(tx("Senior Expert in Smart City Promotion\u00A0· DEPA Thailand\u00A0· ASEAN Smart Cities Network since 2019"))}</span>
       </div>
       <span class="bio-expand-hint">${tx("About the author")}</span>
     </summary>
@@ -2821,107 +2831,107 @@ function renderEssay() {
   <div class="essay-ref-grid">
     <div class="essay-ref-item">
       <span class="essay-ref-n">[1]</span>
-      <div><b>Arkaraprasertkul, N.</b> (2016). "Gentrification from within." <i>Asian Anthropology</i>, 15(1), 1–20. Original formulation of the concept; later adopted by researchers across twelve countries and cited in the SAGE Handbook of Cultural Anthropology (2021).</div>
+      <div><b data-source-issued>Arkaraprasertkul, N.</b> (2016). "Gentrification from within." <i data-source-issued>Asian Anthropology</i>, 15(1), 1–20. ${esc(tx("Original formulation of the concept; later adopted by researchers across twelve countries and cited in the SAGE Handbook of Cultural Anthropology (2021)."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[2]</span>
-      <div><b>Arkaraprasertkul, N.</b> (2018). "Gentrification and its contentment." <i>Urban Studies</i>, 55(7), 1561–1578. Q1 journal (SJR 1.98). Foundational paper on gentrification from within; cited by Fulong Wu (UCL), endorsed by Alan Smart (Calgary).</div>
+      <div><b data-source-issued>Arkaraprasertkul, N.</b> (2018). "Gentrification and its contentment." <i data-source-issued>Urban Studies</i>, 55(7), 1561–1578. ${esc(tx("Q1 journal (SJR 1.98). Foundational paper on gentrification from within; cited by Fulong Wu (UCL), endorsed by Alan Smart (Calgary)."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[3]</span>
-      <div><b>Arkaraprasertkul, N.</b> (2019). "Gentrifying heritage." <i>International Journal of Heritage Studies</i>, 25(9), 882–896. On heritage as economic leverage for working-class residents; cited in <i>Heritage, Gentrification and Resistance in the Neoliberal City</i> (Berghahn Books, 2022).</div>
+      <div><b data-source-issued>Arkaraprasertkul, N.</b> (2019). "Gentrifying heritage." <i data-source-issued>International Journal of Heritage Studies</i>, 25(9), 882–896. ${esc(tx("On heritage as economic leverage for working-class residents; cited in"))} <i data-source-issued>Heritage, Gentrification and Resistance in the Neoliberal City</i> ${esc(tx("(Berghahn Books, 2022)."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[4]</span>
-      <div><b>Arkaraprasertkul, N.</b> (2021). "Read the market. Respect the behaviour. Choose for yourselves." <i>The ASEAN Magazine</i>, Issue 14. ASEAN Secretariat. The market-first governance argument applied to smart city adoption across ASEAN member states.</div>
+      <div><b data-source-issued>Arkaraprasertkul, N.</b> (2021). "Read the market. Respect the behaviour. Choose for yourselves." <i data-source-issued>The ASEAN Magazine</i>, Issue 14. ${esc(tx("ASEAN Secretariat. The market-first governance argument applied to smart city adoption across ASEAN member states."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[5]</span>
-      <div><b>DEPA Thailand</b> (2023). <i>Smart City Primer</i> (Article No. 33). Digital Economy Promotion Agency. Governance-first framework for smart city implementation; the policy foundation for Thailand's ASCN engagement.</div>
+      <div><b data-source-issued>DEPA Thailand</b> (2023). <i data-source-issued>Smart City Primer</i> (Article No. 33). ${esc(tx("Digital Economy Promotion Agency. Governance-first framework for smart city implementation; the policy foundation for Thailand's ASCN engagement."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[6]</span>
-      <div><b>Taeihagh, A., Tan, J.S. &amp; Sivarajah, U.</b> (2021). "Smart City Policies and the Policy Transfer Process." <i>Sustainability</i>, 13(11), 6502. Nineteen key-informant interviews with ASCN participants; most rigorous empirical study of the network to date. Finds knowledge transfer remains shallow.</div>
+      <div><b data-source-issued>Taeihagh, A., Tan, J.S. &amp; Sivarajah, U.</b> (2021). "Smart City Policies and the Policy Transfer Process." <i data-source-issued>Sustainability</i>, 13(11), 6502. ${esc(tx("Nineteen key-informant interviews with ASCN participants; most rigorous empirical study of the network to date. Finds knowledge transfer remains shallow."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[7]</span>
-      <div><b>Costoya, X.</b> (2022). "South-South Cooperation and the Promise of Experimentalist Governance in ASCN." <i>Politics and Governance</i>, 10(3). Source of 'experimentalist governance without diagnostic monitoring.' Identifies the output/outcome measurement gap as the network's structural blind spot.</div>
+      <div><b data-source-issued>Costoya, X.</b> (2022). "South-South Cooperation and the Promise of Experimentalist Governance in ASCN." <i data-source-issued>Politics and Governance</i>, 10(3). ${esc(tx("Source of 'experimentalist governance without diagnostic monitoring.' Identifies the output/outcome measurement gap as the network's structural blind spot."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[8]</span>
-      <div><b>Kong, L. &amp; Woods, O.</b> (2021). "Scaling smartness, (de)provincialising the city? The ASEAN Smart Cities Network and the translational politics of technocratic regionalism." <i>Cities</i>, 117, 103326. Correct diagnosis of Singapore's structural position in ASCN. Empirical base is news articles and CLC brochures; M&E project data not engaged. Both authors at Singapore Management University. Conclusion ("slow, small, collaborative") does not follow from analysis with operational precision. Read alongside Taeihagh et al. (2021) for primary interview evidence.</div>
+      <div><b data-source-issued>Kong, L. &amp; Woods, O.</b> (2021). "Scaling smartness, (de)provincialising the city? The ASEAN Smart Cities Network and the translational politics of technocratic regionalism." <i data-source-issued>Cities</i>, 117, 103326. ${esc(tx("Correct diagnosis of Singapore's structural position in ASCN. Empirical base is news articles and CLC brochures; M&E project data not engaged. Both authors at Singapore Management University. Conclusion (\"slow, small, collaborative\") does not follow from analysis with operational precision. Read alongside Taeihagh et al. (2021) for primary interview evidence."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[9]</span>
-      <div><b>Singapore Tourism Board / AEG grant, 2024.</b> Thai PM Srettha Thavisin stated USD $3M/show with ASEAN exclusivity. Singapore Minister Edwin Tong confirmed grants; denied the figure. PM Lee confirmed "certain incentives." Estimated SGD $500M tourist return. Formal protests from Thailand, Philippines, Indonesia. Reuters, Bangkok Post, Bloomberg.</div>
+      <div><b data-source-issued>Singapore Tourism Board / AEG grant, 2024.</b> ${esc(tx("Thai PM Srettha Thavisin stated USD $3M/show with ASEAN exclusivity. Singapore Minister Edwin Tong confirmed grants; denied the figure. PM Lee confirmed \"certain incentives.\" Estimated SGD $500M tourist return. Formal protests from Thailand, Philippines, Indonesia. Reuters, Bangkok Post, Bloomberg."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[10]</span>
-      <div><b>ASCN M&amp;E Reports 2022–2025.</b> ASEAN Secretariat. Primary data source for all project counts, city rosters, and focus-area analysis on this platform. Full reports downloadable in the Library tab.</div>
+      <div><b data-source-issued>ASCN M&amp;E Reports 2022–2025.</b> ${esc(tx("ASEAN Secretariat. Primary data source for all project counts, city rosters, and focus-area analysis on this platform. Full reports downloadable in the Library tab."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[11]</span>
-      <div><b>World Bank</b> (2019). <i>East Asia's Changing Urban Landscape: Measuring a Decade of Spatial Growth.</i> World Bank Publications. Documents the pace and scale of Southeast Asian urbanisation; the quantitative baseline for the regional context in section I.</div>
+      <div><b data-source-issued>World Bank</b> (2019). <i data-source-issued>East Asia's Changing Urban Landscape: Measuring a Decade of Spatial Growth.</i> World Bank Publications. ${esc(tx("Documents the pace and scale of Southeast Asian urbanisation; the quantitative baseline for the regional context in section I."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[12]</span>
-      <div><b>Hollands, R.G.</b> (2008). "Will the real smart city please stand up?" <i>City</i>, 12(3), 303–320. Foundational critical paper on the gap between smart city rhetoric and outcome accountability. Over 3,000 citations.</div>
+      <div><b data-source-issued>Hollands, R.G.</b> (2008). "Will the real smart city please stand up?" <i data-source-issued>City</i>, 12(3), 303–320. ${esc(tx("Foundational critical paper on the gap between smart city rhetoric and outcome accountability. Over 3,000 citations."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[13]</span>
-      <div><b>Kitchin, R.</b> (2014). "The real-time city? Big data and smart urbanism." <i>GeoJournal</i>, 79, 1–14. Shows that smart city deployment records consistently measure infrastructure deployment, not whether city residents' lives improve. Over 2,500 citations.</div>
+      <div><b data-source-issued>Kitchin, R.</b> (2014). "The real-time city? Big data and smart urbanism." <i data-source-issued>GeoJournal</i>, 79, 1–14. ${esc(tx("Shows that smart city deployment records consistently measure infrastructure deployment, not whether city residents' lives improve. Over 2,500 citations."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[14]</span>
-      <div><b>Söderström, O., Paasche, T. &amp; Klauser, F.</b> (2014). "Smart cities as corporate storytelling." <i>City</i>, 18(3), 307–320. Shows that dominant smart city models are built on northern European and East Asian governance structures most receiving cities cannot replicate; distributing them without adaptation produces technology infrastructure that outlasts its institutional context.</div>
+      <div><b data-source-issued>Söderström, O., Paasche, T. &amp; Klauser, F.</b> (2014). "Smart cities as corporate storytelling." <i data-source-issued>City</i>, 18(3), 307–320. ${esc(tx("Shows that dominant smart city models are built on northern European and East Asian governance structures most receiving cities cannot replicate; distributing them without adaptation produces technology infrastructure that outlasts its institutional context."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[15]</span>
-      <div><b>Acharya, A.</b> (2014). <i>Constructing a Security Community in Southeast Asia: ASEAN and the Problem of Regional Order.</i> 3rd ed. Routledge. Definitive scholarly account of ASEAN's non-interference norm: the foundational constraint that makes ASEAN function as a regional body and simultaneously limits what the region can demand of its members.</div>
+      <div><b data-source-issued>Acharya, A.</b> (2014). <i data-source-issued>Constructing a Security Community in Southeast Asia: ASEAN and the Problem of Regional Order.</i> 3rd ed. Routledge. ${esc(tx("Definitive scholarly account of ASEAN's non-interference norm: the foundational constraint that makes ASEAN function as a regional body and simultaneously limits what the region can demand of its members."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[16]</span>
-      <div><b>Crumpton, C.D., Wongthanavasu, S., Kamnuansilpa, P., Draper, J. &amp; Bialobrzeski, E.</b> (2021). "Assessing the ASEAN Smart Cities Network (ASCN) via the Quintuple Helix Innovation Framework." <i>International Journal of Urban Sustainable Development</i>, 13(1), 97–116. Applies the Quintuple Helix framework (academia–government–industry–civil society–environment) to ASCN. Finds authoritarian governance tendencies among member states structurally undermine participatory smart city outcomes. Arrives at similar conclusions to Kong &amp; Woods by a different theoretical route — which confirms the diagnosis without advancing the prescription.</div>
+      <div><b data-source-issued>Crumpton, C.D., Wongthanavasu, S., Kamnuansilpa, P., Draper, J. &amp; Bialobrzeski, E.</b> (2021). "Assessing the ASEAN Smart Cities Network (ASCN) via the Quintuple Helix Innovation Framework." <i data-source-issued>International Journal of Urban Sustainable Development</i>, 13(1), 97–116. ${esc(tx("Applies the Quintuple Helix framework (academia–government–industry–civil society–environment) to ASCN. Finds authoritarian governance tendencies among member states structurally undermine participatory smart city outcomes. Arrives at similar conclusions to Kong &amp; Woods by a different theoretical route — which confirms the diagnosis without advancing the prescription."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[17]</span>
-      <div><b data-source-issued>Prayogo, A.N. &amp; Juned, M.</b> (2025). "Indonesia's Smart City Diplomacy Through ASEAN Smart Cities Network Shepherdship (2023–2025)." <i>Journal of Social and Political Sciences</i>, 8(3), 39–47. Introduces smart city diplomacy as a middle-power foreign policy concept. Documents Indonesia's pivot from framework to implementation: ASEAN Smart City Investment Toolkit delivered, four pilot cities deployed (Jakarta, Makassar, Banyuwangi, Sumedang), projects grew 77→108. Sumedang's stunting-rate reduction (32.2%→7.89%) via data-driven social services is the network's clearest human-development proof-of-concept.</div>
+      <div><b data-source-issued>Prayogo, A.N. &amp; Juned, M.</b> (2025). "Indonesia's Smart City Diplomacy Through ASEAN Smart Cities Network Shepherdship (2023–2025)." <i data-source-issued>Journal of Social and Political Sciences</i>, 8(3), 39–47. ${esc(tx("Introduces smart city diplomacy as a middle-power foreign policy concept. Documents Indonesia's pivot from framework to implementation: ASEAN Smart City Investment Toolkit delivered, four pilot cities deployed (Jakarta, Makassar, Banyuwangi, Sumedang), projects grew 77→108. Sumedang's stunting-rate reduction (32.2%→7.89%) via data-driven social services is the network's clearest human-development proof-of-concept."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[18]</span>
-      <div><b data-source-issued>Kanaev, E.A. &amp; Fedorenko, D.O.</b> (2023). "Whither ASEAN Smart Cities Network? Evidence from Singapore and Its Energy Policy." <i>Yugo-Vostochnaya Aziya: aktual'nyye problemy razvitiya</i>, 4(3), 191–201. Analyses ASCN through Singapore's energy policy dimension (Grid Digital Twin, IoT, renewable transition). Key finding: smart city development is trivially achievable for Singapore; it represents a genuine developmental challenge for Cambodia, Laos, and Myanmar. Intra-ASEAN digital gaps are severe; only Myanmar and Thailand have energy-related ASCN projects. Recommends Singapore maintain a 'low profile' to avoid amplifying structural inequality.</div>
+      <div><b data-source-issued>Kanaev, E.A. &amp; Fedorenko, D.O.</b> (2023). "Whither ASEAN Smart Cities Network? Evidence from Singapore and Its Energy Policy." <i data-source-issued>Yugo-Vostochnaya Aziya: aktual'nyye problemy razvitiya</i>, 4(3), 191–201. ${esc(tx("Analyses ASCN through Singapore's energy policy dimension (Grid Digital Twin, IoT, renewable transition). Key finding: smart city development is trivially achievable for Singapore; it represents a genuine developmental challenge for Cambodia, Laos, and Myanmar. Intra-ASEAN digital gaps are severe; only Myanmar and Thailand have energy-related ASCN projects. Recommends Singapore maintain a 'low profile' to avoid amplifying structural inequality."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[19]</span>
-      <div><b>Lim, C.C.</b> (2024). "Smart Cities and Sustainable Urbanisation in ASEAN." Plenary presentation, 6th ASEAN–Japan Smart Cities Network High-Level Meeting, Tokyo, 29 October 2024. ASEAN Secretariat director's official overview at year six. 108 projects as of September 2024 across 31 cities, with Civic &amp; Social (27%) and Built Infrastructure (26%) accounting for over half the portfolio while Health &amp; Well-being accounts for just 6%. ASEAN Smart City Financing Toolkit launched 2024. ASUS Phase II commenced. Primary official source for post-2022 network data.</div>
+      <div><b data-source-issued>Lim, C.C.</b> (2024). "Smart Cities and Sustainable Urbanisation in ASEAN." Plenary presentation, 6th ASEAN–Japan Smart Cities Network High-Level Meeting, Tokyo, 29 October 2024. ${esc(tx("ASEAN Secretariat director's official overview at year six. 108 projects as of September 2024 across 31 cities, with Civic &amp; Social (27%) and Built Infrastructure (26%) accounting for over half the portfolio while Health &amp; Well-being accounts for just 6%. ASEAN Smart City Financing Toolkit launched 2024. ASUS Phase II commenced. Primary official source for post-2022 network data."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[20]</span>
-      <div><b>ASEAN Secretariat</b> (2018). <i data-source-issued>ASCN Smart City Action Plans (Consolidated)</i>. Singapore: ASEAN Singapore 2018 (as of 8 July 2018). Consolidated SCAPs for all 26 original pilot cities: Vision, Focus Areas, Strategic Targets, Priority Projects for each. Primary evidence that 'smart city' meant different things to different cities from day one — from Bandar Seri Begawan's heritage revitalisation to Battambang's sewage infrastructure and informal settlement formalisation. The gap between what the SCAP framework asked for and what member cities could realistically deliver is visible in every page.</div>
+      <div><b data-source-issued>ASEAN Secretariat</b> (2018). <i data-source-issued>ASCN Smart City Action Plans (Consolidated)</i>. Singapore: ASEAN Singapore 2018 (as of 8 July 2018). ${esc(tx("Consolidated SCAPs for all 26 original pilot cities: Vision, Focus Areas, Strategic Targets, Priority Projects for each. Primary evidence that 'smart city' meant different things to different cities from day one — from Bandar Seri Begawan's heritage revitalisation to Battambang's sewage infrastructure and informal settlement formalisation. The gap between what the SCAP framework asked for and what member cities could realistically deliver is visible in every page."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[21]</span>
-      <div><b data-i18n="hd.singapore.ministry.of.foreign.affairs">Singapore Ministry of Foreign Affairs</b> (2018). "ASEAN Smart Cities Network (ASCN)." Internal briefing presentation. Singapore. Defines the founding vision: core objective 'improving peoples' lives, using technology as an enabler'; NR and CSCO governance structure; the Twinning Programme with 15 external partners. Documents ASCN's 'broad and inclusive' definition of smart = digital adoption + sustainability and liveability. Key source for understanding Singapore's institutional design choices at founding and the diplomatic logic of the Shepherd model.</div>
+      <div><b data-i18n="hd.singapore.ministry.of.foreign.affairs" data-source-issued>Singapore Ministry of Foreign Affairs</b> (2018). "ASEAN Smart Cities Network (ASCN)." Internal briefing presentation. Singapore. ${esc(tx("Defines the founding vision: core objective 'improving peoples' lives, using technology as an enabler'; NR and CSCO governance structure; the Twinning Programme with 15 external partners. Documents ASCN's 'broad and inclusive' definition of smart = digital adoption + sustainability and liveability. Key source for understanding Singapore's institutional design choices at founding and the diplomatic logic of the Shepherd model."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[22]</span>
-      <div><b data-source-issued>Putra, B.A.</b> (2026). "Human Rights and the ASEAN Smart Cities Network: Covering Unaddressed Civic and Social Concerns." <i>F1000Research</i>, 14:733. doi:10.12688/f1000research.167098.3. Open peer review; reviewers from Tampere, Danang, Sydney, and Kerala. Most comprehensive human rights analysis of ASCN. Identifies surveillance risk in authoritarian/semi-authoritarian member states (Cambodia rank 121, Vietnam 136, Laos 159, Myanmar 166 — Democracy Index 2023) and external-funder dependency as two structural concerns. Recommends ASCN acknowledge vulnerability of underprivileged populations and strengthen bottom-up grassroots digital initiatives.</div>
+      <div><b data-source-issued>Putra, B.A.</b> (2026). "Human Rights and the ASEAN Smart Cities Network: Covering Unaddressed Civic and Social Concerns." <i data-source-issued>F1000Research</i>, 14:733. doi:10.12688/f1000research.167098.3. ${esc(tx("Open peer review; reviewers from Tampere, Danang, Sydney, and Kerala. Most comprehensive human rights analysis of ASCN. Identifies surveillance risk in authoritarian/semi-authoritarian member states (Cambodia rank 121, Vietnam 136, Laos 159, Myanmar 166 — Democracy Index 2023) and external-funder dependency as two structural concerns. Recommends ASCN acknowledge vulnerability of underprivileged populations and strengthen bottom-up grassroots digital initiatives."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[23]</span>
-      <div><b>Martinus, M.</b> (2020). "ASEAN Smart Cities Network: A Catalyst for Partnerships." <i>ISEAS–Yusof Ishak Institute Perspective</i>, 2020(32). Lead researcher at the ASEAN Studies Centre, ISEAS. First systematic mapping of ASCN partnerships (20 documented, 2018–2019). Identifies the network's structural innovation: city-level operation that 'defies the so-called ASEAN top-down approach by embracing regionalism while allowing local government autonomy and participation.' Industry &amp; innovation and safety &amp; security attracted most external partner interest. Huawei appears in Phuket, Davao, and Singapore partnerships.</div>
+      <div><b data-source-issued>Martinus, M.</b> (2020). "ASEAN Smart Cities Network: A Catalyst for Partnerships." <i data-source-issued>ISEAS–Yusof Ishak Institute Perspective</i>, 2020(32). ${esc(tx("Lead researcher at the ASEAN Studies Centre, ISEAS. First systematic mapping of ASCN partnerships (20 documented, 2018–2019). Identifies the network's structural innovation: city-level operation that 'defies the so-called ASEAN top-down approach by embracing regionalism while allowing local government autonomy and participation.' Industry &amp; innovation and safety &amp; security attracted most external partner interest. Huawei appears in Phuket, Davao, and Singapore partnerships."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[24]</span>
-      <div><b>ASEAN Secretariat</b> (2025). <i>ASEAN Smart City Action Plan (ASCAP) 2026–2035</i>. Adopted September 2025, 8th Annual ASCN Meeting, Malaysia. First decade-length strategic plan. Eight pillars: Digital Transformation &amp; Smart Infrastructure; Sustainable &amp; Green Urban Development; Smart Housing &amp; Health; Smart Mobility; Resilience &amp; Disaster Preparedness; Digital Governance; Innovation &amp; Economic Growth; Rural–Village Collaboration (new scope). Aligned with ASEAN Community Vision 2045 and ASEAN Connectivity Strategic Plan 2026–2035. Dili (Timor-Leste) joined as 38th city and 11th member state, January 2026.</div>
+      <div><b data-source-issued>ASEAN Secretariat</b> (2025). <i data-source-issued>ASEAN Smart City Action Plan (ASCAP) 2026–2035</i>. ${esc(tx("Adopted September 2025, 8th Annual ASCN Meeting, Malaysia. First decade-length strategic plan. Eight pillars: Digital Transformation &amp; Smart Infrastructure; Sustainable &amp; Green Urban Development; Smart Housing &amp; Health; Smart Mobility; Resilience &amp; Disaster Preparedness; Digital Governance; Innovation &amp; Economic Growth; Rural–Village Collaboration (new scope). Aligned with ASEAN Community Vision 2045 and ASEAN Connectivity Strategic Plan 2026–2035. Dili (Timor-Leste) joined as 38th city and 11th member state, January 2026."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[25]</span>
-      <div><b>ASCN M&amp;E Reports 2022–2025</b> (appendix analysis). Network grew from 77 to 134 projects (+74%). Malaysia and Thailand accounted for most 2024–2025 growth. Vietnam remained flat at six projects per cycle. Myanmar grew from 11 to 14 projects despite the February 2021 coup. Health &amp; Well-Being stayed at 6% of the portfolio across all four cycles. See the Insights tab for interactive country and focus-area trajectories.</div>
+      <div><b data-source-issued>ASCN M&amp;E Reports 2022–2025</b> (appendix analysis). ${esc(tx("Network grew from 77 to 134 projects (+74%). Malaysia and Thailand accounted for most 2024–2025 growth. Vietnam remained flat at six projects per cycle. Myanmar grew from 11 to 14 projects despite the February 2021 coup. Health &amp; Well-Being stayed at 6% of the portfolio across all four cycles. See the Insights tab for interactive country and focus-area trajectories."))}</div>
     </div>
     <div class="essay-ref-item">
       <span class="essay-ref-n">[26]</span>
-      <div><b>Mastercard Global Destination Cities Index / Euromonitor</b> (2024). Bangkok ranked as the most visited city in the world by international arrivals in 2024, ahead of Paris, London, and Singapore. The point is not that Bangkok is smarter than Singapore. The point is that Bangkok has solved problems at scale that ASCN should study on equal terms.</div>
+      <div><b data-source-issued>Mastercard Global Destination Cities Index / Euromonitor</b> (2024). ${esc(tx("Bangkok ranked as the most visited city in the world by international arrivals in 2024, ahead of Paris, London, and Singapore. The point is not that Bangkok is smarter than Singapore. The point is that Bangkok has solved problems at scale that ASCN should study on equal terms."))}</div>
     </div>
 </div>
 </div>
@@ -2940,7 +2950,7 @@ function renderEssay() {
     <div class="author-section">
       <p class="author-section-label">${tx("ASCN — Regional Work")}</p>
       <ul class="author-list">
-        <li data-i18n="a.architect.of.the.asean.csco.han"><b>Architect of the ASEAN CSCO Handbook</b> — Strategic Advisor and Handbook Architect for <i>The Citizen-First City</i>, the standardized manual for Chief Smart City Officers across all ASEAN member states.</li>
+        <li data-i18n="a.architect.of.the.asean.csco.han"><b>Architect of the ASEAN CSCO Handbook</b> — Strategic Advisor and Handbook Architect for <i data-source-issued>The Citizen-First City</i>, the standardized manual for Chief Smart City Officers across all ASEAN member states.</li>
         <li data-i18n="a.thailand.s.national.representat"><b>Thailand's National Representative</b> — Primary liaison between Thailand's domestic smart city programme and the ASEAN Secretariat, named in official ASCN contact lists from 2024 through 2026.</li>
         <li data-i18n="a.regional.capacity.building.deli"><b>Regional Capacity Building</b> — Delivers country presentations at the UNCRD (United Nations Centre for Regional Development) International Training Workshop on Smart Cities; helps standardize training across Asia.</li>
         <li data-i18n="a.soft.power.research.authored.pa"><b>Soft Power Research</b> — Authored papers framing ASCN as a tool for effective soft power, arguing that the network allows ASEAN cities to export models of sustainable urbanism beyond the region.</li>

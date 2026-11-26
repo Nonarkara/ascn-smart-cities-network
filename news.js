@@ -10,7 +10,7 @@ function story(article, compact = false) {
   const location = article.countries.length ? article.countries.join(", ") : tx("Regional");
   return `<article class="news-story${compact ? " news-story--compact" : ""}">
     <div class="news-story-meta"><span>${esc(article.publisher)}</span><time${article.publishedAt ? ` datetime="${esc(article.publishedAt)}"` : ""}>${esc(showDate(article.publishedAt))}</time>${article.kind && article.kind !== "Report" ? `<span>${esc(tx(article.kind))}</span>` : ""}</div>
-    <h2><a href="${esc(safeUrl(article.url))}" target="_blank" rel="noopener noreferrer">${esc(article.title)} <span aria-hidden="true">↗</span></a></h2>
+    <h2><a data-source-issued href="${esc(safeUrl(article.url))}" target="_blank" rel="noopener noreferrer">${esc(article.title)} <span aria-hidden="true">↗</span></a></h2>
     <p class="news-story-tags">${esc(location)}${compact ? "" : `\u00A0· ${esc(article.topics.map(topic => tx(topic)).join("\u00A0· "))}`}</p>
   </article>`;
 }

@@ -80,6 +80,22 @@ try {
     ['Composition bands — Chinese', 'npm', ['run', 'audit:composition'], { ASCN_COMPOSITION_LANG: 'zh' }],
     ['Composition bands — light theme', 'npm', ['run', 'audit:composition'], { ASCN_COMPOSITION_THEME: 'light' }],
     ['Graphics and rendered reading measure', 'npm', ['run', 'audit:graphics']],
+    // The languages are not the same page. A reader in Thai and a reader in
+    // Chinese meet different text, and a defect in one is invisible in the
+    // other: the platform's own English, left standing where the reader is
+    // not looking. Each language is swept on its own, so a failure says
+    // which one.
+    ['Translation — no English left standing on the Thai pages', 'node', ['scripts/audit-i18n.mjs'], { ASCN_I18N_LANG: 'th' }],
+    ['Translation — no English left standing on the Chinese pages', 'node', ['scripts/audit-i18n.mjs'], { ASCN_I18N_LANG: 'zh' }],
+    // The reading measure, in every script. The character ceiling is a Latin
+    // calibration: a Chinese paragraph that has lost its measure column reads
+    // as 68 characters and passes it while running three measures wide. The
+    // em ceiling is the script-neutral form of the same law, and each
+    // language is swept on its own — a measure that has only ever been
+    // measured in one script has only ever been measured once.
+    ['Reading measure — Latin', 'node', ['scripts/audit-measure.mjs'], { ASCN_MEASURE_LANG: 'en' }],
+    ['Reading measure — Thai', 'node', ['scripts/audit-measure.mjs'], { ASCN_MEASURE_LANG: 'th' }],
+    ['Reading measure — Chinese', 'node', ['scripts/audit-measure.mjs'], { ASCN_MEASURE_LANG: 'zh' }],
     ['Page cost in screens — every view within its cap', 'npm', ['run', 'audit:cost']],
     ['All-view visual captures', 'npm', ['run', 'audit:visual']],
     ['Complete reading-path captures', 'npm', ['run', 'audit:reading']],

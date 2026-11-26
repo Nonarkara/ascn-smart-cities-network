@@ -8,7 +8,7 @@ const state = { archive: null, cities: [], engine: null, page: 0, discoveryPage:
   filters: { query: "", city: "all", year: "all", stage: "all", sourceType: "all", mandate: "all" } };
 const format = new Intl.NumberFormat("en-GB");
 const showDate = (value) => value ? new Intl.DateTimeFormat(currentLang() === "en" ? "en-GB" : currentLang(), { dateStyle: "medium", timeZone: "UTC" }).format(new Date(value)) : tx("Publication date unknown");
-const external = (url, label) => `<a class="ext-link" href="${esc(safeUrl(url))}" target="_blank" rel="noopener noreferrer">${esc(label)} ↗</a>`;
+const external = (url, label) => `<a class="ext-link" data-source-issued href="${esc(safeUrl(url))}" target="_blank" rel="noopener noreferrer">${esc(label)} ↗</a>`;
 const slug = (name) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 const pageSize = 10;
 

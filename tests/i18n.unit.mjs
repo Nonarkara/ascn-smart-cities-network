@@ -1,11 +1,18 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { tx, fill, DICT } from "../lib/i18n.mjs";
+import { tx, fill, keyFor, DICT } from "../lib/i18n.mjs";
 
 // Every literal handed to tx() / fill() is authored copy. A wrapped string with no
 // dictionary entry renders in English in every language and looks translated in
 // the source, which is how an unfinished handoff reads as finished.
+//
+// One exception, and it is declared rather than assumed: a name a source issued
+// — a place, a programme, a document title — keeps the wording it was issued
+// under, in every language. The dictionary says so by carrying the English in
+// every arm. An entry that simply FORGOT a language is still a defect, and this
+// test still catches it: a missing arm is undefined, and undefined is not the
+// English.
 const FILES = ["app.js", "ascn-news.js", "news.js", "archive.js"];
 const CALL = /\b(?:tx|fillText)\(\s*"((?:\\.|[^"\\])*)"/g;
 const slots = (s) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort().join(",");
@@ -19,16 +26,47 @@ function literals() {
   return found;
 }
 
+// The entry the dictionary holds for this English text, if any.
+function entryFor(en) {
+  const key = keyFor(en);
+  return key ? DICT[key] : null;
+}
+
 test("every wrapped literal has a Thai and a Chinese entry with the same slots", () => {
   const missing = [];
   for (const [en, file] of literals()) {
     for (const lang of ["th", "zh"]) {
       const out = tx(en, lang);
-      if (out === en) missing.push(`${file} ${lang}: ${en.slice(0, 70)}`);
-      else if (slots(out) !== slots(en)) missing.push(`${file} ${lang} slots: ${en.slice(0, 70)}`);
+      if (out === en) {
+        // An issued name: the entry carries this language's arm as the English
+        // on purpose. Anything else — no entry at all, or an entry that
+        // forgot this language — is a missing translation.
+        const entry = entryFor(en);
+        if (!entry || entry[lang] !== en) missing.push(`${file} ${lang}: ${en.slice(0, 70)}`);
+        continue;
+      }
+      if (slots(out) !== slots(en)) missing.push(`${file} ${lang} slots: ${en.slice(0, 70)}`);
     }
   }
   assert.deepEqual(missing, []);
+});
+
+test("an issued name is declared, not accidental", () => {
+  // A name that keeps its wording in every language has to say so in the
+  // dictionary, so that a reader of the source can tell the difference
+  // between "issued on purpose" and "nobody got to it". The arms are equal
+  // to the English on purpose; nothing else may be.
+  const accidental = [];
+  for (const [key, entry] of Object.entries(DICT)) {
+    if (!entry || typeof entry !== "object" || typeof entry.en !== "string") continue;
+    for (const lang of ["th", "zh"]) {
+      if (entry[lang] === entry.en) continue;
+      if (typeof entry[lang] !== "string" || !entry[lang].trim()) {
+        accidental.push(`${key} ${lang}: ${JSON.stringify(entry[lang])}`);
+      }
+    }
+  }
+  assert.deepEqual(accidental, []);
 });
 
 test("fill substitutes every slot and never leaves a marker behind", () => {

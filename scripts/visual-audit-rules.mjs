@@ -134,20 +134,24 @@ export function measureRenderedProse(selector) {
       }
     }
     // Text in two columns can share a baseline. The gutter separates runs.
-    let longest = 0, longestText = "";
+    let longest = 0, longestText = "", longestPx = 0;
     const gap = columnGap;
     for (const line of lines) {
       const row = line.glyphs.sort((a, b) => a.left - b.left);
-      let run = [], right = -Infinity, text = "";
+      // `run` holds the line's SEGMENTS; the boxes are what carry the edges,
+      // so the run's width is tracked from the first box's left to the last
+      // box's right.
+      let run = [], right = -Infinity, text = "", runLeft = -Infinity;
       for (const box of row) {
         if (box.left - right > gap && run.length) {
-          if (run.length > longest) { longest = run.length; longestText = text; }
-          run = []; text = "";
+          if (run.length > longest) { longest = run.length; longestText = text; longestPx = right - runLeft; }
+          run = []; text = ""; runLeft = -Infinity;
         }
+        if (!run.length) runLeft = box.left;
         run.push(box.segment); text += box.segment;
         right = box.right;
       }
-      if (run.length > longest) { longest = run.length; longestText = text; }
+      if (run.length > longest) { longest = run.length; longestText = text; longestPx = right - runLeft; }
     }
     out.push({
       chars: longest,
@@ -157,6 +161,15 @@ export function measureRenderedProse(selector) {
       line: longestText,
       sel: el.tagName.toLowerCase() + "." + (el.className || "").toString().split(" ")[0],
       px: Math.round(parseFloat(cs.fontSize)),
+      // The line's WIDTH in em — the measure the eye actually sweeps, and the
+      // only form of the measure that means the same thing in every script.
+      // A character count is a Latin calibration: 75 Latin characters is one
+      // comfortable return sweep, 75 Han characters is three times that, and
+      // 75 Thai characters is a little over one. A Chinese paragraph that
+      // had lost its measure column would read as 68 characters and pass a
+      // 75-character ceiling while running three measures wide. The width
+      // does not lie in any script.
+      em: Math.round((longestPx / fontSize) * 100) / 100,
     });
   }
   return out;
