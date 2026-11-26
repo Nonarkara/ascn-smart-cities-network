@@ -1038,6 +1038,26 @@ function renderFramework() {
   $("#fw-outcomes").innerHTML = `<h3>${esc(tx("Three strategic outcomes"))}</h3>` + block(f.strategic_outcomes);
   $("#fw-systems").innerHTML = `<h3>${esc(tx("Two urban systems"))}</h3>` + block(f.urban_systems);
   $("#fw-enablers").innerHTML = `<h3>${esc(tx("Two enablers"))}</h3>` + block(f.enablers);
+  // The Framework's own definition, in the endorsed document's own words.
+  // The 2018 concept note says the Framework articulates ASEAN's definition
+  // of a smart city; the view carried the outcomes and the two systems but
+  // not the definition, so a reader could see the structure and not the
+  // thing it describes. It sits under the status line, in the space the
+  // header's second column already had.
+  if (f.definition) {
+    $("#framework-definition").innerHTML = `<p class="label">${esc(tx("What a smart city is"))}</p>
+      <p class="fw-definition-body">${esc(tx(f.definition))}</p>
+      <p class="fw-definition-source">${esc(tx("ASEAN Smart Cities Framework, endorsed by ASCN on 8 July 2018."))}</p>`;
+  }
+  // The principles each urban system carries. The Framework states them
+  // inside the systems themselves, so they belong under the systems' names
+  // and not in the block that only names them.
+  const principles = Object.entries(f.principles || {});
+  if (principles.length) {
+    $("#fw-principles").innerHTML = principles.map(([system, items]) => `
+      <div class="fw-principle-col"><h4>${esc(tx(system))}</h4>
+        <ul class="fw-principle-list">${items.map((item) => `<li>${esc(tx(item))}</li>`).join("")}</ul></div>`).join("");
+  }
   const fmax = Math.max(...f.focus_areas.map((a) => a.share));
   $("#focus-detail").innerHTML = f.focus_areas.map((a) => `
     <div class="focus-item"><div class="fi-head"><b>${esc(a.name)}</b><span class="fi-share">${esc(a.share)}%</span></div>

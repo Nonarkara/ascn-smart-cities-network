@@ -60,6 +60,7 @@
   "framework": {
     "name": "ASEAN Smart Cities Framework (2018)",
     "status": "Non-binding guide adopted at the 33rd ASEAN Summit, November 2018.",
+    "definition": "A smart city in ASEAN harnesses technological and digital solutions as well as innovative non-technological means to address urban challenges, continuously improving people's lives and creating new opportunities. A smart city is also equivalent to a “smart sustainable city”, promoting economic and social development alongside environmental protection through effective mechanisms to meet the current and future challenges of its people, while leaving no one behind.",
     "strategic_outcomes": [
       "Competitive Economy",
       "Sustainable Environment",
@@ -69,6 +70,23 @@
       "Integrated Master Planning and Development",
       "Dynamic and Adaptive Urban Governance"
     ],
+    "principles": {
+      "Integrated Master Planning and Development": [
+        "Adopting a long-term perspective",
+        "Productive decision-making",
+        "Built-in flexibility",
+        "Effective execution and implementation",
+        "Systematic innovation",
+        "Robust monitoring and evaluation"
+      ],
+      "Dynamic and Adaptive Urban Governance": [
+        "Visionary and pragmatic leadership",
+        "Integrity",
+        "Sound institutions and rule of law",
+        "Stakeholder involvement",
+        "Market-oriented implementation"
+      ]
+    },
     "enablers": [
       "Technological and Digital Solutions",
       "Partnership and Funding"

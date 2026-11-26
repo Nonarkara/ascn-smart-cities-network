@@ -2707,6 +2707,42 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .fw-list li { padding: 0.55rem 0; border-top: 1px solid var(--line-soft); color: var(--ink-2); }
 .fw-list li:first-child { border-top: 0; }
 .fw-list li b { color: var(--ink); }
+
+/* The Framework's definition, in the header's second column. The column
+   already held the status line and the air above it; the definition is the
+   Framework's own statement of what it describes, and it fills that air
+   rather than adding a band to the page.
+
+   The title's column is 48rem rather than the 1fr every other section head
+   uses, because the title's own ink stops 581px into a 795px column and the
+   214px of air that followed it, with the note column on the far side of
+   it, read as a hole: an empty strip 240px wide with the title running down
+   one side and the note down the other. The note now starts 69px after the
+   title's ink, and what is left over falls at the page's right edge, where
+   an empty margin is a margin and not a hole. */
+.section-head--framework .head-note { max-width: none; }
+.fw-definition { margin-top: 1rem; border-top: 1px solid var(--line-soft); padding-top: 0.9rem; }
+.fw-definition-body { margin: 0; max-width: var(--measure); color: var(--ink-2); font-size: var(--t-small); line-height: 1.6; }
+.fw-definition-source { margin: 0.6rem 0 0; max-width: var(--measure); color: var(--muted); font-size: var(--text-micro); text-transform: uppercase; letter-spacing: 0.06em; }
+@container view (min-width: 1000px) {
+  .section-head--framework:not(.split):not(.projects-head) {
+    grid-template-columns: minmax(0, 48rem) minmax(0, 1fr);
+  }
+  .section-head--framework:not(.split):not(.projects-head) > .label { grid-column: 1; grid-row: 1; }
+  .section-head--framework:not(.split):not(.projects-head) > h1 { grid-column: 1; grid-row: 2; }
+  .section-head--framework:not(.split):not(.projects-head) > .head-note { grid-column: 2; grid-row: 1 / span 2; align-self: end; }
+}
+
+/* The principles inside each urban system. Two systems, two columns, and
+   the column that runs out first is one row short — not a hole. */
+.fw-principles { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.4rem 2.4rem; margin-bottom: 1.2rem; }
+.fw-principle-col h4 { margin: 0 0 0.6rem; font-size: var(--t-body); color: var(--ink); }
+.fw-principle-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.fw-principle-list li { padding: 0.45rem 0; border-top: 1px solid var(--line-soft); color: var(--ink-2); font-size: var(--t-small); line-height: 1.5; }
+.fw-principle-list li:first-child { border-top: 0; }
+@container view (min-width: 900px) {
+  .fw-principles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 .focus-detail { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; }
 .focus-item { border-top: 1px solid var(--line); padding-top: 0.8rem; }
 .focus-item .fi-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.6rem; }

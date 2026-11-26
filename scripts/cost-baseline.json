@@ -1,5 +1,5 @@
 {
-  "note": "Ceilings on the cost of each view, in screens. Only ever lower them; a raise needs a reason written here.",
+  "note": "Ceilings on the cost of each view, in screens. Only ever lower them; a raise needs a reason written here, and only when the owner asks for it.",
   "updatedAt": "2026-11-26T00:12:18.215Z",
   "views": {
     "overview@1440": {
@@ -38,9 +38,9 @@
       "reason": "recorded on first measurement"
     },
     "framework@1440": {
-      "ceiling": 3.28,
-      "measured": 3.28,
-      "reason": "recorded on first measurement"
+      "ceiling": 3.74,
+      "measured": 3.74,
+      "reason": "The Framework view now carries the Framework's own definition of a smart city and the eleven principles it states under each of its two urban systems — the two of the three things the 2018 concept note says the Framework must contain, which this view did not carry. The growth is the endorsed document's own words, not padding, and it was added on the owner's instruction to build the site towards the plan. Raised once, with this reason recorded."
     },
     "partners@1440": {
       "ceiling": 4.47,
@@ -138,9 +138,9 @@
       "reason": "recorded on first measurement"
     },
     "framework@390": {
-      "ceiling": 6.18,
-      "measured": 6.18,
-      "reason": "recorded on first measurement"
+      "ceiling": 7.1,
+      "measured": 7.1,
+      "reason": "The Framework view now carries the Framework's own definition of a smart city and the eleven principles it states under each of its two urban systems — the two of the three things the 2018 concept note says the Framework must contain, which this view did not carry. The growth is the endorsed document's own words, not padding, and it was added on the owner's instruction to build the site towards the plan. Raised once, with this reason recorded."
     },
     "partners@390": {
       "ceiling": 9.44,
