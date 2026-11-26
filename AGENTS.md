@@ -39,4 +39,31 @@ pass; repair the layout or record the reason in `AUDIT-2026-11-22.md`.
 The reading-measure sweep in `npm run audit:graphics` is part of the same law:
 every view at 1440, 1024 and 390, measured in real characters against a ceiling
 of 75. Take its route list from the nav — a route name that is not real falls
-back to the Overview and silently sweeps the wrong view.
+back to the Overview and silently sweeps the wrong view. The sweep must also be
+able to prove its own number: it reports the line it measured, and a control
+fails the gate if the count and the text ever disagree.
+
+A gate that only ever measures one mode is a gate that has only ever looked
+at one mode. `npm run audit:composition` sweeps the views in English and dark
+by default and takes `ASCN_COMPOSITION_LANG` (th, zh) and
+`ASCN_COMPOSITION_THEME` (light) for the others; a release must sweep every
+mode, because the modes are not the same geometry. Thai has no word spaces
+and Chinese sets a character per em, so the same content breaks into
+different lines: a defect that reads as a margin in English can be a hole in
+Thai, and no English sweep will ever find it. Each mode keeps its own record
+in `artifacts/composition/`.
+
+Page cost is a release gate too. `npm run audit:cost` measures every view's
+cost in SCREENS and compares it with the cap recorded for that view in
+`scripts/cost-baseline.json`. A view that costs more than its cap fails; a
+view that costs LESS than its cap also fails, because an improvement that was
+not banked is a cap that has stopped being true. Raise a cap only with a
+reason written in the baseline file, and only when the owner asks for it.
+`tests/cost.spec.mjs` is its falsifier.
+
+The live discovery endpoint is honest about what it can reach. Cloudflare's
+edge is refused by the search index this site's lead list is drawn from, so
+the published snapshot is the list of record and the live check is a bonus:
+`/api/ascn-news` answers with the snapshot, marks itself `saved`, and gives
+the reason each feed gave. Never let a 503 with no body stand in for the
+list.

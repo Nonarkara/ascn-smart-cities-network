@@ -17,20 +17,20 @@ const fingerprint = async () => Object.fromEntries(await Promise.all(releaseFile
 ])));
 let preview;
 let active;
-function run(command, args) {
+function run(command, args, envPatch) {
   return new Promise((resolve, reject) => {
-    active = spawn(command, args, { env, stdio: 'inherit' });
+    active = spawn(command, args, { env: { ...env, ...(envPatch || {}) }, stdio: 'inherit' });
     active.once('error', reject);
     active.once('exit', (code, signal) => { active = null; code === 0 ? resolve() : reject(new Error(`${command} ${args.join(' ')} failed (${signal || code})`)); });
   });
 }
 function stop() { active?.kill('SIGTERM'); preview?.kill('SIGTERM'); }
-async function check(name, command, args) {
+async function check(name, command, args, envPatch) {
   console.log(`\nRelease check: ${name}`);
   const step = { name, passed: false };
   report.checks.push(step);
   await writeFile(`${output}/checks.json`, JSON.stringify(report, null, 2) + '\n');
-  await run(command, args);
+  await run(command, args, envPatch);
   step.passed = true;
 }
 process.once('SIGINT', () => { stop(); process.exitCode = 130; });
@@ -71,7 +71,16 @@ try {
     ['Browser flows and incoming-data regressions', 'npx', ['playwright', 'test']],
     ['Spatial geometry and map readiness', 'npm', ['run', 'audit:spatial']],
     ['Composition bands — empty content area beside content', 'npm', ['run', 'audit:composition']],
+    // The modes are not the same geometry: Thai has no word spaces and
+    // Chinese sets a character per em, so the same content breaks into
+    // different lines. A defect that reads as a margin in English can be a
+    // hole in Thai, and an English-only sweep will never find it. Each
+    // mode that is not swept is a mode nobody has looked at.
+    ['Composition bands — Thai', 'npm', ['run', 'audit:composition'], { ASCN_COMPOSITION_LANG: 'th' }],
+    ['Composition bands — Chinese', 'npm', ['run', 'audit:composition'], { ASCN_COMPOSITION_LANG: 'zh' }],
+    ['Composition bands — light theme', 'npm', ['run', 'audit:composition'], { ASCN_COMPOSITION_THEME: 'light' }],
     ['Graphics and rendered reading measure', 'npm', ['run', 'audit:graphics']],
+    ['Page cost in screens — every view within its cap', 'npm', ['run', 'audit:cost']],
     ['All-view visual captures', 'npm', ['run', 'audit:visual']],
     ['Complete reading-path captures', 'npm', ['run', 'audit:reading']],
   ]) {

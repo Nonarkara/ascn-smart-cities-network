@@ -383,6 +383,7 @@ try {
   const sweepViewports = [{ width: 1440, height: 900 }, { width: 1024, height: 768 }, { width: 390, height: 844 }];
   let worst = { chars: 0, where: "—" };
   const offenders = [];
+  const countedWrong = [];
   for (const vp of sweepViewports) {
   const { page } = await newPage(vp);
   await page.goto(`${BASE}/#overview`, { waitUntil: "domcontentloaded" });
@@ -394,8 +395,21 @@ try {
     await waitForAuditRoute(page, v);
     const found = await page.evaluate(measureRenderedProse, "p, li, dd, blockquote, figcaption, div, span");
     for (const f of found) {
-      if (f.chars > worst.chars) worst = { chars: f.chars, where: `${v} ${f.sel} @${f.px}px @${vp.width}` };
+      if (f.chars > worst.chars) worst = { chars: f.chars, where: `${v} ${f.sel} @${f.px}px @${vp.width}`, line: f.line };
       if (f.chars > 75) offenders.push(`${v} ${f.sel}=${f.chars} @${vp.width}px`);
+      // The count must be the count of the line it reports. An independent
+      // review of this site found the sweep reporting 73 characters for a
+      // line the reader could see as longer: the instrument grouped glyphs
+      // by their exact top, so a line carrying a bold phrase was counted in
+      // two halves. This is the control that closes that: if the number and
+      // the text ever disagree, the sweep is not measuring the reader's line.
+      // Graphemes, not code points — Thai combines marks into one glyph.
+      if (f.chars && f.line) {
+        const graphemes = [...new Intl.Segmenter("en", { granularity: "grapheme" }).segment(f.line)].length;
+        if (graphemes !== f.chars) {
+          countedWrong.push(`${v} ${f.sel} counted ${f.chars} but the line reads ${graphemes} — "${f.line.slice(0, 60)}"`);
+        }
+      }
     }
   }
   await page.close();
@@ -407,6 +421,12 @@ try {
   // ever silently returned zero the whole sweep would pass and test nothing.
   ok("the measure sweep measures something (control)", worst.chars > 20 && worst.chars <= 75,
     `worst observed ${worst.chars} chars`);
+
+  // The control for the instrument itself: every count it reports must be the
+  // number of characters in the line it reports. A sweep that counts one
+  // thing and shows another cannot be used to claim the measure is legal.
+  ok("every measured count matches the line it measured", countedWrong.length === 0,
+    countedWrong.length ? countedWrong.slice(0, 6).join(" | ") : `${worst.chars} chars in "${(worst.line || "").replace(/\s+/g, " ").trim().slice(0, 48)}"`);
 
   // The cap must be in characters, not pixels, so 12px notes do not get a
   // longer line than 16px prose.

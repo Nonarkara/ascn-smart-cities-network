@@ -1359,8 +1359,20 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .review-measures dd { font-size:var(--t-h2); font-weight: 700; font-variant-numeric: tabular-nums; margin: 0; }
 .review-baseline, .review-section { padding: 1.3rem 0; border-bottom: 1px solid var(--line); }
 .review-section h2, .review-baseline h2 { margin-bottom: 0.8rem; }
-.review-bars { max-width: 50rem; margin: 1rem 0; }
+/* The bars are a chart, not prose: the law gives a chart the space it needs
+   to be read. Capped at 50rem they stopped 585px short of a full-width
+   section, and the section's own rule framed the empty strip — in Chinese,
+   where nine years stack, that strip was tall enough to be a band and the
+   gate failed it. The track is painted, so a longer track reads as a chart
+   and not as a hole. */
+.review-bars { max-width: none; margin: 1rem 0; }
 .review-bar-row { display: grid; grid-template-columns: 8rem minmax(0, 1fr) 3rem; gap: 1rem; align-items: center; min-height: 32px; font-size:var(--t-body); }
+/* The year rows carry four digits, so the label column is sized to a year
+   and not to a stage name. The old 7rem column left about 64px of empty
+   strip between the year and its bar, the height of the whole chart — a
+   hole in Thai, where nine years stack, and a margin in English, where
+   five do. */
+.review-bar-row--year { grid-template-columns: 3.4rem minmax(0, 1fr) 3rem; }
 .review-bar-row strong { text-align: right; font-variant-numeric: tabular-nums; }
 .review-bar-track { display: block; height: 10px; background: var(--surface-2); }
 .review-bar-track > span { display: block; height: 100%; background: var(--muted); }
@@ -1579,6 +1591,7 @@ body .view .review-followup .review-note { max-width: 54ch; }
   .review-measures > div { flex: 1 1 100%; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
   .review-measures dt { max-width: 13rem; }
   .review-bar-row { grid-template-columns: 7rem minmax(0, 1fr) 2rem; gap: 0.6rem; }
+  .review-bar-row--year { grid-template-columns: 3.2rem minmax(0, 1fr) 2rem; }
   .review-pagination span { font-size:var(--t-small); }
 }
 .news-preview { margin-top: 1.7rem; padding-top: 1rem; border-top: 2px solid var(--ink); }
@@ -4851,6 +4864,21 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 .mel-col--no .mel-item { color: var(--muted); }
 @media (max-width: 600px) { .mel-split { grid-template-columns: 1fr; gap: 1rem; } }
 
+/* At the wide widths the observatory reads at, the two groups sat in two
+   774px columns while each list was capped at the measure — 452px — so
+   322px of every column held nothing while its neighbour kept running. In
+   English that empty strip fell at the right edge and read as the page's
+   own margin; in Thai the shorter left column ran out first and the strip
+   fell BETWEEN the columns, which is a hole and not a margin. Two
+   sub-columns inside each group use the width instead: four items make two
+   rows of two and eight make four rows of two, and both divide. Each
+   sub-column is about 370px, which is a 48-character measure — inside the
+   law's ceiling rather than outside it. */
+@media (min-width: 1600px) {
+  .mel-col .mel-list { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 2rem; max-width: none; }
+  .mel-head { max-width: none; }
+}
+
 /* ── ASCN global context table (reuses me-table, left-aligned text) ──────── */
 .gc-table th { text-align: left !important; font-size: var(--text-micro); }
 .gc-table .me-feature { white-space: nowrap; font-weight: 700; }
@@ -5024,8 +5052,13 @@ body .view .iaas-row-contact .label { width: fit-content; }
      fit-content and stopped 664px short of the content area at 1920, with
      the right third of the page empty from the header down to the next
      row's rule. The video is a fixed height and crops to its frame, so it
-     can widen without the composition changing shape. */
-  grid-template-columns: minmax(0, 34rem) minmax(0, 1fr);
+     can widen without the composition changing shape.
+     The measure was 34rem, which is the English copy's width. Chinese sets
+     fewer characters to the same width, so the copy ran out 84px short of
+     its own column and the strip between the copy and the video opened
+     into a band. 30rem is still a measure — about 48 characters — and the
+     video takes the rest. */
+  grid-template-columns: minmax(0, 30rem) minmax(0, 1fr);
   grid-template-areas: "copy media" "steps media";
   gap: 1rem 2rem;
   align-items: start;

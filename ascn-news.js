@@ -36,7 +36,12 @@ function route() {
 
 function bars(rows, key, label) {
   const max = Math.max(1, ...rows.map((row) => row.count));
-  return `<div class="review-bars" role="img" aria-label="${esc(label)}">${rows.map((row) => `<div class="review-bar-row"><span>${esc(key === "stage" ? tx(row[key]) : row[key])}</span><span class="review-bar-track"><span style="width:${row.count / max * 100}%"></span></span><strong>${row.count}</strong></div>`).join("")}</div>`;
+  // A year is four digits. It does not need the 7rem label column the stage
+  // names do, and the space it does not need sat empty between the year and
+  // its bar for the height of the chart — a strip the reader sees as a hole
+  // between two columns of the same block.
+  const variant = key === "year" ? " review-bar-row--year" : "";
+  return `<div class="review-bars" role="img" aria-label="${esc(label)}">${rows.map((row) => `<div class="review-bar-row${variant}"><span>${esc(key === "stage" ? tx(row[key]) : row[key])}</span><span class="review-bar-track"><span style="width:${row.count / max * 100}%"></span></span><strong>${row.count}</strong></div>`).join("")}</div>`;
 }
 
 function pagination(selector, page, length, change) {

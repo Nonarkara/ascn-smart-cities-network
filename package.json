@@ -28,6 +28,7 @@
     "verify:live": "node scripts/verify-publication.mjs --live",
     "audit:spatial": "node scripts/audit-sh.mjs",
     "audit:composition": "node scripts/audit-composition.mjs",
+    "audit:cost": "node scripts/audit-cost.mjs",
     "check:release": "node scripts/check-release.mjs",
     "audit:reading": "node scripts/capture-reading-path.mjs"
   },

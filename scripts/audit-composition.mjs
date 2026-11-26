@@ -68,6 +68,13 @@ import { pathToFileURL } from 'node:url';
 const base = process.env.ASCN_TEST_URL || 'http://127.0.0.1:4187';
 const outDir = process.env.ASCN_COMPOSITION_OUT || 'artifacts/composition';
 const strict = process.env.ASCN_COMPOSITION_STRICT === '1';
+// The language and the theme the sweep runs in. The modes are not the same
+// geometry: Thai has no word spaces and Chinese sets a character per em, so
+// the same content breaks into different lines, and a band that is clean in
+// English can be a hole in Thai. A mode nobody measures is a mode nobody
+// has looked at.
+const lang = process.env.ASCN_COMPOSITION_LANG || 'en';
+const theme = process.env.ASCN_COMPOSITION_THEME || 'dark';
 
 const VIEWPORTS = [
   { name: '1440', width: 1440, height: 900 },
@@ -374,11 +381,20 @@ export async function auditView(page, surface) {
 async function main() {
   await mkdir(outDir, { recursive: true });
   const browser = await chromium.launch();
-  const report = { base, startedAt: new Date().toISOString(), viewports: VIEWPORTS.map((v) => v.name), views: [], failures: [], margins: [] };
+  const report = { base, startedAt: new Date().toISOString(), viewports: VIEWPORTS.map((v) => v.name), lang, theme, views: [], failures: [], margins: [] };
 
   for (const vp of VIEWPORTS) {
     const page = await browser.newPage({ viewport: { width: vp.width, height: vp.height } });
     await page.route('**/api/{news,ascn-news}', route => route.fulfill({ status: 503, json: {} }));
+    // The gate used to measure one mode: English, dark. The other modes are
+    // not the same geometry — Thai has no word spaces, so its lines break
+    // differently, and Chinese sets a character per em. A band that is
+    // clean in English can be a hole in Thai. The mode is therefore part
+    // of the measurement, and each mode is swept.
+    await page.addInitScript(({ lang: l, theme: t }) => {
+      try { if (l && l !== 'en') localStorage.setItem('ascn-lang', l); } catch {}
+      try { if (t && t !== 'dark') localStorage.setItem('ascn_theme', t); } catch {}
+    }, { lang, theme });
     await page.goto(`${base}/#overview`, { waitUntil: 'domcontentloaded' });
     await page.locator('#kpi-grid .kpi').first().waitFor({ state: 'attached' });
     const routes = await auditRoutes(page);
@@ -409,7 +425,10 @@ async function main() {
   await browser.close();
 
   report.finishedAt = new Date().toISOString();
-  await writeFile(`${outDir}/composition.json`, JSON.stringify(report, null, 2) + '\n');
+  // Each mode keeps its own record, so a Thai sweep cannot overwrite the
+  // English evidence the release gate read.
+  const recordName = lang === 'en' && theme === 'dark' ? 'composition.json' : `composition-${lang}${theme === 'dark' ? '' : '-' + theme}.json`;
+  await writeFile(`${outDir}/${recordName}`, JSON.stringify(report, null, 2) + '\n');
 
   console.log('\nComposition bands — failures');
   if (!report.failures.length) console.log('  none');

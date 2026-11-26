@@ -87,36 +87,74 @@ export function measureRenderedProse(selector) {
     const cs = getComputedStyle(el);
     if (cs.display === "none" || cs.visibility === "hidden") continue;
     const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-    const rows = new Map();
+    // A VISUAL line, not a row of equal `top`. Grouping by the exact top
+    // split a line whose glyphs sit at slightly different heights — a bold
+    // phrase inside a paragraph, a character with a taller form — into two
+    // rows, and the sweep then reported the longer HALF of the line. Seven
+    // paragraphs on the essay were under-counted by up to eight characters
+    // that way, which is a blind spot in the one instrument that polices the
+    // reading measure: it could report a pass for a line that was over the
+    // ceiling. Lines are therefore grouped by vertical overlap.
+    const glyphs = [];
     for (let node = walker.nextNode(); node; node = walker.nextNode()) {
       for (const { segment, index } of segmenter.segment(node.data)) {
         range.setStart(node, index);
         range.setEnd(node, index + segment.length);
-        const { top, width, left, right } = range.getBoundingClientRect();
-        if (!width) continue;
-        const y = Math.round(top);
-        if (!rows.has(y)) rows.set(y, []);
-        rows.get(y).push({ left, right, segment });
+        const rect = range.getBoundingClientRect();
+        if (!rect.width) continue;
+        glyphs.push({ top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right, segment });
+      }
+    }
+    // A line is also CONTINUOUS in the horizontal. The archive's method note
+    // sits in a three-column flow, and its three columns share a baseline:
+    // grouping by height alone welded the columns into one line and the
+    // sweep read 129 characters where the reader sees 61. A glyph joins a
+    // line only if it is vertically on it AND horizontally beside it.
+    const fontSize = Number.parseFloat(cs.fontSize);
+    const columnGap = fontSize * 2;
+    const lines = [];
+    for (const glyph of glyphs.sort((a, b) => a.top - b.top || a.left - b.left)) {
+      const height = Math.min(glyph.bottom - glyph.top, 1);
+      let target = null;
+      for (const line of lines) {
+        const overlap = Math.min(line.bottom, glyph.bottom) - Math.max(line.top, glyph.top);
+        if (overlap <= Math.min(line.bottom - line.top, glyph.bottom - glyph.top) * 0.4) continue;
+        if (glyph.left > line.right + columnGap || glyph.right < line.left - columnGap) continue;
+        target = line;
+        break;
+      }
+      if (target) {
+        target.top = Math.min(target.top, glyph.top);
+        target.bottom = Math.max(target.bottom, glyph.bottom);
+        target.left = Math.min(target.left, glyph.left);
+        target.right = Math.max(target.right, glyph.right);
+        target.glyphs.push(glyph);
+      } else {
+        lines.push({ top: glyph.top, bottom: glyph.bottom, left: glyph.left, right: glyph.right, glyphs: [glyph] });
       }
     }
     // Text in two columns can share a baseline. The gutter separates runs.
-    let longest = 0;
-    const gap = Number.parseFloat(cs.fontSize);
-    for (const row of rows.values()) {
-      row.sort((a, b) => a.left - b.left);
-      let run = [], right = -Infinity;
+    let longest = 0, longestText = "";
+    const gap = columnGap;
+    for (const line of lines) {
+      const row = line.glyphs.sort((a, b) => a.left - b.left);
+      let run = [], right = -Infinity, text = "";
       for (const box of row) {
         if (box.left - right > gap && run.length) {
-          longest = Math.max(longest, run.length);
-          run = [];
+          if (run.length > longest) { longest = run.length; longestText = text; }
+          run = []; text = "";
         }
-        run.push(box.segment);
+        run.push(box.segment); text += box.segment;
         right = box.right;
       }
-      longest = Math.max(longest, run.length);
+      if (run.length > longest) { longest = run.length; longestText = text; }
     }
     out.push({
       chars: longest,
+      // The line itself, raw, so the count can be checked against the text it
+      // claims to have measured. An instrument that counts one thing and
+      // reports another is how a 77-character line gets called 73.
+      line: longestText,
       sel: el.tagName.toLowerCase() + "." + (el.className || "").toString().split(" ")[0],
       px: Math.round(parseFloat(cs.fontSize)),
     });

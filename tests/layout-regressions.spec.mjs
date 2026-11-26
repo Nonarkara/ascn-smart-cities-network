@@ -32,6 +32,11 @@ test('city entries retain full click targets and selected-city behavior', async 
   await page.evaluate(() => document.fonts.ready);
   for (const width of [390, 680, 860, 861, 1024, 1440, 1920]) {
     await page.setViewportSize({ width, height: 950 });
+    // The cell's own container query re-reads its width after the resize,
+    // and the measurement below was sometimes taken before the new layout
+    // had settled: the card was still holding the old grid and reported an
+    // overflow that was not there a frame later. Two frames is the settle.
+    await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
     const defects = await page.locator('.city-cell').evaluateAll((cells) => cells.flatMap((cell) => {
       const button = cell.querySelector('button');
       const box = cell.getBoundingClientRect();

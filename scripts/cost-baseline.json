@@ -1,0 +1,206 @@
+{
+  "note": "Ceilings on the cost of each view, in screens. Only ever lower them; a raise needs a reason written here.",
+  "updatedAt": "2026-11-26T00:12:18.215Z",
+  "views": {
+    "overview@1440": {
+      "ceiling": 4.16,
+      "measured": 4.16,
+      "reason": "recorded on first measurement"
+    },
+    "innovation@1440": {
+      "ceiling": 5.53,
+      "measured": 5.53,
+      "reason": "recorded on first measurement"
+    },
+    "record@1440": {
+      "ceiling": 7.78,
+      "measured": 7.78,
+      "reason": "recorded on first measurement"
+    },
+    "news@1440": {
+      "ceiling": 8.03,
+      "measured": 8.03,
+      "reason": "recorded on first measurement"
+    },
+    "history@1440": {
+      "ceiling": 4.49,
+      "measured": 4.49,
+      "reason": "recorded on first measurement"
+    },
+    "cities@1440": {
+      "ceiling": 2.64,
+      "measured": 2.64,
+      "reason": "recorded on first measurement"
+    },
+    "projects@1440": {
+      "ceiling": 2.58,
+      "measured": 2.58,
+      "reason": "recorded on first measurement"
+    },
+    "framework@1440": {
+      "ceiling": 3.28,
+      "measured": 3.28,
+      "reason": "recorded on first measurement"
+    },
+    "partners@1440": {
+      "ceiling": 4.47,
+      "measured": 4.47,
+      "reason": "recorded on first measurement"
+    },
+    "contacts@1440": {
+      "ceiling": 4.38,
+      "measured": 4.38,
+      "reason": "recorded on first measurement"
+    },
+    "insights@1440": {
+      "ceiling": 15.39,
+      "measured": 15.39,
+      "reason": "recorded on first measurement"
+    },
+    "data@1440": {
+      "ceiling": 16.65,
+      "measured": 16.65,
+      "reason": "recorded on first measurement"
+    },
+    "archive@1440": {
+      "ceiling": 10.86,
+      "measured": 10.86,
+      "reason": "recorded on first measurement"
+    },
+    "research@1440": {
+      "ceiling": 7.87,
+      "measured": 7.87,
+      "reason": "recorded on first measurement"
+    },
+    "essay@1440": {
+      "ceiling": 21.69,
+      "measured": 21.69,
+      "reason": "recorded on first measurement"
+    },
+    "ascn9@1440": {
+      "ceiling": 1.02,
+      "measured": 1.02,
+      "reason": "recorded on first measurement"
+    },
+    "news/review@1440": {
+      "ceiling": 8.03,
+      "measured": 8.03,
+      "reason": "recorded on first measurement"
+    },
+    "news/archive@1440": {
+      "ceiling": 3.81,
+      "measured": 3.81,
+      "reason": "recorded on first measurement"
+    },
+    "news/discovery@1440": {
+      "ceiling": 2.59,
+      "measured": 2.59,
+      "reason": "recorded on first measurement"
+    },
+    "news/regional@1440": {
+      "ceiling": 3.83,
+      "measured": 3.83,
+      "reason": "recorded on first measurement"
+    },
+    "overview@390": {
+      "ceiling": 9.57,
+      "measured": 9.57,
+      "reason": "recorded on first measurement"
+    },
+    "innovation@390": {
+      "ceiling": 12.08,
+      "measured": 12.08,
+      "reason": "recorded on first measurement"
+    },
+    "record@390": {
+      "ceiling": 12.6,
+      "measured": 12.6,
+      "reason": "recorded on first measurement"
+    },
+    "news@390": {
+      "ceiling": 9.91,
+      "measured": 9.91,
+      "reason": "recorded on first measurement"
+    },
+    "history@390": {
+      "ceiling": 9.61,
+      "measured": 9.61,
+      "reason": "recorded on first measurement"
+    },
+    "cities@390": {
+      "ceiling": 5.72,
+      "measured": 5.72,
+      "reason": "recorded on first measurement"
+    },
+    "projects@390": {
+      "ceiling": 4.01,
+      "measured": 4.01,
+      "reason": "recorded on first measurement"
+    },
+    "framework@390": {
+      "ceiling": 6.18,
+      "measured": 6.18,
+      "reason": "recorded on first measurement"
+    },
+    "partners@390": {
+      "ceiling": 9.44,
+      "measured": 9.44,
+      "reason": "recorded on first measurement"
+    },
+    "contacts@390": {
+      "ceiling": 7.11,
+      "measured": 7.11,
+      "reason": "recorded on first measurement"
+    },
+    "insights@390": {
+      "ceiling": 21.99,
+      "measured": 21.99,
+      "reason": "recorded on first measurement"
+    },
+    "data@390": {
+      "ceiling": 24.4,
+      "measured": 24.4,
+      "reason": "recorded on first measurement"
+    },
+    "archive@390": {
+      "ceiling": 26.33,
+      "measured": 26.33,
+      "reason": "recorded on first measurement"
+    },
+    "research@390": {
+      "ceiling": 14.04,
+      "measured": 14.04,
+      "reason": "recorded on first measurement"
+    },
+    "essay@390": {
+      "ceiling": 26.29,
+      "measured": 26.29,
+      "reason": "recorded on first measurement"
+    },
+    "ascn9@390": {
+      "ceiling": 1.33,
+      "measured": 1.33,
+      "reason": "recorded on first measurement"
+    },
+    "news/review@390": {
+      "ceiling": 9.91,
+      "measured": 9.91,
+      "reason": "recorded on first measurement"
+    },
+    "news/archive@390": {
+      "ceiling": 5.65,
+      "measured": 5.65,
+      "reason": "recorded on first measurement"
+    },
+    "news/discovery@390": {
+      "ceiling": 4.31,
+      "measured": 4.31,
+      "reason": "recorded on first measurement"
+    },
+    "news/regional@390": {
+      "ceiling": 5.62,
+      "measured": 5.62,
+      "reason": "recorded on first measurement"
+    }
+  }
+}
