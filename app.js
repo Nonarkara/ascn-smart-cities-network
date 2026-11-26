@@ -1604,11 +1604,17 @@ function renderInsights() {
       <div class="churn-total"><span class="churn-n">${churn.total}</span><span class="churn-label">${esc(tx("unique city+project combinations, 2022–2025"))}</span></div>
       <div class="churn-bar churn-bar--total" style="width:100%"></div>
       <div class="churn-segs">
-        <div class="churn-seg" style="width:${(churn.allCycles / churn.total) * 100}%"><span class="churn-seg-n">${churn.allCycles}</span><span data-i18n="hd.tracked.all.4.cycles" class="churn-seg-label">Tracked all 4 cycles</span></div>
-        <div class="churn-seg churn-seg--new" style="width:${(churn.latestOnly / churn.total) * 100}%"><span class="churn-seg-n">${churn.latestOnly}</span><span data-i18n="hd.new.in.2025.2" class="churn-seg-label">New in 2025</span></div>
-        <div class="churn-seg churn-seg--drop" style="width:${(churn.firstOnly / churn.total) * 100}%"><span class="churn-seg-n">${churn.firstOnly}</span><span data-i18n="hd.dropped.after.2022" class="churn-seg-label">Dropped after 2022</span></div>
-        <div class="churn-seg churn-seg--int" style="width:${(churn.intermittent / churn.total) * 100}%"><span class="churn-seg-n">${churn.intermittent}</span><span class="churn-seg-label">${esc(tx("Intermittent"))}</span></div>
+        <div class="churn-seg" style="width:${(churn.allCycles / churn.total) * 100}%"></div>
+        <div class="churn-seg churn-seg--new" style="width:${(churn.latestOnly / churn.total) * 100}%"></div>
+        <div class="churn-seg churn-seg--drop" style="width:${(churn.firstOnly / churn.total) * 100}%"></div>
+        <div class="churn-seg churn-seg--int" style="width:${(churn.intermittent / churn.total) * 100}%"></div>
       </div>
+      <ul class="churn-legend">
+        <li class="churn-legend-item"><span class="churn-key"></span><span class="churn-legend-n">${churn.allCycles}</span><span class="churn-legend-label" data-i18n="hd.tracked.all.4.cycles">Tracked all 4 cycles</span></li>
+        <li class="churn-legend-item"><span class="churn-key churn-key--new"></span><span class="churn-legend-n">${churn.latestOnly}</span><span class="churn-legend-label" data-i18n="hd.new.in.2025.2">New in 2025</span></li>
+        <li class="churn-legend-item"><span class="churn-key churn-key--drop"></span><span class="churn-legend-n">${churn.firstOnly}</span><span class="churn-legend-label" data-i18n="hd.dropped.after.2022">Dropped after 2022</span></li>
+        <li class="churn-legend-item"><span class="churn-key churn-key--int"></span><span class="churn-legend-n">${churn.intermittent}</span><span class="churn-legend-label">${esc(tx("Intermittent"))}</span></li>
+      </ul>
     </div>
     <p class="ig-note" data-i18n="a.a.project.that.disappears.from.t">A project that disappears from the appendix is not necessarily cancelled — but it cannot be verified or compared across cycles. Source: ASCN M&amp;E appendix rows 2022–2025.</p>`;
 

@@ -96,11 +96,19 @@ try {
     ['Reading measure — Latin', 'node', ['scripts/audit-measure.mjs'], { ASCN_MEASURE_LANG: 'en' }],
     ['Reading measure — Thai', 'node', ['scripts/audit-measure.mjs'], { ASCN_MEASURE_LANG: 'th' }],
     ['Reading measure — Chinese', 'node', ['scripts/audit-measure.mjs'], { ASCN_MEASURE_LANG: 'zh' }],
+    // A fixed-width track holds text, and the width of text is a property of
+    // the language. This is the sweep that finds the box that does not fit
+    // its content, and it is swept in every language because a defect that
+    // reads as a margin in English is a hole in Thai.
+    ['Content overflow — every box holds its content, every language', 'node', ['scripts/audit-overflow.mjs']],
     ['Page cost in screens — every view within its cap', 'npm', ['run', 'audit:cost']],
     ['All-view visual captures', 'npm', ['run', 'audit:visual']],
     ['Complete reading-path captures', 'npm', ['run', 'audit:reading']],
   ]) {
-    await check(name, command, args);
+    // The mode patch has to be passed through. It was dropped here, so every
+    // "Thai", "Chinese" and "light" check silently ran the default mode and
+    // the gate reported four identical sweeps as four modes.
+    await check(name, command, args, envPatch);
   }
   const after = await fingerprint();
   const changed = releaseFiles.find(file => after[file] !== report.releaseSha256[file]);

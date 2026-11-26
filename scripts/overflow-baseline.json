@@ -1,0 +1,10 @@
+{
+  "note": "Content that does not fit the box that holds it. Every entry needs a reason: no reason means the overflow was never explained. The gate fails when an offender is not recorded here, when a recorded offender has grown, and when a recorded offender no longer happens.",
+  "updatedAt": "2026-11-28T00:00:00.000Z",
+  "exceptions": {
+    "insights::slope-track": {
+      "over": 4,
+      "reason": "The slope's endpoint marker is an 8px dot centred on the track's end (left:100%, translateX(-50%)), so half of it — 4px — necessarily straddles the track's right edge. The column gap is 8px, so the marker sits in the gutter between the track and the value it labels and never touches that value. The dot is a marker on a point, not text in a box."
+    }
+  }
+}

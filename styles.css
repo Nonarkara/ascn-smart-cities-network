@@ -2358,9 +2358,23 @@ body .view p.record-actions { max-width: 100%; }
 .focus-bars, .stack-bars, .city-load, .growth-bars, .ig-bars, .focus-mini { display: grid; gap: 0.5rem; }
 /* The value column held two runs — "90.9/M" plus "5 proj · 55K". At 3.2rem
    that wrapped to three lines once body type moved to 16px, which tripled the
-   row height and read as a layout bug rather than a width. */
-.bar-row { display: grid; align-items: center; gap: 0.65rem; grid-template-columns: minmax(7rem, 11rem) 1fr 6.5rem; }
-.bar-row.wide-label { grid-template-columns: minmax(9rem, 13rem) 1fr 7rem; }
+   row height and read as a layout bug rather than a width.
+   The column is sized in rem because the run it holds is text, and the width
+   of text is a property of the language. But a column much wider than its
+   content is space with no job: the bar runs out and the number waits across
+   an empty band. So the shared column holds a number and nothing longer,
+   and the two groups that really do hold something long say so below. */
+.bar-row { display: grid; align-items: center; gap: 0.65rem; grid-template-columns: minmax(7rem, 11rem) 1fr 4rem; }
+.bar-row.wide-label { grid-template-columns: minmax(9rem, 13rem) 1fr 4rem; }
+@media (min-width: 521px) {
+  /* The investment rows hold a dollar figure: "6,700,000,000" measured 98px
+     in a 91px column. 8rem is 104px. */
+  #ig-investment .bar-row { grid-template-columns: minmax(9rem, 13rem) 1fr 8rem; }
+  /* The density rows hold a caption under the ratio: the Thai
+     "2 โครงการ · 14.0M" measured 99.5px in an 81px column and pushed the
+     document three pixels sideways. 8.5rem is 110px. */
+  #ig-density .bar-row { grid-template-columns: minmax(7rem, 11rem) 1fr 8.5rem; }
+}
 .bar-row span { color: var(--ink-2); }
 .bar-row strong { text-align: right; }
 .bar-track { position: relative; height: 0.45rem; overflow: hidden; background: var(--surface);
@@ -3334,9 +3348,12 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
   /* A bar row stacked into one column puts the label, the bar, the value and
      two sub-labels on five lines. Keeping the three columns on a phone makes
      the entry two lines, and the sub-label wraps inside its own column
-     instead of running past it. */
+     instead of running past it.
+     The label column is 6.6rem because "Indonesian/Malay" — an issued
+     language-group name, so it cannot be shortened — measured 83px in a 73px
+     column and ran ten pixels into the bar. */
   .bar-row, .bar-row.wide-label {
-    grid-template-columns: minmax(4rem, 5.6rem) minmax(1.5rem, 1fr) auto;
+    grid-template-columns: minmax(4rem, 6.6rem) minmax(1.5rem, 1fr) auto;
     gap: 0.35rem;
     font-size: var(--t-small);
   }
@@ -4056,6 +4073,12 @@ body .view .path-steps li { max-width: none; }
 
 /* Density bars — reuse .bar-row; add sub-label */
 .bar-sub { font-style: normal; font-size: var(--t-micro); color: var(--muted); margin-left: 0.35rem; white-space: nowrap; }
+/* The scholarship rows name the countries each language's works came from.
+   That list is issued wording — "Singapore, UK, Australia, US, Indonesia,
+   Thailand, Malaysia, Philippines" measured 334px in a 138px label column and
+   ran 196px past it, under the bar. A list of names can wrap; a number cannot.
+   So this one sub-label wraps inside its own column. */
+.lang-col .bar-sub { white-space: normal; }
 .bar-row strong .bar-sub { margin-left: 0.3rem; }
 .ig-note { font-size:var(--t-small); color: var(--muted); margin: 0.9rem 0 0.4rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
 
@@ -4736,30 +4759,47 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 .slope-line--dn { background: var(--muted); }
 .slope-line--flat { background: var(--line); height: 1px; }
 @media (max-width: 720px) {
-  .slope-header, .slope-row { grid-template-columns: 100px 2rem 1fr 2rem 3rem; }
+  /* The year columns hold "2022" and "2025": 31px measured in a 26px track,
+     so the digits ran past the column. 2.5rem is 32.5px. */
+  .slope-header, .slope-row { grid-template-columns: 100px 2.5rem 1fr 2.5rem 3rem; }
   .slope-country { font-size:var(--t-small); }
 }
 
 /* ── Project churn funnel panel ────────────────────────────────────────── */
-.churn-funnel { margin-bottom: 0.5rem; }
+/* The segments are proportional, so their widths are fixed by the data and
+   cannot be widened to hold a label: "Dropped after 2022" was 1.2% of the
+   bar — 14px — and its label spilled over the neighbouring segments and was
+   unreadable. The bar now carries the proportion and the key below carries
+   the counts and the names, so nothing is painted inside a box too small to
+   hold it and the same reading works on a phone, where the smallest segment
+   is 4px wide.
+   The four colours live here once; the bar and the key both read them, so
+   they cannot drift apart. */
+.churn-funnel { margin-bottom: 0.5rem; --churn-tracked: var(--amber); --churn-new: var(--ink-2); --churn-drop: var(--muted); --churn-int: #c27544; }
 .churn-total { display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.6rem; }
 .churn-n { font-size:var(--t-h1); font-weight: 800; color: var(--ink); }
 .churn-label { font-size:var(--t-body); color: var(--ink-2); }
 .churn-bar { height: 10px; background: var(--line); margin-bottom: 0.5rem; }
 .churn-bar--total { background: var(--line); }
-.churn-segs { display: flex; height: 36px; gap: 2px; overflow: hidden; }
-.churn-seg { display: flex; flex-direction: column; justify-content: center; align-items: center; min-width: 0; background: var(--amber); color: var(--on-solid); padding: 0.2rem; }
-.churn-seg--new { background: var(--ink-2); }
-.churn-seg--drop { background: var(--muted); }
+.churn-segs { display: flex; height: 16px; gap: 2px; overflow: hidden; }
+.churn-seg { min-width: 0; background: var(--churn-tracked); }
+.churn-seg--new { background: var(--churn-new); }
+.churn-seg--drop { background: var(--churn-drop); }
 /* "Intermittent" — the projects that appear and disappear between cycles.
    Cinnamon Rufous: the amber's own family one step down, so the segment
    reads as part of the same bar and still separates from the amber next to
    it by value (0.246 against 0.440). */
-.churn-seg--int { background: #c27544; }
-.churn-seg-n { font-size:var(--t-body); font-weight: 800; font-family: var(--mono); }
-.churn-seg-label { font-size:var(--t-micro); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; text-align: center; line-height: 1.1; }
+.churn-seg--int { background: var(--churn-int); }
+.churn-legend { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.35rem 1.5rem; list-style: none; margin: 0.7rem 0 0; padding: 0; }
+.churn-legend-item { display: flex; align-items: baseline; gap: 0.45rem; min-width: 0; }
+.churn-key { width: 0.65rem; height: 0.65rem; flex: none; background: var(--churn-tracked); }
+.churn-key--new { background: var(--churn-new); }
+.churn-key--drop { background: var(--churn-drop); }
+.churn-key--int { background: var(--churn-int); }
+.churn-legend-n { font-family: var(--mono); font-weight: 700; color: var(--ink); }
+.churn-legend-label { font-size:var(--t-small); color: var(--ink-2); }
 @media (max-width: 600px) {
-  .churn-seg-label { display: none; }
+  .churn-legend { grid-template-columns: minmax(0, 1fr); }
 }
 
 
@@ -4814,7 +4854,18 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 .ascap-cov-tags { grid-column: 2 / -1; display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.1rem; }
 .ascap-cov-tag { font-size:var(--t-micro); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid; padding: 0.05rem 0.35rem; opacity: 0.75; }
 @media (max-width: 600px) {
-  .ascap-cov-row { grid-template-columns: 2rem 1fr 3rem; }
+  /* The desktop row is four tracks: id, name, bar, count. The phone kept three
+     of the tracks and let the grid place them by itself, so the coverage bar
+     was left 39px wide against the right edge and the count was orphaned on
+     its own line under the project id. The row now places its own children:
+     id, name and count on the first line, the bar under them, the tags under
+     that. */
+  .ascap-cov-row { grid-template-columns: 2rem 1fr auto; }
+  .ascap-cov-pid { grid-column: 1; grid-row: 1; }
+  .ascap-cov-name { grid-column: 2; grid-row: 1; }
+  .ascap-cov-count { grid-column: 3; grid-row: 1; }
+  .ascap-cov-track { grid-column: 2 / -1; grid-row: 2; }
+  .ascap-cov-tags { grid-column: 2 / -1; grid-row: 3; }
   .ascap-cov-name { font-size:var(--t-small); }
   .ascap-cov-tags { display: none; }
 }
@@ -4922,7 +4973,11 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 .gc-table .me-ascn-col { font-weight: 600; color: var(--ink); }
 
 /* ── 5G readiness ────────────────────────────────────────────────────────── */
-.g5-head, .g5-row { display: grid; grid-template-columns: 7rem 6rem 13rem 1fr 3rem; align-items: center; gap: 0.5rem; padding: 0.32rem 0; border-bottom: 1px solid var(--line-soft); }
+/* The last track holds either a percentage or the phrase that stands in for
+   one. "no projection" measured 47px in a 39px track and ran past the table's
+   own right edge; 4rem is 52px, which holds the longest phrasing the
+   dictionary carries in any of the three languages. */
+.g5-head, .g5-row { display: grid; grid-template-columns: 7rem 6rem 13rem 1fr 4rem; align-items: center; gap: 0.5rem; padding: 0.32rem 0; border-bottom: 1px solid var(--line-soft); }
 .g5-head { font-size:var(--t-micro); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); border-bottom: 1px solid var(--line); padding-bottom: 0.45rem; margin-bottom: 0.15rem; }
 .g5-country { font-size:var(--t-body); color: var(--ink); font-weight: 600; }
 .g5-status { font-size:var(--t-small); font-family: var(--mono); color: var(--ink-2); }
@@ -4951,7 +5006,9 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 
 /* ── Funding at scale ────────────────────────────────────────────────────── */
 .fs-wrap { display: grid; gap: 0.6rem; }
-.fs-row { display: grid; grid-template-columns: 14rem 1fr 5rem; grid-template-areas: "name bar val" "note note note"; align-items: center; gap: 0.3rem 0.6rem; }
+/* The value track holds "undisclosed" where the funding was not published:
+   68px measured in a 65px track. 5.5rem is 71.5px. */
+.fs-row { display: grid; grid-template-columns: 14rem 1fr 5.5rem; grid-template-areas: "name bar val" "note note note"; align-items: center; gap: 0.3rem 0.6rem; }
 .fs-name { grid-area: name; font-size:var(--t-body); color: var(--ink); }
 .fs-track { grid-area: bar; height: 10px; background: var(--surface); }
 .fs-val { grid-area: val; font-size:var(--t-body); font-family: var(--mono); font-weight: 700; text-align: right; color: var(--amber); }
