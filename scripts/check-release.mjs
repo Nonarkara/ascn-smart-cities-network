@@ -67,7 +67,7 @@ try {
     if (Date.now() > deadline) throw new Error('Release preview did not become ready');
     await new Promise((resolve) => setTimeout(resolve, 250));
   }
-  for (const [name, command, args] of [
+  for (const [name, command, args, envPatch] of [
     ['Browser flows and incoming-data regressions', 'npx', ['playwright', 'test']],
     ['Spatial geometry and map readiness', 'npm', ['run', 'audit:spatial']],
     ['Composition bands — empty content area beside content', 'npm', ['run', 'audit:composition']],
