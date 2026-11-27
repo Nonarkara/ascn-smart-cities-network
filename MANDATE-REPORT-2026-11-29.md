@@ -213,6 +213,50 @@ round; the remaining ones — history, framework, insights, partners,
 record, the essay's end matter — are the owner's call, and the report says
 so rather than hiding them behind a passing exit code.
 
+### 2.8 The independent review of round 3, and what it cost
+
+The build was reviewed by an independent reviewer with its own instruments —
+not the project's gates, because the previous round proved that a gate can
+be blind and still report green. The reviewer's own census counted **47,248
+prose lines** and **51,736 running lines** over 270 route-loads, and
+extracted the four source PDFs itself to count the appendix rows.
+
+**Verified independently:** F1 (405 rows; 77 / 86 / 108 / 134 counted from
+the PDFs themselves; 405 of 405 titles present verbatim; Viet Nam's six rows
+read "111. Viet Nam Da Nang" in the source), F1b (both corrected claims
+against the data), F2 (0 prose offenders, 0 over the house ceiling), F3 (the
+857 × 245px region gone in every language and theme), F4 (0 peer grids
+strand a cell), F5, F6 (0 real crops), F7 (96/96 deep links land).
+
+**Three findings, and each one's answer:**
+
+1. **The build failed the project's own touch-target gate.** The map's credit
+   links measured **43.64px** — 0.36px under the floor — and `npm run deploy`
+   runs that gate first, so the release could not have shipped. The credit
+   links now have 46px of target (14px of text plus 16px of padding above and
+   below, with the padding taken back out of the layout by a negative
+   margin). The gate reports **0 failures in all four modes**.
+2. **The archive head still carried a band the composition gate does not
+   record**: 359 × 82px under the lede, with the title block running on
+   beside it. The gate's own threshold says a band shorter than 150px is a
+   gutter, so it was not reported — but the band was real, and this round
+   had put it there. **Repaired:** the language switcher now sits with the
+   statement it switches, under the lede, and the two columns of the head
+   end within twenty pixels of each other.
+3. **The target gate could not reach the reference links.** It skipped every
+   link inside prose — right for an inline link, wrong for the house's
+   reference class, which is held to the 24px AA bar *whether it sits in a
+   sentence or in a card*. The archive's source names sat at 19px and no
+   gate could see them. **Repaired:** a reference link is now measured even
+   inside prose (the gate went from 24 reference links to 128), the archive's
+   source links are named so the class can name them, and every reference
+   link is held to 24 × 24.
+
+The reviewer's verdict is **PARTIAL**, and the two things it leaves open are
+the owner's: the voids in the six views (measured, confirmed empty by the
+reviewer's own glyph count, not decided by it), and the archive band, which
+this round has now repaired.
+
 ---
 
 ## 3. The gates this work added or repaired
