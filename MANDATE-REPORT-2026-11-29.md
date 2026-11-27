@@ -314,6 +314,65 @@ tell an upstream outage from its own failure teaches its readers to re-run
 a red gate until it goes green, and a gate that is re-run until it goes
 green is no gate at all.
 
+### 2.10 The independent review of round 3b, and the defect it found behind the repair
+
+The build was reviewed again, with its own instruments — its own per-entry
+geometry, its own per-character line counts (the project's graphics gate
+*estimates* characters from a width, which cannot police Thai or Chinese),
+and its own copy of the previous build to compare against. Its verdict was
+**PARTIAL**, with three findings on the repair and one finding that was not
+a regression of the repair at all: a defect that had been live in the
+previous release too, and that **no gate in this repository could see**.
+
+**F1 — HIGH — the library grid collapsed to a zero-width column on the
+resize path.** A window narrowed from the desk to the phone left **31 of the
+62 library entries at 0px wide**, their text printed on top of their
+neighbours, and the view costing **35.96 screens against a cap of 23.38**.
+No horizontal overflow, so the overflow gate could not see it; and every
+gate in this repository loads the page fresh at each viewport, so **the
+whole instrument set had never looked at a page that was narrowed after it
+was built.**
+
+The cause was the grid law's own span. An item that spans two columns in a
+one-column grid forces an implicit track; the explicit track beside it
+collapses to nothing; the next pass reads two columns where the
+stylesheet says one; and the law applies its span again. The state kept
+itself. The law now clears its spans first, measures the grid as the
+stylesheet alone describes it, and applies to that — so a grid can no
+longer be broken by the law that is meant to mend it.
+
+**F2 — MEDIUM — the record's own numbers were wrong.** The cap reason said
+the entries were "177px tall instead of 247px" and that the view cost
+"26.23 screens". The reviewer's measurement, cross-checked against the
+project's own cost instrument, gave **26.92 screens in English and 27.12 in
+Thai** for the build before the repair, and a mean entry of **255.8px**,
+not 247px; 177px was the *first* entry's height, and 26.23 was an earlier
+run's figure. The cap itself was right. **The reason has been corrected**,
+in the baseline file and in the audit record, and the correction is stated
+there rather than quietly overwritten.
+
+**F3 — LOW — a code comment claimed a measure the render does not have.**
+The comment said the title keeps "a 218px measure"; the measured width
+runs from 204px to 295px depending on the entry's own text. The comment
+now states the measured range.
+
+**The gate blind spot, closed.** Two gates now walk the path no gate had
+ever walked. The **grid gate** builds each view at the desk width and
+narrows it, and fails on a collapsed track — its planted defect was proved
+red before the repair was kept. The **cost gate** measures the cost again
+on the narrowed page and fails when it exceeds the cap.
+
+**And the cost of a page turned out to be a race.** The essay's two
+photographs carry no dimensions, so the page measured **25.96 screens
+before they arrived and 26.61 after** — in the same build, decided by a
+timer. The cost gate now settles the page before it measures it, and
+reports any image that reserves no space; the essay's photographs now
+carry their dimensions, so the page no longer jumps when they arrive.
+
+The reviewer's remaining item — the six views' one-sided voids — is
+measured and reported, and **the owner's call**: recompose them, or record
+each with its measurement.
+
 ---
 
 ## 3. The gates this work added or repaired
@@ -328,6 +387,8 @@ green is no gate at all.
 | `audit-grids.mjs` | every peer grid in every view at 1440, 1024 and 390: a row that ends short of its grid's trailing edge, measured in cells rather than pixels | `tests/visual-audit.unit.mjs` — the judge, with a planted row |
 | `audit-targets.mjs` | every rendered control at 390px in four modes: 44px for a control, 24px for a reference link | `tests/visual-audit.unit.mjs` — the judge, with a planted 30px button |
 | `tile-health.mjs` | the basemap's health, from the tile requests the **page** made: the site being broken is told apart from the tile server refusing | `tests/tile-health.unit.mjs` — 7 cases for the decision; `tests/tile-health.spec.mjs` — 4 cases against the real built site |
+| `audit-cost.mjs` (repaired) | the cost of a **settled** page — the images are loaded before the page is measured — and the cost of the page **after the window was narrowed**; a view that costs more when narrowed fails its cap | `tests/cost.spec.mjs` — the resize-path judgement, with a planted 35.96-screen page; the unstable-image judgement, with a planted image that reserves no space |
+| `audit-grids.mjs` (repaired) | every peer grid, every view, at 1440, 1024 and 390 — **and on the resize path**, where a column track that has collapsed to nothing while the grid holds items is a failure | `tests/visual-audit.unit.mjs` — the judge, with a planted row; the collapsed-track judgement, proved red on the planted defect |
 
 Two of these are new in round three. The **grid gate** is the direct answer
 to a law that had no instrument: a grid's column count must divide its item
