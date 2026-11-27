@@ -1462,6 +1462,12 @@ input[type="search"] { min-width: min(16rem, 100%); }
 }
 body .view .review-followup p,
 body .view .review-followup .review-note { max-width: 54ch; }
+/* The attribution is one run of an issued publisher name. At the note's
+   size, 54ch is wider than the paper measure (31.54em), so the Thai
+   "อ้างอิงจาก Ho Chi Minh City Digital Transformation Centre" stayed one
+   line at 33.18em. The question above keeps 54ch. The note wraps at the
+   paper measure. */
+body .view .review-followup .review-note { max-width: min(54ch, 31em); }
 /* Two columns fit from 538px of view; three from 822px. */
 @container view (min-width: 538px) and (max-width: 821px) {
   #review-followups[data-count="2"],

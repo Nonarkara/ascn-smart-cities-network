@@ -2523,7 +2523,11 @@ function renderEssay() {
 
   /* ---- Focus area bar chart ---- */
   const focusDiagram = `<figure class="essay-diagram" aria-label="ASCN project distribution by focus area">
-  <svg viewBox="0 0 580 248" xmlns="http://www.w3.org/2000/svg">
+  <!-- The Chinese title is a bold Han run anchored at x=0. On the CI
+       font its first glyph starts about 2px left of that anchor, and the
+       phone scale reports the same bearing as 2 user units. Four units of
+       pad on each side; the bars stay where they are. -->
+  <svg viewBox="-4 0 588 248" xmlns="http://www.w3.org/2000/svg">
     <text x="0" y="16" font-size="9.5" font-weight="700" letter-spacing="0.07em" fill="currentColor">${esc(tx("FOCUS AREA DISTRIBUTION — 134 PROJECTS · M&E CYCLE 4 (2025)"))}</text>
     <text x="0" y="32" font-size="9" class="dg-muted" fill="currentColor">${esc(tx("Approximate shares derived from ASCN M&E reporting."))}</text>
     ${[[tx("Smart Mobility"),28,0],[tx("Smart Living"),26,28],[tx("Smart Environment"),22,56],[tx("Smart Governance"),18,84],[tx("Smart Economy"),12,112],[tx("Smart People"),8,140]].map(([label,pct,y])=>{
@@ -2541,7 +2545,9 @@ function renderEssay() {
 
   /* ---- Timeline diagram ---- */
   const timelineDiagram = `<figure class="essay-diagram" aria-label="ASCN milestones 2018–2025">
-  <svg viewBox="0 0 660 136" xmlns="http://www.w3.org/2000/svg">
+  <!-- Jost Bold draws the title's "A" about 1px left of its anchor at x=0.
+       A viewBox that starts at 0 crops that stroke. The right edge stays at 660. -->
+  <svg viewBox="-2 0 662 136" xmlns="http://www.w3.org/2000/svg">
     <text x="0" y="16" font-size="9.5" font-weight="700" letter-spacing="0.07em" fill="currentColor">${esc(tx("ASCN MILESTONES 2018–2025"))}</text>
     <line x1="20" y1="64" x2="640" y2="64" stroke="currentColor" stroke-width="1.5"/>
     ${[
