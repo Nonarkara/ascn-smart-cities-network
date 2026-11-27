@@ -1,6 +1,6 @@
 {
   "note": "Ceilings on the cost of each view, in screens. Only ever lower them; a raise needs a reason written here, and only when the owner asks for it.",
-  "updatedAt": "2026-11-26T00:12:18.215Z",
+  "updatedAt": "2026-11-27T17:11:32.187949Z",
   "views": {
     "overview@1440": {
       "ceiling": 4.16,
@@ -58,9 +58,9 @@
       "reason": "recorded on first measurement"
     },
     "data@1440": {
-      "ceiling": 16.65,
-      "measured": 16.65,
-      "reason": "recorded on first measurement"
+      "ceiling": 9.94,
+      "measured": 9.94,
+      "reason": "Lowered from 16.65 after the library stopped being a ledger. The ledger ran one entry per row down the page; the entries are now cards in a three-column grid, so the same sixty-two sources occupy a third of the height. The content did not change — the layout that carried it did."
     },
     "archive@1440": {
       "ceiling": 10.86,
@@ -158,9 +158,9 @@
       "reason": "recorded on first measurement"
     },
     "data@390": {
-      "ceiling": 24.4,
-      "measured": 24.4,
-      "reason": "recorded on first measurement"
+      "ceiling": 23.38,
+      "measured": 23.38,
+      "reason": "Lowered from 24.4 after the phone library entry was recomposed: the badge, the title and the links now share one line and the takeaway runs the width of the entry beneath them, so each of the sixty-two entries is 177px tall instead of 247px. The entry was over its cap at 26.23 screens; this repair brought it under and the cap follows it down."
     },
     "archive@390": {
       "ceiling": 26.33,

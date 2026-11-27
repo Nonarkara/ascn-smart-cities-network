@@ -6844,6 +6844,31 @@ body .view .evidence-routes li { max-width: none; }
 .lib-entry.is-wide .le-actions { grid-column: 1; grid-row: 3; }
 .lib-entry.is-wide .le-takeaway { grid-column: 2; grid-row: 1 / span 3; }
 
+/* On a phone the entry's own stack was too tall: the badge sat on a row of
+   its own, the actions on another, and the library — sixty-two entries —
+   grew to 26.2 screens against a cap of 24.4. The three things that belong
+   together now share one line — the badge, the title, and the links — and
+   the takeaway runs the width of the entry beneath them. Nothing overlaps,
+   the title keeps a 218px measure, and the links keep their 44px target.
+   The padding comes down with them: a rule already separates one entry
+   from the next, so the space above and below it was carrying the same
+   message twice. */
+@media (max-width: 700px) {
+  .lib-entry {
+    grid-template-columns: max-content minmax(0, 1fr) max-content;
+    column-gap: 0.8rem;
+    padding: 0.6rem 0 0.7rem;
+    align-items: start;
+  }
+  .lib-entry .le-badge { grid-column: 1; grid-row: 1; }
+  .lib-entry .le-title-block { grid-column: 2; grid-row: 1; }
+  .lib-entry .le-actions {
+    grid-column: 3; grid-row: 1;
+    flex-direction: column; align-items: flex-start; gap: 0.1rem;
+  }
+  .lib-entry .le-takeaway { grid-column: 1 / -1; grid-row: 2; }
+}
+
 /* ── Leaflet's own controls ───────────────────────────────────────────────
    The vendored map ships 30px zoom buttons and 14px credit links. Both are
    controls on a map the reader touches with a thumb, so both take the house's
