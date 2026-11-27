@@ -1,6 +1,16 @@
 import { expect, test } from '@playwright/test';
-import { measureRenderedProse } from '../scripts/visual-audit-rules.mjs';
+import { measureRenderedLines } from '../scripts/visual-audit-rules.mjs';
 import { measureOffenders } from '../scripts/measure-law.mjs';
+
+// The instrument is measured in the page, where it cannot see this module's
+// scope, so the kind filter is applied here. A line is PROSE when it is
+// body copy the reader sweeps; a title or a metadata line is running text
+// and is held to the physical measure instead.
+// No length floor: a Chinese line in a narrow measure carries fewer than
+// twenty characters and is still a line the reader sweeps. Filtering on the
+// line's length is how a wide line was once called short.
+const proseLines = async (page, selector) =>
+  (await page.evaluate(measureRenderedLines, selector)).filter((row) => row.kind === 'prose');
 
 // The character ceiling is a Latin calibration. Chinese sets a character per
 // em, so a Chinese paragraph that has lost its measure column reads as 40
@@ -19,7 +29,7 @@ test('a wide Chinese line passes the character ceiling and fails the em ceiling'
   await page.locator('p').evaluate((p) => {
     p.textContent = '这座城市的智慧城市计划覆盖所有社区并改善公共服务'.repeat(6);
   });
-  const found = await page.evaluate(measureRenderedProse, 'p');
+  const found = await proseLines(page, 'p');
   expect(found.length).toBeGreaterThan(0);
   expect(found[0].chars, 'the line should be legal in characters').toBeLessThanOrEqual(75);
   expect(found[0].em, 'the line should be illegal in width').toBeGreaterThan(31.54);
@@ -38,7 +48,7 @@ test('a wide Thai line passes the character ceiling and fails the em ceiling', a
   await page.locator('p').evaluate((p) => {
     p.textContent = 'เมืองอัจฉริยะต้องดูแลผู้คนทุกคนในทุกชุมชนอย่างเท่าเทียมกัน'.repeat(3);
   });
-  const found = await page.evaluate(measureRenderedProse, 'p');
+  const found = await proseLines(page, 'p');
   expect(found.length).toBeGreaterThan(0);
   expect(found[0].chars, 'the line should be legal in characters').toBeLessThanOrEqual(75);
   expect(found[0].em, 'the line should be illegal in width').toBeGreaterThan(31.54);
@@ -55,7 +65,7 @@ test('the rendered reading measure splits columns and rejects a long line', asyn
   await page.locator('p').evaluate((p, text) => {
     p.textContent = Array(8).fill(text).join(' ');
   }, line);
-  const measure = async () => (await page.evaluate(measureRenderedProse, 'p'))[0].chars;
+  const measure = async () => (await proseLines(page, 'p'))[0].chars;
   expect(await measure()).toBeLessThanOrEqual(75);
   await page.locator('p').evaluate(p => { p.style.columns = '1'; });
   expect(await measure()).toBeGreaterThan(75);
@@ -76,7 +86,7 @@ test('the measure counts a line that carries a bold phrase as one line', async (
     strong.textContent = 'A BOLD PHRASE IN THE MIDDLE';
     p.insertBefore(strong, p.firstChild);
   }, words);
-  const found = await page.evaluate(measureRenderedProse, 'p');
+  const found = await proseLines(page, 'p');
   expect(found.length).toBeGreaterThan(0);
   // The line holds more than the ceiling's worth of characters, and the
   // instrument must say so.
@@ -96,7 +106,7 @@ test('the measure reads a multi-column note by its column, not by the box', asyn
   await page.locator('p').evaluate((p) => {
     p.textContent = Array(6).fill('Counts are not inflated and the outcome says so here.').join(' ');
   });
-  const found = await page.evaluate(measureRenderedProse, 'p');
+  const found = await proseLines(page, 'p');
   expect(found.length).toBeGreaterThan(0);
   expect(found[0].chars, 'the columns were welded into one line').toBeLessThanOrEqual(75);
   const graphemes = [...new Intl.Segmenter('en', { granularity: 'grapheme' }).segment(found[0].line)].length;

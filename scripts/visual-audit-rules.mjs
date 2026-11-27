@@ -222,10 +222,7 @@ export function measureRenderedLines(selector) {
   return out;
 }
 
-// The old entry point, kept for the tests and the graphics sweep: prose
-// only, and only blocks long enough to be a running line.
-export function measureRenderedProse(selector) {
-  return measureRenderedLines(selector)
-    .filter((row) => row.kind === "prose" && row.chars >= 20)
-    .map((row) => row);
-}
+// The old entry point is gone: it filtered by calling measureRenderedLines,
+// and a function that page.evaluate() serialises cannot call a function in
+// this module's scope. The caller that needs prose-only rows filters the
+// rows it measured — tests/reading-measure.spec.mjs does exactly that.
