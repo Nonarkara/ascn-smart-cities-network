@@ -257,6 +257,63 @@ the owner's: the voids in the six views (measured, confirmed empty by the
 reviewer's own glyph count, not decided by it), and the archive band, which
 this round has now repaired.
 
+### 2.9 Round 3b — the phone library, and a gate that could not tell an outage from a bug
+
+Two things were found after the round-3 review, and neither was a slop
+problem. They were the law's own two working ends: a view that had grown
+past the cap it was promised, and a gate that had no way to say whose
+fault a failure was.
+
+**The data view was over its own cost cap.** The library had become a grid
+of sixty-two cards, and each card stacked its four parts down the page —
+the badge on a row of its own, the title on the next, the takeaway on the
+third, the links on the fourth. Every one of those rows is a row the card
+did not need, and sixty-two times over the view cost **26.92 screens in
+English, 27.12 in Thai and 24.41 in Chinese, against a cap of 24.4**.
+
+Repaired on the phone only. The badge, the title and the links now share
+one line — they are one group of facts about one source — and the takeaway
+runs the width of the entry beneath them, because the takeaway is the
+second paragraph of the entry, not a third row of the header. The padding
+came down with them: a hairline already separates one entry from the next,
+so the space above and below it was carrying that same message twice.
+Measured: the mean entry is **212.7px tall instead of 255.8px**, the view is
+**23.38 screens** in English, **23.23** in Thai and **20.32** in Chinese,
+and the desktop view — where the ledger's sixty-two rows had become a
+three-column grid — fell from 16.65 to **9.94 screens**.
+
+Both caps were **lowered** to the measured cost, each with its reason
+written in `scripts/cost-baseline.json`. No cap was raised.
+
+**The release gate failed on a third party's bad afternoon.** The build's
+own browser-flow test asked the map whether its tiles had drawn, and when
+OpenStreetMap refused for a moment the answer was no — so the gate went
+red on a release that had nothing wrong with it. The gate could not say
+otherwise, because it had asked a yes/no question about the wrong subject:
+it asked whether tiles had drawn, and an upstream outage and a broken map
+look identical from inside.
+
+So the instrument was rebuilt on the only evidence that settles the
+question — **what the page itself received**, watched on the browser's own
+request events, with the watcher attached before the map is created:
+
+| what the page saw | verdict |
+|---|---|
+| a tile decoded and drew | pass |
+| the site asked for a tile the server does not have (404, 410) | **the site is at fault** — the URL template is wrong; a release fails |
+| the page carries tile images but no request ever left the browser | **the site is at fault** — its own policy blocked them; a release fails |
+| the server refused (401/403/429), errored (5xx), or the request failed in the network | **an upstream outage** — the site must degrade as it promises: the notice appears, the markers stay, the reader can still choose a city. That is checked, and the outage is recorded rather than counted as a finding |
+
+Both the spatial gate and the browser-flow test use it now. Every branch is
+proved: **7 unit cases** for the decision and **4 browser cases** against
+the real built site — a wrong URL fails the release, a refusal does not, a
+blocked request does, a healthy basemap passes.
+
+This is the gate law applied to the gates themselves. A gate that cannot
+tell an upstream outage from its own failure teaches its readers to re-run
+a red gate until it goes green, and a gate that is re-run until it goes
+green is no gate at all.
+
 ---
 
 ## 3. The gates this work added or repaired
@@ -270,6 +327,7 @@ this round has now repaired.
 | `audit-cost.mjs` | every view's cost in screens against a cap that may only be lowered | `tests/cost.spec.mjs` |
 | `audit-grids.mjs` | every peer grid in every view at 1440, 1024 and 390: a row that ends short of its grid's trailing edge, measured in cells rather than pixels | `tests/visual-audit.unit.mjs` — the judge, with a planted row |
 | `audit-targets.mjs` | every rendered control at 390px in four modes: 44px for a control, 24px for a reference link | `tests/visual-audit.unit.mjs` — the judge, with a planted 30px button |
+| `tile-health.mjs` | the basemap's health, from the tile requests the **page** made: the site being broken is told apart from the tile server refusing | `tests/tile-health.unit.mjs` — 7 cases for the decision; `tests/tile-health.spec.mjs` — 4 cases against the real built site |
 
 Two of these are new in round three. The **grid gate** is the direct answer
 to a law that had no instrument: a grid's column count must divide its item

@@ -160,7 +160,7 @@
     "data@390": {
       "ceiling": 23.38,
       "measured": 23.38,
-      "reason": "Lowered from 24.4 after the phone library entry was recomposed: the badge, the title and the links now share one line and the takeaway runs the width of the entry beneath them, so each of the sixty-two entries is 177px tall instead of 247px. The entry was over its cap at 26.23 screens; this repair brought it under and the cap follows it down."
+      "reason": "Lowered from 24.4 after the phone library entry was recomposed. The library had become a grid of cards, and each card stacked its four parts down the page; the sixty-two entries then cost 26.92 screens in English, 27.12 in Thai and 24.41 in Chinese — over the 24.4 cap. The badge, the title and the links now share one line and the takeaway runs the width of the entry beneath them, which brings the mean entry from 255.8px to 212.7px and the view to 23.38 screens (English), 23.23 (Thai) and 20.32 (Chinese). The cap is the worst of the three, 23.38."
     },
     "archive@390": {
       "ceiling": 26.33,

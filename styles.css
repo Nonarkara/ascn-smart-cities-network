@@ -6846,13 +6846,14 @@ body .view .evidence-routes li { max-width: none; }
 
 /* On a phone the entry's own stack was too tall: the badge sat on a row of
    its own, the actions on another, and the library — sixty-two entries —
-   grew to 26.2 screens against a cap of 24.4. The three things that belong
-   together now share one line — the badge, the title, and the links — and
-   the takeaway runs the width of the entry beneath them. Nothing overlaps,
-   the title keeps a 218px measure, and the links keep their 44px target.
-   The padding comes down with them: a rule already separates one entry
-   from the next, so the space above and below it was carrying the same
-   message twice. */
+   grew to 26.9 screens in English and 27.1 in Thai against a cap of 24.4.
+   The three things that belong together now share one line — the badge, the
+   title, and the links — and the takeaway runs the width of the entry
+   beneath them. Nothing overlaps, the title keeps a measure between 204px
+   and 295px depending on the entry's own text, and the links keep their
+   44px target. The padding comes down with them: a rule already separates
+   one entry from the next, so the space above and below it was carrying
+   the same message twice. */
 @media (max-width: 700px) {
   .lib-entry {
     grid-template-columns: max-content minmax(0, 1fr) max-content;

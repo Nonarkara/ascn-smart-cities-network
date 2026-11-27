@@ -2781,7 +2781,7 @@ function renderEssay() {
   <div class="essay-section">
     ${h(3, "III. The Singapore question")}
     <figure class="essay-photo">
-      <img src="Photos/ASCN-1st-2018-Singapore.jpg" alt="Minister Vivian Balakrishnan at the Inaugural ASCN Meeting, Singapore, 8 July 2018" loading="lazy" />
+      <img src="Photos/ASCN-1st-2018-Singapore.jpg" alt="Minister Vivian Balakrishnan at the Inaugural ASCN Meeting, Singapore, 8 July 2018" loading="lazy" width="750" height="501" />
       <figcaption data-i18n="a.minister.vivian.balakrishnan.sin">Minister Vivian Balakrishnan, Singapore's Minister-in-charge of the Smart Nation Initiative, at the Inaugural ASEAN Smart Cities Network Meeting, Singapore, 8 July 2018. Singapore designed the network's architecture before handing the chair forward.</figcaption>
     </figure>
     ${p("Let me say the obvious thing first. Singapore founded ASCN. Singapore provided the first chair, the first shepherd, and the primary knowledge institution. Without Singapore, there is no ASCN. That is a fact. It is also a problem.")}
@@ -2807,7 +2807,7 @@ function renderEssay() {
   <div class="essay-section">
     ${h(3, "V. Less meetings. More building.")}
     <figure class="essay-photo">
-      <img src="Photos/ASCN-8th-2025-KL-expert-talk.jpg" alt="Expert session at the 8th ASCN Annual Meeting, Kuala Lumpur, 2025" loading="lazy" />
+      <img src="Photos/ASCN-8th-2025-KL-expert-talk.jpg" alt="Expert session at the 8th ASCN Annual Meeting, Kuala Lumpur, 2025" loading="lazy" width="447" height="447" />
       <figcaption data-i18n="a.expert.session.8th.ascn.annual.m">Expert session, 8th ASCN Annual Meeting, Kuala Lumpur, September 2025. Ceremonies are easy. Building systems is hard.</figcaption>
     </figure>
     ${p("I have been part of ASCN since 2019. Seven annual meetings. Four M&amp;E cycles. Two changes of chair. One change of shepherd. I leave every annual meeting with the same thought: the people in the room understand the problems. The chief smart city officers from Nakhon Si Thammarat and Phnom Penh and Bandar Seri Begawan and Ha Noi have spent years navigating flood drainage and informal settlement formalisation under conditions that no Singapore planning document has had to account for. They know things no knowledge institution could have produced without being there.")}
@@ -3465,8 +3465,32 @@ function gridLawPass() {
     const cs = getComputedStyle(grid);
     if (!cs.display.includes("grid")) continue;
     if (cs.gridTemplateAreas && cs.gridTemplateAreas !== "none") continue;
-    const cols = cs.gridTemplateColumns.split(/\s+/).filter((t) => t && t !== "none").length;
+    // THE LAW'S OWN SPANS ARE CLEARED FIRST.
+    //
+    // An item that spans two columns in a one-column grid forces an implicit
+    // second track, and the explicit track beside it collapses to zero width.
+    // The next pass then reads two columns where the stylesheet says one,
+    // counts the items that no longer have width, and applies the span
+    // again — a state that keeps itself. A window narrowed from the desk to
+    // the phone left thirty-one of the sixty-two library entries at zero
+    // width, their text printed on top of their neighbours.
+    //
+    // So the spans go first, the grid is measured as the stylesheet alone
+    // describes it, and the law is applied to that. Nothing is painted
+    // between the clearing and the applying: it all happens in one frame.
+    for (const k of grid.children) {
+      if (k.classList.contains("is-wide")) k.classList.remove("is-wide");
+      if (k.style.gridColumn) k.style.gridColumn = "";
+      k.style.removeProperty("--span");
+    }
+    const after = getComputedStyle(grid);
+    const cols = after.gridTemplateColumns.split(/\s+/).filter((t) => t && t !== "none").length;
     if (cols < 2) continue;
+    // A track that has collapsed to nothing is a defect, not a column. It is
+    // left alone here and reported by the grid gate, which sweeps the resize
+    // path that every other gate misses.
+    const tracks = after.gridTemplateColumns.split(/\s+/).filter((t) => t && t !== "none");
+    if (tracks.some((t) => parseFloat(t) === 0)) continue;
     const kids = [...grid.children].filter((k) => {
       const kcs = getComputedStyle(k);
       if (kcs.display === "none" || kcs.visibility === "hidden") return false;

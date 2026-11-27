@@ -9,7 +9,7 @@
 // A gate that cannot fail is not evidence. So this test plants the defect,
 // proves the gate goes red, and restores.
 import { test, expect } from '@playwright/test';
-import { measureCost, judge } from '../scripts/audit-cost.mjs';
+import { measureCost, judge, judgeResized, judgeUnstableImages } from '../scripts/audit-cost.mjs';
 import baseline from '../scripts/cost-baseline.json' with { type: 'json' };
 
 test.use({ viewport: { width: 1440, height: 900 } });
@@ -85,5 +85,40 @@ test.describe('page cost', () => {
       }
     }
     expect(missing, `views with no cap: ${missing.join(', ')}`).toEqual([]);
+  });
+
+  test('the gate fails a view that costs more after the window was narrowed', () => {
+    // The cap is a promise about the view. A reader who drags the window
+    // gets a different page, and the promise has to hold there too.
+    const clean = judgeResized({ 'data@390': { screens: 23.38 } }, baseline);
+    expect(clean.failures, 'the shipped view should hold its cap on the resize path').toEqual([]);
+    const broken = judgeResized({ 'data@390': { screens: 35.96 } }, baseline);
+    expect(broken.failures.length, 'the gate did not go red on a view that grew when narrowed').toBeGreaterThan(0);
+    expect(broken.failures[0]).toContain('data@390');
+  });
+
+  test('the gate fails an image that reserves no space until it loads', () => {
+    // An image in the flow with no box of its own makes the view's cost
+    // depend on a timer: the essay measured 25.96 screens before its
+    // photographs arrived and 26.61 after.
+    const rows = [{ view: 'essay', lang: 'en', width: '390', images: [{ sel: 'img.essay-photo', inFlow: true, reserved: false }] }];
+    const failures = judgeUnstableImages(rows);
+    expect(failures.length, 'the unstable image was not reported').toBeGreaterThan(0);
+    expect(failures[0]).toContain('essay');
+  });
+
+  test('the gate does not condemn an image that cannot move the page', () => {
+    // A map tile is absolutely positioned inside a box of fixed size, and an
+    // image inside a box that holds its own space changes nothing.
+    const rows = [{
+      view: 'cities',
+      lang: 'en',
+      width: '390',
+      images: [
+        { sel: 'img.leaflet-tile', inFlow: false, reserved: false },
+        { sel: 'img.essay-photo', inFlow: true, reserved: true },
+      ],
+    }];
+    expect(judgeUnstableImages(rows)).toEqual([]);
   });
 });
