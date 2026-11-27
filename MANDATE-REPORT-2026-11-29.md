@@ -82,7 +82,37 @@ and the names. The four colours are declared once and read by both the bar
 and the key, so they cannot drift apart. The key is two columns of two,
 because four items do not divide into three.
 
-### 2.4 Two links shared one translation key
+### 2.4 Two more gates were measuring one language
+
+The composition gate was repaired, but the **spatial** gate and the **cost**
+gate still measured the site in English only — and the translation round had
+made that matter.
+
+**The spatial gate had never seen a non-Latin page.** Its first honest
+Chinese sweep found six findings, all of them the same one: *"1 block(s)
+stretched inside a closed band"* in the Essay view, at every viewport. The
+block was `P.label` — "来源与延伸阅读" — in a **385px** box with **91px** of
+ink: **4.23 times**, against a ceiling of 3.27. The English label is a
+third longer and came in at 2.5 times, so the English sweep never saw it.
+
+The defect was not in the Chinese text. It was that a **label** was capped
+at the reading measure — the measure caps the running line of *prose*, and
+an eyebrow label has no line to run. Two places in the site already said so
+with `width: fit-content`; the house style was right and only the general
+rule was wrong. A label now takes the width of its own words, up to the
+measure.
+
+**The cost of a page was a fact about English.** Measured, Thai against
+English: **6 views cost more in Thai** — `overview` by 0.09 screens,
+`partners`, `cities` and `news/archive` by 0.03 — and 6 cost less. So a
+cap that only ever held in English was a cap about English. The cap belongs
+to the view, not to one script of it: the gate now measures every view in
+English, Thai and Chinese and holds the cap against the **worst** of the
+three. No cap was raised — English was already the worst for the views that
+were close — and the "only lower it" rule still bites, because an
+improvement is banked only when **every** language is under the cap.
+
+### 2.5 Two links shared one translation key
 
 The showcase's video link and the innovation view's video link both carried
 `audit.open-video`. The selector matched two elements and the browser test
@@ -91,7 +121,7 @@ that asserts the innovation link's target could not resolve.
 **Repair:** the showcase link has its own key. The same text, two different
 files, two different keys.
 
-### 2.5 The dictionary's own words
+### 2.6 The dictionary's own words
 
 Six entries had a corrupt English arm — one of them a published paper's
 title that had been given a Thai rendering, which is the exact defect the
@@ -101,6 +131,79 @@ a key at all, so the page painted the literal key string.
 
 **Repair:** all repaired, the orphans deleted, and the audit now fails on a
 disagreeing group, on a non-Latin English arm, and on an ambiguity.
+
+### 2.7 Round three — what the independent review found, and what it cost
+
+The review of round 2 was read in full and each finding was answered with a
+repair or a reason. Seven of them were real.
+
+**F1 — the project register was dropping a country.** `scripts/extract_ascn_data.py`
+sliced the appendix tables of the four M&E reports by position, so a row
+whose cells wrapped was read as one merged row — and the country column is
+printed only on the first row of a country group, so a row that began with
+the city **Singapore** was read as a country and dropped. **378 rows became
+405**: 27 rows recovered, 3 corrupt rows split into 10, six Viet Nam rows
+(2025 #111–116) relabelled from Thailand, one truncated name restored. The
+register is now rebuilt by `scripts/rebuild-ascn-projects.py` — committed,
+re-runnable, with a `--check` mode — and `scripts/validate-data.mjs` fails
+when a year's appendix rows do not equal the report's own total, and when a
+row is merged or run-on.
+
+**F1b — two published claims were false because of it.** "Vietnam: silent in
+2025" became "Vietnam: the same six projects, four cycles running", and
+"13 projects reported but not in the appendix" became "34 projects, three
+countries, none completed", in all three languages.
+
+**F7 — a deep link of the form `#/<route>` silently rendered the Overview.**
+`app.js` parsed `location.hash.slice(1).split("/")`, so a leading slash
+yielded an empty tab name and `setTab` replaced it with "overview". The
+reviewer's own brief used that form. Fixed, and the sweep that takes its
+route list from the navigation now lands where it says.
+
+**F2 — the measure gate could not see a title or a metadata line.** The
+sweep's selector had no `a` and no `td`, and it skipped any block shorter
+than 120 characters — so a single-line 77-character label was invisible by
+construction. The gate now measures every rendered line it can reach, and
+the law is restated: **prose** ≤ 75 characters *and* ≤ 31.54em; **running
+text** ≤ 410px physical; a **table cell** is bound by its column; **SVG**
+text by its viewBox. The sweep went from **29 failures to 0** in English
+and dark at 1440, 1024 and 390.
+
+**F4 — six peer grids stranded their last card.** The counts are data —
+eleven contact cards, eleven documents, sixty-two library entries — and
+`auto-fill`/`auto-fit` pick the column count from the *width*, not the
+count, which is where strands come from. The stylesheet now says how many
+columns a grid may hold at a given field width; `app.js` settles the
+division at runtime, where the counts are known, and the last item takes
+the columns its row has left. `scripts/audit-grids.mjs` proves it in the
+built site at every viewport: **0 rows end in an empty cell**. The gate
+also caught a real hole on the way — the 5G matrix header labelled four of
+its five columns.
+
+**F5 — 21 controls were under 44px on the phone.** The house rule is 44px
+for a control and the 24px AA bar for a reference link — a publisher's
+name, an institution on a contact card — because 44px would space twenty
+ministry names a third of a metre apart. Both rules are now *proved*, not
+asserted: `scripts/audit-targets.mjs` measures every rendered control at
+390px in four modes, and fails on a control under 44px or a reference link
+under 24px. The controls were repaired: a 30px map button, a 20px "↗", a
+33px download, a 15px language button, a 40px map toggle.
+
+**F6 — five labels were cropped by their own box.** A city name, a country
+name, a focus area and a table head. The overflow gate only ever looked at
+boxes whose overflow was *visible* — boxes that were spilling out — so a box
+that hides what does not fit was the one half of the defect it could not
+see. The gate now measures **cropped** text as well, with the same
+baseline and the same rule that an exception must carry a reason. The
+labels were repaired: they wrap, or their column was given the room.
+
+**F3 — the one-sided voids are still open.** The composition gate now
+reports the class the reviewer found: a band that touches one field edge
+while the opposite edge carries content. It reports **99** of them. The
+archive's 857 × 245px head and the library's ledger were recomposed this
+round; the remaining ones — history, framework, insights, partners,
+record, the essay's end matter — are the owner's call, and the report says
+so rather than hiding them behind a passing exit code.
 
 ---
 
@@ -113,8 +216,15 @@ disagreeing group, on a non-Latin English arm, and on an ambiguity.
 | `audit-overflow.mjs` | every view, in three languages, at three widths: content that does not fit the box that holds it, and SVG text cropped by its own viewBox | `tests/overflow.spec.mjs` — 5 tests |
 | `audit-composition.mjs` | four modes, four sweeps, now genuinely four | `tests/composition.spec.mjs` |
 | `audit-cost.mjs` | every view's cost in screens against a cap that may only be lowered | `tests/cost.spec.mjs` |
+| `audit-grids.mjs` | every peer grid in every view at 1440, 1024 and 390: a row that ends short of its grid's trailing edge, measured in cells rather than pixels | `tests/visual-audit.unit.mjs` — the judge, with a planted row |
+| `audit-targets.mjs` | every rendered control at 390px in four modes: 44px for a control, 24px for a reference link | `tests/visual-audit.unit.mjs` — the judge, with a planted 30px button |
 
-The overflow gate is the new one, and it is the direct answer to the class
+Two of these are new in round three. The **grid gate** is the direct answer
+to a law that had no instrument: a grid's column count must divide its item
+count, or the last item takes the columns its row has left. The **target
+gate** answers a rule the house had written down and never checked.
+
+The overflow gate is the direct answer to the class
 of defect the translation created. Its exceptions live in
 `scripts/overflow-baseline.json`, each with a reason; the gate fails when an
 offender is not recorded, when a recorded offender has **grown**, when one
@@ -235,36 +345,51 @@ Both domains: **LIVE FLOWS PASS**.
 
 Stated plainly, with the evidence.
 
-### 5.1 The two unreproduced claims
+### 5.1 The two claims — reproduced, and repaired
 
-A previous reviewer asserted an **"archive hole"** and a **"77-character
-line"**. Neither has been reproduced, in the rounds that followed or in
-this one.
+This report previously said that a previous reviewer's **"archive hole"** and
+**"77-character line"** could not be reproduced, and recorded them as
+unresolved rather than dismissed. **That was wrong.** The independent review
+of round 2 reproduced both, with measurements, and the reason the house
+could not see them is now on the record:
 
-- **77-character line.** The reading-measure sweep reports the widest line
-  at **27.13em** in Latin, **26.81em** in Thai and **25.59em** in Chinese,
-  against a **31.54em** em ceiling and a **75-character** ceiling for
-  Latin. No 77-character line was found in any view, in any language, at
-  any width. The sweep now also fails when its count and the text it
-  measured disagree, so the number it reports is the number it can prove.
-- **Archive hole.** The archive table measures **351px of content in a
-  351px box** at 390px, with no sideways push and no clipped text. The
-  header row the overflow instrument flags is the visually-hidden row the
-  phone layout uses, with each cell repeating its own label; the instrument
-  now skips a hidden subtree for that reason.
+- **77-character line — reproduced.** The reviewer's census counted
+  **39,311 individually measured rendered lines** across nine language ×
+  viewport sweeps and found **15 lines of exactly 77 characters**, in all
+  three languages: `div.le-title` and `div.le-meta` in the library ledger,
+  and `span.alum-title` on the contacts view. The house sweep could not see
+  them because its selector had no `a` and no `td`, and because it skipped
+  every block shorter than **120 characters** — which a single-line
+  77-character label is by definition. The gate now measures every
+  rendered line it can reach, the law is restated (prose ≤ 75 characters
+  *and* ≤ 31.54em; running text ≤ 410px physical; a table cell is bound by
+  its column; SVG text by its viewBox), and the offenders are repaired: the
+  library ledger was rebuilt as a card grid with the measure applied. The
+  sweep went from **29 failures to 0**.
+- **Archive hole — reproduced.** An empty region of **857 × 245px** in the
+  archive's first screen at 1440, in every language and theme, with running
+  content beside it on 141 of 245 rows. The cause was structural, and it is
+  why the house gate did not see it: the lede was a **359px measure column
+  in a 1211px content box**. There was no column to run out — it was a
+  measure column with 852px of nothing beside it, and the gate was looking
+  for columns that ran out while a neighbour ran on. The archive head is
+  now two columns, and the composition gate measures this class: a band
+  that touches one field edge while the opposite edge carries content is
+  reported as a **one-sided void**. The failure criteria were not loosened.
 
-These are recorded as **unresolved, not as dismissed**. If either is
-reproduced with a selector, a viewport, a language and a measurement, it
-becomes a defect that round.
+"Not reproduced" meant "not looked at". The instrument was blind, and the
+honest statement was about the instrument, not about the site.
 
-### 5.2 The modes that are still only swept by one instrument
+### 5.2 The graphics gate still runs its geometry in one mode
 
-The composition, overflow and measure gates sweep Thai, Chinese and light.
-The **spatial** gate (`audit-sh.mjs`) and the **graphics** gate
-(`verify-graphics.mjs`) still run in one mode each. Thai and Chinese are
-different geometry, and no English-only sweep will ever find the hole that
-a Thai line opens. The spatial and graphics gates should follow the
-composition gate into the other modes.
+The composition, spatial, overflow, measure and translation gates all sweep
+Thai, Chinese and light. The **graphics** gate (`verify-graphics.mjs`) checks
+the language layer in all three — the `lang` attribute, raw keys, and that
+switching language deletes no live content — but its *geometry* checks
+(the longest heading line, the type audit) still run in the default mode.
+The spatial gate now covers that ground, so this is a narrowing rather than
+a gap; it is listed because the instrument that claims to check graphics
+does not yet check them in every script.
 
 ### 5.3 The layout is measured; it is not yet independently reviewed in those modes
 

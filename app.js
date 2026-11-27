@@ -3,7 +3,7 @@ import { applyLang, initLang, currentLang, tx, fill as fillText, t, LANGS } from
 
 /* ============================================================
    ASCN Open Platform — tabbed living observatory
-   Data: data/ascn-v2-data.json (project engine, 378 appendix rows)
+   Data: data/ascn-v2-data.json (project engine, 405 appendix rows)
          data/ascn-knowledge.json (narrative + structured reference)
          data/ascn-cities.json (38 city profiles + geo)
    ============================================================ */
@@ -247,7 +247,12 @@ function setTab(tab, push = true, { preserveIndex = false } = {}) {
 
 // Parse hash into tab + optional sub-route (e.g. #cities/jakarta)
 function routeFromHash({ preserveIndex = false } = {}) {
-  const [tab, sub] = (location.hash || "#overview").slice(1).split("/");
+  // A hash written "#/cities" used to parse as an EMPTY tab name, and
+  // setTab silently answered with the Overview: a shared or bookmarked link
+  // landed on a different view with no warning anywhere. The leading slash
+  // is a separator, not a route name.
+  const raw = (location.hash || "#overview").replace(/^#\/?/, "");
+  const [tab, sub] = raw.split("/");
   setTab(tab, false, { preserveIndex });
   if (tab === "cities" && sub && state.data && state.C) {
     const city = state.C.find((c) => citySlug(c.name) === sub);
@@ -1306,11 +1311,19 @@ function renderInsights() {
   $("#ig-density").innerHTML = `<div class="ig-bars">${densityHtml}</div>${tailHtml}`;
 
   // ── 6. Signal flags ───────────────────────────────────────────────────────
+  // The signals are findings, and a finding has to survive the data. The
+  // first extraction dropped every Singapore row and mislabelled Viet Nam's
+  // six, and two of these four signals were written on top of that: the
+  // "Vietnam is silent in 2025" flag was an artefact of the extraction, and
+  // the "13 projects missing from the appendix" flag counted rows the
+  // extractor had thrown away. The register now carries one row for every
+  // numbered project in all four reports, so both flags were replaced with
+  // what the corrected register actually shows.
   const signals = [
-    { icon: "⊘", cls: "sig-warn", flag: "Vietnam: silent in 2025", body: "Da Nang, Ha Noi, and Ho Chi Minh City — all founding members — appeared consistently through 2022–2024 (6 projects each year). The 2025 cycle shows zero Vietnam rows in the appendix. Whether this reflects delayed reporting or withdrawal from the M&E cycle is not stated in the report. It is the single largest gap in the 2025 record." },
+    { icon: "━", cls: "sig-flat", flag: "Vietnam: the same six projects, four cycles running", body: "Da Nang, Ha Noi, and Ho Chi Minh City report six projects in every cycle — 6 in 2022, 6 in 2023, 6 in 2024, 6 in 2025. The network's other 57 new projects came from everywhere else: Viet Nam's three founding cities added nothing to the register in four years." },
     { icon: "━", cls: "sig-flat", flag: "Health & Well-Being: 6% for four consecutive years", body: "Every other focus area moved. This one did not: 6%, 6%, 6%, 6%. The COVID-19 pandemic — which began one year after ASCN's founding and disrupted urban health systems across the region — produced zero measurable reorientation of the portfolio. That is a finding, not a data gap." },
     { icon: "↑", cls: "sig-note", flag: "Myanmar: steady growth after the 2021 coup", body: "Myanmar's documented projects increased every single cycle: 11 (2022), 12 (2023), 13 (2024), 14 (2025). ASEAN's non-interference principle kept the network intact; the data shows Myanmar among the more active contributors during a period when most international engagement with Naypyidaw was suspended or constrained." },
-    { icon: "△", cls: "sig-gap", flag: "13 projects reported but not in the appendix", body: "The 2025 report declares 134 total projects. The appendix — the row-by-row evidence table from which this platform's data is drawn — contains 121 entries. Thirteen projects have no individual record. Without an appendix entry, a project cannot be cross-referenced against prior cycles or independently verified." },
+    { icon: "△", cls: "sig-gap", flag: "34 projects, three countries, none completed", body: "Thailand (20 projects), Viet Nam (6) and the Philippines (8) hold 34 of the 2025 register's 134 rows, and not one of them has a completed row. All 18 completed rows belong to the seven smaller portfolios: Malaysia and Cambodia have four each, Brunei and Singapore three, Lao PDR two, Indonesia and Myanmar one." },
   ];
   $("#ig-signals").innerHTML = `<div class="ig-signals-grid">${signals.map((s) => `<div class="ig-signal-card ${s.cls}"><div class="ig-sig-icon">${s.icon}</div><strong>${esc(tx(s.flag))}</strong><p>${esc(tx(s.body))}</p></div>`).join("")}</div>`;
   renderDataQuality();
@@ -1795,13 +1808,16 @@ function renderLibrary() {
     const actions = [];
     if (e.file) actions.push(`<a class="le-dl" href="docs/${encodeURIComponent(e.file)}" download data-source-issued>PDF ↓</a>`);
     if (e.url) actions.push(`<a class="le-ext" href="${esc(safeUrl(e.url))}" target="_blank" rel="noopener noreferrer">${esc(tx("View ↗"))}</a>`);
+    // The takeaway is a sibling of the title block, not a child of it: a wide
+    // entry — the one that takes the columns its row has left — has to be
+    // able to put the takeaway in the second column, beside the title.
     return `<div class="lib-entry">
       <span class="le-badge ${esc(e.type)}">${esc(tx(e.type))}</span>
-      <div class="le-body">
+      <div class="le-title-block">
         <div class="le-title" data-source-issued>${esc(e.title)}</div>
         <div class="le-meta" data-source-issued>${esc(e.source)}${e.year ? `\u00A0· ${esc(e.year)}` : ""}${e.category ? `\u00A0· ${esc(e.category)}` : ""}</div>
-        <p class="le-takeaway">${esc(tx(e.takeaway))}</p>
       </div>
+      <p class="le-takeaway">${esc(tx(e.takeaway))}</p>
       <div class="le-actions">${actions.join("")}</div>
     </div>`;
   }).join("");
@@ -3394,6 +3410,7 @@ async function init() {
   wireTheme();
   wireIndexSearch();
   wireShellChrome();
+  wireGridLaw();
   document.querySelector('.skip-link').addEventListener('click',(event)=>{event.preventDefault();document.querySelector('main').focus();document.querySelector('main').scrollIntoView({behavior:'instant'});});
   initFinder();
   routeFromHash();
@@ -3428,6 +3445,76 @@ async function init() {
         </section>`);
     }
   }
+}
+
+/* ---------------- The grid law ----------------
+   A grid's column count must divide its item count, or the last item takes
+   the columns its row has left. The counts are data — eleven contact cards,
+   eleven documents, sixty-two library entries, and the library's count
+   changes with the filter — so the stylesheet cannot know them. The
+   stylesheet says how many columns a grid may hold at a given field width;
+   this settles the division at runtime, where the counts are known.
+
+   auto-fit and auto-fill pick the column count from the width, not from the
+   count, and that is where strands come from. No grid in this site uses
+   them: every grid's column count comes from the count or is set here. */
+const GRID_LAW_GRIDS = ".kpi-grid, .meetings-grid, .document-grid, .download-grid, .contacts-grid, .lib-results";
+
+function gridLawPass() {
+  for (const grid of $$(GRID_LAW_GRIDS)) {
+    const cs = getComputedStyle(grid);
+    if (!cs.display.includes("grid")) continue;
+    if (cs.gridTemplateAreas && cs.gridTemplateAreas !== "none") continue;
+    const cols = cs.gridTemplateColumns.split(/\s+/).filter((t) => t && t !== "none").length;
+    if (cols < 2) continue;
+    const kids = [...grid.children].filter((k) => {
+      const kcs = getComputedStyle(k);
+      if (kcs.display === "none" || kcs.visibility === "hidden") return false;
+      const r = k.getBoundingClientRect();
+      return r.width > 0 && r.height > 0;
+    });
+    if (kids.length < 2) continue;
+    // The last item takes the columns its row has left: with n items in c
+    // columns, the row the last one lands in holds (n - 1) % c items, so the
+    // free columns are c - ((n - 1) % c) and the last item spans exactly
+    // that many. The row then ends complete, with no cell left empty.
+    const last = kids[kids.length - 1];
+    const rem = kids.length % cols;
+    const span = rem === 0 ? 1 : cols - rem + 1;
+    for (const k of kids) {
+      const wide = k === last && span > 1;
+      if (wide) {
+        if (!k.classList.contains("is-wide")) k.classList.add("is-wide");
+        if (k.style.getPropertyValue("--span") !== String(span)) {
+          k.style.gridColumn = `span ${span}`;
+          k.style.setProperty("--span", String(span));
+        }
+      } else {
+        if (k.classList.contains("is-wide")) k.classList.remove("is-wide");
+        if (k.style.gridColumn) {
+          k.style.gridColumn = "";
+          k.style.removeProperty("--span");
+        }
+      }
+    }
+  }
+}
+
+function wireGridLaw() {
+  let queued = false;
+  const run = () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => { queued = false; gridLawPass(); });
+  };
+  // Renders inject markup, the library filter changes the count, and a view
+  // that was hidden becomes visible: all three change what a grid holds, so
+  // the pass runs when the DOM changes, when a view is shown, and when the
+  // window changes width (which changes the field, and so the columns).
+  const observer = new MutationObserver(run);
+  observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden"] });
+  window.addEventListener("resize", run, { passive: true });
+  run();
 }
 
 init();

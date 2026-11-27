@@ -87,3 +87,31 @@ test("upstream failures are not cached and successful collections are cached", a
   assert.equal(writes, 1);
   assert.ok((await successful.json()).articles.length > 0);
 });
+
+test("when the publishers do not answer, the endpoint serves the published snapshot and says so", async (t) => {
+  const originalCaches = globalThis.caches;
+  globalThis.caches = { default: { match: async () => null, put: async () => {} } };
+  t.after(() => { if (originalCaches) globalThis.caches = originalCaches; else delete globalThis.caches; mock.restoreAll(); });
+  const snapshot = {
+    checkedAt: "2026-10-06T18:25:41.044Z",
+    articles: [{ title: "Saved headline", url: "https://example.com/saved", publisher: "Publisher", sourceId: "test", publishedAt: "2026-10-06", countries: ["Singapore"], topics: ["Mobility"], kind: "article" }],
+    sources: [{ id: "test", name: "Publisher", section: "Cities", site: "https://example.com/", status: "ok", articles: 1 }],
+  };
+  const context = {
+    request: new Request("https://example.com/api/news"),
+    waitUntil() {},
+    env: { ASSETS: { fetch: async () => new Response(JSON.stringify(snapshot), { status: 200, headers: { "Content-Type": "application/json" } }) } },
+  };
+  mock.method(globalThis, "fetch", async () => new Response("Unavailable", { status: 503 }));
+  const response = await onRequest(context);
+  assert.equal(response.status, 200);
+  const payload = await response.json();
+  // The list is served, and the answer says it was not checked live.
+  assert.equal(payload.mode, "saved");
+  assert.equal(payload.live, false);
+  assert.equal(payload.articles.length, 1);
+  assert.equal(payload.checkedAt, snapshot.checkedAt);
+  // And the reason each feed gave is still there.
+  assert.ok(payload.sources.every((s) => s.status === "unavailable" && s.reason));
+  mock.restoreAll();
+});

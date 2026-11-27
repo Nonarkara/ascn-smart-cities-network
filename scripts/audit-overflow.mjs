@@ -87,9 +87,10 @@ const NEWS_FIXTURE = {
 export async function measureOverflow(page) {
   return page.evaluate((slack) => {
     const plate = document.querySelector('#plate');
-    if (!plate) return { offenders: [], clipped: [], bleed: 0 };
+    if (!plate) return { offenders: [], clipped: [], cut: [], bleed: 0 };
     const offenders = [];
     const clipped = [];
+    const cut = [];
 
     // A subtree that is visually hidden is not on screen.
     const isHidden = (el) => {
@@ -121,6 +122,39 @@ export async function measureOverflow(page) {
       });
     }
 
+    // Text cropped by a hidden overflow. The old sweep only looked at boxes
+    // whose overflow was VISIBLE — that is, boxes that were spilling out. A
+    // box that hides what does not fit is the other half of the same defect:
+    // the words are still there, and the reader still cannot see them. The
+    // independent review found five of these — a city name, a country name, a
+    // focus area and a table head — all cut by `overflow: hidden`.
+    for (const el of plate.querySelectorAll('*')) {
+      if (el.namespaceURI !== 'http://www.w3.org/1999/xhtml') continue;
+      if (el.clientWidth <= 0 || el.clientHeight <= 0) continue;
+      const cs = getComputedStyle(el);
+      if (cs.overflowX === 'visible' && cs.overflowY === 'visible') continue;
+      if (cs.overflowX === 'auto' || cs.overflowX === 'scroll') continue;
+      if (cs.overflowY === 'auto' || cs.overflowY === 'scroll') continue;
+      if (isHidden(el)) continue;
+      // A map pans its tiles inside a clipped container: the crop belongs to
+      // the map, not to the text. Leaflet's own markup is excluded, and only
+      // it — the site's own boxes are still measured.
+      if (el.closest('[class*="leaflet-"]')) continue;
+      const overX = el.scrollWidth - el.clientWidth;
+      const overY = el.scrollHeight - el.clientHeight;
+      if (overX <= 1 && overY <= 1) continue;
+      const text = (el.textContent || '').trim().replace(/\s+/g, ' ');
+      if (!text) continue;
+      cut.push({
+        tag: el.tagName.toLowerCase(),
+        cls: String(el.className || '').slice(0, 60),
+        over: Math.max(overX, overY),
+        overX,
+        overY,
+        text: text.slice(0, 60),
+      });
+    }
+
     for (const svg of plate.querySelectorAll('svg')) {
       const vb = svg.viewBox && svg.viewBox.baseVal;
       if (!vb || !vb.width) continue;
@@ -141,6 +175,7 @@ export async function measureOverflow(page) {
     return {
       offenders,
       clipped,
+      cut,
       bleed: Math.max(plate.scrollWidth - plate.clientWidth, main ? main.scrollWidth - main.clientWidth : 0),
     };
   }, SLACK);
@@ -175,8 +210,34 @@ export function judge(measured, baseline) {
       failures.push(`${key}: the recorded exception grew — ${over}px now, ${entry.over}px was recorded`);
     }
   }
+  for (const row of measured) {
+    for (const c of row.cut || []) {
+      const key = `${row.route}::${c.cls || c.tag}`;
+      const entry = exceptions[key];
+      if (!entry) {
+        failures.push(`${key}: text is cropped by its own box (${c.overX}px across, ${c.overY}px down) and is not recorded in the baseline`);
+        continue;
+      }
+      if (!entry.reason || !String(entry.reason).trim()) {
+        failures.push(`${key}: recorded as an exception with no reason — no reason means the crop was never explained`);
+        continue;
+      }
+      if (c.over > entry.over + SLACK) {
+        failures.push(`${key}: the recorded crop grew — ${c.over}px now, ${entry.over}px was recorded`);
+      }
+    }
+  }
   for (const [key, entry] of Object.entries(exceptions)) {
     if (!seen.has(key)) stale.push(`${key}: no longer happens (was ${entry.over}px) — remove it from the baseline`);
+  }
+  // Text cropped by a hidden overflow: the same rule as a spill, and the
+  // same baseline. An exception with no reason is a crop nobody explained.
+  for (const row of measured) {
+    for (const c of row.cut || []) {
+      const key = `${row.route}::${c.cls || c.tag}`;
+      seen.add(key);
+      maxOver.set(key, Math.max(maxOver.get(key) || 0, c.over));
+    }
   }
   const clipped = measured.filter((r) => r.clipped.length);
   for (const row of clipped) {

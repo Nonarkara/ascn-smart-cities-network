@@ -107,6 +107,17 @@ try {
     // its content, and it is swept in every language because a defect that
     // reads as a margin in English is a hole in Thai.
     ['Content overflow — every box holds its content, every language', 'node', ['scripts/audit-overflow.mjs']],
+    // The grid law: a grid's column count must divide its item count, or
+    // the last item takes the columns its row has left. The counts are
+    // data, so this is proved in the built site at every viewport.
+    ['Grid law — no row ends in an empty cell', 'node', ['scripts/audit-grids.mjs']],
+    // Touch targets on the phone. A control takes 44px; a reference link is
+    // a footnote and takes the 24px AA bar. The widths of text are a
+    // property of the language, so the phone is swept in every language.
+    ['Touch targets — controls 44px, reference links 24px', 'node', ['scripts/audit-targets.mjs'], { ASCN_TARGET_LANG: 'en' }],
+    ['Touch targets — Thai', 'node', ['scripts/audit-targets.mjs'], { ASCN_TARGET_LANG: 'th' }],
+    ['Touch targets — Chinese', 'node', ['scripts/audit-targets.mjs'], { ASCN_TARGET_LANG: 'zh' }],
+    ['Touch targets — light theme', 'node', ['scripts/audit-targets.mjs'], { ASCN_TARGET_THEME: 'light' }],
     ['Page cost in screens — every view within its cap', 'npm', ['run', 'audit:cost']],
     ['All-view visual captures', 'npm', ['run', 'audit:visual']],
     ['Complete reading-path captures', 'npm', ['run', 'audit:reading']],

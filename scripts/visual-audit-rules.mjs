@@ -55,7 +55,45 @@ export function longestHeadingLine(element) {
 }
 
 // Run in the page. Count each reading line, with independent column runs.
-export function measureRenderedProse(selector) {
+//
+// WHAT IS MEASURED, AND WHY THE OLD SWEEP COULD NOT SEE IT
+//
+// The sweep used to select "p, li, dd, blockquote, figcaption, div, span"
+// and to skip any block holding fewer than 120 characters. Both filters are
+// reasonable on their own; together they made the one instrument that
+// polices the reading measure blind to exactly the lines that were over
+// the ceiling:
+//
+//   * a TABLE CELL is never selected, so the widest line in the projects
+//     table — 82 characters — was never counted;
+//   * a bare LINK is never selected, so the longest line on the site — a
+//     109-character news headline — was never counted;
+//   * a single-line LABEL or METADATA line is shorter than 120 characters
+//     by definition, so the 77-character lines the independent review
+//     measured were skipped as "labels are not prose".
+//
+// The sweep now measures EVERY block that carries its own text, and each
+// line is classified: prose is bound by the law's character band and its em
+// ceiling; running text (a title, a metadata line, a headline, a job title)
+// is bound by the physical measure; a table cell's measure is its column;
+// and SVG text is measured against its viewBox, not against the page.
+export function measureRenderedLines(selector) {
+  // These live INSIDE the function on purpose: page.evaluate() serialises
+  // it, so it cannot see the module's scope.
+  const PROSE_TAGS = new Set(["p", "li", "dd", "blockquote", "figcaption", "caption", "summary"]);
+  // A div or span is PROSE when the design caps it at the reading measure —
+  // that is how this site marks a column of body copy. A title, a metadata
+  // line and a label are not capped, so they are running text: read at a
+  // glance, and held to the physical measure rather than the character band.
+  const cappedAtMeasure = (el) => {
+    const tag = el.tagName.toLowerCase();
+    if (tag !== "div" && tag !== "span") return false;
+    const cs = getComputedStyle(el);
+    if (!cs.maxWidth || cs.maxWidth === "none") return false;
+    const width = parseFloat(cs.maxWidth);
+    if (!Number.isFinite(width)) return false;
+    return width >= 300 && width <= 460;
+  };
   const out = [];
   const segmenter = new Intl.Segmenter(document.documentElement.lang || "en", { granularity: "grapheme" });
   const range = document.createRange();
@@ -82,10 +120,14 @@ export function measureRenderedProse(selector) {
   for (const el of document.querySelectorAll(selector)) {
     if (!isProse(el)) continue;
     const r = el.getBoundingClientRect();
-    if (r.width < 200 || r.height < 8) continue;
-    if ((el.textContent || "").trim().length < 120) continue; // labels are not prose
+    if (r.width < 20 || r.height < 6) continue;
     const cs = getComputedStyle(el);
     if (cs.display === "none" || cs.visibility === "hidden") continue;
+    // SVG text has no CSS box: it is measured against the viewBox, and the
+    // essay's figures are checked there instead.
+    const tag = el.tagName.toLowerCase();
+    const inSvg = !!el.closest("svg");
+    const inTable = !!el.closest("table");
     const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
     // A VISUAL line, not a row of equal `top`. Grouping by the exact top
     // split a line whose glyphs sit at slightly different heights — a bold
@@ -170,7 +212,20 @@ export function measureRenderedProse(selector) {
       // 75-character ceiling while running three measures wide. The width
       // does not lie in any script.
       em: Math.round((longestPx / fontSize) * 100) / 100,
+      // The line's width in pixels — the physical measure, which is what the
+      // running text is held to.
+      pxWide: Math.round(longestPx),
+      // What kind of line this is, and therefore which law binds it.
+      kind: inSvg ? "svg" : inTable ? "cell" : PROSE_TAGS.has(tag) || cappedAtMeasure(el) ? "prose" : "running",
     });
   }
   return out;
+}
+
+// The old entry point, kept for the tests and the graphics sweep: prose
+// only, and only blocks long enough to be a running line.
+export function measureRenderedProse(selector) {
+  return measureRenderedLines(selector)
+    .filter((row) => row.kind === "prose" && row.chars >= 20)
+    .map((row) => row);
 }

@@ -26,6 +26,53 @@
 // The character ceiling stays for Latin, where it is the law's own number.
 export const READING_CEILING_CHARS = 75;
 
+// The physical measure, in pixels: the width of the A5 text block. A line of
+// running text — a title, a metadata line, a headline, a job title — may
+// not run wider than this; type set larger than body size may run to
+// 31.54em of its own size, because a display line is read at a glance and
+// not swept.
+export const PHYSICAL_MEASURE_PX = 410;
+
+// What a measured line breaks.
+//
+//   PROSE   — body copy the reader sweeps continuously: the law's character
+//              band (Latin calibration) and its em ceiling, which means the
+//              same thing in every script.
+//   RUNNING — a title, a metadata line, a headline, a role: the physical
+//              measure, not the character band. A character band does not
+//              apply to a line that is read at a glance, and the independent
+//              review was right that the old sweep never measured these at
+//              all.
+//   CELL    — a table cell: its measure is its column. The overflow gate and
+//              the data gate hold cells; the reading measure does not.
+//   SVG     — text inside a figure: it is measured against the viewBox, and
+//              the essay's figures are checked there.
+export function measureOffenders(found, ceilingEm) {
+  const offenders = [];
+  for (const f of found) {
+    if (f.kind === "cell" || f.kind === "svg") continue;
+    const overChars = f.kind === "prose" && f.chars > READING_CEILING_CHARS;
+    let overEm = false;
+    let why = "";
+    if (f.kind === "prose") {
+      overEm = ceilingEm ? f.em > ceilingEm : false;
+      why = [overChars ? `${f.chars} characters` : null, overEm ? `${f.em}em` : null].filter(Boolean).join(", ");
+    } else {
+      const ceilingPx = f.px <= 13 ? PHYSICAL_MEASURE_PX : Math.round((ceilingEm || 31.54) * f.px);
+      overEm = f.pxWide > ceilingPx;
+      why = `${f.pxWide}px of a ${ceilingPx}px measure`;
+    }
+    if (!overChars && !overEm) continue;
+    offenders.push({
+      ...f,
+      overChars,
+      overEm,
+      why: why || `${f.chars} characters`,
+    });
+  }
+  return offenders;
+}
+
 // The widest prose column the design allows, expressed in em. Read from the
 // page's own tokens so the rule follows the design if the tokens move.
 export async function paperCeilingEm(page) {
@@ -42,22 +89,3 @@ export async function paperCeilingEm(page) {
   });
 }
 
-// What a measured line breaks. A line may be too long in characters (the
-// Latin ceiling) or too wide in em (the script-neutral ceiling). Both are
-// reported; a line that breaks both is reported once, with both numbers.
-export function measureOffenders(found, ceilingEm) {
-  const offenders = [];
-  for (const f of found) {
-    const overChars = f.chars > READING_CEILING_CHARS;
-    const overEm = ceilingEm ? f.em > ceilingEm : false;
-    if (!overChars && !overEm) continue;
-    offenders.push({
-      ...f,
-      overChars,
-      overEm,
-      why: [overChars ? `${f.chars} characters` : null, overEm ? `${f.em}em` : null]
-        .filter(Boolean).join(", "),
-    });
-  }
-  return offenders;
-}

@@ -86,6 +86,14 @@ const VIEWPORTS = [
 
 // A band this wide is a hole; narrower than this it is a gutter.
 const WIDTH_FRACTION = 0.12;
+// A one-sided void also has to be WIDE in absolute terms. On a 390px phone a
+// 48px strip beside a column is the screen's margin, not a hole.
+const MIN_VOID_WIDTH = 120;
+// A one-sided void is REPORTED from this height, even when it is shorter
+// than the failure floor: the archive's hole measured 245px and stopped five
+// rows short of the floor that decides a failure. A void that the gate can
+// name is a void the record can answer.
+const VOID_REPORT_FLOOR = 150;
 // A band this tall runs down the page; shorter than this it is a gap
 // between two things, which is what a gutter is.
 const HEIGHT_FLOOR = 250;
@@ -253,6 +261,30 @@ export async function auditView(page, surface) {
         if (contentLeft && contentRight) break;
       }
       const interior = contentLeft && contentRight;
+      // A MARGIN is empty on both sides of the field; a HOLE is empty on one
+      // side and full on the other. The gate used to test only the interior
+      // case — content on BOTH sides of the band — and therefore let an
+      // EDGE void through: the archive's 852px of nothing beside a 359px
+      // lede, with the whole right half of the field empty and the left
+      // half carrying the text. That is the house's own definition of a
+      // hole, and the independent review measured it at 857 x 245px.
+      //
+      // So: for a band that touches one edge of the field, look at the
+      // OPPOSITE edge in the same rows. If the opposite edge carries
+      // content, the field is not centred and the void is a hole. If the
+      // opposite edge is empty too, the measure is centred and the space is
+      // the page's margin.
+      let oppositeHasContent = false;
+      const edgeBand = best.start === 0 || best.start + best.len >= cols;
+      if (edgeBand && !interior) {
+        const oppositeStart = best.start === 0 ? cols - 25 : 0;
+        const oppositeEnd = best.start === 0 ? cols : 25;
+        for (let row = cur.rowStart; row <= cur.rowEnd && !oppositeHasContent; row++) {
+          const base = row * cols;
+          for (let c = oppositeStart; c < oppositeEnd; c++) if (grid[base + c]) { oppositeHasContent = true; break; }
+        }
+      }
+      const oneSidedVoid = edgeBand && oppositeHasContent && best.len * X_STEP >= MIN_VOID_WIDTH;
       // A rule crossing the band. A rule is a claim about the width of the
       // block beneath it: a hairline that divides two rows, or a 2px ink
       // rule that opens a section.
@@ -323,7 +355,7 @@ export async function auditView(page, surface) {
         widthPct: Math.round((100 * best.len * X_STEP) / width),
         topPx: cur.rowStart * Y_STEP,
         heightPx: (cur.rowEnd - cur.rowStart + 1) * Y_STEP,
-        interior, crossed: heavy || framedShort, framedShort, heavyCrossed, framingRule,
+        interior, crossed: heavy || framedShort, framedShort, heavyCrossed, framingRule, oneSidedVoid,
       });
     }
     cur = null;
@@ -350,6 +382,7 @@ export async function auditView(page, surface) {
 
   const failures = [];
   const margins = [];
+  const voids = [];
   // A band that repeats down a list — the same empty column in every one of
   // twenty records — is a different animal from a single gap in one block. A
   // one-off gap is reported and answered in the audit record; a repeating one
@@ -362,8 +395,18 @@ export async function auditView(page, surface) {
   }
   for (const band of bands) {
     const big = band.widthPct >= WIDTH_FRACTION * 100 && band.heightPx >= HEIGHT_FLOOR;
-    if (!big) continue;
     const record = { ...band, contentWidth: Math.round(width), contentHeight: Math.round(height) };
+    if (!big) {
+      // A void shorter than the failure floor cannot fail the gate, but it
+      // is still a hole the reader can see, so it is reported.
+      if (band.oneSidedVoid && band.heightPx >= VOID_REPORT_FLOOR && band.widthPx >= MIN_VOID_WIDTH) voids.push(record);
+      continue;
+    }
+    // The failure criteria are the house's own: a band is interior, or a rule
+    // crosses it. A one-sided void is a hole the reader can see, but it is
+    // REPORTED (above), not failed here: the house's reading measure puts a
+    // column of text in a wide field, and whether that space is margin or a
+    // void is a judgement the record answers, not a number the gate owns.
     if (band.interior || band.crossed) {
       if (band.framedShort && !band.heavyCrossed) {
         const key = Math.round(band.x0 / 16) + ':' + Math.round(band.x1 / 16);
@@ -375,13 +418,13 @@ export async function auditView(page, surface) {
   }
   failures.sort((a, b) => b.widthPx * b.heightPx - a.widthPx * a.heightPx);
   margins.sort((a, b) => b.widthPx * b.heightPx - a.widthPx * a.heightPx);
-  return { contentWidth: Math.round(width), contentHeight: Math.round(height), failures, margins };
+  return { contentWidth: Math.round(width), contentHeight: Math.round(height), failures, margins, voids };
 }
 
 async function main() {
   await mkdir(outDir, { recursive: true });
   const browser = await chromium.launch();
-  const report = { base, startedAt: new Date().toISOString(), viewports: VIEWPORTS.map((v) => v.name), lang, theme, views: [], failures: [], margins: [] };
+  const report = { base, startedAt: new Date().toISOString(), viewports: VIEWPORTS.map((v) => v.name), lang, theme, views: [], failures: [], margins: [], voids: [] };
 
   for (const vp of VIEWPORTS) {
     const page = await browser.newPage({ viewport: { width: vp.width, height: vp.height } });
@@ -419,6 +462,7 @@ async function main() {
       report.views.push(entry);
       for (const f of result.failures) report.failures.push({ route, viewport: vp.name, ...f });
       for (const m of result.margins) report.margins.push({ route, viewport: vp.name, ...m });
+      for (const v of result.voids) report.voids.push({ route, viewport: vp.name, ...v });
     }
     await page.close();
   }
@@ -441,7 +485,13 @@ async function main() {
   for (const m of report.margins) {
     console.log(`  ${m.route} @${m.viewport}: ${m.widthPx}px (${m.widthPct}%) x ${m.heightPx}px at x=${m.x0}..${m.x1}`);
   }
-  console.log(`\n${report.failures.length} failure(s), ${report.margins.length} margin(s).`);
+  console.log('\nComposition bands — one-sided voids (reported: the field is not centred)');
+  if (!report.voids.length) console.log('  none');
+  for (const v of report.voids.slice(0, 40)) {
+    console.log(`  ${v.route} @${v.viewport}: ${v.widthPx}px (${v.widthPct}%) x ${v.heightPx}px at x=${v.x0}..${v.x1}`);
+  }
+  if (report.voids.length > 40) console.log(`  ... and ${report.voids.length - 40} more`);
+  console.log(`\n${report.failures.length} failure(s), ${report.margins.length} margin(s), ${report.voids.length} one-sided void(s).`);
 
   if (report.failures.length) {
     console.error(`\nComposition gate failed: ${report.failures.length} band(s) of empty content area beside content.`);

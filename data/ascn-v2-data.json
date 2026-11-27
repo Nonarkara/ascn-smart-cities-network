@@ -1,14 +1,25 @@
 {
   "metadata": {
     "title": "ASEAN Smart Cities Network V2 Analytics Dataset",
-    "generated_from": "Official ASCN public reports downloaded into .tmp/ascn-sources",
-    "generated_at": "2026-06-20",
+    "generated_from": "Official ASCN public reports committed under docs/ and read by scripts/rebuild-ascn-projects.py",
+    "generated_at": "2026-11-29",
     "raw_pdfs_committed": false,
     "notes": [
-      "Rows extracted from PDF appendices may require manual cleanup where source tables wrap across lines.",
+      "Every project row is read from the printed table of the report named in `sources`, one row per numbered project.",
       "2022 and 2023 implementation counts are rounded estimates derived from published percentages.",
       "Personal contact-list details are not exposed in this public JSON; only document metadata is cited."
-    ]
+    ],
+    "source_review": {
+      "reviewed": "2026-11-29",
+      "method": "The four committed M&E reports were read again, row by row, against the register.",
+      "found": [
+        "Three rows had several numbered rows merged into one field, so a project name landed in the city column.",
+        "Twenty-seven rows were missing: every Singapore row, and every row whose predecessor wrapped across a line.",
+        "Six Viet Nam rows (2025, 111-116) were labelled Thailand.",
+        "One project name had lost its last word (2025, 41)."
+      ],
+      "repaired": "The register was rebuilt from the reports; the row count now equals each report's own total."
+    }
   },
   "network": {
     "established": "2018-04-28",
@@ -207,11 +218,11 @@
     },
     "appendix_summaries": {
       "2022": {
-        "row_count": 74,
+        "row_count": 77,
         "by_country": {
           "Brunei Darussalam": 5,
           "Cambodia": 7,
-          "Indonesia": 8,
+          "Indonesia": 11,
           "Lao PDR": 6,
           "Malaysia": 15,
           "Myanmar": 11,
@@ -223,9 +234,9 @@
         "by_focus": {
           "Built Infrastructure": 19,
           "Civic & Social": 22,
-          "Health & Well-Being": 3,
+          "Health & Well-Being": 5,
           "Industry & Innovation": 4,
-          "Quality Environment": 16,
+          "Quality Environment": 17,
           "Safety & Security": 10
         },
         "top_cities": [
@@ -234,8 +245,16 @@
             "projects": 5
           },
           {
+            "city": "Banyuwangi",
+            "projects": 5
+          },
+          {
             "city": "Kuala Lumpur",
             "projects": 5
+          },
+          {
+            "city": "Jakarta",
+            "projects": 4
           },
           {
             "city": "Luang Prabang",
@@ -258,14 +277,6 @@
             "projects": 3
           },
           {
-            "city": "Banyuwangi",
-            "projects": 3
-          },
-          {
-            "city": "Jakarta",
-            "projects": 3
-          },
-          {
             "city": "Kota Kinabalu",
             "projects": 3
           },
@@ -280,11 +291,11 @@
         ]
       },
       "2023": {
-        "row_count": 82,
+        "row_count": 86,
         "by_country": {
           "Brunei Darussalam": 7,
           "Cambodia": 8,
-          "Indonesia": 10,
+          "Indonesia": 14,
           "Lao PDR": 6,
           "Malaysia": 15,
           "Myanmar": 12,
@@ -295,16 +306,20 @@
         },
         "by_focus": {
           "Built Infrastructure": 20,
-          "Civic & Social": 23,
-          "Health & Well-Being": 4,
+          "Civic & Social": 25,
+          "Health & Well-Being": 5,
           "Industry & Innovation": 8,
-          "Quality Environment": 17,
+          "Quality Environment": 18,
           "Safety & Security": 10
         },
         "top_cities": [
           {
             "city": "Bandar Seri Begawan",
             "projects": 7
+          },
+          {
+            "city": "Banyuwangi",
+            "projects": 5
           },
           {
             "city": "Makassar",
@@ -327,6 +342,10 @@
             "projects": 4
           },
           {
+            "city": "Jakarta",
+            "projects": 4
+          },
+          {
             "city": "Luang Prabang",
             "projects": 4
           },
@@ -339,27 +358,19 @@
             "projects": 4
           },
           {
-            "city": "Banyuwangi",
-            "projects": 3
-          },
-          {
             "city": "Kota Kinabalu",
-            "projects": 3
-          },
-          {
-            "city": "Kuching",
             "projects": 3
           }
         ]
       },
       "2024": {
-        "row_count": 101,
+        "row_count": 108,
         "by_country": {
-          "Brunei Darussalam": 5,
+          "Brunei Darussalam": 7,
           "Cambodia": 15,
-          "Indonesia": 12,
-          "Lao PDR": 6,
-          "Malaysia": 14,
+          "Indonesia": 15,
+          "Lao PDR": 7,
+          "Malaysia": 15,
           "Myanmar": 13,
           "Philippines": 6,
           "Singapore": 5,
@@ -368,27 +379,35 @@
         },
         "by_focus": {
           "Built Infrastructure": 28,
-          "Civic & Social": 25,
-          "Health & Well-Being": 5,
+          "Civic & Social": 28,
+          "Health & Well-Being": 6,
           "Industry & Innovation": 14,
-          "Quality Environment": 18,
-          "Safety & Security": 11
+          "Quality Environment": 20,
+          "Safety & Security": 12
         },
         "top_cities": [
           {
-            "city": "Siem Reap",
-            "projects": 6
+            "city": "Bandar Seri Begawan",
+            "projects": 7
           },
           {
-            "city": "Bandar Seri Begawan",
-            "projects": 5
+            "city": "Siem Reap",
+            "projects": 6
           },
           {
             "city": "Phnom Penh",
             "projects": 5
           },
           {
+            "city": "Banyuwangi",
+            "projects": 5
+          },
+          {
             "city": "Makassar",
+            "projects": 5
+          },
+          {
+            "city": "Luang Prabang",
             "projects": 5
           },
           {
@@ -412,39 +431,32 @@
             "projects": 5
           },
           {
-            "city": "Chiang Mai",
-            "projects": 4
-          },
-          {
-            "city": "Banyuwangi",
-            "projects": 3
-          },
-          {
             "city": "Jakarta",
-            "projects": 3
+            "projects": 4
           }
         ]
       },
       "2025": {
-        "row_count": 121,
+        "row_count": 134,
         "by_country": {
-          "Brunei Darussalam": 4,
+          "Brunei Darussalam": 7,
           "Cambodia": 17,
-          "Indonesia": 13,
+          "Indonesia": 18,
           "Lao PDR": 9,
-          "Malaysia": 26,
+          "Malaysia": 29,
           "Myanmar": 14,
           "Philippines": 8,
-          "Singapore": 4,
-          "Thailand": 26
+          "Singapore": 6,
+          "Thailand": 20,
+          "Viet Nam": 6
         },
         "by_focus": {
           "Built Infrastructure": 32,
-          "Civic & Social": 29,
-          "Health & Well-Being": 7,
-          "Industry & Innovation": 13,
-          "Quality Environment": 22,
-          "Safety & Security": 18
+          "Civic & Social": 34,
+          "Health & Well-Being": 8,
+          "Industry & Innovation": 16,
+          "Quality Environment": 25,
+          "Safety & Security": 19
         },
         "top_cities": [
           {
@@ -452,11 +464,27 @@
             "projects": 8
           },
           {
+            "city": "Bandar Seri Begawan",
+            "projects": 7
+          },
+          {
             "city": "Nay Pyi Taw",
             "projects": 6
           },
           {
+            "city": "Singapore",
+            "projects": 6
+          },
+          {
             "city": "Phnom Penh",
+            "projects": 5
+          },
+          {
+            "city": "Banyuwangi",
+            "projects": 5
+          },
+          {
+            "city": "Jakarta",
             "projects": 5
           },
           {
@@ -468,32 +496,16 @@
             "projects": 5
           },
           {
+            "city": "Kuala Lumpur",
+            "projects": 5
+          },
+          {
+            "city": "Kuching",
+            "projects": 5
+          },
+          {
             "city": "Putrajaya",
             "projects": 5
-          },
-          {
-            "city": "Mandalay",
-            "projects": 5
-          },
-          {
-            "city": "Bandar Seri Begawan",
-            "projects": 4
-          },
-          {
-            "city": "Vientiane",
-            "projects": 4
-          },
-          {
-            "city": "Ipoh",
-            "projects": 4
-          },
-          {
-            "city": "Kota Kinabalu",
-            "projects": 4
-          },
-          {
-            "city": "Kuala Lumpur",
-            "projects": 4
           }
         ]
       }
@@ -653,6 +665,26 @@
     {
       "report_year": 2022,
       "status": "ongoing/planning",
+      "number": 16,
+      "country": "Indonesia",
+      "city": "Banyuwangi",
+      "project": "Caring for Stunting",
+      "focus_area": "Health & Well-Being",
+      "source_page": 22
+    },
+    {
+      "report_year": 2022,
+      "status": "ongoing/planning",
+      "number": 17,
+      "country": "Indonesia",
+      "city": "Banyuwangi",
+      "project": "Sustainable Waste Management",
+      "focus_area": "Quality Environment",
+      "source_page": 22
+    },
+    {
+      "report_year": 2022,
+      "status": "ongoing/planning",
       "number": 18,
       "country": "Indonesia",
       "city": "Jakarta",
@@ -678,6 +710,16 @@
       "city": "Jakarta",
       "project": "JAKI",
       "focus_area": "Civic & Social",
+      "source_page": 22
+    },
+    {
+      "report_year": 2022,
+      "status": "ongoing/planning",
+      "number": 21,
+      "country": "Indonesia",
+      "city": "Jakarta",
+      "project": "Corona Website",
+      "focus_area": "Health & Well-Being",
       "source_page": 22
     },
     {
@@ -1423,6 +1465,26 @@
     {
       "report_year": 2023,
       "status": "ongoing/planning",
+      "number": 19,
+      "country": "Indonesia",
+      "city": "Banyuwangi",
+      "project": "Caring for Stunting",
+      "focus_area": "Health & Well-Being",
+      "source_page": 21
+    },
+    {
+      "report_year": 2023,
+      "status": "ongoing/planning",
+      "number": 20,
+      "country": "Indonesia",
+      "city": "Banyuwangi",
+      "project": "Sustainable Waste Management",
+      "focus_area": "Quality Environment",
+      "source_page": 21
+    },
+    {
+      "report_year": 2023,
+      "status": "ongoing/planning",
       "number": 21,
       "country": "Indonesia",
       "city": "Jakarta",
@@ -1438,6 +1500,26 @@
       "city": "Jakarta",
       "project": "JakLingko",
       "focus_area": "Built Infrastructure",
+      "source_page": 21
+    },
+    {
+      "report_year": 2023,
+      "status": "ongoing/planning",
+      "number": 23,
+      "country": "Indonesia",
+      "city": "Jakarta",
+      "project": "JAKI",
+      "focus_area": "Civic & Social",
+      "source_page": 21
+    },
+    {
+      "report_year": 2023,
+      "status": "ongoing/planning",
+      "number": 24,
+      "country": "Indonesia",
+      "city": "Jakarta",
+      "project": "Jakarta Smart City Goes to School",
+      "focus_area": "Civic & Social",
       "source_page": 21
     },
     {
@@ -2263,6 +2345,26 @@
     {
       "report_year": 2024,
       "status": "ongoing/planning",
+      "number": 21,
+      "country": "Indonesia",
+      "city": "Banyuwangi",
+      "project": "Caring for Stunting",
+      "focus_area": "Health & Well-Being",
+      "source_page": 27
+    },
+    {
+      "report_year": 2024,
+      "status": "ongoing/planning",
+      "number": 22,
+      "country": "Indonesia",
+      "city": "Banyuwangi",
+      "project": "Sustainable Waste Management",
+      "focus_area": "Quality Environment",
+      "source_page": 27
+    },
+    {
+      "report_year": 2024,
+      "status": "ongoing/planning",
       "number": 23,
       "country": "Indonesia",
       "city": "Jakarta",
@@ -2287,6 +2389,16 @@
       "country": "Indonesia",
       "city": "Jakarta",
       "project": "JAKI",
+      "focus_area": "Civic & Social",
+      "source_page": 28
+    },
+    {
+      "report_year": 2024,
+      "status": "ongoing/planning",
+      "number": 26,
+      "country": "Indonesia",
+      "city": "Jakarta",
+      "project": "Jakarta Smart City Goes to School",
       "focus_area": "Civic & Social",
       "source_page": 28
     },
@@ -3003,6 +3115,26 @@
     {
       "report_year": 2024,
       "status": "completed",
+      "number": 1,
+      "country": "Brunei Darussalam",
+      "city": "Bandar Seri Begawan",
+      "project": "National Information Hub",
+      "focus_area": "Civic & Social",
+      "source_page": 31
+    },
+    {
+      "report_year": 2024,
+      "status": "completed",
+      "number": 2,
+      "country": "Brunei Darussalam",
+      "city": "Bandar Seri Begawan",
+      "project": "Clean River Management",
+      "focus_area": "Quality Environment",
+      "source_page": 31
+    },
+    {
+      "report_year": 2024,
+      "status": "completed",
       "number": 3,
       "country": "Cambodia",
       "city": "Phnom Penh",
@@ -3035,9 +3167,29 @@
       "status": "completed",
       "number": 6,
       "country": "Lao PDR",
-      "city": "Luang Prabang Smart City Planning and Development",
-      "project": "7. Luang Prabang Smart and Integrated Urban Strategy 8. Malaysia Johor Bahru Iskandar Malaysia Integrated Urban Services Program Safety & Security",
+      "city": "Luang Prabang",
+      "project": "Smart City Planning and Development",
       "focus_area": "Civic & Social",
+      "source_page": 31
+    },
+    {
+      "report_year": 2024,
+      "status": "completed",
+      "number": 7,
+      "country": "Lao PDR",
+      "city": "Luang Prabang",
+      "project": "Smart and Integrated Urban Strategy",
+      "focus_area": "Civic & Social",
+      "source_page": 31
+    },
+    {
+      "report_year": 2024,
+      "status": "completed",
+      "number": 8,
+      "country": "Malaysia",
+      "city": "Johor Bahru",
+      "project": "Iskandar Malaysia Integrated Urban Services Program",
+      "focus_area": "Safety & Security",
       "source_page": 31
     },
     {
@@ -3263,6 +3415,26 @@
     {
       "report_year": 2025,
       "status": "ongoing/planning",
+      "number": 20,
+      "country": "Indonesia",
+      "city": "Banyuwangi",
+      "project": "Caring for Stunting",
+      "focus_area": "Health & Well-Being",
+      "source_page": 28
+    },
+    {
+      "report_year": 2025,
+      "status": "ongoing/planning",
+      "number": 21,
+      "country": "Indonesia",
+      "city": "Banyuwangi",
+      "project": "Sustainable Waste Management",
+      "focus_area": "Quality Environment",
+      "source_page": 28
+    },
+    {
+      "report_year": 2025,
+      "status": "ongoing/planning",
       "number": 22,
       "country": "Indonesia",
       "city": "Jakarta",
@@ -3278,6 +3450,26 @@
       "city": "Jakarta",
       "project": "JakLingko",
       "focus_area": "Built Infrastructure",
+      "source_page": 28
+    },
+    {
+      "report_year": 2025,
+      "status": "ongoing/planning",
+      "number": 24,
+      "country": "Indonesia",
+      "city": "Jakarta",
+      "project": "JAKI",
+      "focus_area": "Civic & Social",
+      "source_page": 28
+    },
+    {
+      "report_year": 2025,
+      "status": "ongoing/planning",
+      "number": 25,
+      "country": "Indonesia",
+      "city": "Jakarta",
+      "project": "Jakarta Smart City Goes to School",
+      "focus_area": "Civic & Social",
       "source_page": 28
     },
     {
@@ -3436,7 +3628,7 @@
       "number": 41,
       "country": "Lao PDR",
       "city": "Vientiane",
-      "project": "Vientiane Integrated Urban Information GIS-based Opendata (VirGo)",
+      "project": "Vientiane Integrated Urban Information GIS-based Opendata (VirGo) Platform",
       "focus_area": "Civic & Social",
       "source_page": 29
     },
@@ -4134,7 +4326,7 @@
       "report_year": 2025,
       "status": "ongoing/planning",
       "number": 111,
-      "country": "Thailand",
+      "country": "Viet Nam",
       "city": "Da Nang",
       "project": "Intelligent Operation Centre",
       "focus_area": "Safety & Security",
@@ -4144,7 +4336,7 @@
       "report_year": 2025,
       "status": "ongoing/planning",
       "number": 112,
-      "country": "Thailand",
+      "country": "Viet Nam",
       "city": "Da Nang",
       "project": "Smart Water Management System",
       "focus_area": "Quality Environment",
@@ -4154,7 +4346,7 @@
       "report_year": 2025,
       "status": "ongoing/planning",
       "number": 113,
-      "country": "Thailand",
+      "country": "Viet Nam",
       "city": "Ha Noi",
       "project": "Intelligent Operation Centre",
       "focus_area": "Safety & Security",
@@ -4164,7 +4356,7 @@
       "report_year": 2025,
       "status": "ongoing/planning",
       "number": 114,
-      "country": "Thailand",
+      "country": "Viet Nam",
       "city": "Ha Noi",
       "project": "Transport Operation and Surveillance Centre",
       "focus_area": "Built Infrastructure",
@@ -4174,7 +4366,7 @@
       "report_year": 2025,
       "status": "ongoing/planning",
       "number": 115,
-      "country": "Thailand",
+      "country": "Viet Nam",
       "city": "Ho Chi Minh City",
       "project": "Integrated Operation Centre",
       "focus_area": "Civic & Social",
@@ -4184,11 +4376,41 @@
       "report_year": 2025,
       "status": "ongoing/planning",
       "number": 116,
-      "country": "Thailand",
+      "country": "Viet Nam",
       "city": "Ho Chi Minh City",
       "project": "Integrated and Unified Emergency Response Centre",
       "focus_area": "Safety & Security",
       "source_page": 32
+    },
+    {
+      "report_year": 2025,
+      "status": "completed",
+      "number": 1,
+      "country": "Brunei Darussalam",
+      "city": "Bandar Seri Begawan",
+      "project": "National Information Hub",
+      "focus_area": "Civic & Social",
+      "source_page": 33
+    },
+    {
+      "report_year": 2025,
+      "status": "completed",
+      "number": 2,
+      "country": "Brunei Darussalam",
+      "city": "Bandar Seri Begawan",
+      "project": "Clean River Management",
+      "focus_area": "Quality Environment",
+      "source_page": 33
+    },
+    {
+      "report_year": 2025,
+      "status": "completed",
+      "number": 3,
+      "country": "Brunei Darussalam",
+      "city": "Bandar Seri Begawan",
+      "project": "Digital Payment Hub",
+      "focus_area": "Industry & Innovation",
+      "source_page": 33
     },
     {
       "report_year": 2025,
@@ -4233,6 +4455,16 @@
     {
       "report_year": 2025,
       "status": "completed",
+      "number": 8,
+      "country": "Indonesia",
+      "city": "Banyuwangi",
+      "project": "Creating Inclusive Economic Growth through Tourism-Based Development",
+      "focus_area": "Civic & Social",
+      "source_page": 33
+    },
+    {
+      "report_year": 2025,
+      "status": "completed",
       "number": 9,
       "country": "Lao PDR",
       "city": "Luang Prabang",
@@ -4255,8 +4487,38 @@
       "status": "completed",
       "number": 11,
       "country": "Malaysia",
-      "city": "Johor Bahru Iskandar",
-      "project": "Integrated Urban Services Program Safety & Security 12. Johor Bahru Management of Water Resources and Distribution Quality Environment 13. Kuala Lumpur OSC 3.0 Plus Online 14. Kuching Introduction of Blockchain Technology",
+      "city": "Johor Bahru",
+      "project": "Iskandar Malaysia Integrated Urban Services Program",
+      "focus_area": "Safety & Security",
+      "source_page": 33
+    },
+    {
+      "report_year": 2025,
+      "status": "completed",
+      "number": 12,
+      "country": "Malaysia",
+      "city": "Johor Bahru",
+      "project": "Management of Water Resources and Distribution",
+      "focus_area": "Quality Environment",
+      "source_page": 33
+    },
+    {
+      "report_year": 2025,
+      "status": "completed",
+      "number": 13,
+      "country": "Malaysia",
+      "city": "Kuala Lumpur",
+      "project": "OSC 3.0 Plus Online",
+      "focus_area": "Civic & Social",
+      "source_page": 33
+    },
+    {
+      "report_year": 2025,
+      "status": "completed",
+      "number": 14,
+      "country": "Malaysia",
+      "city": "Kuching",
+      "project": "Introduction of Blockchain Technology",
       "focus_area": "Civic & Social",
       "source_page": 33
     },
@@ -4275,9 +4537,29 @@
       "status": "completed",
       "number": 16,
       "country": "Singapore",
-      "city": "E-Payments Industry & Innovation 17.",
-      "project": "National Digital Identity 18. Smart Nation 1.0 Initiatives Industry & Innovation",
+      "city": "Singapore",
+      "project": "E-Payments",
+      "focus_area": "Industry & Innovation",
+      "source_page": 33
+    },
+    {
+      "report_year": 2025,
+      "status": "completed",
+      "number": 17,
+      "country": "Singapore",
+      "city": "Singapore",
+      "project": "National Digital Identity",
       "focus_area": "Civic & Social",
+      "source_page": 33
+    },
+    {
+      "report_year": 2025,
+      "status": "completed",
+      "number": 18,
+      "country": "Singapore",
+      "city": "Singapore",
+      "project": "Smart Nation 1.0 Initiatives",
+      "focus_area": "Industry & Innovation",
       "source_page": 33
     }
   ],

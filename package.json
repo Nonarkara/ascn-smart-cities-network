@@ -33,7 +33,9 @@
     "audit:measure": "node scripts/audit-measure.mjs",
     "audit:overflow": "node scripts/audit-overflow.mjs",
     "check:release": "node scripts/check-release.mjs",
-    "audit:reading": "node scripts/capture-reading-path.mjs"
+    "audit:reading": "node scripts/capture-reading-path.mjs",
+    "audit:grids": "node scripts/audit-grids.mjs",
+    "audit:targets": "node scripts/audit-targets.mjs"
   },
   "devDependencies": {
     "@fontsource/archivo": "^5.3.0",

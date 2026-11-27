@@ -92,6 +92,13 @@ for (const report of engine.reports || []) {
 const validYears = new Set(reportYears);
 const countrySet = new Set(citiesDoc.cities.map((city) => city.country));
 let artifactRows = 0;
+// A run-on row is one that swallowed its neighbours: several numbered rows
+// merged into a single field. The first extraction produced three of them
+// and they reached the published site — the last row of the projects table
+// carried a project name in its CITY cell. A row whose text holds another
+// row's number, or that is longer than any printed project name, is an
+// extraction artefact and now fails the build instead of warning.
+const RUN_ON = /(?:^|\s)\d{1,3}\.\s+[A-ZÀ-Ỹ]/;
 for (const [index, project] of (engine.projects || []).entries()) {
   for (const field of requiredProjectFields) {
     if (!(field in project) || project[field] === "") fail(errors, `Project row ${index + 1}: missing ${field}.`);
@@ -99,16 +106,25 @@ for (const [index, project] of (engine.projects || []).entries()) {
   if (!validYears.has(project.report_year)) fail(errors, `Project row ${index + 1}: unknown report_year ${project.report_year}.`);
   if (!countrySet.has(project.country)) fail(errors, `Project row ${index + 1}: unknown country "${project.country}".`);
   if (!focusAreas.has(project.focus_area)) fail(errors, `Project row ${index + 1}: unknown focus area "${project.focus_area}".`);
-  if (`${project.city}`.length > 60 || /^\d+\.?$/.test(`${project.city}`)) artifactRows++;
+  const row = `${project.city} ${project.project}`;
+  if (RUN_ON.test(row) || `${project.project}`.length > 90) {
+    artifactRows++;
+    fail(errors, `Project row ${index + 1}: looks like merged PDF rows — "${String(project.project).slice(0, 70)}".`);
+  }
 }
 if (artifactRows) warn(warnings, `${artifactRows} project rows look like wrapped-PDF extraction artifacts; keep methodology caveats visible.`);
 
 const projectsByYear = countBy(engine.projects || [], "report_year");
 for (const report of engine.reports || []) {
   const appendixRows = projectsByYear.get(report.year) || 0;
+  // The register is the row-by-row evidence for the report's own total, so
+  // the two must agree. A shortfall used to be a warning, and the register
+  // sat thirteen rows short of 2025 for years: the row-by-row extraction
+  // dropped every Singapore row and every row whose predecessor wrapped,
+  // and the warning was read past every time. It fails now.
   if (appendixRows > report.total_projects) fail(errors, `${report.year}: appendix rows exceed official report total.`);
   if (appendixRows < report.total_projects) {
-    warn(warnings, `${report.year}: ${report.total_projects - appendixRows} official projects lack individual appendix rows.`);
+    fail(errors, `${report.year}: ${report.total_projects - appendixRows} official projects have no appendix row. The register must carry one row per numbered project.`);
   }
 }
 

@@ -3,7 +3,7 @@ import { chromium, devices } from "@playwright/test";
 import { createHash } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
-import { outsidePalette, shorterMeasure, longestHeadingLine, mediaCaptionFits, renderedTypeSizes, measureRenderedProse } from "./visual-audit-rules.mjs";
+import { outsidePalette, shorterMeasure, longestHeadingLine, mediaCaptionFits, renderedTypeSizes, measureRenderedLines } from "./visual-audit-rules.mjs";
 
 const BASE = process.env.ASCN_TEST_URL || "http://127.0.0.1:4187";
 const fetch = (input, options = {}) => globalThis.fetch(input, { ...options, signal: options.signal || AbortSignal.timeout(20000) });
@@ -393,10 +393,10 @@ try {
   for (const v of views) {
     await page.goto(`${BASE}/#${v}`, { waitUntil: "domcontentloaded" });
     await waitForAuditRoute(page, v);
-    const found = await page.evaluate(measureRenderedProse, "p, li, dd, blockquote, figcaption, div, span");
+    const found = await page.evaluate(measureRenderedLines, "p, li, dd, blockquote, figcaption, div, span, a, td, th, dt, strong, em, b, i, small, label, button, h1, h2, h3, h4, h5, h6, time, summary, caption, cite, legend, output, mark");
     for (const f of found) {
       if (f.chars > worst.chars) worst = { chars: f.chars, where: `${v} ${f.sel} @${f.px}px @${vp.width}`, line: f.line };
-      if (f.chars > 75) offenders.push(`${v} ${f.sel}=${f.chars} @${vp.width}px`);
+      if (f.kind === "prose" && f.chars > 75) offenders.push(`${v} ${f.sel}=${f.chars} @${vp.width}px`);
       // The count must be the count of the line it reports. An independent
       // review of this site found the sweep reporting 73 characters for a
       // line the reader could see as longer: the instrument grouped glyphs

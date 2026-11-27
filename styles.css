@@ -465,6 +465,37 @@ p, li, dd, blockquote, figcaption, .lede {
    its own words, up to the measure. */
 .label { width: fit-content; max-width: var(--measure); }
 
+/* ---------- Running text: the physical measure ----------
+   The law above governs PROSE — the running line the reader sweeps. A line
+   that is read at a glance has a different measure, and it was the lines the
+   project's own sweep could not see: table cells and bare links were never
+   selected, and any block holding fewer than 120 characters was skipped as
+   "labels are not prose". The independent review measured those lines — a
+   109-character news headline, a 96-character metadata line, an 82-character
+   table cell — and the sweep reported a clean site.
+
+   So the sweep now measures every line it can see, and a running line is
+   held to the physical measure: the width of the A5 text block, 410px. Type
+   set larger than body size may run to 31.54em of its own size, because a
+   display line is looked at, not swept.
+
+   These caps are the repair. Each one was measured over the 75-character or
+   the 410px ceiling before it was written. */
+.le-title, .le-meta,
+.alum-title,
+.cities-rel-desc,
+.impact-note,
+.author-summary-role,
+.essay-series-date,
+.archive-pending-head strong,
+.news-story h2,
+.review-record h2,
+.bio-summary-text span { display: block; max-width: var(--measure); }
+/* A review note is prose the reader scans: it carries a date, a publisher
+   and a question. It was set at 54ch — 430px — which is past the ceiling
+   even at its own size. */
+.review-note { max-width: var(--measure); }
+
 /* ---------- Two-Screen Architecture (axiomx.nonarkara.org style) ---------- */
 .shell {
   height: 100dvh;
@@ -1206,7 +1237,7 @@ h3 { margin-bottom: 0; font-size:var(--t-body); line-height: 1.25; }
 
 /* ---------- Buttons / controls ---------- */
 .segmented { display: inline-flex; align-items: center; gap: 0.2rem; padding: 0.12rem; border: 1px solid var(--line-soft); background: var(--surface); }
-.segmented button { border: 0; background: transparent; color: var(--muted); cursor: pointer; padding: 0.5rem 0.6rem; min-height: 40px; }
+.segmented button { border: 0; background: transparent; color: var(--muted); cursor: pointer; padding: 0.5rem 0.6rem; min-height: 44px; min-width: 44px; }
 .segmented button.active { background: var(--amber); color: var(--on-solid); }
 
 .controls { display: flex; gap: 0.55rem; flex-wrap: wrap; align-items: center; }
@@ -1218,8 +1249,8 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .text-button:hover { background: var(--amber); color: var(--on-solid); border-color: var(--ink); }
 
 /* ---------- KPI strip ---------- */
-.kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin: 1.6rem 0; }
-.kpi-grid--four { grid-template-columns: repeat(4, 1fr); }
+.kpi-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; margin: 1.6rem 0; }
+.kpi-grid--four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .kpi { padding: 0.75rem 0.8rem; border-top: 1px solid var(--line); }
 .kpi + .kpi { box-shadow: inset 1px 0 0 var(--line-soft); padding-left: 0.8rem; }
 .kpi strong { display: block; margin-bottom: 0.15rem; font-size: var(--t-h2); line-height: 1; font-weight: 800; }
@@ -1278,7 +1309,9 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .news-layout { display: grid; grid-template-columns: minmax(0, 3fr) minmax(15rem, 1fr); gap: 2rem; }
 .news-story { padding: 1.1rem 0; border-bottom: 1px solid var(--line); }
 .news-story:first-child { border-top: 1px solid var(--line); }
-.news-story h2 { font-size:var(--t-h2); line-height: 1.25; letter-spacing: 0; max-width: 47rem; }
+/* The headline is the line a reader reads first: it is running text, and it
+   was running 632px wide — the longest line on the site. */
+.news-story h2 { font-size:var(--t-h2); line-height: 1.25; letter-spacing: 0; max-width: var(--measure); }
 .news-story h2 a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .news-story h2 a span { font-size:var(--t-body); white-space: nowrap; }
 .news-story-meta { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; margin-bottom: 0.5rem; font-size:var(--t-small); color: var(--muted); }
@@ -1383,7 +1416,10 @@ input[type="search"] { min-width: min(16rem, 100%); }
 .review-bar-row strong { text-align: right; font-variant-numeric: tabular-nums; }
 .review-bar-track { display: block; height: 10px; background: var(--surface-2); }
 .review-bar-track > span { display: block; height: 100%; background: var(--muted); }
-.review-mandate { padding: 1rem 0; border-top: 1px solid var(--line); }
+/* A mandate's two evidence links are running text: they are read at a
+   glance, and the longest of them ran 632px — the longest line on the
+   site. */
+.review-mandate { padding: 1rem 0; border-top: 1px solid var(--line); max-width: var(--measure); }
 .review-mandate h3, .review-followup h3 { font-size:var(--t-body); letter-spacing: 0; }
 .review-mandate p, .review-followup p { margin: 0.4rem 0; max-width: 55rem; }
 .review-mandate a { display: block; min-height: 44px; padding: 0.5rem 0; font-size:var(--t-body); max-width: 55rem; text-decoration: underline; text-underline-offset: 3px; }
@@ -1461,7 +1497,7 @@ input[type="search"] { min-width: min(16rem, 100%); }
   max-width: 100%;
 }
 body .view .review-followup p,
-body .view .review-followup .review-note { max-width: 54ch; }
+body .view .review-followup .review-note { max-width: var(--measure); }
 /* Two columns fit from 538px of view; three from 822px. */
 @container view (min-width: 538px) and (max-width: 821px) {
   #review-followups[data-count="2"],
@@ -1529,7 +1565,11 @@ body .view .review-followup .review-note { max-width: 54ch; }
   .review-record > p:not(.review-note) { grid-column: 2; grid-row: 1 / span 3; align-self: start; }
   .review-record > details { grid-column: 1 / -1; }
 }
-.review-record h2, .review-record p { max-width: 55rem; overflow-wrap: anywhere; }
+/* The record's claim is prose and the grid column holds it; the HEADLINE is
+   running text, and it was running 632px wide — the longest line on the
+   site — because the title link is what a reader reads first. */
+.review-record h2 { max-width: var(--measure); }
+.review-record p { max-width: 55rem; overflow-wrap: anywhere; }
 .review-record .news-story-meta > span { max-width: 100%; overflow-wrap: anywhere; }
 .review-record h2 a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .review-record p { margin: 0.7rem 0; }
@@ -2410,7 +2450,7 @@ body .view p.record-actions { max-width: 100%; }
 .chair-row b { color: var(--navy); }
 .chair-row span { color: var(--ink-2); }
 .chair-row em { font-style: normal; color: var(--muted); display: block; font-size:var(--t-body); }
-.meetings-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.meetings-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; }
 .meeting-card { border-top: 1px solid var(--line); padding-top: 0.7rem; }
 .meeting-card b { display: block; font-size:var(--t-lede); }
 .meeting-card .yr { color: var(--red); font-weight: 800; font-size:var(--t-body); }
@@ -2789,7 +2829,7 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .def-row { padding: 0.6rem 0; border-top: 1px solid var(--line-soft); }
 .def-row:first-child { border-top: 0; }
 .def-row b { display: block; }
-.def-row b a { color: var(--navy); }
+.def-row b a { color: var(--navy); display: inline-flex; align-items: center; min-height: 44px; }
 .def-row span { color: var(--ink-2); font-size:var(--t-body); }
 .def-row em { font-style: normal; color: var(--muted); font-size:var(--t-small); }
 /* The financing notes run at the house's measure. 70ch of Jost is about 95
@@ -2849,13 +2889,13 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .dq-stat em { display: block; margin-top: 0.18rem; color: var(--muted); font-style: normal; font-size:var(--t-small); line-height: 1.45; }
 
 /* ---------- Open Data ---------- */
-.download-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; }
+.download-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.4rem; }
 .download-card { border-top: 1px solid var(--line); padding-top: 0.9rem; display: flex; flex-direction: column; }
 .download-card b { font-size:var(--t-body); }
 .download-card p { color: var(--ink-2); font-size:var(--t-body); margin: 0.35rem 0 0.9rem; }
 .download-card .text-button { align-self: start; margin-top: auto; }
 
-.document-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 1px solid var(--line); }
+.document-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; border-top: 1px solid var(--line); }
 .doc-card { display: flex; flex-direction: column; padding: 0.95rem 1rem 1rem 0; box-shadow: inset 0 -1px 0 var(--line-soft), inset -1px 0 0 var(--line-soft); }
 .doc-card .dc-kind { color: var(--navy); font-weight: 800; font-size:var(--t-micro); letter-spacing: 0.08em; text-transform: uppercase; }
 .doc-card b { font-size:var(--t-body); margin: 0.25rem 0; }
@@ -3060,7 +3100,7 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .sec-links a:hover { color: var(--amber); border-color: var(--amber); }
 
 .contacts-grid-wrap .label { margin-bottom: 1rem; }
-.contacts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0; border-top: 1px solid var(--line); }
+.contacts-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; border-top: 1px solid var(--line); }
 .contact-card { padding: 1.25rem 1rem 1.25rem 0; border-bottom: 1px solid var(--line-soft); display: grid; gap: 0.35rem; }
 .cc-head { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
 .cc-country { font-size:var(--t-body); font-weight: 700; color: var(--ink); }
@@ -3079,7 +3119,6 @@ td { color: var(--ink-2); font-size:var(--t-body); }
 .contacts-source-note a { color: var(--ink-2); }
 
 @media (max-width: 640px) {
-  .contacts-grid { grid-template-columns: 1fr; }
   .contact-card { padding: 1rem 0; }
 }
 
@@ -3275,8 +3314,16 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 .lib-chip:hover:not(.active) { border-color: var(--ink); color: var(--ink); }
 .lib-count { color: var(--muted); font-size:var(--t-small); font-weight: 700; }
 
-.lib-results { display: grid; gap: 0; }
-.lib-entry { display: grid; grid-template-columns: 5.5rem 1fr auto; gap: 0.5rem 1rem; padding: 0.95rem 0; border-top: 1px solid var(--line-soft); align-items: start; }
+/* The library ledger was one 1211px row per source: a 359px measure of text
+   on the left, the download link on the far right, and 850px of nothing
+   between them. The longest metadata line in the ledger ran 96 characters —
+   further than the reading measure allows any line to run. The ledger is now
+   the house's document-card grid: three cards across on a wide screen, two
+   on a tablet, one on the phone. Each entry is a box that fits its own
+   text, the takeaway keeps the measure, and a metadata line cannot outgrow
+   the card that holds it. */
+.lib-results { display: grid; grid-template-columns: minmax(0, 1fr); column-gap: 1.5rem; align-items: start; }
+.lib-entry { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.3rem; padding: 0.9rem 0 1.1rem; border-top: 1px solid var(--line-soft); align-content: start; }
 .lib-entry:first-child { border-top: 0; }
 /* The library entry is a grid, so this badge was a grid item and stretched
    to the column: a 351px box around 56px of ink. The badge keeps its own
@@ -3288,14 +3335,24 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 .le-badge.policy { color: var(--amber); }
 .le-badge.research { color: var(--muted); }
 .le-badge.data { color: var(--muted); }
-.le-body { min-width: 0; }
+.le-title-block { min-width: 0; }
 .le-title { font-size:var(--t-body); font-weight: 700; color: var(--ink); line-height: 1.3; }
 .le-meta { color: var(--muted); font-size:var(--t-micro); font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; margin: 0.18rem 0 0.42rem; }
 .le-takeaway { color: var(--ink-2); font-size:var(--t-body); margin: 0; line-height: 1.5; }
-.le-actions { display: flex; flex-direction: column; gap: 0.35rem; align-items: flex-end; min-width: 4.5rem; }
+.le-actions { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 0.9rem; flex-wrap: wrap; min-width: 0; }
 .le-dl, .le-ext { font-size:var(--t-micro); font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; color: var(--navy); }
 .le-ext { color: var(--ink-2); }
 .lib-empty { padding: 2.5rem 0; color: var(--muted); font-size:var(--t-body); }
+/* The ledger's columns follow the VIEW, not the window: the index rail takes
+   203px, so a 1440px window leaves 1211px of reading field and a 1024px
+   window leaves 795px. Three cards need 1000px of field to keep a readable
+   measure inside each one; two cards need 600px. */
+@container view (min-width: 600px) {
+  .lib-results { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@container view (min-width: 1000px) {
+  .lib-results { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
 
 /* ---------- Responsive ---------- */
 /* The partners' two side blocks follow the CONTENT area, not the viewport.
@@ -3315,12 +3372,7 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
   .dq-grid { grid-template-columns: 1fr; }
   .footer-content { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .footer-logos { grid-column: 1 / -1; grid-row: 3; }
-  .lib-entry { grid-template-columns: 4.5rem 1fr; }
-  .le-actions { display: none; }
-  .kpi-grid { grid-template-columns: repeat(3, 1fr); }
-  .kpi-grid--four { grid-template-columns: repeat(2, 1fr); }
-  .meetings-grid, .partner-cards, .download-grid,
-  .document-grid { grid-template-columns: repeat(2, 1fr); }
+  .partner-cards { grid-template-columns: repeat(2, 1fr); }
   .big-projects, .impact-grid { grid-template-columns: 1fr; }
   .big-project:nth-child(odd) { border-right: 0; }
   .info-card.wide { grid-column: auto; }
@@ -3338,7 +3390,6 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
   .site-nav { align-items: flex-start; flex-direction: column; gap: 0.35rem; padding: 0.5rem 0; }
   .site-nav nav { width: 100%; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 0.2rem; scrollbar-width: none; }
   .site-nav nav::-webkit-scrollbar { display: none; }
-  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
   .ascap-panel .pillars { grid-template-columns: 1fr; }
   .footer-logos { flex-wrap: wrap; }
   .section-head.split { flex-direction: column; }
@@ -3347,9 +3398,7 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 }
 
 @media (max-width: 520px) {
-  .kpi-grid, .kpi-grid--four, .meetings-grid, .partner-cards, .download-grid,
-  .document-grid { grid-template-columns: 1fr; }
-  .kpi-grid--four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .partner-cards { grid-template-columns: 1fr; }
   .kpi + .kpi { border-left: 0; box-shadow: none; padding-left: 0.8rem; }
   .kpi-grid--four .kpi:nth-child(odd) { padding-left: 0; }
   /* A bar row stacked into one column puts the label, the bar, the value and
@@ -4050,9 +4099,9 @@ body .view .path-steps li { max-width: none; }
 .ig-traj-swatch--base { background: var(--line); }
 .ig-traj-swatch--curr { background: var(--amber); }
 .ig-traj-wrap { display: grid; gap: 0.45rem; }
-.ig-traj-row { display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 0.8rem; }
+.ig-traj-row { display: grid; grid-template-columns: 152px 1fr; align-items: center; gap: 0.8rem; }
 .ig-traj-silent-row { opacity: 0.55; }
-.ig-traj-country { font-size:var(--t-body); font-weight: 600; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ig-traj-country { font-size:var(--t-body); font-weight: 600; color: var(--ink-2); overflow-wrap: anywhere; }
 .ig-traj-bars { display: flex; align-items: center; gap: 0.6rem; }
 .ig-traj-track { flex: 1; height: 10px; background: var(--surface); position: relative; overflow: visible; }
 .ig-traj-bg { position: absolute; left: 0; top: 0; height: 100%; background: var(--line); }
@@ -4071,12 +4120,12 @@ body .view .path-steps li { max-width: none; }
 .ig-spec-leg { display: flex; align-items: center; gap: 0.3rem; font-size:var(--t-small); color: var(--ink-2); }
 .ig-spec-leg span { display: inline-block; width: 10px; height: 10px; flex-shrink: 0; }
 .ig-spec-wrap { display: grid; gap: 0.55rem; }
-.ig-spec-row { display: grid; grid-template-columns: 140px 1fr 110px; align-items: center; gap: 0.8rem; }
-.ig-spec-country { font-size:var(--t-body); font-weight: 600; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ig-spec-row { display: grid; grid-template-columns: 152px 1fr 128px; align-items: center; gap: 0.8rem; }
+.ig-spec-country { font-size:var(--t-body); font-weight: 600; color: var(--ink-2); overflow-wrap: anywhere; }
 .ig-spec-bar { display: flex; height: 14px; overflow: hidden; gap: 0; }
 .ig-spec-seg { height: 100%; transition: opacity 0.15s; }
 .ig-spec-seg:hover { opacity: 0.75; }
-.ig-spec-top { font-size:var(--t-micro); color: var(--muted); font-weight: 600; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ig-spec-top { font-size:var(--t-micro); color: var(--muted); font-weight: 600; text-align: right; overflow-wrap: anywhere; }
 
 /* Density bars — reuse .bar-row; add sub-label */
 .bar-sub { font-style: normal; font-size: var(--t-micro); color: var(--muted); margin-left: 0.35rem; white-space: nowrap; }
@@ -4628,7 +4677,7 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 .prog-head > div { flex: 1; }
 .prog-head b { display: block; font-size:var(--t-body); font-weight: 700; line-height: 1.25; }
 .prog-country { font-size:var(--t-small); color: var(--ink-2); font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.06em; }
-.prog-link { font-size:var(--t-lede); color: var(--amber); text-decoration: none; flex-shrink: 0; line-height: 1; padding: 0.2rem; }
+.prog-link { font-size:var(--t-lede); color: var(--amber); text-decoration: none; flex-shrink: 0; line-height: 1; padding: 0.2rem; min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
 .prog-link:hover { color: var(--ink); }
 .prog-tagline { font-size:var(--t-small); font-weight: 600; color: var(--amber); margin: 0; letter-spacing: 0.01em; }
 .prog-desc { font-size:var(--t-body); color: var(--ink-2); line-height: 1.6; margin: 0; flex: 1; }
@@ -4676,8 +4725,8 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
    rows stop 198px short of the card's edge is a hole; the gap between a
    label and its right-aligned figure is a table convention, not one. */
 .comp-list { border-top: 1px solid var(--line-soft); margin-top: 0.75rem; width: 100%; max-width: 100%; }
-.comp-row { display: grid; grid-template-columns: 110px minmax(0, 1fr) 130px; align-items: baseline; gap: 0.6rem; padding: 0.45rem 0; border-bottom: 1px solid var(--line-soft); }
-.comp-city { font-size:var(--t-small); font-weight: 700; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.comp-row { display: grid; grid-template-columns: 130px minmax(0, 1fr) 130px; align-items: baseline; gap: 0.6rem; padding: 0.45rem 0; border-bottom: 1px solid var(--line-soft); }
+.comp-city { font-size:var(--t-small); font-weight: 700; color: var(--ink-2); }
 .comp-proj { font-size:var(--t-body); color: var(--ink-2); }
 .comp-type { font-size:var(--t-micro); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; text-align: right; }
 @media (max-width: 600px) {
@@ -4884,11 +4933,11 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
 .dg-wrap { display: grid; gap: 0.5rem; }
 .dg-row {
   display: grid;
-  grid-template-columns: 11rem 1fr 8rem 2.5rem;
+  grid-template-columns: 13.5rem 1fr 8rem 2.5rem;
   align-items: center;
   gap: 0.5rem;
 }
-.dg-fa { font-size:var(--t-small); color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dg-fa { font-size:var(--t-small); color: var(--ink-2); overflow-wrap: anywhere; }
 .dg-track { display: flex; height: 10px; overflow: hidden; }
 .dg-fill-comp, .dg-fill-ong { height: 100%; transition: width 0.3s; }
 /* The "active" half of each bar carries the same hue as the finished half,
@@ -4986,6 +5035,10 @@ details[open] .bio-expand-hint::after { content: " ↑"; }
    dictionary carries in any of the three languages. */
 .g5-head, .g5-row { display: grid; grid-template-columns: 7rem 6rem 13rem 1fr 4rem; align-items: center; gap: 0.5rem; padding: 0.32rem 0; border-bottom: 1px solid var(--line-soft); }
 .g5-head { font-size:var(--t-micro); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); border-bottom: 1px solid var(--line); padding-bottom: 0.45rem; margin-bottom: 0.15rem; }
+/* The header labels the bar and the number together: the matrix has five
+   columns and the header had four, so the number's column carried no label
+   and the row under it ended in an empty cell. */
+.g5-head span:last-child { grid-column: 4 / -1; }
 .g5-country { font-size:var(--t-body); color: var(--ink); font-weight: 600; }
 .g5-status { font-size:var(--t-small); font-family: var(--mono); color: var(--ink-2); }
 .g5-lean { font-size:var(--t-micro); font-weight: 700; padding: 0.1rem 0.4rem; border: 1px solid; display: inline-block; justify-self: start; }
@@ -5652,7 +5705,7 @@ body .view .iaas-hero-media figcaption {
 /* Surfaces the route-coverage sweep newly reached. /data and /contacts had never
    been measured before, which is how a 40px Download and a 36px filter chip
    survived: they are ordinary controls and are now held to 44. */
-.dc-dl, .lib-chip { min-height: 44px; display: inline-flex; align-items: center; }
+.dc-dl, .lib-chip { min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: center; }
 
 /* A headline link inside a review-record article is not a link inside a
    sentence — it is the thing you click to open the record, and it stood at
@@ -6211,14 +6264,17 @@ body .view .ig-note.col-flow { max-width: var(--measure); }
 /* ---------- Archive: one rule, unequal fields, no cards ---------- */
 .archive-head {
   display: grid;
-  /* The language switcher used to sit in a column of its own sized by the
-     grid's 1fr, so a 1px rule ran 367px under a switcher 86px wide, and
-     281px of that header carried nothing. The column is now the switcher's
-     own width and the rule under it is the switcher's own width. */
-  grid-template-columns: minmax(0, 1fr) auto;
+  /* The archive head was a single 1180px block with the lede in a 359px
+     column at its left edge: 852px of nothing beside running text, the
+     largest hole the independent review measured on the site. The head is
+     now two columns — the identity and the statement — so the lede stands
+     beside the title instead of alone in a corner, and the language
+     switcher keeps its own width under the title. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, var(--measure));
   gap: 1.25rem 2.4rem;
   align-items: start;
 }
+.archive-titles { min-width: 0; }
 .archive-subtitle {
   margin: 0.35rem 0 0.55rem;
   font-size: var(--t-h2);
@@ -6228,13 +6284,14 @@ body .view .ig-note.col-flow { max-width: var(--measure); }
   text-transform: none;
 }
 .archive-lang {
-  display: flex;
+  display: inline-flex;
   justify-content: flex-start;
   gap: 1.25rem;
   border-top: 1px solid var(--ink);
 }
 .archive-lang button {
   min-height: 44px;
+  min-width: 44px;
   padding: 0.55rem 0;
   border: 0;
   border-bottom: 1px solid transparent;
@@ -6665,3 +6722,110 @@ body .view .evidence-routes li { max-width: none; }
 @media (max-width: 1100px) { .ig-traj-delta { min-width: 0; overflow-wrap: anywhere; } }
 
 #archive-title { font-size: var(--t-figure); line-height: 1.05; }
+
+/* ── The grid law ─────────────────────────────────────────────────────────
+   A grid's column count must divide its item count, or the last item takes
+   the columns its row has left. The counts are data — eleven contact cards,
+   eleven documents, sixty-two library entries, and the library's count
+   changes with the filter — so the stylesheet cannot know them. The
+   stylesheet says how many columns a grid MAY hold at a given field width;
+   app.js settles the division at runtime, where the counts are known.
+
+   auto-fit and auto-fill pick the column count from the width, not from the
+   count, and that is where strands come from. No grid in this site uses
+   them.
+
+   The counts below are counted from the field, not the window: the plate is
+   the viewport minus the index rail, so a window query measures the wrong
+   thing for anything inside a view. */
+
+.kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.kpi-grid--four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.meetings-grid, .download-grid, .document-grid, .contacts-grid { grid-template-columns: minmax(0, 1fr); }
+
+/* The KPI strip's separator is the left edge of every cell except the first
+   in its row, and the first in its row depends on the column count. */
+.kpi:nth-child(odd) { box-shadow: none; padding-left: 0; }
+
+@container view (min-width: 460px) {
+  .contacts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@container view (min-width: 620px) {
+  .kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .kpi:nth-child(odd) { box-shadow: inset 1px 0 0 var(--line-soft); padding-left: 0.8rem; }
+  .kpi:nth-child(3n + 1) { box-shadow: none; padding-left: 0; }
+}
+
+@container view (min-width: 700px) {
+  .meetings-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .download-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .document-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .contacts-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@container view (min-width: 1000px) {
+  .kpi-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .kpi-grid--four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .kpi:nth-child(odd) { box-shadow: inset 1px 0 0 var(--line-soft); padding-left: 0.8rem; }
+  .kpi-grid .kpi:nth-child(5n + 1) { box-shadow: none; padding-left: 0; }
+  .kpi-grid--four .kpi:nth-child(4n + 1) { box-shadow: none; padding-left: 0; }
+  .contacts-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* ── The item that takes the row ─────────────────────────────────────────
+   When the count does not divide, the last item spans the columns its row
+   has left, so the row ends complete instead of holding a hole. A wide item
+   has to use that width, or it is a hole with a title in it: each one below
+   lays its own content out in the columns it now holds. */
+
+.kpi.is-wide { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+.kpi.is-wide strong { margin-bottom: 0; }
+.kpi.is-wide span { text-align: right; }
+
+.contact-card.is-wide {
+  /* The wide contact card lays its three blocks — country, representative,
+     institution — across the width it takes, the way the narrow card lays
+     them down. A card that takes two columns and keeps its content in a
+     250px corner is a hole with a name in it. */
+  grid-template-columns: max-content max-content max-content;
+  justify-content: space-between;
+  column-gap: 1.5rem;
+  align-content: start;
+  /* The three blocks sit on one line, so they share one baseline: the
+     institution is set a size smaller than the name, and without this it
+     floated above the row it belongs to. */
+  align-items: baseline;
+}
+.contact-card.is-wide .cc-head { grid-column: 1; grid-row: 1; }
+.contact-card.is-wide .cc-nr-name { grid-column: 2; grid-row: 1; }
+.contact-card.is-wide .cc-inst { grid-column: 3; grid-row: 1; }
+
+.doc-card.is-wide {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: 1.5rem;
+  align-content: start;
+}
+.doc-card.is-wide .dc-kind { grid-column: 1; grid-row: 1; }
+.doc-card.is-wide b { grid-column: 1; grid-row: 2; margin: 0.25rem 0 0; }
+.doc-card.is-wide p { grid-column: 2; grid-row: 1 / span 2; margin: 0; }
+.doc-card.is-wide .dc-foot { grid-column: 1 / -1; margin-top: 0.6rem; }
+
+.lib-entry.is-wide {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: 1.5rem;
+  align-content: start;
+}
+.lib-entry.is-wide .le-badge { grid-column: 1; grid-row: 1; }
+.lib-entry.is-wide .le-title-block { grid-column: 1; grid-row: 2; }
+.lib-entry.is-wide .le-actions { grid-column: 1; grid-row: 3; }
+.lib-entry.is-wide .le-takeaway { grid-column: 2; grid-row: 1 / span 3; }
+
+/* ── Leaflet's own controls ───────────────────────────────────────────────
+   The vendored map ships 30px zoom buttons and 14px credit links. Both are
+   controls on a map the reader touches with a thumb, so both take the house's
+   44px target. The credit links keep their own size: the padding and the
+   negative margin give them the target without moving the credit line. */
+.leaflet-container .leaflet-control-zoom a { width: 44px; height: 44px; line-height: 44px; font-size: 18px; }
+.leaflet-container .leaflet-control-attribution a { display: inline-block; min-width: 44px; padding: 15px 0; margin: -15px 0; }
