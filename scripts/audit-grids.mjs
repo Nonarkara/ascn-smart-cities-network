@@ -203,7 +203,7 @@ export async function collectGrids(page) {
 if (import.meta.url === `file://${process.argv[1]}`) {
   await mkdir(OUT, { recursive: true });
   const browser = await chromium.launch();
-  const report = { base: BASE, startedAt: new Date().toISOString(), failures: [], notes: [], grids: [], collapsed: [], resizePath: [] };
+  const report = { base: BASE, startedAt: new Date().toISOString(), failures: [], notes: [], grids: [], collapsed: [], resizePath: [], filtered: [] };
 
   for (const vp of VIEWPORTS) {
     const page = await browser.newPage({ viewport: vp });
@@ -256,6 +256,41 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     await page.close();
   }
 
+  // THE FILTERED STATES.
+  //
+  // The law is settled at runtime, where the counts are known — and one of
+  // those counts is not known in advance: the library's filter changes how
+  // many entries there are, and a grid of nineteen entries in three columns
+  // ends its last row with one card, not two. So every filter state is
+  // measured, on a fresh load and after the window has been narrowed.
+  {
+    const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+    await page.route("**/api/{news,ascn-news}", (r) => r.fulfill({ status: 503, json: { checkedAt: new Date().toISOString(), articles: [], sources: [] } }));
+    await page.addInitScript(() => { try { localStorage.setItem("ascn-lang", "en"); } catch { /* private mode */ } });
+    await page.goto(`${BASE}/#data`, { waitUntil: "domcontentloaded" });
+    await page.waitForTimeout(500);
+    const chips = await page.$$eval("#lib-type-chips [data-type]", (els) => els.map((e) => e.getAttribute("data-type")));
+    for (const type of chips) {
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await page.goto(`${BASE}/#data`, { waitUntil: "domcontentloaded" });
+      await page.waitForTimeout(400);
+      await page.click(`#lib-type-chips [data-type="${type}"]`);
+      await page.waitForTimeout(500);
+      for (const width of [1440, 390]) {
+        if (width === 390) {
+          await page.setViewportSize({ width: 390, height: 844 });
+          await page.waitForTimeout(600);
+        }
+        const { out: found, collapsed } = await collectGrids(page);
+        const path = width === 1440 ? `filter "${type}", fresh load` : `filter "${type}", narrowed from 1440`;
+        for (const f of found) report.grids.push({ view: `data [${type}]`, width, path, ...f });
+        for (const c of collapsed) report.collapsed.push({ view: `data [${type}]`, width, path, ...c });
+        report.filtered.push({ type, width, path });
+      }
+    }
+    await page.close();
+  }
+
   await browser.close();
 
   for (const r of report.grids) {
@@ -271,6 +306,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   console.log(`  holes in the last row: ${report.failures.filter((f) => !f.includes("collapsed")).length}`);
   console.log(`  rows with an empty cell that are not the last row: ${report.notes.length}`);
   console.log(`  collapsed tracks: ${report.collapsed.length}`);
+  console.log(`  filtered states measured: ${report.filtered.length}`);
   for (const n of report.notes.slice(0, 10)) console.log("   note", n);
   for (const f of report.failures.slice(0, 30)) console.log("   FAIL", f);
   if (!report.passed) process.exitCode = 1;
