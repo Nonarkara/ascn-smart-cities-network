@@ -6094,8 +6094,13 @@ button:active { transform: scale(0.97); }
 .rec-table-current ~ .rec-col-cap b,
 .rec-col:last-child .rec-col-cap b { color: var(--ink); }
 .rec-caption {
-  /* Bound to the chart's measure, not the page's. */
-  max-width: 42rem;
+  /* A caption is body copy, so it runs at the reading measure — and the
+     measure is 31.54em of the caption's OWN size, because the law is the
+     width of the line, not a token written for body text. At 11px that is
+     347px. The caption was bound to 42rem, which is 672px: the line ran
+     503px, or 107 characters, and the instrument that could not see a
+     title or a metadata line could not see this either. */
+  max-width: 31.5em;
   margin: 0.6rem 0 0; font-size: var(--t-small); color: var(--muted);
   line-height: 1.5;
 }
@@ -6135,7 +6140,10 @@ button:active { transform: scale(0.97); }
   .rec-seg { min-height: 1.1rem; }
   .rec-seg b { font-size: var(--t-body); }
   .rec-urban-bars { max-width: 100%; }
-  .rec-caption { max-width: 100%; }
+  /* The caption is not the table's width. On a phone the table scrolls, and
+     a caption that spans the table carries a 107-character line across the
+     scroll; the note keeps the measure of the note. */
+  .rec-caption { max-width: min(100%, 31.5em); }
   .rec-legend { display: flex; margin-left: 0; }
   /* The name column reserved 128px for names that are 78px long at their
      widest, and the 44px left over ran down the column beside every bar. */

@@ -382,6 +382,12 @@ try {
   // width cannot see that.
   const sweepViewports = [{ width: 1440, height: 900 }, { width: 1024, height: 768 }, { width: 390, height: 844 }];
   let worst = { chars: 0, where: "—" };
+  // The control below is about PROSE, and prose has a character band.
+  // Running text — a title, a metadata line, a headline, a role — is bound
+  // by the physical measure instead, and a legal 76-character running line
+  // is not a prose failure. Measuring both with one number is how the
+  // control came to condemn a line the law holds legal.
+  let worstProse = { chars: 0, where: "—" };
   const offenders = [];
   const countedWrong = [];
   for (const vp of sweepViewports) {
@@ -396,6 +402,7 @@ try {
     const found = await page.evaluate(measureRenderedLines, "p, li, dd, blockquote, figcaption, div, span, a, td, th, dt, strong, em, b, i, small, label, button, h1, h2, h3, h4, h5, h6, time, summary, caption, cite, legend, output, mark");
     for (const f of found) {
       if (f.chars > worst.chars) worst = { chars: f.chars, where: `${v} ${f.sel} @${f.px}px @${vp.width}`, line: f.line };
+      if (f.kind === "prose" && f.chars > worstProse.chars) worstProse = { chars: f.chars, where: `${v} ${f.sel} @${f.px}px @${vp.width}`, line: f.line };
       if (f.kind === "prose" && f.chars > 75) offenders.push(`${v} ${f.sel}=${f.chars} @${vp.width}px`);
       // The count must be the count of the line it reports. An independent
       // review of this site found the sweep reporting 73 characters for a
@@ -419,8 +426,8 @@ try {
 
   // Control. The assertion above is a number comparison, so if the measurement
   // ever silently returned zero the whole sweep would pass and test nothing.
-  ok("the measure sweep measures something (control)", worst.chars > 20 && worst.chars <= 75,
-    `worst observed ${worst.chars} chars`);
+  ok("the measure sweep measures something (control)", worstProse.chars > 20 && worstProse.chars <= 75,
+    `worst prose line ${worstProse.chars} chars (${worstProse.where}); widest line of any kind ${worst.chars} chars (${worst.where})`);
 
   // The control for the instrument itself: every count it reports must be the
   // number of characters in the line it reports. A sweep that counts one
