@@ -457,6 +457,13 @@ img { display: block; max-width: 100%; }
 p, li, dd, blockquote, figcaption, .lede {
   max-width: var(--measure);
 }
+/* A label is an eyebrow, not prose. The measure caps the running line; it
+   does not claim that a four-word label occupies a whole column. Two essay
+   labels sat inside a ruled band with 385px of box for 91px of Chinese ink —
+   4.2 times — and the spatial gate called it in Chinese and not in English,
+   because the English label is a third longer. A label takes the width of
+   its own words, up to the measure. */
+.label { width: fit-content; max-width: var(--measure); }
 
 /* ---------- Two-Screen Architecture (axiomx.nonarkara.org style) ---------- */
 .shell {

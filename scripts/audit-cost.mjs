@@ -59,6 +59,18 @@ const base = process.env.ASCN_TEST_URL || 'http://127.0.0.1:4187';
 const outDir = process.env.ASCN_COST_OUT || 'artifacts/cost';
 const baselinePath = process.env.ASCN_COST_BASELINE || 'scripts/cost-baseline.json';
 const writeBaseline = process.env.ASCN_COST_WRITE === '1';
+// The mode is part of the cost. Thai has no word spaces and Chinese sets a
+// character per em, so the same sentences break into different lines and the
+// reader scrolls a different distance. A cap that only ever holds in English
+// is a cap about English.
+const theme = process.env.ASCN_COST_THEME || 'dark';
+// The languages the site ships. The cap belongs to the view, not to one
+// script of it: Thai has no word spaces and Chinese sets a character per em,
+// so the same sentences break into different lines and the reader scrolls a
+// different distance. The cap has to hold in the worst of them.
+const LANGS = (process.env.ASCN_COST_LANGS || 'en,th,zh').split(',').filter(Boolean);
+const modeTag = theme === 'dark' ? '' : `-${theme}`;
+const outFile = `${outDir}/cost${modeTag}.json`;
 
 // The two widths the law names: the desk and the phone. The measure is in
 // screens, so the height of the viewport is part of the definition — the
@@ -193,19 +205,38 @@ async function main() {
   const measured = {};
   const routes = [];
   for (const vp of VIEWPORTS) {
-    const page = await browser.newPage({ viewport: { width: vp.width, height: vp.height } });
-    await page.route('**/api/news', (route) => route.fulfill({ status: 200, json: NEWS_FIXTURE }));
-    await page.route('**/api/ascn-news', (route) => route.fulfill({ status: 200, json: NEWS_FIXTURE }));
-    await openRoute(page, 'overview');
-    const nav = await navRoutes(page);
-    if (!nav.length) throw new Error('Page cost could not read the navigation');
-    if (!routes.length) routes.push(...nav);
-    for (const route of nav) {
-      await openRoute(page, route);
-      const m = await measureCost(page);
-      measured[`${route}@${vp.key}`] = { route, width: vp.key, ...m };
+    for (const l of LANGS) {
+      const page = await browser.newPage({ viewport: { width: vp.width, height: vp.height } });
+      // The mode is set the way a reader sets it: the choice is remembered in
+      // the browser, so the page opens in that language and that theme. One
+      // page per language — an init script is added per page, so adding
+      // three to one page would leave the last one winning.
+      await page.addInitScript(({ lang: ll, theme: t }) => {
+        try { if (ll) localStorage.setItem('ascn-lang', ll); } catch {}
+        try { if (t && t !== 'dark') localStorage.setItem('ascn_theme', t); } catch {}
+      }, { lang: l, theme });
+      await page.route('**/api/news', (route) => route.fulfill({ status: 200, json: NEWS_FIXTURE }));
+      await page.route('**/api/ascn-news', (route) => route.fulfill({ status: 200, json: NEWS_FIXTURE }));
+      await openRoute(page, 'overview');
+      const nav = await navRoutes(page);
+      if (!nav.length) throw new Error('Page cost could not read the navigation');
+      if (!routes.length) routes.push(...nav);
+      for (const route of nav) {
+        await openRoute(page, route);
+        const m = await measureCost(page);
+        const key = `${route}@${vp.key}`;
+        const row = measured[key] || (measured[key] = { route, width: vp.key, screens: 0, byLang: {} });
+        row.byLang[l] = { screens: m.screens, chromeTop: m.chromeTop, firstTop: m.firstTop };
+        // The cap belongs to the view, not to one script of it. Thai has no
+        // word spaces and Chinese sets a character per em, so the same
+        // sentences break into different lines and the reader scrolls a
+        // different distance; the worst case of the three is what the cap
+        // has to hold.
+        row.screens = Math.max(row.screens, m.screens);
+        if (l === LANGS[0]) Object.assign(row, m);
+      }
+      await page.close();
     }
-    await page.close();
   }
   await browser.close();
 
@@ -219,8 +250,8 @@ async function main() {
   const { failures, improvements, uncapped } = judge(measured, baseline);
   const rows = Object.entries(measured).map(([key, m]) => ({ key, ...m }));
 
-  const report = { measuredAt: new Date().toISOString(), viewports: VIEWPORTS, routes, rows, failures, improvements, uncapped };
-  await writeFile(`${outDir}/cost.json`, JSON.stringify(report, null, 2) + '\n');
+  const report = { measuredAt: new Date().toISOString(), viewports: VIEWPORTS, langs: LANGS, theme, routes, rows, failures, improvements, uncapped };
+  await writeFile(outFile, JSON.stringify(report, null, 2) + '\n');
 
   console.log('Page cost, in screens');
   console.log('view'.padEnd(22) + 'width'.padEnd(8) + 'screens'.padEnd(10) + 'cap'.padEnd(9) + 'chrome');

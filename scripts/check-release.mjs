@@ -70,6 +70,12 @@ try {
   for (const [name, command, args, envPatch] of [
     ['Browser flows and incoming-data regressions', 'npx', ['playwright', 'test']],
     ['Spatial geometry and map readiness', 'npm', ['run', 'audit:spatial']],
+    // The spatial gate measures boxes against the ink they hold, and the ink
+    // is text whose width is a property of the language. Thai and Chinese
+    // are not the same geometry as English, so they are swept on their own.
+    ['Spatial geometry — Thai', 'npm', ['run', 'audit:spatial'], { ASCN_SH_LANG: 'th', ASCN_SH_LABEL: 'release-th' }],
+    ['Spatial geometry — Chinese', 'npm', ['run', 'audit:spatial'], { ASCN_SH_LANG: 'zh', ASCN_SH_LABEL: 'release-zh' }],
+    ['Spatial geometry — light theme', 'npm', ['run', 'audit:spatial'], { ASCN_SH_THEME: 'light', ASCN_SH_LABEL: 'release-light' }],
     ['Composition bands — empty content area beside content', 'npm', ['run', 'audit:composition']],
     // The modes are not the same geometry: Thai has no word spaces and
     // Chinese sets a character per em, so the same content breaks into

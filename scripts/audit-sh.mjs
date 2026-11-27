@@ -36,7 +36,15 @@ import { mkdir, writeFile } from 'node:fs/promises';
 const base = process.env.ASCN_TEST_URL || 'http://127.0.0.1:4187';
 const label = process.env.ASCN_SH_LABEL || 'audit';
 const strict = process.env.ASCN_SH_STRICT === '1';
-const outDir = process.env.ASCN_SH_OUT || `artifacts/sh/${label}`;
+// The mode is part of the measurement. Thai has no word spaces and Chinese
+// sets a character per em, so the same content breaks into different lines,
+// and a box that is generous in English can be tight in Thai. A gate that
+// only ever measures one mode is a gate that has only ever looked at one
+// mode.
+const lang = process.env.ASCN_SH_LANG || 'en';
+const theme = process.env.ASCN_SH_THEME || 'dark';
+const modeTag = lang === 'en' && theme === 'dark' ? '' : `-${lang}-${theme}`;
+const outDir = process.env.ASCN_SH_OUT || `artifacts/sh/${label}${modeTag}`;
 
 // The viewports the law names, plus the wide ones the owner's own screen
 // uses. 390×844 and 1440×900 are the first-screen checks; 1024 uses 768
@@ -489,6 +497,12 @@ for (const vp of VIEWPORTS) {
   let browser = await chromium.launch({ channel: process.env.PLAYWRIGHT_CHANNEL || undefined });
   let ctx = await browser.newContext({ viewport: { width: vp.width, height: vp.height } });
   let page = await ctx.newPage();
+    // The mode is set the way a reader sets it: the choice is remembered in
+    // the browser, so the page opens in that language and that theme.
+    await page.addInitScript(({ lang: l, theme: t }) => {
+      try { if (l && l !== 'en') localStorage.setItem('ascn-lang', l); } catch {}
+      try { if (t && t !== 'dark') localStorage.setItem('ascn_theme', t); } catch {}
+    }, { lang, theme });
     // Geometry is reviewed against the shipped snapshot. Live-feed success
     // and failure have separate browser flow tests.
     await page.route('**/api/{news,ascn-news}', (route) => route.fulfill({ status: 503, json: {} }));
@@ -625,7 +639,7 @@ await writeFile(`${outDir}/sh.json`, JSON.stringify(report, null, 2) + '\n');
 
 // ── the report ──────────────────────────────────────────────────────────────
 let total = 0;
-console.log(`\nMSH audit — ${label} — ${report.length} view/width pairs\n`);
+console.log(`\nMSH audit — ${label}${modeTag ? ` (${modeTag.slice(1)})` : ''} — ${report.length} view/width pairs\n`);
 console.log(['view', 'w', 'chrome%', 'rail%', 'heading', 'findings'].join('\t'));
 for (const m of report) {
   total += m.failures.length;
