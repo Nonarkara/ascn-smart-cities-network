@@ -1,6 +1,6 @@
 {
   "note": "Ceilings on the cost of each view, in screens. Only ever lower them; a raise needs a reason written here, and only when the owner asks for it.",
-  "updatedAt": "2026-11-26T00:12:18.215Z",
+  "updatedAt": "2026-11-27T06:10:00.000Z",
   "views": {
     "overview@1440": {
       "ceiling": 4.16,
@@ -58,9 +58,9 @@
       "reason": "recorded on first measurement"
     },
     "data@1440": {
-      "ceiling": 16.65,
-      "measured": 16.65,
-      "reason": "recorded on first measurement"
+      "ceiling": 16.36,
+      "measured": 16.36,
+      "reason": "Lowered from 16.65. The gate measures every language and keeps the worst; English is the longest, at 16.36 screens. The old ceiling sat 0.29 above that, past the 0.25 slack, so it had stopped being the page."
     },
     "archive@1440": {
       "ceiling": 10.86,
@@ -73,9 +73,9 @@
       "reason": "recorded on first measurement"
     },
     "essay@1440": {
-      "ceiling": 21.69,
-      "measured": 21.69,
-      "reason": "recorded on first measurement"
+      "ceiling": 20.07,
+      "measured": 20.07,
+      "reason": "Lowered from 21.69. English is the longest of the three languages, at 20.07 screens. The two essay photographs are lazy and have no reserved box, so this gate, which does not scroll, does not count them; loading them reaches 21.25, still under the old ceiling."
     },
     "ascn9@1440": {
       "ceiling": 1.02,
@@ -173,9 +173,9 @@
       "reason": "recorded on first measurement"
     },
     "essay@390": {
-      "ceiling": 26.29,
-      "measured": 26.29,
-      "reason": "recorded on first measurement"
+      "ceiling": 25.74,
+      "measured": 25.74,
+      "reason": "Lowered from 26.29. English is the longest of the three languages, at 25.74 screens. Same cause as essay@1440: the unsized lazy photographs are not in the measurement."
     },
     "ascn9@390": {
       "ceiling": 1.33,
