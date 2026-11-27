@@ -149,6 +149,14 @@ re-runnable, with a `--check` mode — and `scripts/validate-data.mjs` fails
 when a year's appendix rows do not equal the report's own total, and when a
 row is merged or run-on.
 
+One observation the independent review made on the rebuilt register: the
+`number` field is **not unique within a year** (2025: 116 distinct numbers
+over 134 rows), because each report carries two appendices — ongoing and
+completed — and each restarts at 1. That is faithful to the source, not a
+data error; a project is keyed by (year, **status**, number), and nothing in
+the site keys it by number alone. It is recorded here so that a future
+consumer does not.
+
 **F1b — two published claims were false because of it.** "Vietnam: silent in
 2025" became "Vietnam: the same six projects, four cycles running", and
 "13 projects reported but not in the appendix" became "34 projects, three
