@@ -6836,4 +6836,7 @@ body .view .evidence-routes li { max-width: none; }
    44px target. The credit links keep their own size: the padding and the
    negative margin give them the target without moving the credit line. */
 .leaflet-container .leaflet-control-zoom a { width: 44px; height: 44px; line-height: 44px; font-size: 18px; }
-.leaflet-container .leaflet-control-attribution a { display: inline-block; min-width: 44px; padding: 15px 0; margin: -15px 0; }
+/* 14px of text plus 16px of padding above and below is 46px, clear of the
+   44px floor; the negative margin takes the padding back out of the layout,
+   so the credit line sits exactly where it did. */
+.leaflet-container .leaflet-control-attribution a { display: inline-block; min-width: 44px; padding: 16px 0; margin: -16px 0; }
