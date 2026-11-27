@@ -5720,8 +5720,10 @@ body .view .iaas-hero-media figcaption {
    AA bar instead, which they were missing at 18-19px. */
 .news-source a, .def-row b a, .cc-inst,
 .review-record-detail p a, .review-project-links a,
-.contacts-source-note a, .alum-lede a {
-  display: inline-block; min-height: 24px;
+.contacts-source-note a, .alum-lede a, .archive-source {
+  /* The AA bar is 24 by 24: a reference link is held in both directions, so
+     a two-letter host name is not left with a 19px-wide target. */
+  display: inline-block; min-width: 24px; min-height: 24px;
 }
 
 /* ---------- Touch targets -------------------------------------------------
@@ -6291,6 +6293,18 @@ body .view .ig-note.col-flow { max-width: var(--measure); }
   letter-spacing: 0;
   text-transform: none;
 }
+/* The head's second column: the statement, and the switch that changes the
+   language it is written in. The switcher used to sit under the title, and
+   the title block then ran 90px below the statement — a column that ran out
+   while its neighbour ran on, with nothing in the space. The switch now
+   belongs to the statement it switches, and the two columns end together. */
+.archive-statement { min-width: 0; }
+.archive-statement .archive-lang { margin-top: 0.9rem; }
+/* The source name in an archive row is a reference link: a footnote to the
+   row, held to the 24px AA bar. The padding gives it the target and the
+   negative margin takes the padding back out of the layout, so the rows do
+   not grow by six pixels each. */
+.archive-source { display: inline-block; min-width: 24px; min-height: 24px; padding: 3px 0; margin: -3px 0; }
 .archive-lang {
   display: inline-flex;
   justify-content: flex-start;

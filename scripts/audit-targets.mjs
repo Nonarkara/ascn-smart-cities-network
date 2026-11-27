@@ -34,6 +34,7 @@ export const REFERENCE_LINK_SELECTOR = [
   ".review-project-links a",
   ".contacts-source-note a",
   ".alum-lede a",
+  ".archive-source",
 ].join(", ");
 
 const BASE = process.env.ASCN_TEST_URL || "http://127.0.0.1:4187";
@@ -49,10 +50,15 @@ export async function measureTargets(page) {
     if (!view) return [];
     const out = [];
     // A link inside a sentence is a link in the text, not a control in its
-    // own right; the line's own height is its target.
+    // own right (WCAG 2.2's inline exception) — UNLESS it is one of the
+    // house's reference links, which are held to the 24px AA bar whether
+    // they sit in a sentence or in a card. Skipping every in-prose link
+    // meant the reference class could never be proved: the archive's source
+    // names sat at 19px and no gate could reach them.
     const inProse = (el) => !!el.closest("p, li, dd, figcaption, td, th, blockquote, .lede, .ig-note, .cc-note, .method-row span");
     for (const el of view.querySelectorAll("a, button, input, select, textarea, [role='button'], [role='tab'], [role='switch'], [tabindex]:not([tabindex='-1'])")) {
-      if (inProse(el)) continue;
+      const isReference = el.matches(referenceSelector);
+      if (!isReference && inProse(el)) continue;
       const cs = getComputedStyle(el);
       if (cs.display === "none" || cs.visibility === "hidden") continue;
       const r = el.getBoundingClientRect();
@@ -61,7 +67,7 @@ export async function measureTargets(page) {
         sel: el.tagName.toLowerCase() + (el.id ? "#" + el.id : "." + String(el.className || "").trim().split(/\s+/).join(".")),
         width: Math.round(r.width * 100) / 100,
         height: Math.round(r.height * 100) / 100,
-        reference: el.matches(referenceSelector),
+        reference: isReference,
         text: (el.textContent || "").trim().replace(/\s+/g, " ").slice(0, 60),
       });
     }

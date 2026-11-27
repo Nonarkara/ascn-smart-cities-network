@@ -232,7 +232,10 @@ function sourceCell(item) {
   if (href === "#") return esc(copy().cleared);
   let host = item.source;
   try { host = new URL(href).host.replace(/^www\./, ""); } catch { /* Keep the safe URL text. */ }
-  return `<a href="${esc(href)}" target="_blank" rel="noopener noreferrer" data-source-issued>${esc(host)}</a>`;
+  // The source name is a reference link — a footnote, not a control — and it
+  // is named so the target gate can hold it to the 24px AA bar. An unnamed
+  // link is a link no gate can reach.
+  return `<a class="archive-source" href="${esc(href)}" target="_blank" rel="noopener noreferrer" data-source-issued>${esc(host)}</a>`;
 }
 
 function flagLine(item) {
