@@ -32,6 +32,7 @@
 
 import { chromium } from '@playwright/test';
 import { mkdir, writeFile } from 'node:fs/promises';
+import { checkBasemap, watchTileRequests } from './tile-health.mjs';
 
 const base = process.env.ASCN_TEST_URL || 'http://127.0.0.1:4187';
 const label = process.env.ASCN_SH_LABEL || 'audit';
@@ -491,6 +492,10 @@ async function measure(page, inkCeiling, strandedFloor, trackSlack) {
 
 await mkdir(outDir, { recursive: true });
 const report = [];
+// The upstream outages met while measuring: recorded, not hidden. An outage
+// is not a failure, but a reader of the record has to know the basemap was
+// never seen drawing, and why.
+const degraded = [];
 await writeFile(`${outDir}/sh.json`, '[]\n');
 // Isolate viewports; retain failed measurements instead of reporting them green.
 for (const vp of VIEWPORTS) {
@@ -508,6 +513,10 @@ for (const vp of VIEWPORTS) {
     await page.route('**/api/{news,ascn-news}', (route) => route.fulfill({ status: 503, json: {} }));
     const errors = [];
     page.on('pageerror', (e) => errors.push(String(e.message)));
+    // The tile requests are watched for the whole sweep: a watcher attached
+    // after the map is created has missed the evidence that settles whether
+    // an empty basemap is the site's fault or the server's.
+    const tileRequests = watchTileRequests(page);
     for (const view of VIEWS) {
       const surface = view.split('/')[0];
       try {
@@ -532,22 +541,22 @@ for (const vp of VIEWPORTS) {
       if (view === 'overview') await page.locator('#kpi-grid .kpi').first().waitFor({ state: 'attached' });
       if (surface === 'news') await page.locator(`#news-panel-${view.split('/')[1] || 'review'}`).waitFor();
       // Markers without a basemap are not a verified map. Wait for visible
-      // tiles, just as the visual capture does; record a failure on outage.
+      // tiles, just as the visual capture does.
+      //
+      // The basemap is a third party. A tile outage is not a failure of this
+      // site, and a gate that cannot tell the two apart sends its readers
+      // to re-run a red gate until it goes green — which is the same as
+      // having no gate. So the instrument asks the server what happened:
+      // if it answered with the tiles it was asked for and the map still
+      // drew nothing, the site is at fault and this fails; if it refused or
+      // timed out, the site must have degraded the way it promises — the
+      // notice shown, the markers kept — and that is what is checked.
       let mapFailure = null;
       if (['cities', 'contacts'].includes(view)) {
         const selector = view === 'cities' ? '#sea-map' : '#contacts-map';
-        try {
-          await page.waitForFunction((sel) => {
-            const map = document.querySelector(sel);
-            if (!map || map.querySelectorAll('.leaflet-interactive').length === 0) return false;
-            const box = map.getBoundingClientRect();
-            const tiles = [...map.querySelectorAll('.leaflet-tile')].filter((tile) => {
-              const b = tile.getBoundingClientRect();
-              return b.right > box.left && b.left < box.right && b.bottom > box.top && b.top < box.bottom;
-            });
-            return tiles.length > 0 && tiles.every((tile) => tile.complete && tile.naturalWidth === 256);
-          }, selector, { timeout: 20000 });
-        } catch { mapFailure = `${selector}: geographic tiles or markers not ready`; }
+        const basemap = await checkBasemap(page, selector, { timeout: 20000, seen: tileRequests });
+        if (!basemap.ok) mapFailure = `${selector}: ${basemap.reason}`;
+        else if (basemap.degraded) degraded.push(`${selector}: ${basemap.reason}`);
       }
       await page.evaluate(() => {
         const p = document.querySelector('#plate');
@@ -655,6 +664,13 @@ for (const m of report) {
   );
 }
 console.log(`\n${total} finding(s). Record: ${outDir}/sh.json\n`);
+if (degraded.length) {
+  // Recorded, not hidden: the basemap was not seen drawing in these
+  // measurements, and the reason was somebody else's outage.
+  console.log(`${degraded.length} upstream tile outage(s) met while measuring — the basemap was not seen drawing:`);
+  for (const line of [...new Set(degraded)]) console.log(`  ${line}`);
+  console.log('The site degraded as it promises; the outage is not counted as a finding.\n');
+}
 if (strict && total > 0) {
   throw new Error(`MSH audit found ${total} issue(s).`);
 }

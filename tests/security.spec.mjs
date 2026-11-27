@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { readFile } from "node:fs/promises";
+import { checkBasemap, watchTileRequests } from "../scripts/tile-health.mjs";
 
 async function data(name) {
   return JSON.parse(await readFile(new URL(`../data/${name}`, import.meta.url)));
@@ -92,6 +93,10 @@ test("all existing routes render with working maps, charts, filters, and no CSP 
   page.on("request", (request) => {
     if (request.resourceType() === "script" && new URL(request.url()).hostname === "unpkg.com") externalScripts.push(request.url());
   });
+  // The tile requests are watched from the start, because a watcher attached
+  // after the map is created has missed the evidence that settles whether an
+  // empty basemap is the site's fault or the server's.
+  const tileRequests = watchTileRequests(page);
   await page.goto("/#overview");
   await expect(page.locator("#kpi-grid .kpi")).toHaveCount(5);
   for (const tab of ["innovation", "record", "news", "history", "cities", "projects", "framework", "partners", "contacts", "insights", "data", "archive", "research", "essay"]) {
@@ -101,8 +106,13 @@ test("all existing routes render with working maps, charts, filters, and no CSP 
   }
   await page.locator('#tab-nav [data-tab="cities"]').click();
   await expect(page.locator("#sea-map .leaflet-interactive")).toHaveCount(38);
-  await expect.poll(() => page.locator("#sea-map .leaflet-tile").evaluateAll((images) =>
-    images.some((image) => image.complete && image.naturalWidth > 0)), { timeout: 15_000 }).toBe(true);
+  // The basemap is a third party. If OpenStreetMap refuses or times out,
+  // that is not a site failure — but the site must then degrade the way it
+  // promises: the notice appears and the markers stay. If the server
+  // answered with the tiles it was asked for and the map still drew
+  // nothing, the site is at fault and this fails.
+  const basemap = await checkBasemap(page, "#sea-map", { seen: tileRequests });
+  expect(basemap.siteFault, basemap.reason).toBe(false);
   await page.locator("#city-search").fill("Bangkok");
   // The city entry carries its country as a two-letter code on the face of the
   // card, but its accessible name keeps all three facts in full: a screen
